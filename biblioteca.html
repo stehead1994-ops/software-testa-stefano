@@ -184,10 +184,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-h
           <div class="row2">
             <div class="fg"><label>Note</label><input type="text" id="f-note" placeholder="Es. collana, genere..."></div>
             <div class="fg"><label>Numero copie</label>
-              <select id="f-copies">
-                <option value="1">1 copia</option><option value="2">2 copie</option><option value="3">3 copie</option>
-                <option value="4">4 copie</option><option value="5">5 copie</option>
-              </select>
+              <input type="number" id="f-copies" value="1" min="1" max="999" placeholder="Es. 3">
             </div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
