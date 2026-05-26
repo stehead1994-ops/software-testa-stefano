@@ -578,8 +578,8 @@
         </div>
       </div>
       <div class="card-footer">
-        <button class="btn-dl btn-dl-primary" onclick="openBiblioteca()" style="cursor:pointer;border:none;font-family:inherit;font-size:inherit">📚 Apri</button>
-        <button class="btn-dl btn-dl-secondary" onclick="openBiblioteca()" style="cursor:pointer;border:none" title="Apri biblioteca">↗</button>
+        <a class="btn-dl btn-dl-primary" href="biblioteca.html" target="_blank">📚 Apri</a>
+        <a class="btn-dl btn-dl-secondary" href="biblioteca.html" target="_blank" title="Apri biblioteca">↗</a>
       </div>
     </div>
 
@@ -614,70 +614,7 @@
   document.getElementById("anno").textContent = new Date().getFullYear();
 </script>
 
-<!-- BIBLIOTECA OVERLAY -->
-<style>
-#bib-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: #f0f4f8;
-  flex-direction: column;
-}
-#bib-overlay.open { display: flex; }
-#bib-topbar {
-  background: #1D5FAD;
-  color: white;
-  padding: 0 1.5rem;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-#bib-topbar span { flex: 1; font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif; }
-#bib-close-btn {
-  background: rgba(255,255,255,0.2);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-}
-#bib-close-btn:hover { background: rgba(255,255,255,0.3); }
-#bib-frame {
-  flex: 1;
-  border: none;
-  width: 100%;
-}
-</style>
 
-<div id="bib-overlay">
-  <div id="bib-topbar">
-    <span>📚 Biblioteca Primaria di Castelcovati</span>
-    <button id="bib-close-btn" onclick="closeBiblioteca()">✕ Chiudi</button>
-  </div>
-  <iframe id="bib-frame" src="" title="Biblioteca"></iframe>
-</div>
-
-<script>
-function openBiblioteca() {
-  const overlay = document.getElementById('bib-overlay');
-  const frame = document.getElementById('bib-frame');
-  if(!frame.src || frame.src === window.location.href) {
-    frame.src = 'biblioteca.html';
-  }
-  overlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeBiblioteca() {
-  document.getElementById('bib-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-</script>
 
 </body>
 </html>
