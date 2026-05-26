@@ -181,7 +181,15 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-h
             <div class="fg"><label>Anno</label><input type="text" id="f-year" placeholder="Anno"></div>
             <div class="fg"><label>ISBN</label><input type="text" id="f-isbn" style="font-family:monospace" placeholder="ISBN"></div>
           </div>
-          <div class="fg"><label>Note</label><input type="text" id="f-note" placeholder="Es. collana, genere..."></div>
+          <div class="row2">
+            <div class="fg"><label>Note</label><input type="text" id="f-note" placeholder="Es. collana, genere..."></div>
+            <div class="fg"><label>Numero copie</label>
+              <select id="f-copies">
+                <option value="1">1 copia</option><option value="2">2 copie</option><option value="3">3 copie</option>
+                <option value="4">4 copie</option><option value="5">5 copie</option>
+              </select>
+            </div>
+          </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn btn-primary" onclick="saveBook()">✅ Aggiungi al catalogo</button>
             <button class="btn btn-secondary" onclick="clearBookForm()">Pulisci</button>
@@ -372,6 +380,8 @@ function initials(n){return (n||'').trim().split(/\s+/).map(w=>w[0]||'').join(''
 function activeLoans(){return loans.filter(l=>!l.returned);}
 function userActiveLoans(uid){return loans.filter(l=>l.user_id==uid&&!l.returned);}
 function bookActiveLoans(isbn){return loans.filter(l=>l.isbn===isbn&&!l.returned);}
+function bookAvailableCopies(isbn){const b=books.find(x=>x.isbn===isbn);const total=(b&&b.copies)||1;const out=bookActiveLoans(isbn).length;return Math.max(0,total-out);}
+function bookCopiesLabel(isbn){const b=books.find(x=>x.isbn===isbn);const total=(b&&b.copies)||1;const avail=bookAvailableCopies(isbn);return avail+'/'+total;}
 
 function doLogin(){
   const u=document.getElementById('login-user').value.trim();
@@ -431,7 +441,7 @@ function refreshDash(){
   const recent=[...books].reverse().slice(0,5);
   const drEl=document.getElementById('dash-recent');
   if(!recent.length)drEl.innerHTML='<div class="empty">📚 Nessun libro ancora</div>';
-  else drEl.innerHTML='<table class="data-table"><thead><tr><th>Titolo</th><th>Autore</th><th>Stato</th></tr></thead><tbody>'+recent.map(b=>{const loaned=bookActiveLoans(b.isbn).length>0;return'<tr><td>'+esc(b.title.slice(0,40))+'</td><td>'+esc(b.author||'—')+'</td><td><span class="badge '+(loaned?'b-warn':'b-ok')+'">'+(loaned?'In prestito':'Disponibile')+'</span></td></tr>';}).join('')+'</tbody></table>';
+  else drEl.innerHTML='<table class="data-table"><thead><tr><th>Titolo</th><th>Autore</th><th>Stato</th></tr></thead><tbody>'+recent.map(b=>{const loaned=bookActiveLoans(b.isbn).length>0;const av=bookAvailableCopies(b.isbn);const tot=(b.copies)||1;return'<tr><td>'+esc(b.title.slice(0,40))+'</td><td>'+esc(b.author||'—')+'</td><td><span class="badge '+(av===0?'b-warn':'b-ok')+'">'+(av===0?'Esaurito':av+'/'+tot+' disp.')+'</span></td></tr>';}).join('')+'</tbody></table>';
 }
 
 function renderCatalog(){
@@ -564,13 +574,13 @@ async function saveBook(){
   if(!title){toast('Inserisci almeno il titolo','err');return;}
   showLoad('Salvataggio...');
   try{
-    const res=await db.insert('books',{isbn,title,author:document.getElementById('f-author').value.trim(),publisher:document.getElementById('f-publisher').value.trim(),year:document.getElementById('f-year').value.trim(),note:document.getElementById('f-note').value.trim()});
+    const res=await db.insert('books',{isbn,title,author:document.getElementById('f-author').value.trim(),publisher:document.getElementById('f-publisher').value.trim(),year:document.getElementById('f-year').value.trim(),note:document.getElementById('f-note').value.trim(),copies:parseInt(document.getElementById('f-copies').value)||1});
     if(res&&res[0])books.push(res[0]);
     hideLoad();clearBookForm();populateLabelSelect();refreshDash();toast('Libro aggiunto!');
   }catch(e){hideLoad();toast('Errore salvataggio: '+e.message,'err');}
 }
 
-function clearBookForm(){['f-title','f-author','f-publisher','f-year','f-isbn','f-note','isbn-input'].forEach(id=>document.getElementById(id).value='');}
+function clearBookForm(){['f-title','f-author','f-publisher','f-year','f-isbn','f-note','isbn-input'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-copies').value='1';}
 
 function populateLabelSelect(){
   const sel=document.getElementById('label-select');const cur=sel.value;
@@ -696,8 +706,7 @@ function filterLoanBooks(){
   const drop=document.getElementById('loan-book-drop');
   document.getElementById('loan-book-val').value='';document.getElementById('loan-book-badge').style.display='none';
   if(!q){drop.style.display='none';return;}
-  const loanedISBNs=activeLoans().map(l=>l.isbn);
-  const results=books.filter(b=>!loanedISBNs.includes(b.isbn)&&(b.isbn.includes(q)||b.title.toLowerCase().includes(q)||(b.author||'').toLowerCase().includes(q))).slice(0,8);
+  const results=books.filter(b=>bookAvailableCopies(b.isbn)>0&&(b.isbn.includes(q)||b.title.toLowerCase().includes(q)||(b.author||'').toLowerCase().includes(q))).slice(0,8);
   if(!results.length){drop.innerHTML='<div class="ac-item" style="color:#aaa">Nessun libro disponibile</div>';drop.style.display='block';return;}
   drop.innerHTML=results.map(b=>'<div class="ac-item" onclick="selectLoanBook(\''+esc(b.isbn)+'\')"><div style="font-weight:500">'+esc(b.title.slice(0,45))+'</div><div style="font-size:11px;color:#888">'+esc(b.author||'')+' · <span style="font-family:monospace">'+esc(b.isbn)+'</span></div></div>').join('');
   drop.style.display='block';
