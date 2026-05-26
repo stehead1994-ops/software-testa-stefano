@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca Primaria di Castelcovati</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-height:100vh}
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.login-box{background:white;border-radius:12px;border:1px solid #dde3ea;padding:2.5rem 2rem;width:340px;text-align:center}
+.login-logo{font-size:48px;margin-bottom:1rem}
+.login-box h1{font-size:18px;font-weight:600;margin-bottom:4px}
+.login-box p{font-size:13px;color:#666;margin-bottom:1.5rem}
+.login-box input{width:100%;padding:10px 12px;border:1px solid #cdd4dc;border-radius:8px;font-size:14px;margin-bottom:10px;outline:none;font-family:inherit}
+.login-box input:focus{border-color:#1D5FAD}
+.login-btn{width:100%;padding:10px;background:#1D5FAD;color:white;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}
+.login-btn:hover{background:#1850a0}
+.login-err{color:#c0392b;font-size:12px;margin-top:8px;display:none}
+#app{display:none;min-height:100vh}
+.topbar{background:#1D5FAD;color:white;padding:0 1.5rem;height:52px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.topbar h1{font-size:16px;font-weight:600;flex:1}
+.logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit}
+.logout-btn:hover{background:rgba(255,255,255,0.25)}
+.main{display:flex;min-height:calc(100vh - 52px)}
+.sidebar{width:200px;background:white;border-right:1px solid #e0e6ed;padding:1rem 0;flex-shrink:0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 1.25rem;font-size:14px;color:#555;cursor:pointer;border-left:3px solid transparent}
+.nav-item:hover{background:#f5f8fc;color:#1D5FAD}
+.nav-item.active{background:#EBF3FB;color:#1D5FAD;border-left-color:#1D5FAD;font-weight:500}
+.nav-section{font-size:11px;color:#aaa;padding:12px 1.25rem 4px;letter-spacing:.5px;text-transform:uppercase}
+.content{flex:1;padding:1.5rem;max-width:900px}
+.page{display:none}.page.active{display:block}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:1.5rem}
+.stat{background:white;border:1px solid #e0e6ed;border-radius:10px;padding:14px 16px}
+.stat-label{font-size:12px;color:#888;margin-bottom:4px}
+.stat-val{font-size:26px;font-weight:600}
+.stat-val.blue{color:#1D5FAD}.stat-val.green{color:#27ae60}.stat-val.amber{color:#e67e22}
+.card{background:white;border:1px solid #e0e6ed;border-radius:10px;padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:13px;font-weight:600;color:#888;margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px}
+.page-title{font-size:20px;font-weight:600;margin-bottom:1.25rem}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:12px;color:#666;margin-bottom:5px;font-weight:500}
+.fg input,.fg select,.fg textarea{width:100%;padding:9px 12px;border:1px solid #cdd4dc;border-radius:8px;font-size:14px;font-family:inherit;outline:none;background:white}
+.fg input:focus,.fg select:focus{border-color:#1D5FAD}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;border:none;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:#1D5FAD;color:white}.btn-primary:hover{background:#1850a0}
+.btn-secondary{background:white;color:#444;border:1px solid #cdd4dc}.btn-secondary:hover{background:#f5f8fc}
+.btn-danger{background:white;color:#c0392b;border:1px solid #e8b4b4}.btn-danger:hover{background:#fdf2f2}
+.btn-warning{background:white;color:#d68910;border:1px solid #f5cba7}
+.btn-success{background:#27ae60;color:white}.btn-success:hover{background:#229954}
+.btn-sm{padding:5px 10px;font-size:12px}
+.item-list{display:flex;flex-direction:column;gap:8px}
+.item-card{background:white;border:1px solid #e0e6ed;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:12px}
+.item-card.dimmed{opacity:.5}
+.avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex-shrink:0}
+.av0{background:#EBF3FB;color:#0C447C}.av1{background:#E1F5EE;color:#085041}
+.av2{background:#FAECE7;color:#712B13}.av3{background:#EEEDFE;color:#3C3489}.av4{background:#FAEEDA;color:#633806}
+.item-info{flex:1;min-width:0}
+.item-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-meta{font-size:12px;color:#888;margin-top:2px}
+.item-actions{display:flex;gap:6px;flex-shrink:0;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;padding:3px 8px;border-radius:100px;font-weight:500}
+.b-ok{background:#e8f8f0;color:#1e8449}.b-warn{background:#fef3e2;color:#935116}
+.b-info{background:#EBF3FB;color:#0C447C}.b-gray{background:#f2f2f2;color:#666}
+.class-tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;background:#f0f4f8;color:#666;margin-left:6px}
+.search-row{display:flex;gap:10px;margin-bottom:12px}
+.search-row input{flex:1;padding:9px 12px;border:1px solid #cdd4dc;border-radius:8px;font-size:14px;font-family:inherit;outline:none}
+.search-row input:focus{border-color:#1D5FAD}
+.filter-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{padding:5px 12px;font-size:12px;border-radius:100px;cursor:pointer;border:1px solid #cdd4dc;background:white;color:#666;font-family:inherit}
+.chip.active{background:#EBF3FB;color:#1D5FAD;border-color:#9fc4e8;font-weight:500}
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{text-align:left;padding:8px 12px;font-size:11px;color:#888;text-transform:uppercase;border-bottom:1px solid #e0e6ed;font-weight:600}
+.data-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.data-table tr:hover td{background:#f9fbfd}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:white;border-radius:12px;padding:1.5rem;width:440px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:17px;font-weight:600;margin-bottom:1rem}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem}
+.scan-box{background:#f5f8fc;border:2px dashed #9fc4e8;border-radius:10px;padding:1.5rem;text-align:center;margin-bottom:1rem}
+.isbn-input{font-family:'Courier New',monospace;letter-spacing:2px;font-size:16px;text-align:center;width:240px;display:block;margin:0 auto}
+.api-note{background:#EBF3FB;border:1px solid #9fc4e8;border-radius:8px;padding:10px 14px;font-size:12px;color:#1D5FAD;margin-top:10px}
+.empty{text-align:center;padding:3rem 1rem;color:#aaa;font-size:14px}
+.toast{position:fixed;bottom:24px;right:24px;background:#2c3e50;color:white;padding:12px 20px;border-radius:8px;font-size:13px;z-index:1000;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}.toast.ok{background:#27ae60}.toast.err{background:#c0392b}
+.spinner{width:16px;height:16px;border:2px solid #dde3ea;border-top-color:#1D5FAD;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.8);z-index:900;align-items:center;justify-content:center;flex-direction:column;gap:12px;font-size:14px;color:#555}
+.loading-overlay.show{display:flex}
+.spinner-lg{width:36px;height:36px;border:3px solid #dde3ea;border-top-color:#1D5FAD;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ac-drop{display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #cdd4dc;border-radius:8px;z-index:50;max-height:200px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.ac-item{padding:10px 14px;cursor:pointer;border-bottom:.5px solid #f0f0f0;font-size:13px}
+.ac-item:hover{background:#f5f8fc}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">📚</div>
+    <h1>Biblioteca Primaria</h1>
+    <p>Castelcovati — accesso riservato</p>
+    <input type="text" id="login-user" placeholder="Nome utente" autocomplete="username">
+    <input type="password" id="login-pass" placeholder="Password">
+    <button class="login-btn" onclick="doLogin()">Accedi</button>
+    <div class="login-err" id="login-err">Credenziali non valide</div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <span>📚</span>
+    <h1>Biblioteca Primaria di Castelcovati</h1>
+    <button class="logout-btn" onclick="doLogout()">Esci</button>
+  </div>
+  <div class="main">
+    <div class="sidebar">
+      <div class="nav-section">Panoramica</div>
+      <div class="nav-item active" onclick="goTo('dashboard')">🏠 Dashboard</div>
+      <div class="nav-section">Catalogo</div>
+      <div class="nav-item" onclick="goTo('catalog')">📖 Libri</div>
+      <div class="nav-item" onclick="goTo('add-book')">➕ Aggiungi libro</div>
+      <div class="nav-item" onclick="goTo('labels')">🏷️ Etichette</div>
+      <div class="nav-section">Utenti</div>
+      <div class="nav-item" onclick="goTo('users')">👥 Alunni e docenti</div>
+      <div class="nav-item" onclick="goTo('add-user')">👤 Registra utente</div>
+      <div class="nav-item" onclick="goTo('archive')">🗄️ Archivio</div>
+      <div class="nav-section">Prestiti</div>
+      <div class="nav-item" onclick="goTo('loans')">🔄 Gestione prestiti</div>
+    </div>
+    <div class="content">
+
+      <div class="page active" id="page-dashboard">
+        <div class="page-title">Dashboard</div>
+        <div class="stats">
+          <div class="stat"><div class="stat-label">Libri totali</div><div class="stat-val blue" id="s-books">—</div></div>
+          <div class="stat"><div class="stat-label">Disponibili</div><div class="stat-val green" id="s-avail">—</div></div>
+          <div class="stat"><div class="stat-label">In prestito</div><div class="stat-val amber" id="s-loaned">—</div></div>
+          <div class="stat"><div class="stat-label">Utenti attivi</div><div class="stat-val blue" id="s-users">—</div></div>
+        </div>
+        <div class="card"><div class="card-title">📋 Prestiti attivi</div><div id="dash-loans"></div></div>
+        <div class="card"><div class="card-title">📚 Ultimi libri aggiunti</div><div id="dash-recent"></div></div>
+      </div>
+
+      <div class="page" id="page-catalog">
+        <div class="page-title">Catalogo libri</div>
+        <div class="search-row">
+          <input type="text" id="book-search" placeholder="Cerca titolo, autore, ISBN..." oninput="renderCatalog()">
+          <select id="book-filter" onchange="renderCatalog()" style="width:160px;padding:9px 12px;border:1px solid #cdd4dc;border-radius:8px;font-size:13px;font-family:inherit">
+            <option value="">Tutti</option><option value="available">Disponibili</option><option value="loaned">In prestito</option>
+          </select>
+        </div>
+        <div class="item-list" id="catalog-list"></div>
+      </div>
+
+      <div class="page" id="page-add-book">
+        <div class="page-title">Aggiungi libro</div>
+        <div class="card">
+          <div class="card-title">📷 ISBN</div>
+          <div class="scan-box">
+            <input type="text" class="isbn-input" id="isbn-input" placeholder="9788845923456" maxlength="17">
+            <p style="font-size:13px;color:#888;margin-top:8px">Scansiona con la pistola barcode oppure digita l'ISBN</p>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn btn-primary" onclick="cercaISBN()">🔍 Cerca dati libro</button>
+            <div id="isbn-searching" style="display:none;align-items:center;gap:6px;font-size:13px;color:#888"><div class="spinner"></div> Ricerca...</div>
+          </div>
+          <div class="api-note" style="margin-top:10px">ℹ️ Cerca i dati per ISBN. Se non trovato, compila manualmente. Per i classici usa "Cerca per titolo".</div>
+        </div>
+        <div class="card">
+          <div class="card-title">✏️ Dati del libro</div>
+          <div class="fg"><label>Titolo *</label><input type="text" id="f-title" placeholder="Titolo del libro"></div>
+          <div class="row2">
+            <div class="fg"><label>Autore/i</label><input type="text" id="f-author" placeholder="Autore"></div>
+            <div class="fg"><label>Casa editrice</label><input type="text" id="f-publisher" placeholder="Editore"></div>
+          </div>
+          <div class="row2">
+            <div class="fg"><label>Anno</label><input type="text" id="f-year" placeholder="Anno"></div>
+            <div class="fg"><label>ISBN</label><input type="text" id="f-isbn" style="font-family:monospace" placeholder="ISBN"></div>
+          </div>
+          <div class="fg"><label>Note</label><input type="text" id="f-note" placeholder="Es. collana, genere..."></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="saveBook()">✅ Aggiungi al catalogo</button>
+            <button class="btn btn-secondary" onclick="clearBookForm()">Pulisci</button>
+            <div style="position:relative">
+              <button class="btn btn-secondary" id="btn-cerca-titolo" onclick="cercaTitolo()">🔍 Cerca per titolo</button>
+              <div class="ac-drop" id="titolo-drop" style="width:400px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page" id="page-labels">
+        <div class="page-title">Etichette</div>
+        <div class="card">
+          <div class="card-title">🏷️ Etichetta singola</div>
+          <div class="fg"><label>Libro</label>
+            <select id="label-select" onchange="renderLabel()" style="width:100%"><option value="">— seleziona —</option></select>
+          </div>
+          <div id="label-preview"></div>
+          <div id="label-btns" style="display:none;margin-top:10px;gap:8px">
+            <button class="btn btn-primary" onclick="printLabel()">🖨️ Stampa</button>
+            <button class="btn btn-secondary" onclick="downloadSVG()">⬇️ SVG</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">🖨️ Stampa tutte</div>
+          <button class="btn btn-secondary" onclick="printAll()">📋 Foglio A4 completo</button>
+        </div>
+      </div>
+
+      <div class="page" id="page-users">
+        <div class="page-title">Alunni e docenti</div>
+        <div class="search-row">
+          <input type="text" id="user-search" placeholder="Cerca nome o classe..." oninput="renderUsers()">
+          <select id="class-filter" onchange="renderUsers()" style="width:140px;padding:9px 12px;border:1px solid #cdd4dc;border-radius:8px;font-size:13px;font-family:inherit"><option value="">Tutte le classi</option></select>
+        </div>
+        <div class="filter-chips">
+          <button class="chip active" onclick="setUF('all',this)">Tutti</button>
+          <button class="chip" onclick="setUF('alunno',this)">Alunni</button>
+          <button class="chip" onclick="setUF('docente',this)">Docenti</button>
+          <button class="chip" onclick="setUF('loans',this)">Con prestiti</button>
+        </div>
+        <div class="item-list" id="user-list"></div>
+      </div>
+
+      <div class="page" id="page-add-user">
+        <div class="page-title">Registra utente</div>
+        <div class="card">
+          <div class="card-title">👤 Nuovo utente</div>
+          <div class="fg"><label>Tipo</label>
+            <select id="add-type" onchange="toggleClassFields()">
+              <option value="alunno">Alunno</option><option value="docente">Docente</option>
+            </select>
+          </div>
+          <div class="row2">
+            <div class="fg"><label>Nome *</label><input type="text" id="add-name" placeholder="Nome"></div>
+            <div class="fg"><label>Cognome *</label><input type="text" id="add-surname" placeholder="Cognome"></div>
+          </div>
+          <div id="class-fields">
+            <div class="row3">
+              <div class="fg"><label>Classe</label>
+                <select id="add-class"><option>1A</option><option>1B</option><option>2A</option><option>2B</option><option>3A</option><option>3B</option><option>4A</option><option>4B</option><option>5A</option><option>5B</option></select>
+              </div>
+              <div class="fg"><label>Anno scolastico</label><input type="text" id="add-year" value="2025/26"></div>
+              <div class="fg"><label>Max prestiti</label>
+                <select id="add-limit"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select>
+              </div>
+            </div>
+          </div>
+          <div class="fg"><label>Note</label><input type="text" id="add-note" placeholder="Es. BES, DSA..."></div>
+          <button class="btn btn-primary" onclick="addUser()">✅ Registra</button>
+        </div>
+        <div class="card">
+          <div class="card-title">👥 Importa classe</div>
+          <p style="font-size:13px;color:#888;margin-bottom:10px">Un alunno per riga: Nome Cognome</p>
+          <div class="row2">
+            <div class="fg"><label>Classe</label><select id="bulk-class"><option>1A</option><option>1B</option><option>2A</option><option>2B</option><option>3A</option><option>3B</option><option>4A</option><option>4B</option><option>5A</option><option>5B</option></select></div>
+            <div class="fg"><label>Anno</label><input type="text" id="bulk-year" value="2025/26"></div>
+          </div>
+          <div class="fg"><textarea id="bulk-names" style="width:100%;height:100px;padding:9px;border:1px solid #cdd4dc;border-radius:8px;font-size:13px;font-family:inherit;resize:vertical" placeholder="Marco Rossi&#10;Anna Bianchi"></textarea></div>
+          <button class="btn btn-primary" onclick="bulkAdd()">👥 Aggiungi tutti</button>
+        </div>
+      </div>
+
+      <div class="page" id="page-archive">
+        <div class="page-title">Archivio</div>
+        <div class="item-list" id="arch-list"></div>
+      </div>
+
+      <div class="page" id="page-loans">
+        <div class="page-title">Gestione prestiti</div>
+        <div class="card">
+          <div class="card-title">➕ Nuovo prestito</div>
+          <div class="row2">
+            <div class="fg" style="position:relative">
+              <label>Libro (ISBN o titolo)</label>
+              <input type="text" id="loan-book-input" placeholder="Scansiona o digita..." autocomplete="off" oninput="filterLoanBooks()">
+              <input type="hidden" id="loan-book-val">
+              <div class="ac-drop" id="loan-book-drop"></div>
+            </div>
+            <div class="fg" style="position:relative">
+              <label>Utente</label>
+              <input type="text" id="loan-user-input" placeholder="Digita nome o classe..." autocomplete="off" oninput="filterLoanUsers()">
+              <input type="hidden" id="loan-user-val">
+              <div class="ac-drop" id="loan-user-drop"></div>
+            </div>
+          </div>
+          <div style="margin-bottom:10px">
+            <span id="loan-book-badge" style="display:none" class="badge b-info"></span>
+            <span id="loan-user-badge" style="display:none" class="badge b-ok" style="margin-left:6px"></span>
+          </div>
+          <button class="btn btn-primary" onclick="registerLoan()">📤 Registra prestito</button>
+        </div>
+        <div class="card"><div class="card-title">📋 Prestiti attivi</div><div id="loans-table"></div></div>
+        <div class="card"><div class="card-title">📜 Storico</div><div id="history-table"></div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-confirm">
+  <div class="modal" style="max-width:360px">
+    <h3 id="mc-title">Conferma</h3>
+    <p style="font-size:14px;color:#666;margin-bottom:1rem" id="mc-body"></p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-confirm')">Annulla</button>
+      <button class="btn btn-danger" id="mc-ok">Conferma</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-return">
+  <div class="modal" style="max-width:360px">
+    <h3>Restituzione</h3>
+    <p style="font-size:14px;color:#666;margin-bottom:1rem" id="mr-body"></p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-return')">Annulla</button>
+      <button class="btn btn-success" id="mr-ok">✅ Conferma</button>
+    </div>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loading-overlay">
+  <div class="spinner-lg"></div>
+  <span id="loading-msg">Caricamento...</span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL = 'https://aoyagflgtclemnpucgay.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFveWFnZmxndGNsZW1ucHVjZ2F5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NzY0OTEsImV4cCI6MjA5NTM1MjQ5MX0.Pzq4t8pK9S2AmpsI08X2EbfHgC8n4kYCl0AyOcoihz8';
+const CRED = {user:'BiblioPrimariaCastel', pass:'Castelcovati26!'};
+
+const db = {
+  async get(table) {
+    const r = await fetch(SUPA_URL+'/rest/v1/'+table+'?order=id.asc', {headers:{apikey:SUPA_KEY, Authorization:'Bearer '+SUPA_KEY}});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  },
+  async insert(table, data) {
+    const r = await fetch(SUPA_URL+'/rest/v1/'+table, {method:'POST', headers:{apikey:SUPA_KEY, Authorization:'Bearer '+SUPA_KEY, 'Content-Type':'application/json', Prefer:'return=representation'}, body:JSON.stringify(data)});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  },
+  async update(table, id, data) {
+    const r = await fetch(SUPA_URL+'/rest/v1/'+table+'?id=eq.'+id, {method:'PATCH', headers:{apikey:SUPA_KEY, Authorization:'Bearer '+SUPA_KEY, 'Content-Type':'application/json', Prefer:'return=representation'}, body:JSON.stringify(data)});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  },
+  async del(table, id) {
+    await fetch(SUPA_URL+'/rest/v1/'+table+'?id=eq.'+id, {method:'DELETE', headers:{apikey:SUPA_KEY, Authorization:'Bearer '+SUPA_KEY}});
+  }
+};
+
+let books=[], users=[], loans=[];
+
+function showLoad(msg) { document.getElementById('loading-msg').textContent=msg||'Caricamento...'; document.getElementById('loading-overlay').classList.add('show'); }
+function hideLoad() { document.getElementById('loading-overlay').classList.remove('show'); }
+
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+(type||'ok');setTimeout(()=>t.className='toast',3500);}
+function confirm2(title,body,cb){document.getElementById('mc-title').textContent=title;document.getElementById('mc-body').textContent=body;document.getElementById('mc-ok').onclick=()=>{closeModal('modal-confirm');cb();};document.getElementById('modal-confirm').classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function avCol(id){return['av0','av1','av2','av3','av4'][Math.abs(id||0)%5];}
+function initials(n){return (n||'').trim().split(/\s+/).map(w=>w[0]||'').join('').toUpperCase().slice(0,2);}
+function activeLoans(){return loans.filter(l=>!l.returned);}
+function userActiveLoans(uid){return loans.filter(l=>l.user_id==uid&&!l.returned);}
+function bookActiveLoans(isbn){return loans.filter(l=>l.isbn===isbn&&!l.returned);}
+
+function doLogin(){
+  const u=document.getElementById('login-user').value.trim();
+  const p=document.getElementById('login-pass').value;
+  if(u===CRED.user&&p===CRED.pass){
+    sessionStorage.setItem('bib_auth','1');
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    loadAll();
+  } else {
+    document.getElementById('login-err').style.display='block';
+  }
+}
+function doLogout(){
+  sessionStorage.removeItem('bib_auth');
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
+document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('login-user').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+async function loadAll(){
+  showLoad('Caricamento dati...');
+  try {
+    [books,users,loans] = await Promise.all([db.get('books'),db.get('users'),db.get('loans')]);
+    refreshDash();
+  } catch(e) {
+    console.error(e);
+    toast('Errore connessione database — riprova','err');
+    document.getElementById('dash-loans').innerHTML='<div class="empty">⚠️ Database non raggiungibile<br><br><button class="btn btn-primary" onclick="loadAll()">🔄 Riprova</button></div>';
+  }
+  hideLoad();
+}
+
+function goTo(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+name+"'"))n.classList.add('active');});
+  if(name==='catalog')renderCatalog();
+  if(name==='labels')populateLabelSelect();
+  if(name==='users')renderUsers();
+  if(name==='archive')renderArchive();
+  if(name==='loans')renderLoans();
+  if(name==='dashboard')refreshDash();
+}
+
+function refreshDash(){
+  const al=activeLoans();
+  document.getElementById('s-books').textContent=books.length;
+  document.getElementById('s-avail').textContent=books.filter(b=>!bookActiveLoans(b.isbn).length).length;
+  document.getElementById('s-loaned').textContent=al.length;
+  document.getElementById('s-users').textContent=users.filter(u=>!u.archived).length;
+  const dlEl=document.getElementById('dash-loans');
+  if(!al.length){dlEl.innerHTML='<div class="empty">✅ Nessun prestito attivo</div>';}
+  else dlEl.innerHTML='<table class="data-table"><thead><tr><th>Libro</th><th>Utente</th><th>Dal</th><th></th></tr></thead><tbody>'+al.map(l=>{const b=books.find(x=>x.isbn===l.isbn)||{title:l.isbn};const u=users.find(x=>x.id==l.user_id);return'<tr><td>'+esc(b.title.slice(0,35))+'</td><td>'+esc(u?u.name+' '+u.surname:'—')+(u&&u.classe?'<span class="class-tag">'+esc(u.classe)+'</span>':'')+'</td><td>'+esc(l.date)+'</td><td><button class="btn btn-success btn-sm" onclick="openReturn('+l.id+')">Restituisci</button></td></tr>';}).join('')+'</tbody></table>';
+  const recent=[...books].reverse().slice(0,5);
+  const drEl=document.getElementById('dash-recent');
+  if(!recent.length)drEl.innerHTML='<div class="empty">📚 Nessun libro ancora</div>';
+  else drEl.innerHTML='<table class="data-table"><thead><tr><th>Titolo</th><th>Autore</th><th>Stato</th></tr></thead><tbody>'+recent.map(b=>{const loaned=bookActiveLoans(b.isbn).length>0;return'<tr><td>'+esc(b.title.slice(0,40))+'</td><td>'+esc(b.author||'—')+'</td><td><span class="badge '+(loaned?'b-warn':'b-ok')+'">'+(loaned?'In prestito':'Disponibile')+'</span></td></tr>';}).join('')+'</tbody></table>';
+}
+
+function renderCatalog(){
+  const q=(document.getElementById('book-search').value||'').toLowerCase();
+  const fs=document.getElementById('book-filter').value;
+  let list=books.filter(b=>{
+    const match=!q||(b.title+' '+(b.author||'')+' '+b.isbn).toLowerCase().includes(q);
+    const loaned=bookActiveLoans(b.isbn).length>0;
+    return match&&(!fs||(fs==='available'&&!loaned)||(fs==='loaned'&&loaned));
+  });
+  const el=document.getElementById('catalog-list');
+  if(!list.length){el.innerHTML='<div class="empty">📚 '+(books.length?'Nessun risultato':'Nessun libro nel catalogo')+'</div>';return;}
+  el.innerHTML=list.map(b=>{
+    const loaned=bookActiveLoans(b.isbn).length>0;
+    const loan=loaned?activeLoans().find(l=>l.isbn===b.isbn):null;
+    const luser=loan?users.find(u=>u.id==loan.user_id):null;
+    return'<div class="item-card"><div style="font-size:24px;flex-shrink:0">📖</div><div class="item-info"><div class="item-name">'+esc(b.title)+'</div><div class="item-meta">'+esc(b.author||'—')+' · '+esc(b.publisher||'')+(b.year?' ('+b.year+')':'')+'</div><div class="item-meta" style="font-family:monospace;font-size:11px">'+esc(b.isbn)+'</div>'+(loaned&&luser?'<span class="badge b-warn" style="margin-top:4px">📤 '+esc(luser.name+' '+luser.surname)+'</span>':'')+'</div><div class="item-actions"><span class="badge '+(loaned?'b-warn':'b-ok')+'">'+(loaned?'In prestito':'Disponibile')+'</span><button class="btn btn-danger btn-sm" onclick="deleteBook('+b.id+',\''+esc(b.isbn)+'\')">🗑️</button></div></div>';
+  }).join('');
+}
+
+async function deleteBook(id,isbn){
+  if(bookActiveLoans(isbn).length){toast('Non puoi eliminare un libro in prestito','err');return;}
+  confirm2('Elimina libro','Eliminare definitivamente questo libro?',async()=>{
+    showLoad('Eliminazione...');
+    await db.del('books',id);
+    books=books.filter(b=>b.id!==id);
+    hideLoad();renderCatalog();refreshDash();populateLabelSelect();toast('Libro eliminato');
+  });
+}
+
+async function cercaISBN(){
+  const raw=document.getElementById('isbn-input').value.replace(/[-\s]/g,'');
+  if(!raw||raw.length<10){toast('ISBN non valido','err');return;}
+  document.getElementById('f-isbn').value=raw;
+  if(books.find(b=>b.isbn===raw)){toast('Libro già nel catalogo','err');return;}
+  const searching=document.getElementById('isbn-searching');
+  searching.style.display='flex';
+  let found=false;
+  const ft=(url,ms=6000)=>{const c=new AbortController();const id=setTimeout(()=>c.abort(),ms);return fetch(url,{signal:c.signal}).finally(()=>clearTimeout(id));};
+  const set=(t,a,p,y)=>{document.getElementById('f-title').value=t||'';document.getElementById('f-author').value=a||'';document.getElementById('f-publisher').value=p||'';document.getElementById('f-year').value=y||'';found=true;};
+  try{const r=await ft('https://www.googleapis.com/books/v1/volumes?q=isbn:'+raw+'&maxResults=1');const d=await r.json();if(d.totalItems>0&&d.items?.[0]){const v=d.items[0].volumeInfo;set(v.title,(v.authors||[]).join(', '),v.publisher,v.publishedDate?.slice(0,4));}}catch(e){}
+  if(!found)try{const r=await ft('https://openlibrary.org/search.json?isbn='+raw+'&fields=title,author_name,publisher,first_publish_year&limit=1');const d=await r.json();const b=d.docs?.[0];if(b?.title)set(b.title,(b.author_name||[]).join(', '),(b.publisher||[])[0],b.first_publish_year?.toString());}catch(e){}
+  if(!found)try{const r=await ft('https://openlibrary.org/api/books?bibkeys=ISBN:'+raw+'&format=json&jscmd=data');const d=await r.json();const b=d['ISBN:'+raw];if(b)set(b.title,(b.authors||[]).map(a=>a.name).join(', '),(b.publishers||[]).map(p=>p.name).join(', '),b.publish_date);}catch(e){}
+  searching.style.display='none';
+  if(found){document.getElementById('f-title').focus();toast('✅ Dati trovati!');}
+  else{document.getElementById('f-title').focus();toast('Non trovato — compila manualmente o cerca per titolo');}
+}
+
+async function cercaTitolo(){
+  const title=document.getElementById('f-title').value.trim();
+  if(!title){toast('Scrivi prima il titolo','err');return;}
+  const q=encodeURIComponent(title+' '+(document.getElementById('f-author').value.trim()||''));
+  const ft=(url,ms=6000)=>{const c=new AbortController();const id=setTimeout(()=>c.abort(),ms);return fetch(url,{signal:c.signal}).finally(()=>clearTimeout(id));};
+  try{
+    let items=[];
+    const r=await ft('https://www.googleapis.com/books/v1/volumes?q='+q+'&maxResults=5&langRestrict=it');
+    const d=await r.json();
+    if(d.items?.length)items=d.items;
+    else{const r2=await ft('https://www.googleapis.com/books/v1/volumes?q='+q+'&maxResults=5');const d2=await r2.json();if(d2.items?.length)items=d2.items;}
+    if(!items.length){toast('Nessun risultato','err');return;}
+    const drop=document.getElementById('titolo-drop');
+    window._titResults=items;
+    drop.innerHTML=items.map((item,i)=>{const v=item.volumeInfo;return'<div class="ac-item" onclick="selectTitolo('+i+')"><div style="font-weight:500">'+esc(v.title||'—')+'</div><div style="font-size:11px;color:#888">'+esc((v.authors||[]).join(', '))+' · '+esc(v.publisher||'')+(v.publishedDate?' ('+v.publishedDate.slice(0,4)+')':'')+'</div></div>';}).join('');
+    drop.style.display='block';
+  }catch(e){toast('Errore nella ricerca','err');}
+}
+
+function selectTitolo(i){
+  const v=window._titResults[i].volumeInfo;
+  document.getElementById('f-title').value=v.title||'';
+  document.getElementById('f-author').value=(v.authors||[]).join(', ');
+  document.getElementById('f-publisher').value=v.publisher||'';
+  document.getElementById('f-year').value=v.publishedDate?v.publishedDate.slice(0,4):'';
+  document.getElementById('titolo-drop').style.display='none';
+  toast('✅ Dati inseriti — controlla e salva');
+}
+
+document.getElementById('isbn-input').addEventListener('input',function(){document.getElementById('f-isbn').value=this.value.replace(/[-\s]/g,'');});
+document.getElementById('isbn-input').addEventListener('keydown',e=>{if(e.key==='Enter')cercaISBN();});
+document.addEventListener('click',e=>{if(!e.target.closest('#btn-cerca-titolo')&&!e.target.closest('#titolo-drop'))document.getElementById('titolo-drop').style.display='none';if(!e.target.closest('#loan-book-input')&&!e.target.closest('#loan-book-drop'))document.getElementById('loan-book-drop').style.display='none';if(!e.target.closest('#loan-user-input')&&!e.target.closest('#loan-user-drop'))document.getElementById('loan-user-drop').style.display='none';});
+
+async function saveBook(){
+  const title=document.getElementById('f-title').value.trim();
+  const isbn=document.getElementById('f-isbn').value.trim();
+  if(!title){toast('Inserisci almeno il titolo','err');return;}
+  showLoad('Salvataggio...');
+  try{
+    const res=await db.insert('books',{isbn,title,author:document.getElementById('f-author').value.trim(),publisher:document.getElementById('f-publisher').value.trim(),year:document.getElementById('f-year').value.trim(),note:document.getElementById('f-note').value.trim()});
+    if(res&&res[0])books.push(res[0]);
+    hideLoad();clearBookForm();populateLabelSelect();refreshDash();toast('Libro aggiunto!');
+  }catch(e){hideLoad();toast('Errore salvataggio: '+e.message,'err');}
+}
+
+function clearBookForm(){['f-title','f-author','f-publisher','f-year','f-isbn','f-note','isbn-input'].forEach(id=>document.getElementById(id).value='');}
+
+function populateLabelSelect(){
+  const sel=document.getElementById('label-select');const cur=sel.value;
+  sel.innerHTML='<option value="">— seleziona —</option>'+books.map(b=>'<option value="'+esc(b.isbn)+'">'+esc(b.title)+' ('+esc(b.isbn)+')</option>').join('');
+  if(cur)sel.value=cur;
+}
+
+function barcode(isbn){
+  const digits=isbn.replace(/\D/g,'').slice(0,13).padEnd(13,'0');let svg='';let x=4;const bw=Math.floor(192/(digits.length*2+4));
+  for(let i=0;i<digits.length;i++){const bars=[2,1,1,1,2,1,3,1,1,2][parseInt(digits[i])%10];svg+='<rect x="'+x+'" y="0" width="'+(bw*bars)+'" height="38" fill="#111"/>';x+=bw*bars+bw;}
+  return svg;
+}
+
+function renderLabel(){
+  const isbn=document.getElementById('label-select').value;
+  const area=document.getElementById('label-preview');const btns=document.getElementById('label-btns');
+  if(!isbn){area.innerHTML='';btns.style.display='none';return;}
+  const b=books.find(x=>x.isbn===isbn);if(!b)return;
+  area.innerHTML='<div style="border:1px solid #cdd4dc;border-radius:8px;padding:16px;background:white;text-align:center;max-width:280px;margin:12px auto"><div style="font-size:9px;color:#555;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">📚 Biblioteca Primaria di Castelcovati</div><div style="font-size:13px;font-weight:700;margin-bottom:2px">'+esc(b.title.slice(0,30))+'</div>'+(b.author?'<div style="font-size:11px;color:#666;margin-bottom:10px">'+esc(b.author.slice(0,32))+'</div>':'')+'<svg width="200" height="42" viewBox="0 0 200 42">'+barcode(b.isbn)+'</svg><div style="font-family:monospace;font-size:10px;color:#444;margin-top:4px">'+esc(b.isbn)+'</div></div>';
+  btns.style.display='flex';
+}
+
+function printLabel(){
+  const isbn=document.getElementById('label-select').value;const b=books.find(x=>x.isbn===isbn);if(!b)return;
+  const win=window.open('','_blank');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Etichetta</title><style>body{display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;font-family:Arial,sans-serif}.lbl{background:white;border:1px solid #ccc;border-radius:8px;padding:16px;text-align:center;width:260px}.s{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#666;margin-bottom:4px}.t{font-size:14px;font-weight:700;margin-bottom:2px}.a{font-size:11px;color:#666;margin-bottom:10px}.i{font-family:monospace;font-size:10px;color:#444;margin-top:4px}@media print{body{background:white}}</style></head><body><div class="lbl"><div class="s">📚 Biblioteca Primaria di Castelcovati</div><div class="t">'+esc(b.title.slice(0,30))+'</div>'+(b.author?'<div class="a">'+esc(b.author.slice(0,32))+'</div>':'')+'<svg width="200" height="42" viewBox="0 0 200 42">'+barcode(b.isbn)+'</svg><div class="i">'+esc(b.isbn)+'</div></div><script>window.onload=()=>window.print()<\/script></body></html>');
+}
+
+function downloadSVG(){
+  const isbn=document.getElementById('label-select').value;const b=books.find(x=>x.isbn===isbn);if(!b)return;
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="260" height="120" viewBox="0 0 260 120"><rect width="260" height="120" rx="8" fill="white" stroke="#ccc" stroke-width="1"/><text x="130" y="16" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">BIBLIOTECA PRIMARIA DI CASTELCOVATI</text><text x="130" y="34" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#111">'+esc(b.title.slice(0,28))+'</text>'+(b.author?'<text x="130" y="48" text-anchor="middle" font-family="Arial" font-size="10" fill="#666">'+esc(b.author.slice(0,32))+'</text>':'')+'<g transform="translate(30,56)">'+barcode(b.isbn)+'</g><text x="130" y="112" text-anchor="middle" font-family="monospace" font-size="9" fill="#444">'+esc(b.isbn)+'</text></svg>';
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));a.download='etichetta-'+b.isbn+'.svg';a.click();
+}
+
+function printAll(){
+  if(!books.length){toast('Nessun libro','err');return;}
+  const win=window.open('','_blank');
+  const labels=books.map(b=>'<div class="lbl"><div class="s">📚 Biblioteca Primaria di Castelcovati</div><div class="t">'+esc(b.title.slice(0,26))+'</div>'+(b.author?'<div class="a">'+esc(b.author.slice(0,28))+'</div>':'')+'<svg width="160" height="36" viewBox="0 0 200 42">'+barcode(b.isbn)+'</svg><div class="i">'+esc(b.isbn)+'</div></div>').join('');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Etichette</title><style>body{font-family:Arial,sans-serif;margin:16px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.lbl{background:white;border:1px solid #ccc;border-radius:6px;padding:10px;text-align:center}.s{font-size:8px;text-transform:uppercase;letter-spacing:.4px;color:#666;margin-bottom:3px}.t{font-size:12px;font-weight:700;margin-bottom:2px}.a{font-size:10px;color:#666;margin-bottom:6px}.i{font-family:monospace;font-size:9px;color:#444}@media print{body{margin:0}}</style></head><body><div class="grid">'+labels+'</div><script>window.onload=()=>window.print()<\/script></body></html>');
+}
+
+let uf='all';
+function setUF(f,el){uf=f;document.querySelectorAll('.filter-chips .chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderUsers();}
+
+function renderUsers(){
+  const q=(document.getElementById('user-search').value||'').toLowerCase();
+  const cf=document.getElementById('class-filter').value;
+  const classes=[...new Set(users.filter(u=>!u.archived&&u.classe).map(u=>u.classe))].sort();
+  const sel=document.getElementById('class-filter');const cur=sel.value;
+  sel.innerHTML='<option value="">Tutte le classi</option>'+classes.map(c=>'<option value="'+c+'"'+(c===cur?' selected':'')+'>'+c+'</option>').join('');
+  let list=users.filter(u=>!u.archived);
+  if(uf==='alunno')list=list.filter(u=>u.type==='alunno');
+  if(uf==='docente')list=list.filter(u=>u.type==='docente');
+  if(uf==='loans')list=list.filter(u=>userActiveLoans(u.id).length>0);
+  if(cf)list=list.filter(u=>u.classe===cf);
+  if(q)list=list.filter(u=>(u.name+' '+u.surname+' '+(u.classe||'')).toLowerCase().includes(q));
+  const el=document.getElementById('user-list');
+  if(!list.length){el.innerHTML='<div class="empty">👥 '+(users.filter(u=>!u.archived).length?'Nessun risultato':'Nessun utente registrato')+'</div>';return;}
+  el.innerHTML=list.map(u=>{const al=userActiveLoans(u.id);return'<div class="item-card"><div class="avatar '+avCol(u.id)+'">'+initials(u.name+' '+u.surname)+'</div><div class="item-info"><div class="item-name">'+esc(u.name+' '+u.surname)+(u.classe?'<span class="class-tag">'+esc(u.classe)+'</span>':'')+'</div><div class="item-meta">'+(u.type==='docente'?'Docente':'Alunno')+' · '+esc(u.year||'')+(u.note?' · '+esc(u.note):'')+'</div><div style="margin-top:4px">'+(al.length?'<span class="badge b-warn">📚 '+al.length+' in prestito</span>':'<span class="badge b-ok">✅ Nessun prestito</span>')+' <span class="badge b-info">max '+(u.loan_limit||2)+'</span></div></div><div class="item-actions"><button class="btn btn-warning btn-sm" onclick="archiveUser('+u.id+')" title="Archivia">🗄️</button><button class="btn btn-danger btn-sm" onclick="deleteUser('+u.id+')" title="Elimina">🗑️</button></div></div>';}).join('');
+}
+
+function toggleClassFields(){document.getElementById('class-fields').style.display=document.getElementById('add-type').value==='docente'?'none':'block';}
+
+async function addUser(){
+  const type=document.getElementById('add-type').value;
+  const name=document.getElementById('add-name').value.trim();
+  const surname=document.getElementById('add-surname').value.trim();
+  if(!name||!surname){toast('Inserisci nome e cognome','err');return;}
+  const classe=type==='alunno'?document.getElementById('add-class').value:'';
+  const year=type==='alunno'?document.getElementById('add-year').value.trim():'';
+  const loan_limit=parseInt(document.getElementById('add-limit').value)||2;
+  const note=document.getElementById('add-note').value.trim();
+  if(users.find(u=>!u.archived&&u.name===name&&u.surname===surname&&u.classe===classe)){toast('Utente già presente','err');return;}
+  showLoad('Salvataggio...');
+  try{const res=await db.insert('users',{type,name,surname,classe,year,loan_limit,note,archived:false});if(res&&res[0])users.push(res[0]);hideLoad();toast('Utente registrato!');['add-name','add-surname','add-note'].forEach(id=>document.getElementById(id).value='');refreshDash();}
+  catch(e){hideLoad();toast('Errore: '+e.message,'err');}
+}
+
+async function bulkAdd(){
+  const classe=document.getElementById('bulk-class').value;
+  const year=document.getElementById('bulk-year').value.trim();
+  const raw=document.getElementById('bulk-names').value.trim();
+  if(!raw){toast('Inserisci i nomi','err');return;}
+  let added=0;showLoad('Importazione...');
+  for(const line of raw.split('\n').map(l=>l.trim()).filter(Boolean)){
+    const parts=line.split(/\s+/);const name=parts[0]||'';const surname=parts.slice(1).join(' ')||'';
+    if(!name)continue;
+    if(users.find(u=>!u.archived&&u.name===name&&u.surname===surname&&u.classe===classe))continue;
+    try{const res=await db.insert('users',{type:'alunno',name,surname,classe,year,loan_limit:2,note:'',archived:false});if(res&&res[0]){users.push(res[0]);added++;}}catch(e){}
+  }
+  hideLoad();toast(added+' alunni aggiunti!');document.getElementById('bulk-names').value='';goTo('users');
+}
+
+async function archiveUser(uid){
+  const u=users.find(x=>x.id==uid);if(!u)return;
+  if(userActiveLoans(uid).length){toast('Ha prestiti attivi — registra le restituzioni prima','err');return;}
+  confirm2('Archivia utente','Archiviare '+u.name+' '+u.surname+'?',async()=>{
+    showLoad();await db.update('users',uid,{archived:true});users=users.map(x=>x.id==uid?{...x,archived:true}:x);hideLoad();renderUsers();renderArchive();refreshDash();toast('Utente archiviato');
+  });
+}
+
+async function deleteUser(uid){
+  const u=users.find(x=>x.id==uid);if(!u)return;
+  if(userActiveLoans(uid).length){toast('Ha prestiti attivi!','err');return;}
+  confirm2('Elimina utente','Eliminare definitivamente '+u.name+' '+u.surname+'?',async()=>{
+    showLoad();await db.del('users',uid);users=users.filter(x=>x.id!=uid);hideLoad();renderUsers();renderArchive();refreshDash();toast('Utente eliminato');
+  });
+}
+
+function renderArchive(){
+  const arch=users.filter(u=>u.archived);
+  const el=document.getElementById('arch-list');
+  if(!arch.length){el.innerHTML='<div class="empty">🗄️ Nessun utente archiviato</div>';return;}
+  el.innerHTML=arch.map(u=>'<div class="item-card dimmed"><div class="avatar '+avCol(u.id)+'">'+initials(u.name+' '+u.surname)+'</div><div class="item-info"><div class="item-name">'+esc(u.name+' '+u.surname)+(u.classe?'<span class="class-tag">'+esc(u.classe)+'</span>':'')+'</div><div class="item-meta">'+(u.type==='docente'?'Docente':'Alunno')+' · '+loans.filter(l=>l.user_id==u.id).length+' prestiti totali</div><span class="badge b-gray">Archiviato</span></div><div class="item-actions"><button class="btn btn-secondary btn-sm" onclick="restoreUser('+u.id+')">🔄 Riattiva</button><button class="btn btn-danger btn-sm" onclick="deleteUser('+u.id+')">🗑️</button></div></div>').join('');
+}
+
+async function restoreUser(uid){
+  showLoad();await db.update('users',uid,{archived:false});users=users.map(x=>x.id==uid?{...x,archived:false}:x);hideLoad();renderArchive();renderUsers();refreshDash();toast('Utente riattivato');
+}
+
+function filterLoanBooks(){
+  const q=document.getElementById('loan-book-input').value.trim().toLowerCase();
+  const drop=document.getElementById('loan-book-drop');
+  document.getElementById('loan-book-val').value='';document.getElementById('loan-book-badge').style.display='none';
+  if(!q){drop.style.display='none';return;}
+  const loanedISBNs=activeLoans().map(l=>l.isbn);
+  const results=books.filter(b=>!loanedISBNs.includes(b.isbn)&&(b.isbn.includes(q)||b.title.toLowerCase().includes(q)||(b.author||'').toLowerCase().includes(q))).slice(0,8);
+  if(!results.length){drop.innerHTML='<div class="ac-item" style="color:#aaa">Nessun libro disponibile</div>';drop.style.display='block';return;}
+  drop.innerHTML=results.map(b=>'<div class="ac-item" onclick="selectLoanBook(\''+esc(b.isbn)+'\')"><div style="font-weight:500">'+esc(b.title.slice(0,45))+'</div><div style="font-size:11px;color:#888">'+esc(b.author||'')+' · <span style="font-family:monospace">'+esc(b.isbn)+'</span></div></div>').join('');
+  drop.style.display='block';
+}
+
+function selectLoanBook(isbn){
+  const b=books.find(x=>x.isbn===isbn);if(!b)return;
+  document.getElementById('loan-book-val').value=isbn;
+  document.getElementById('loan-book-input').value=b.title;
+  document.getElementById('loan-book-drop').style.display='none';
+  const badge=document.getElementById('loan-book-badge');badge.textContent='📖 '+b.title.slice(0,30);badge.style.display='inline-flex';
+}
+
+document.getElementById('loan-book-input').addEventListener('input',function(){
+  const v=this.value.replace(/[-\s]/g,'');
+  if(/^\d{13}$/.test(v)){setTimeout(()=>{const b=books.find(x=>x.isbn===v&&!activeLoans().find(l=>l.isbn===v));if(b)selectLoanBook(b.isbn);else if(books.find(x=>x.isbn===v))toast('Libro già in prestito','err');else toast('ISBN non nel catalogo','err');},200);}
+});
+
+function filterLoanUsers(){
+  const q=document.getElementById('loan-user-input').value.trim().toLowerCase();
+  const drop=document.getElementById('loan-user-drop');
+  document.getElementById('loan-user-val').value='';document.getElementById('loan-user-badge').style.display='none';
+  if(!q){drop.style.display='none';return;}
+  const results=users.filter(u=>!u.archived&&((u.name+' '+u.surname).toLowerCase().includes(q)||(u.classe||'').toLowerCase().includes(q))).slice(0,8);
+  if(!results.length){drop.innerHTML='<div class="ac-item" style="color:#aaa">Nessun utente trovato</div>';drop.style.display='block';return;}
+  drop.innerHTML=results.map(u=>{const al=userActiveLoans(u.id).length;const lim=u.loan_limit||2;const full=al>=lim;return'<div class="ac-item" style="opacity:'+(full?'.5':'1')+';cursor:'+(full?'not-allowed':'pointer')+'"'+(full?'':' onclick="selectLoanUser('+u.id+')"')+'><div style="font-weight:500">'+esc(u.name+' '+u.surname)+(u.classe?' <span style="font-size:11px;background:#f0f4f8;padding:1px 6px;border-radius:4px">'+esc(u.classe)+'</span>':'')+(full?' <span style="font-size:11px;color:#e74c3c">limite raggiunto</span>':'')+'</div><div style="font-size:11px;color:#888">'+(u.type==='docente'?'Docente':'Alunno')+' · '+al+'/'+lim+' prestiti</div></div>';}).join('');
+  drop.style.display='block';
+}
+
+function selectLoanUser(uid){
+  const u=users.find(x=>x.id==uid);if(!u)return;
+  document.getElementById('loan-user-val').value=uid;
+  document.getElementById('loan-user-input').value=u.name+' '+u.surname+(u.classe?' ('+u.classe+')':'');
+  document.getElementById('loan-user-drop').style.display='none';
+  const badge=document.getElementById('loan-user-badge');badge.textContent='👤 '+u.name+' '+u.surname;badge.style.display='inline-flex';
+}
+
+async function registerLoan(){
+  const isbn=document.getElementById('loan-book-val').value;
+  const uid=document.getElementById('loan-user-val').value;
+  if(!isbn){toast('Seleziona un libro','err');return;}
+  if(!uid){toast('Seleziona un utente','err');return;}
+  const u=users.find(x=>x.id==uid);
+  if(userActiveLoans(uid).length>=(u?.loan_limit||2)){toast('Limite prestiti raggiunto','err');return;}
+  showLoad('Salvataggio...');
+  try{
+    const res=await db.insert('loans',{isbn,user_id:parseInt(uid),date:new Date().toLocaleDateString('it-IT'),returned:false});
+    if(res&&res[0])loans.push(res[0]);
+    hideLoad();
+    ['loan-book-input','loan-user-input'].forEach(id=>document.getElementById(id).value='');
+    ['loan-book-val','loan-user-val'].forEach(id=>document.getElementById(id).value='');
+    ['loan-book-badge','loan-user-badge'].forEach(id=>document.getElementById(id).style.display='none');
+    renderLoans();refreshDash();toast('Prestito registrato!');
+  }catch(e){hideLoad();toast('Errore: '+e.message,'err');}
+}
+
+function renderLoans(){
+  const al=activeLoans();
+  const lEl=document.getElementById('loans-table');
+  if(!al.length)lEl.innerHTML='<div class="empty">✅ Nessun prestito attivo</div>';
+  else lEl.innerHTML='<table class="data-table"><thead><tr><th>Libro</th><th>Utente</th><th>Classe</th><th>Dal</th><th></th></tr></thead><tbody>'+al.map(l=>{const b=books.find(x=>x.isbn===l.isbn)||{title:l.isbn};const u=users.find(x=>x.id==l.user_id);return'<tr><td>'+esc(b.title.slice(0,35))+'</td><td>'+esc(u?u.name+' '+u.surname:'—')+'</td><td>'+esc(u&&u.classe?u.classe:'—')+'</td><td>'+esc(l.date)+'</td><td><button class="btn btn-success btn-sm" onclick="openReturn('+l.id+')">✅ Restituisci</button></td></tr>';}).join('')+'</tbody></table>';
+  const hist=loans.filter(l=>l.returned).reverse().slice(0,20);
+  const hEl=document.getElementById('history-table');
+  if(!hist.length)hEl.innerHTML='<div class="empty">📜 Nessuna restituzione</div>';
+  else hEl.innerHTML='<table class="data-table"><thead><tr><th>Libro</th><th>Utente</th><th>Prestito</th><th>Restituzione</th></tr></thead><tbody>'+hist.map(l=>{const b=books.find(x=>x.isbn===l.isbn)||{title:l.isbn};const u=users.find(x=>x.id==l.user_id);return'<tr><td>'+esc(b.title.slice(0,35))+'</td><td>'+esc(u?u.name+' '+u.surname:'—')+'</td><td>'+esc(l.date)+'</td><td>'+esc(l.return_date||'—')+'</td></tr>';}).join('')+'</tbody></table>';
+}
+
+function openReturn(loanId){
+  const l=loans.find(x=>x.id==loanId);if(!l)return;
+  const b=books.find(x=>x.isbn===l.isbn)||{title:l.isbn};
+  const u=users.find(x=>x.id==l.user_id);
+  document.getElementById('mr-body').textContent='Restituire "'+b.title.slice(0,40)+'"'+(u?' da '+u.name+' '+u.surname:'')+'?';
+  document.getElementById('mr-ok').onclick=async()=>{
+    showLoad('Restituzione...');
+    const today=new Date().toLocaleDateString('it-IT');
+    await db.update('loans',loanId,{returned:true,return_date:today});
+    loans=loans.map(x=>x.id==loanId?{...x,returned:true,return_date:today}:x);
+    hideLoad();closeModal('modal-return');refreshDash();renderLoans();toast('Restituzione registrata!');
+  };
+  document.getElementById('modal-return').classList.add('open');
+}
+
+if(sessionStorage.getItem('bib_auth')==='1'){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  loadAll();
+}
+</script>
+</body>
+</html>
