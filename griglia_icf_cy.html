@@ -145,6 +145,16 @@ body { font-family: 'DM Sans', sans-serif; background: var(--page); color: var(-
   .anag { border: 1px solid #ccc; }
   .print-top { display: block !important; text-align: center; padding: 0 0 14px; }
   .no-print { display: none !important; }
+  /* Note: nascondi la textarea e mostra il div testuale */
+  .area-note textarea { display: none !important; }
+  .print-note {
+    display: block !important;
+    font-size: 11px; color: #444; font-style: italic;
+    white-space: pre-wrap; word-break: break-word;
+    line-height: 1.5; padding: 2px 0;
+  }
+  .area-note { background: #fafaf8; padding: 8px 18px 10px; }
+  .area-note label { display: block; font-size: 10px; color: #999; margin-bottom: 3px; }
 }
 .print-top { display: none; }
 </style>
@@ -337,8 +347,12 @@ function render() {
       body.appendChild(row);
     });
     const na = document.createElement('div'); na.className = 'area-note';
-    na.innerHTML = `<label>Note e osservazioni per questa area</label><textarea id="nt-${area.id}" placeholder="Contesto, esempi specifici, variazioni osservate, risorse presenti...">${NT[area.id]||''}</textarea>`;
-    na.querySelector('textarea').oninput = e => { NT[area.id] = e.target.value; };
+    na.innerHTML = `<label>Note e osservazioni per questa area</label><textarea id="nt-${area.id}" placeholder="Contesto, esempi specifici, variazioni osservate, risorse presenti...">${NT[area.id]||''}</textarea><div class="print-note" id="pnt-${area.id}" style="display:none">${NT[area.id]||''}</div>`;
+    na.querySelector('textarea').oninput = e => {
+      NT[area.id] = e.target.value;
+      const pn = document.getElementById('pnt-' + area.id);
+      if (pn) pn.textContent = e.target.value;
+    };
     body.appendChild(na);
     blk.appendChild(body);
     cont.appendChild(blk);
@@ -612,6 +626,11 @@ window.addEventListener('beforeprint',()=>{
   const cl=document.getElementById('a-classe').value||'\u2014';
   document.getElementById('print-meta').textContent=`Bambino: ${nome}  |  Classe: ${cl}  |  Fascia: ${ft}  |  Data: ${data}`;
   document.querySelectorAll('.area-body').forEach(b=>b.classList.add('open'));
+  // Aggiorna i div di stampa con il testo corrente delle note
+  AREE.forEach(area => {
+    const pn = document.getElementById('pnt-' + area.id);
+    if (pn) pn.textContent = NT[area.id] || '';
+  });
 });
 
 document.getElementById('a-data').value=new Date().toISOString().split('T')[0];
