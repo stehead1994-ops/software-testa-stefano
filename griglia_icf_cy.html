@@ -7,156 +7,155 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 :root {
-  --ink: #1c1c28; --ink-mid: #50506a; --ink-soft: #9090aa;
-  --page: #f5f4ef; --white: #ffffff; --line: #e4e3dc; --line-strong: #cccbc2;
-  --c0: #1a6644; --c0bg: #eaf5ef; --c1: #1a4d8a; --c1bg: #eaf0fb;
-  --c2: #7a5000; --c2bg: #fdf4e3; --c3: #8a1a1a; --c3bg: #fdeaea;
-  --r: 6px; --rlg: 12px;
+  --ink:#1c1c28;--ink-mid:#50506a;--ink-soft:#9090aa;
+  --page:#f5f4ef;--white:#ffffff;--line:#e4e3dc;--line-strong:#cccbc2;
+  --c0:#1a6644;--c0bg:#eaf5ef;--c1:#1a4d8a;--c1bg:#eaf0fb;
+  --c2:#7a5000;--c2bg:#fdf4e3;--c3:#8a1a1a;--c3bg:#fdeaea;
+  --r:6px;--rlg:12px;
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'DM Sans', sans-serif; background: var(--page); color: var(--ink); font-size: 14px; line-height: 1.55; }
-.hdr { background: var(--ink); color: #fff; position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 16px rgba(0,0,0,.22); }
-.hdr-inner { max-width: 960px; margin: 0 auto; padding: 13px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-.hdr-title { display: flex; align-items: baseline; gap: 10px; }
-.hdr-title h1 { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
-.badge { font-family: 'DM Mono', monospace; font-size: 10px; background: rgba(255,255,255,.13); padding: 2px 9px; border-radius: 20px; color: rgba(255,255,255,.75); letter-spacing: .06em; }
-.hdr-btns { display: flex; gap: 7px; flex-wrap: wrap; }
-.btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 13px; border-radius: var(--r); border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; transition: all .14s; }
-.btn-ghost { background: rgba(255,255,255,.1); color: rgba(255,255,255,.88); border: 1px solid rgba(255,255,255,.18); }
-.btn-ghost:hover { background: rgba(255,255,255,.2); }
-.btn-save { background: #2a7a4b; color: #fff; }
-.btn-save:hover { background: #226040; }
-.btn-print { background: #2d5a8e; color: #fff; }
-.btn-print:hover { background: #264e7c; }
-.wrap { max-width: 960px; margin: 0 auto; padding: 24px 24px 64px; }
-.anag { background: var(--white); border: 1px solid var(--line); border-radius: var(--rlg); padding: 20px 22px; margin-bottom: 20px; }
-.anag-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 14px; }
-.anag-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
-.f label { display: block; font-size: 11px; font-weight: 500; color: var(--ink-mid); margin-bottom: 3px; }
-.f input, .f select { width: 100%; padding: 7px 10px; border: 1px solid var(--line-strong); border-radius: var(--r); font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); background: var(--white); outline: none; transition: border-color .14s; }
-.f input:focus, .f select:focus { border-color: #2d5a8e; }
-.legend { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
-.legend-lbl { font-size: 11px; color: var(--ink-soft); margin-right: 2px; }
-.pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-.p0 { background: var(--c0bg); color: var(--c0); }
-.p1 { background: var(--c1bg); color: var(--c1); }
-.p2 { background: var(--c2bg); color: var(--c2); }
-.p3 { background: var(--c3bg); color: var(--c3); }
-.pnd { background: #f0f0f5; color: var(--ink-soft); }
-.area { background: var(--white); border: 1px solid var(--line); border-radius: var(--rlg); margin-bottom: 14px; overflow: hidden; }
-.area-hdr { display: flex; align-items: center; gap: 11px; padding: 13px 18px; cursor: pointer; user-select: none; transition: background .13s; }
-.area-hdr:hover { background: var(--page); }
-.area-hdr.open { border-bottom: 1px solid var(--line); }
-.area-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.area-name { flex: 1; font-weight: 600; font-size: 14px; }
-.area-sub { font-size: 12px; color: var(--ink-soft); font-style: italic; }
-.area-prog { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--ink-soft); white-space: nowrap; }
-.area-chev { font-size: 16px; color: var(--ink-soft); transition: transform .2s; margin-left: 4px; }
-.area-chev.open { transform: rotate(180deg); }
-.area-body { display: none; }
-.area-body.open { display: block; }
-.item { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 14px; padding: 11px 18px; border-bottom: 1px solid var(--line); transition: background .1s; }
-.item:last-of-type { border-bottom: none; }
-.item:hover { background: #fafaf8; }
-.item.hidden { display: none; }
-.item-name { font-size: 13.5px; font-weight: 500; color: var(--ink); line-height: 1.4; }
-.item-ex { font-size: 12px; color: var(--ink-soft); font-style: italic; margin-top: 3px; line-height: 1.4; }
-.scores { display: flex; gap: 3px; flex-shrink: 0; padding-top: 2px; }
-.sb { width: 32px; height: 32px; border-radius: var(--r); border: 1.5px solid var(--line-strong); background: var(--white); cursor: pointer; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 600; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; transition: all .12s; }
-.sb:hover { border-color: #2d5a8e; color: #2d5a8e; }
-.sb[data-v="A"].on { background: var(--c0bg); border-color: var(--c0); color: var(--c0); }
-.sb[data-v="S"].on { background: var(--c1bg); border-color: var(--c1); color: var(--c1); }
-.sb[data-v="F"].on { background: var(--c2bg); border-color: var(--c2); color: var(--c2); }
-.sb[data-v="N"].on { background: var(--c3bg); border-color: var(--c3); color: var(--c3); }
-.sb[data-v="—"].on { background: #f0f0f5; border-color: #aaa; color: var(--ink-soft); }
-.area-note { padding: 10px 18px 14px; border-top: 1px solid var(--line); background: var(--page); }
-.area-note label { font-size: 11px; color: var(--ink-soft); display: block; margin-bottom: 5px; }
-.area-note textarea { width: 100%; min-height: 54px; resize: vertical; padding: 7px 10px; border: 1px solid var(--line-strong); border-radius: var(--r); font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--ink); background: var(--white); outline: none; }
-.area-note textarea:focus { border-color: #2d5a8e; }
-.tabs { display: flex; border-bottom: 2px solid var(--line); margin-bottom: 20px; }
-.tab { padding: 9px 18px; border: none; background: none; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink-soft); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .14s; }
-.tab:hover { color: var(--ink); }
-.tab.on { color: #2d5a8e; border-bottom-color: #2d5a8e; }
-.panel { display: none; }
-.panel.on { display: block; }
-.recap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 10px; margin-bottom: 20px; }
-.rc { background: var(--white); border: 1px solid var(--line); border-radius: var(--rlg); padding: 14px; text-align: center; }
-.rc-n { font-size: 26px; font-weight: 700; font-family: 'DM Mono', monospace; display: block; }
-.rc-l { font-size: 10px; color: var(--ink-soft); display: block; margin-top: 2px; text-transform: uppercase; letter-spacing: .06em; }
-.rA { color: var(--c0); } .rS { color: var(--c1); } .rF { color: var(--c2); } .rN { color: var(--c3); } .rG { color: var(--ink-soft); }
-.recap-section { background: var(--white); border: 1px solid var(--line); border-radius: var(--rlg); margin-bottom: 10px; overflow: hidden; }
-.rs-hdr { display: flex; align-items: center; gap: 10px; padding: 11px 16px; border-bottom: 1px solid var(--line); }
-.rs-body { padding: 12px 16px; }
-.rs-row { display: flex; align-items: baseline; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--line); }
-.rs-row:last-child { border-bottom: none; }
-.rs-name { flex: 1; font-size: 12.5px; color: var(--ink); }
-.report-section { background: var(--white); border: 1px solid var(--line); border-radius: var(--rlg); padding: 22px 24px; margin-bottom: 18px; }
-.report-section h3 { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
-.radar-wrap { display: flex; justify-content: center; align-items: center; gap: 32px; flex-wrap: wrap; }
-.radar-legend { display: flex; flex-direction: column; gap: 8px; }
-.rl-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-mid); }
-.rl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.bars-grid { display: flex; flex-direction: column; gap: 10px; }
-.bar-row { display: grid; grid-template-columns: 180px 1fr 36px; align-items: center; gap: 10px; }
-.bar-label { font-size: 12px; color: var(--ink-mid); text-align: right; line-height: 1.3; }
-.bar-track { height: 20px; background: #f0f0f0; border-radius: 4px; overflow: hidden; display: flex; }
-.bar-seg { height: 100%; }
-.bar-pct { font-size: 11px; font-family: 'DM Mono',monospace; color: var(--ink-soft); }
-.donut-wrap { display: flex; justify-content: center; align-items: center; gap: 32px; flex-wrap: wrap; }
-.donut-legend { display: flex; flex-direction: column; gap: 10px; min-width: 160px; }
-.dl-row { display: flex; align-items: center; gap: 10px; }
-.dl-swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
-.dl-name { font-size: 12px; color: var(--ink-mid); flex: 1; }
-.dl-val { font-family: 'DM Mono',monospace; font-size: 13px; font-weight: 600; }
-.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
-.tbl th { text-align: left; padding: 7px 10px; font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-soft); border-bottom: 2px solid var(--line); }
-.tbl td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
-.tbl tr:last-child td { border-bottom: none; }
-.tbl tr:hover td { background: #fafaf8; }
-.tbl-score { display: inline-flex; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-.comp-info { font-size: 13px; color: var(--ink-mid); margin-bottom: 14px; line-height: 1.5; }
-.import-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
-.import-row label { font-size: 12px; color: var(--ink-mid); }
-.import-btn { padding: 6px 14px; border-radius: var(--r); border: 1.5px dashed var(--line-strong); background: var(--page); cursor: pointer; font-family: 'DM Sans',sans-serif; font-size: 12px; color: var(--ink-mid); transition: all .14s; }
-.import-btn:hover { border-color: #2d5a8e; color: #2d5a8e; background: var(--c1bg); }
-.interp-box { background: var(--page); border-left: 3px solid #2d5a8e; padding: 12px 16px; border-radius: 0 var(--r) var(--r) 0; margin-top: 16px; }
-.interp-box .ib-title { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #2d5a8e; margin-bottom: 6px; }
-.interp-box p { font-size: 13px; color: var(--ink-mid); line-height: 1.6; }
-.interp-box ul { margin: 6px 0 0 16px; }
-.interp-box li { font-size: 13px; color: var(--ink-mid); line-height: 1.6; margin-bottom: 2px; }
-.strengths-box { border-left-color: var(--c0); }
-.strengths-box .ib-title { color: var(--c0); }
-.needs-box { border-left-color: var(--c3); }
-.needs-box .ib-title { color: var(--c3); }
-
-.delta-pos { color: var(--c0); font-weight: 600; }
-.delta-neg { color: var(--c3); font-weight: 600; }
-.delta-eq  { color: var(--ink-soft); }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--page);color:var(--ink);font-size:14px;line-height:1.55;}
+.hdr{background:var(--ink);color:#fff;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(0,0,0,.22);}
+.hdr-inner{max-width:960px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.hdr-title{display:flex;align-items:baseline;gap:10px;}
+.hdr-title h1{font-size:16px;font-weight:600;letter-spacing:-.01em;}
+.badge{font-family:'DM Mono',monospace;font-size:10px;background:rgba(255,255,255,.13);padding:2px 9px;border-radius:20px;color:rgba(255,255,255,.75);letter-spacing:.06em;}
+.hdr-btns{display:flex;gap:7px;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:var(--r);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;transition:all .14s;}
+.btn-ghost{background:rgba(255,255,255,.1);color:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.18);}
+.btn-ghost:hover{background:rgba(255,255,255,.2);}
+.btn-save{background:#2a7a4b;color:#fff;}
+.btn-save:hover{background:#226040;}
+.btn-print{background:#2d5a8e;color:#fff;}
+.btn-print:hover{background:#264e7c;}
+.wrap{max-width:960px;margin:0 auto;padding:24px 24px 64px;}
+.anag{background:var(--white);border:1px solid var(--line);border-radius:var(--rlg);padding:20px 22px;margin-bottom:20px;}
+.anag-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:14px;}
+.anag-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;}
+.f label{display:block;font-size:11px;font-weight:500;color:var(--ink-mid);margin-bottom:3px;}
+.f input,.f select{width:100%;padding:7px 10px;border:1px solid var(--line-strong);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:var(--white);outline:none;transition:border-color .14s;}
+.f input:focus,.f select:focus{border-color:#2d5a8e;}
+.legend{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:20px;}
+.legend-lbl{font-size:11px;color:var(--ink-soft);margin-right:2px;}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.p0{background:var(--c0bg);color:var(--c0);}
+.p1{background:var(--c1bg);color:var(--c1);}
+.p2{background:var(--c2bg);color:var(--c2);}
+.p3{background:var(--c3bg);color:var(--c3);}
+.pnd{background:#f0f0f5;color:var(--ink-soft);}
+.area{background:var(--white);border:1px solid var(--line);border-radius:var(--rlg);margin-bottom:14px;overflow:hidden;}
+.area-hdr{display:flex;align-items:center;gap:11px;padding:13px 18px;cursor:pointer;user-select:none;transition:background .13s;}
+.area-hdr:hover{background:var(--page);}
+.area-hdr.open{border-bottom:1px solid var(--line);}
+.area-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.area-name{flex:1;font-weight:600;font-size:14px;}
+.area-sub{font-size:12px;color:var(--ink-soft);font-style:italic;}
+.area-prog{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-soft);white-space:nowrap;}
+.area-chev{font-size:16px;color:var(--ink-soft);transition:transform .2s;margin-left:4px;}
+.area-chev.open{transform:rotate(180deg);}
+.area-body{display:none;}
+.area-body.open{display:block;}
+.item{display:grid;grid-template-columns:1fr auto;align-items:start;gap:14px;padding:11px 18px;border-bottom:1px solid var(--line);transition:background .1s;}
+.item:last-of-type{border-bottom:none;}
+.item:hover{background:#fafaf8;}
+.item.hidden{display:none;}
+.item-name{font-size:13.5px;font-weight:500;color:var(--ink);line-height:1.4;}
+.item-ex{font-size:12px;color:var(--ink-soft);font-style:italic;margin-top:3px;line-height:1.4;}
+.scores{display:flex;gap:3px;flex-shrink:0;padding-top:2px;}
+.sb{width:32px;height:32px;border-radius:var(--r);border:1.5px solid var(--line-strong);background:var(--white);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.sb:hover{border-color:#2d5a8e;color:#2d5a8e;}
+.sb[data-v="A"].on{background:var(--c0bg);border-color:var(--c0);color:var(--c0);}
+.sb[data-v="S"].on{background:var(--c1bg);border-color:var(--c1);color:var(--c1);}
+.sb[data-v="F"].on{background:var(--c2bg);border-color:var(--c2);color:var(--c2);}
+.sb[data-v="N"].on{background:var(--c3bg);border-color:var(--c3);color:var(--c3);}
+.sb[data-v="—"].on{background:#f0f0f5;border-color:#aaa;color:var(--ink-soft);}
+.area-note{padding:10px 18px 14px;border-top:1px solid var(--line);background:var(--page);}
+.area-note label{font-size:11px;color:var(--ink-soft);display:block;margin-bottom:5px;}
+.area-note textarea{width:100%;min-height:54px;resize:vertical;padding:7px 10px;border:1px solid var(--line-strong);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);background:var(--white);outline:none;}
+.area-note textarea:focus{border-color:#2d5a8e;}
+.tabs{display:flex;border-bottom:2px solid var(--line);margin-bottom:20px;}
+.tab{padding:9px 18px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink-soft);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .14s;}
+.tab:hover{color:var(--ink);}
+.tab.on{color:#2d5a8e;border-bottom-color:#2d5a8e;}
+.panel{display:none;}
+.panel.on{display:block;}
+.recap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:20px;}
+.rc{background:var(--white);border:1px solid var(--line);border-radius:var(--rlg);padding:14px;text-align:center;}
+.rc-n{font-size:26px;font-weight:700;font-family:'DM Mono',monospace;display:block;}
+.rc-l{font-size:10px;color:var(--ink-soft);display:block;margin-top:2px;text-transform:uppercase;letter-spacing:.06em;}
+.rA{color:var(--c0);}.rS{color:var(--c1);}.rF{color:var(--c2);}.rN{color:var(--c3);}.rG{color:var(--ink-soft);}
+.recap-section{background:var(--white);border:1px solid var(--line);border-radius:var(--rlg);margin-bottom:10px;overflow:hidden;}
+.rs-hdr{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--line);}
+.rs-body{padding:12px 16px;}
+.rs-row{display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:1px solid var(--line);}
+.rs-row:last-child{border-bottom:none;}
+.rs-name{flex:1;font-size:12.5px;color:var(--ink);}
+.report-section{background:var(--white);border:1px solid var(--line);border-radius:var(--rlg);padding:22px 24px;margin-bottom:18px;}
+.report-section h3{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:18px;}
+.sec-h4{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);margin:20px 0 10px;}
+.radar-wrap{display:flex;justify-content:center;align-items:center;gap:32px;flex-wrap:wrap;}
+.radar-legend{display:flex;flex-direction:column;gap:8px;}
+.rl-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-mid);}
+.rl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.bars-grid{display:flex;flex-direction:column;gap:10px;}
+.bar-row{display:grid;grid-template-columns:180px 1fr 36px;align-items:center;gap:10px;}
+.bar-label{font-size:12px;color:var(--ink-mid);text-align:right;line-height:1.3;}
+.bar-track{height:20px;background:#f0f0f0;border-radius:4px;overflow:hidden;display:flex;}
+.bar-seg{height:100%;}
+.bar-pct{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink-soft);}
+.donut-wrap{display:flex;justify-content:center;align-items:center;gap:32px;flex-wrap:wrap;}
+.donut-legend{display:flex;flex-direction:column;gap:10px;min-width:160px;}
+.dl-row{display:flex;align-items:center;gap:10px;}
+.dl-swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+.dl-name{font-size:12px;color:var(--ink-mid);flex:1;}
+.dl-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:600;}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.tbl th{text-align:left;padding:7px 10px;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);border-bottom:2px solid var(--line);}
+.tbl td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:#fafaf8;}
+.tbl-score{display:inline-flex;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.interp-box{background:var(--page);border-left:3px solid #2d5a8e;padding:12px 16px;border-radius:0 var(--r) var(--r) 0;margin-top:16px;}
+.interp-box .ib-title{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#2d5a8e;margin-bottom:6px;}
+.interp-box p{font-size:13px;color:var(--ink-mid);line-height:1.6;}
+.interp-box ul{margin:6px 0 0 16px;}
+.interp-box li{font-size:13px;color:var(--ink-mid);line-height:1.6;margin-bottom:2px;}
+.strengths-box{border-left-color:var(--c0);}.strengths-box .ib-title{color:var(--c0);}
+.needs-box{border-left-color:var(--c3);}.needs-box .ib-title{color:var(--c3);}
+.delta-pos{color:var(--c0);font-weight:600;}
+.delta-neg{color:var(--c3);font-weight:600;}
+.delta-eq{color:var(--ink-soft);}
+/* Drop zone */
+.drop-zone{border:2px dashed var(--line-strong);border-radius:10px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .18s;background:var(--page);}
+.drop-zone:hover,.drop-zone.dz-over{border-color:#2d5a8e;background:var(--c1bg);}
+.drop-zone.dz-over{border-style:solid;}
+/* Storico tag */
+.stor-tag{display:inline-flex;align-items:center;gap:6px;background:var(--c1bg);border:1px solid #c0d4ef;border-radius:20px;padding:3px 10px;font-size:12px;color:var(--c1);}
+.stor-tag button{background:none;border:none;cursor:pointer;color:#8a9ab8;font-size:15px;line-height:1;padding:0 2px;}
+/* Delta groups */
+.dg-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px 8px 0 0;font-size:12px;font-weight:600;}
+.dg-body{overflow-x:auto;border-top:none;border-radius:0 0 8px 8px;}
+/* Storico export bar */
+.storico-export-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:18px;}
 @media print {
-  .hdr, .tabs, .btn { display: none !important; }
-  body { background: #fff; font-size: 11px; }
-  .wrap { padding: 0; max-width: 100%; }
-  .area-body { display: block !important; }
-  .area { break-inside: avoid; margin-bottom: 8px; border: 1px solid #ccc; }
-  .item { padding: 5px 12px; }
-  .scores { gap: 2px; }
-  .sb { width: 22px; height: 22px; font-size: 9px; }
-  .sb:not(.on) { display: none; }
-  .anag { border: 1px solid #ccc; }
-  .print-top { display: block !important; text-align: center; padding: 0 0 14px; }
-  .no-print { display: none !important; }
-  /* Note: nascondi la textarea e mostra il div testuale */
-  .area-note textarea { display: none !important; }
-  .print-note {
-    display: block !important;
-    font-size: 11px; color: #444; font-style: italic;
-    white-space: pre-wrap; word-break: break-word;
-    line-height: 1.5; padding: 2px 0;
-  }
-  .area-note { background: #fafaf8; padding: 8px 18px 10px; }
-  .area-note label { display: block; font-size: 10px; color: #999; margin-bottom: 3px; }
+  .hdr,.tabs,.btn{display:none !important;}
+  body{background:#fff;font-size:11px;}
+  .wrap{padding:0;max-width:100%;}
+  .area-body{display:block !important;}
+  .area{break-inside:avoid;margin-bottom:8px;border:1px solid #ccc;}
+  .item{padding:5px 12px;}
+  .scores{gap:2px;}
+  .sb{width:22px;height:22px;font-size:9px;}
+  .sb:not(.on){display:none;}
+  .anag{border:1px solid #ccc;}
+  .print-top{display:block !important;text-align:center;padding:0 0 14px;}
+  .no-print{display:none !important;}
+  .area-note textarea{display:none !important;}
+  .print-note{display:block !important;font-size:11px;color:#444;font-style:italic;white-space:pre-wrap;word-break:break-word;line-height:1.5;padding:2px 0;}
+  .area-note{background:#fafaf8;padding:8px 18px 10px;}
+  .area-note label{display:block;font-size:10px;color:#999;margin-bottom:3px;}
 }
-.print-top { display: none; }
+.print-top{display:none;}
 </style>
 </head>
 <body>
@@ -204,6 +203,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--page); color: var(-
     <button class="tab on" onclick="showTab('griglia',this)">Griglia ICF</button>
     <button class="tab" onclick="showTab('riepilogo',this)">Riepilogo</button>
     <button class="tab" onclick="showTab('report',this)">&#128202; Report &amp; Grafici</button>
+    <button class="tab" onclick="showTab('storico',this)">&#128337; Storico &amp; Crescita</button>
   </div>
 
   <div id="tab-griglia" class="panel on">
@@ -225,360 +225,561 @@ body { font-family: 'DM Sans', sans-serif; background: var(--page); color: var(-
   <div id="tab-report" class="panel">
     <div id="report-content"></div>
   </div>
+
+  <div id="tab-storico" class="panel">
+    <div id="storico-content"></div>
+  </div>
 </div>
 
 <script>
 const AREE = [
-  {
-    id:'A', dot:'#2d5a8e',
-    nome:'Attenzione, memoria e funzioni cognitive',
-    sub:'b1 \u2014 Funzioni mentali',
-    items:[
-      { id:'A1', eta:'all', nome:'Attenzione sostenuta sul compito', ex:'Es. mantiene la concentrazione su una spiegazione o un esercizio per il tempo atteso per la sua et\u00e0, senza distrarsi continuamente.' },
-      { id:'A2', eta:'all', nome:'Memoria e ricezione di istruzioni', ex:'Es. ricorda e segue correttamente una consegna in due o tre passaggi; ricorda contenuti spiegati nei giorni precedenti senza bisogno di ripassarli ogni volta.' },
-      { id:'A3', eta:['primaria','media'], nome:'Pianificazione, organizzazione e problem solving', ex:'Es. sa strutturare da solo i passi per svolgere un compito; quando una strategia non funziona prova un approccio diverso invece di bloccarsi.' },
-      { id:'A4', eta:['infanzia','primaria'], nome:'Funzioni cognitive di base: classificare, seriare, concetti logici', ex:'Es. raggruppa oggetti per categoria, completa una serie per forma o colore, usa correttamente \u201cprima/dopo\u201d, \u201cpi\u00f9/meno\u201d.' },
-      { id:'A5', eta:'all', nome:'Motivazione e regolazione emotiva', ex:'Es. si avvicina ai compiti senza bisogno di costante rinforzo; gestisce la frustrazione da errore senza crisi prolungate e accetta i cambiamenti di programma.' },
-    ]
-  },
-  {
-    id:'B', dot:'#1a6644',
-    nome:'Comunicazione e linguaggio',
-    sub:'b3, d3 \u2014 Voce, eloquio, comunicazione ricettiva e produttiva',
-    items:[
-      { id:'B1', eta:'all', nome:'Comprensione del linguaggio orale', ex:'Es. segue istruzioni verbali complesse senza bisogno di supporto visivo aggiuntivo; comprende spiegazioni di gruppo.' },
-      { id:'B2', eta:'all', nome:'Produzione verbale: articolazione e chiarezza', ex:'Es. si esprime in modo comprensibile per insegnanti e compagni, senza distorsioni fonetiche o blocchi che ostacolino la comunicazione.' },
-      { id:'B3', eta:'all', nome:'Produzione orale: conversazione e narrazione', ex:'Es. aspetta il proprio turno, risponde in modo pertinente; sa raccontare un evento con sequenza logica o descrivere un\'immagine in modo coerente.' },
-      { id:'B4', eta:'all', nome:'Comunicazione non verbale e CAA', ex:'Es. usa il contatto visivo e integra gesti e mimica; se necessario utilizza simboli, tabelle di comunicazione o app per esprimere bisogni e intenzioni.' },
-      { id:'B5', eta:['primaria','media'], nome:'Lettura e scrittura', ex:'Es. decodifica un testo e risponde a domande sul contenuto; produce testi brevi su traccia con grafia leggibile e ortografia adeguata alla classe.' },
-    ]
-  },
-  {
-    id:'C', dot:'#7a3800',
-    nome:'Apprendimento scolastico e compiti',
-    sub:'d1, d2 \u2014 Apprendimento, applicazione conoscenze, compiti e richieste',
-    items:[
-      { id:'C1', eta:'all', nome:'Seguire la lezione e acquisire nuovi concetti', ex:'Es. al termine di una spiegazione sa riferire almeno un contenuto appreso, anche con parole proprie.' },
-      { id:'C2', eta:['primaria','media'], nome:'Letto-scrittura e calcolo', ex:'Es. legge ad alta voce in modo corretto; esegue le operazioni aritmetiche attese per la classe; trascrive correttamente sotto dettatura.' },
-      { id:'C3', eta:['primaria','media'], nome:'Organizzazione del lavoro e del materiale', ex:'Es. completa un compito strutturato in pi\u00f9 fasi senza perdere il filo; tiene il diario aggiornato e porta il materiale richiesto.' },
-      { id:'C4', eta:['infanzia','primaria'], nome:'Partecipazione al gioco strutturato e simbolico', ex:'Es. segue le regole di un gioco di gruppo, partecipa al gioco del \u201cfar finta\u201d con i compagni in modo coordinato.' },
-      { id:'C5', eta:['primaria','media'], nome:'Gestione dello stress da prestazione', ex:'Es. affronta verifiche e interrogazioni senza blocco ansioso paralizzante; chiede aiuto in modo adeguato quando \u00e8 in difficolt\u00e0.' },
-    ]
-  },
-  {
-    id:'D', dot:'#5a1a7a',
-    nome:'Autonomia personale e motricit\u00e0',
-    sub:'b2, d4, d5 \u2014 Sensoriale, mobilit\u00e0, cura della propria persona',
-    items:[
-      { id:'D1', eta:'all', nome:'Cura di s\u00e9 e alimentazione', ex:'Es. va in bagno da solo, si lava le mani, allaccia le scarpe; usa posate adeguate all\'et\u00e0 e mangia senza assistenza diretta.' },
-      { id:'D2', eta:'all', nome:'Motricit\u00e0 grossolana e fine', ex:'Es. cammina su superfici irregolari, sale le scale, partecipa a giochi motori; impugna correttamente la matita, usa le forbici e manipola materiali da costruzione.' },
-      { id:'D3', eta:'all', nome:'Orientamento nello spazio scolastico', ex:'Es. raggiunge da solo il bagno, la mensa, la palestra; conosce i percorsi della scuola senza bisogno di essere accompagnato.' },
-      { id:'D4', eta:'all', nome:'Funzioni sensoriali e ausili', ex:'Es. legge dalla lavagna senza difficolt\u00e0 visive evidenti, tollera suoni e stimoli sensoriali del contesto; utilizza ausili o tecnologie assistive in modo autonomo o con supporto definito.' },
-    ]
-  },
-  {
-    id:'E', dot:'#1a5a6a',
-    nome:'Relazioni sociali e partecipazione',
-    sub:'d7, d9 \u2014 Relazioni interpersonali, vita sociale, comunit\u00e0 scolastica',
-    items:[
-      { id:'E1', eta:'all', nome:'Relazione con gli adulti di riferimento', ex:'Es. accetta correzioni e feedback, chiede aiuto in modo adeguato, rispetta le figure di autorit\u00e0 senza opposizione sistematica.' },
-      { id:'E2', eta:'all', nome:'Interazione con i pari e rispetto delle regole', ex:'Es. gioca e collabora con i compagni senza isolarsi n\u00e9 aggredire; rispetta i turni e le norme della classe senza bisogno di richiami continui.' },
-      { id:'E3', eta:'all', nome:'Gestione dei conflitti e autostima', ex:'Es. affronta un litigio usando parole anzich\u00e9 azioni fisiche; si riconosce capace in almeno qualche ambito scolastico e non rifiuta sistematicamente di provare.' },
-      { id:'E4', eta:'all', nome:'Partecipazione collettiva e amicizie', ex:'Es. partecipa a uscite, recite e attivit\u00e0 sportive senza rifiuto sistematico; ha almeno un amico/a stabile con cui trascorre la ricreazione o lavora in coppia.' },
-    ]
-  },
-  {
-    id:'F', dot:'#6a1a1a',
-    nome:'Fattori contestuali e ambientali',
-    sub:'e \u2014 Fattori ambientali e personali (barriere e facilitatori)',
-    items:[
-      { id:'F1', eta:'all', nome:'Tolleranza dell\'ambiente e dei cambiamenti', ex:'Es. non mostra disagio significativo per rumori, luci intense o spazi affollati; gestisce supplenze, cambi d\'aula e imprevisti senza crisi significative.' },
-      { id:'F2', eta:['primaria','media'], nome:'Utilizzo di tecnologie e strumenti didattici', ex:'Es. usa tablet, LIM, computer o altri strumenti digitali per attivit\u00e0 scolastiche in modo funzionale e pertinente.' },
-      { id:'F3', eta:'all', nome:'Risposta al supporto e coinvolgimento', ex:'Es. beneficia visibilmente di scaffolding visivo, mappe e strumenti compensativi; esprime preferenze su attivit\u00e0 o compiti e propone idee.' },
-      { id:'F4', eta:'all', nome:'Integrazione nel gruppo classe', ex:'Es. \u00e8 cercato/a dai compagni, non \u00e8 sistematicamente ignorato o escluso dal gruppo; viene incluso nei giochi o nei lavori.' },
-      { id:'F5', eta:'all', nome:'Contesto familiare e continuit\u00e0 casa-scuola', ex:'Es. arriva a scuola sereno/a, porta il materiale, \u00e8 in grado di riferire stati emotivi; il contesto casa-scuola appare collaborativo.' },
-    ]
-  },
+  {id:'A',dot:'#2d5a8e',nome:'Attenzione, memoria e funzioni cognitive',sub:'b1 \u2014 Funzioni mentali',items:[
+    {id:'A1',eta:'all',nome:'Attenzione sostenuta sul compito',ex:'Es. mantiene la concentrazione su una spiegazione o un esercizio per il tempo atteso per la sua et\u00e0, senza distrarsi continuamente.'},
+    {id:'A2',eta:'all',nome:'Memoria e ricezione di istruzioni',ex:'Es. ricorda e segue correttamente una consegna in due o tre passaggi; ricorda contenuti spiegati nei giorni precedenti senza bisogno di ripassarli ogni volta.'},
+    {id:'A3',eta:['primaria','media'],nome:'Pianificazione, organizzazione e problem solving',ex:'Es. sa strutturare da solo i passi per svolgere un compito; quando una strategia non funziona prova un approccio diverso invece di bloccarsi.'},
+    {id:'A4',eta:['infanzia','primaria'],nome:'Funzioni cognitive di base: classificare, seriare, concetti logici',ex:'Es. raggruppa oggetti per categoria, completa una serie per forma o colore, usa correttamente \u201cprima/dopo\u201d, \u201cpi\u00f9/meno\u201d.'},
+    {id:'A5',eta:'all',nome:'Motivazione e regolazione emotiva',ex:'Es. si avvicina ai compiti senza bisogno di costante rinforzo; gestisce la frustrazione da errore senza crisi prolungate e accetta i cambiamenti di programma.'},
+  ]},
+  {id:'B',dot:'#1a6644',nome:'Comunicazione e linguaggio',sub:'b3, d3 \u2014 Voce, eloquio, comunicazione ricettiva e produttiva',items:[
+    {id:'B1',eta:'all',nome:'Comprensione del linguaggio orale',ex:'Es. segue istruzioni verbali complesse senza bisogno di supporto visivo aggiuntivo; comprende spiegazioni di gruppo.'},
+    {id:'B2',eta:'all',nome:'Produzione verbale: articolazione e chiarezza',ex:'Es. si esprime in modo comprensibile per insegnanti e compagni, senza distorsioni fonetiche o blocchi che ostacolino la comunicazione.'},
+    {id:'B3',eta:'all',nome:'Produzione orale: conversazione e narrazione',ex:'Es. aspetta il proprio turno, risponde in modo pertinente; sa raccontare un evento con sequenza logica o descrivere un\'immagine in modo coerente.'},
+    {id:'B4',eta:'all',nome:'Comunicazione non verbale e CAA',ex:'Es. usa il contatto visivo e integra gesti e mimica; se necessario utilizza simboli, tabelle di comunicazione o app per esprimere bisogni e intenzioni.'},
+    {id:'B5',eta:['primaria','media'],nome:'Lettura e scrittura',ex:'Es. decodifica un testo e risponde a domande sul contenuto; produce testi brevi su traccia con grafia leggibile e ortografia adeguata alla classe.'},
+  ]},
+  {id:'C',dot:'#7a3800',nome:'Apprendimento scolastico e compiti',sub:'d1, d2 \u2014 Apprendimento, applicazione conoscenze, compiti e richieste',items:[
+    {id:'C1',eta:'all',nome:'Seguire la lezione e acquisire nuovi concetti',ex:'Es. al termine di una spiegazione sa riferire almeno un contenuto appreso, anche con parole proprie.'},
+    {id:'C2',eta:['primaria','media'],nome:'Letto-scrittura e calcolo',ex:'Es. legge ad alta voce in modo corretto; esegue le operazioni aritmetiche attese per la classe; trascrive correttamente sotto dettatura.'},
+    {id:'C3',eta:['primaria','media'],nome:'Organizzazione del lavoro e del materiale',ex:'Es. completa un compito strutturato in pi\u00f9 fasi senza perdere il filo; tiene il diario aggiornato e porta il materiale richiesto.'},
+    {id:'C4',eta:['infanzia','primaria'],nome:'Partecipazione al gioco strutturato e simbolico',ex:'Es. segue le regole di un gioco di gruppo, partecipa al gioco del \u201cfar finta\u201d con i compagni in modo coordinato.'},
+    {id:'C5',eta:['primaria','media'],nome:'Gestione dello stress da prestazione',ex:'Es. affronta verifiche e interrogazioni senza blocco ansioso paralizzante; chiede aiuto in modo adeguato quando \u00e8 in difficolt\u00e0.'},
+  ]},
+  {id:'D',dot:'#5a1a7a',nome:'Autonomia personale e motricit\u00e0',sub:'b2, d4, d5 \u2014 Sensoriale, mobilit\u00e0, cura della propria persona',items:[
+    {id:'D1',eta:'all',nome:'Cura di s\u00e9 e alimentazione',ex:'Es. va in bagno da solo, si lava le mani, allaccia le scarpe; usa posate adeguate all\'et\u00e0 e mangia senza assistenza diretta.'},
+    {id:'D2',eta:'all',nome:'Motricit\u00e0 grossolana e fine',ex:'Es. cammina su superfici irregolari, sale le scale, partecipa a giochi motori; impugna correttamente la matita, usa le forbici e manipola materiali da costruzione.'},
+    {id:'D3',eta:'all',nome:'Orientamento nello spazio scolastico',ex:'Es. raggiunge da solo il bagno, la mensa, la palestra; conosce i percorsi della scuola senza bisogno di essere accompagnato.'},
+    {id:'D4',eta:'all',nome:'Funzioni sensoriali e ausili',ex:'Es. legge dalla lavagna senza difficolt\u00e0 visive evidenti, tollera suoni e stimoli sensoriali del contesto; utilizza ausili o tecnologie assistive in modo autonomo o con supporto definito.'},
+  ]},
+  {id:'E',dot:'#1a5a6a',nome:'Relazioni sociali e partecipazione',sub:'d7, d9 \u2014 Relazioni interpersonali, vita sociale, comunit\u00e0 scolastica',items:[
+    {id:'E1',eta:'all',nome:'Relazione con gli adulti di riferimento',ex:'Es. accetta correzioni e feedback, chiede aiuto in modo adeguato, rispetta le figure di autorit\u00e0 senza opposizione sistematica.'},
+    {id:'E2',eta:'all',nome:'Interazione con i pari e rispetto delle regole',ex:'Es. gioca e collabora con i compagni senza isolarsi n\u00e9 aggredire; rispetta i turni e le norme della classe senza bisogno di richiami continui.'},
+    {id:'E3',eta:'all',nome:'Gestione dei conflitti e autostima',ex:'Es. affronta un litigio usando parole anzich\u00e9 azioni fisiche; si riconosce capace in almeno qualche ambito scolastico e non rifiuta sistematicamente di provare.'},
+    {id:'E4',eta:'all',nome:'Partecipazione collettiva e amicizie',ex:'Es. partecipa a uscite, recite e attivit\u00e0 sportive senza rifiuto sistematico; ha almeno un amico/a stabile con cui trascorre la ricreazione o lavora in coppia.'},
+  ]},
+  {id:'F',dot:'#6a1a1a',nome:'Fattori contestuali e ambientali',sub:'e \u2014 Fattori ambientali e personali (barriere e facilitatori)',items:[
+    {id:'F1',eta:'all',nome:'Tolleranza dell\'ambiente e dei cambiamenti',ex:'Es. non mostra disagio significativo per rumori, luci intense o spazi affollati; gestisce supplenze, cambi d\'aula e imprevisti senza crisi significative.'},
+    {id:'F2',eta:['primaria','media'],nome:'Utilizzo di tecnologie e strumenti didattici',ex:'Es. usa tablet, LIM, computer o altri strumenti digitali per attivit\u00e0 scolastiche in modo funzionale e pertinente.'},
+    {id:'F3',eta:'all',nome:'Risposta al supporto e coinvolgimento',ex:'Es. beneficia visibilmente di scaffolding visivo, mappe e strumenti compensativi; esprime preferenze su attivit\u00e0 o compiti e propone idee.'},
+    {id:'F4',eta:'all',nome:'Integrazione nel gruppo classe',ex:'Es. \u00e8 cercato/a dai compagni, non \u00e8 sistematicamente ignorato o escluso dal gruppo; viene incluso nei giochi o nei lavori.'},
+    {id:'F5',eta:'all',nome:'Contesto familiare e continuit\u00e0 casa-scuola',ex:'Es. arriva a scuola sereno/a, porta il materiale, \u00e8 in grado di riferire stati emotivi; il contesto casa-scuola appare collaborativo.'},
+  ]},
 ];
 
-let fascia = 'all';
-const SC = {};
-const NT = {};
+let fascia='all';
+const SC={};
+const NT={};
+let storicoList=[];
 
-function showTab(id, btn) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
-  document.getElementById('tab-' + id).classList.add('on');
-  if (btn) btn.classList.add('on');
-  if (id === 'riepilogo') renderRecap();
-  if (id === 'report') renderReport();
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+const scoreMap={A:3,S:2,F:1,N:0};
+const labMap={A:'Autonomo',S:'Supportato',F:'Con aiuto',N:'Non raggiunto'};
+const clsMap={A:'p0',S:'p1',F:'p2',N:'p3'};
+
+function scoreArea(area, punteggi) {
+  const comp = area.items.filter(it => punteggi[it.id] && punteggi[it.id] !== '\u2014');
+  if (!comp.length) return null;
+  const cA=comp.filter(it=>punteggi[it.id]==='A').length;
+  const cS=comp.filter(it=>punteggi[it.id]==='S').length;
+  const cF=comp.filter(it=>punteggi[it.id]==='F').length;
+  return Math.round((cA*3+cS*2+cF)/(comp.length*3)*100);
 }
 
+function fmtData(iso) {
+  if (!iso) return '?';
+  return new Date(iso).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
+}
+function fmtDataBreve(iso) {
+  if (!iso) return '?';
+  return new Date(iso).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'2-digit'});
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function showTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('tab-'+id).classList.add('on');
+  if (btn) btn.classList.add('on');
+  if (id==='riepilogo') renderRecap();
+  if (id==='report') renderReport();
+  if (id==='storico') renderStorico();
+}
+
+// ─── GRIGLIA ──────────────────────────────────────────────────────────────────
 function render() {
-  const cont = document.getElementById('aree');
-  cont.innerHTML = '';
-  AREE.forEach((area, ai) => {
-    const blk = document.createElement('div');
-    blk.className = 'area'; blk.id = 'area-' + area.id;
-    const hdr = document.createElement('div');
-    hdr.className = 'area-hdr' + (ai < 2 ? ' open' : '');
-    hdr.innerHTML = `<span class="area-dot" style="background:${area.dot}"></span><span class="area-name">${area.nome}</span><span class="area-sub no-print">${area.sub}</span><span class="area-prog" id="prog-${area.id}"></span><span class="area-chev${ai < 2 ? ' open' : ''}" id="chev-${area.id}">\u25be</span>`;
-    hdr.onclick = () => toggle(area.id);
+  const cont=document.getElementById('aree');
+  cont.innerHTML='';
+  AREE.forEach((area,ai)=>{
+    const blk=document.createElement('div');
+    blk.className='area';blk.id='area-'+area.id;
+    const hdr=document.createElement('div');
+    hdr.className='area-hdr'+(ai<2?' open':'');
+    hdr.innerHTML=`<span class="area-dot" style="background:${area.dot}"></span><span class="area-name">${area.nome}</span><span class="area-sub no-print">${area.sub}</span><span class="area-prog" id="prog-${area.id}"></span><span class="area-chev${ai<2?' open':''}" id="chev-${area.id}">\u25be</span>`;
+    hdr.onclick=()=>toggle(area.id);
     blk.appendChild(hdr);
-    const body = document.createElement('div');
-    body.className = 'area-body' + (ai < 2 ? ' open' : '');
-    body.id = 'body-' + area.id;
-    area.items.forEach(it => {
-      const row = document.createElement('div');
-      row.className = 'item'; row.id = 'row-' + it.id;
-      row.dataset.eta = Array.isArray(it.eta) ? it.eta.join(',') : it.eta;
-      const txt = document.createElement('div');
-      txt.innerHTML = `<div class="item-name">${it.nome}</div><div class="item-ex">${it.ex}</div>`;
+    const body=document.createElement('div');
+    body.className='area-body'+(ai<2?' open':'');
+    body.id='body-'+area.id;
+    area.items.forEach(it=>{
+      const row=document.createElement('div');
+      row.className='item';row.id='row-'+it.id;
+      row.dataset.eta=Array.isArray(it.eta)?it.eta.join(','):it.eta;
+      const txt=document.createElement('div');
+      txt.innerHTML=`<div class="item-name">${it.nome}</div><div class="item-ex">${it.ex}</div>`;
       row.appendChild(txt);
-      const sg = document.createElement('div'); sg.className = 'scores';
-      [['A','Autonomo'],['S','Supportato (verbale/visivo)'],['F','Con aiuto fisico/consistente'],['N','Non ancora raggiunto'],['\u2014','Non osservato / non applicabile']].forEach(([v, tip]) => {
-        const b = document.createElement('button');
-        b.className = 'sb'; b.dataset.v = v; b.textContent = v; b.title = tip;
-        if (SC[it.id] === v) b.classList.add('on');
-        b.onclick = () => setScore(it.id, v);
+      const sg=document.createElement('div');sg.className='scores';
+      [['A','Autonomo'],['S','Supportato (verbale/visivo)'],['F','Con aiuto fisico/consistente'],['N','Non ancora raggiunto'],['\u2014','Non osservato / non applicabile']].forEach(([v,tip])=>{
+        const b=document.createElement('button');
+        b.className='sb';b.dataset.v=v;b.textContent=v;b.title=tip;
+        if(SC[it.id]===v) b.classList.add('on');
+        b.onclick=()=>setScore(it.id,v);
         sg.appendChild(b);
       });
       row.appendChild(sg);
       body.appendChild(row);
     });
-    const na = document.createElement('div'); na.className = 'area-note';
-    na.innerHTML = `<label>Note e osservazioni per questa area</label><textarea id="nt-${area.id}" placeholder="Contesto, esempi specifici, variazioni osservate, risorse presenti...">${NT[area.id]||''}</textarea><div class="print-note" id="pnt-${area.id}" style="display:none">${NT[area.id]||''}</div>`;
-    na.querySelector('textarea').oninput = e => {
-      NT[area.id] = e.target.value;
-      const pn = document.getElementById('pnt-' + area.id);
-      if (pn) pn.textContent = e.target.value;
+    const na=document.createElement('div');na.className='area-note';
+    na.innerHTML=`<label>Note e osservazioni per questa area</label><textarea id="nt-${area.id}" placeholder="Contesto, esempi specifici, variazioni osservate...">${NT[area.id]||''}</textarea><div class="print-note" id="pnt-${area.id}" style="display:none">${NT[area.id]||''}</div>`;
+    na.querySelector('textarea').oninput=e=>{
+      NT[area.id]=e.target.value;
+      const pn=document.getElementById('pnt-'+area.id);
+      if(pn) pn.textContent=e.target.value;
     };
     body.appendChild(na);
     blk.appendChild(body);
     cont.appendChild(blk);
   });
-  filterEta(); prog();
+  filterEta();prog();
 }
 
 function toggle(id) {
-  const body = document.getElementById('body-' + id);
-  const hdr  = body.previousElementSibling;
-  const chev = document.getElementById('chev-' + id);
-  const open = body.classList.toggle('open');
-  hdr.classList.toggle('open', open);
-  chev.classList.toggle('open', open);
+  const body=document.getElementById('body-'+id);
+  const hdr=body.previousElementSibling;
+  const chev=document.getElementById('chev-'+id);
+  const open=body.classList.toggle('open');
+  hdr.classList.toggle('open',open);
+  chev.classList.toggle('open',open);
 }
 
-function setScore(iid, v) {
-  SC[iid] = SC[iid] === v ? undefined : v;
-  if (SC[iid] === undefined) delete SC[iid];
-  document.getElementById('row-' + iid).querySelectorAll('.sb').forEach(b => {
-    b.classList.toggle('on', b.dataset.v === SC[iid]);
+function setScore(iid,v) {
+  SC[iid]=SC[iid]===v?undefined:v;
+  if(SC[iid]===undefined) delete SC[iid];
+  document.getElementById('row-'+iid).querySelectorAll('.sb').forEach(b=>{
+    b.classList.toggle('on',b.dataset.v===SC[iid]);
   });
   prog();
 }
 
 function filterEta() {
-  document.querySelectorAll('.item').forEach(r => {
-    const e = r.dataset.eta;
-    r.classList.toggle('hidden', fascia !== 'all' && e !== 'all' && !e.split(',').includes(fascia));
+  document.querySelectorAll('.item').forEach(r=>{
+    const e=r.dataset.eta;
+    r.classList.toggle('hidden',fascia!=='all'&&e!=='all'&&!e.split(',').includes(fascia));
   });
   prog();
 }
 
-function setFascia(v) { fascia = v; filterEta(); }
+function setFascia(v){fascia=v;filterEta();}
 
 function prog() {
-  AREE.forEach(area => {
-    const vis = area.items.filter(it => {
-      const r = document.getElementById('row-' + it.id);
-      return r && !r.classList.contains('hidden');
-    });
-    const comp = vis.filter(it => SC[it.id] && SC[it.id] !== '\u2014').length;
-    const el = document.getElementById('prog-' + area.id);
-    if (el) el.textContent = vis.length ? `${comp}/${vis.length}` : '';
+  AREE.forEach(area=>{
+    const vis=area.items.filter(it=>{const r=document.getElementById('row-'+it.id);return r&&!r.classList.contains('hidden');});
+    const comp=vis.filter(it=>SC[it.id]&&SC[it.id]!=='\u2014').length;
+    const el=document.getElementById('prog-'+area.id);
+    if(el) el.textContent=vis.length?`${comp}/${vis.length}`:'';
   });
 }
 
-let storicoDati = null;
-
+// ─── REPORT ───────────────────────────────────────────────────────────────────
 function renderReport() {
-  const el = document.getElementById('report-content');
-  const statsAree = AREE.map(area => {
-    const vis = area.items.filter(it => {
-      const r = document.getElementById('row-' + it.id);
-      return r && !r.classList.contains('hidden');
-    });
-    const comp = vis.filter(it => SC[it.id] && SC[it.id] !== '\u2014');
-    const cA = comp.filter(it => SC[it.id]==='A').length;
-    const cS = comp.filter(it => SC[it.id]==='S').length;
-    const cF = comp.filter(it => SC[it.id]==='F').length;
-    const cN = comp.filter(it => SC[it.id]==='N').length;
-    const tot = comp.length;
-    const score = tot > 0 ? Math.round((cA*3 + cS*2 + cF*1) / (tot*3) * 100) : null;
-    return { area, vis, comp, cA, cS, cF, cN, tot, score };
-  }).filter(s => s.vis.length > 0);
-
+  const el=document.getElementById('report-content');
+  const statsAree=AREE.map(area=>{
+    const vis=area.items.filter(it=>{const r=document.getElementById('row-'+it.id);return r&&!r.classList.contains('hidden');});
+    const comp=vis.filter(it=>SC[it.id]&&SC[it.id]!=='\u2014');
+    const cA=comp.filter(it=>SC[it.id]==='A').length;
+    const cS=comp.filter(it=>SC[it.id]==='S').length;
+    const cF=comp.filter(it=>SC[it.id]==='F').length;
+    const cN=comp.filter(it=>SC[it.id]==='N').length;
+    const tot=comp.length;
+    const score=tot>0?Math.round((cA*3+cS*2+cF)/(tot*3)*100):null;
+    return{area,vis,comp,cA,cS,cF,cN,tot,score};
+  }).filter(s=>s.vis.length>0);
   let gA=0,gS=0,gF=0,gN=0,gTot=0;
-  statsAree.forEach(s => { gA+=s.cA; gS+=s.cS; gF+=s.cF; gN+=s.cN; gTot+=s.tot; });
-
-  const nome = document.getElementById('a-nome').value || 'Il bambino';
-  const dataOss = document.getElementById('a-data').value;
-  const dataFmt = dataOss ? new Date(dataOss).toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'}) : '\u2014';
-
-  el.innerHTML =
-    buildRadar(statsAree) +
-    buildBarreAree(statsAree) +
-    buildDonut(gA,gS,gF,gN,gTot) +
-    buildTabellaAnalitica(statsAree) +
-    buildSintesi(statsAree, nome, dataFmt) +
-    buildConfrontoTemporale(statsAree);
+  statsAree.forEach(s=>{gA+=s.cA;gS+=s.cS;gF+=s.cF;gN+=s.cN;gTot+=s.tot;});
+  const nome=document.getElementById('a-nome').value||'Il bambino';
+  const dataOss=document.getElementById('a-data').value;
+  const dataFmt=dataOss?new Date(dataOss).toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'}):'—';
+  el.innerHTML=buildRadar(statsAree)+buildBarreAree(statsAree)+buildDonut(gA,gS,gF,gN,gTot)+buildTabellaAnalitica(statsAree)+buildSintesi(statsAree,nome,dataFmt);
 }
-
-
 
 function buildRadar(statsAree) {
-  if (statsAree.every(s => s.score === null)) return '';
-  const W=320, H=320, cx=160, cy=160, R=120;
-  const N = statsAree.length;
-  const angles = statsAree.map((_,i) => (i/N)*2*Math.PI - Math.PI/2);
-  let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">`;
-  [25,50,75,100].forEach(pct => {
-    const r = R * pct/100;
-    const pts = angles.map(a => `${cx+r*Math.cos(a)},${cy+r*Math.sin(a)}`).join(' ');
-    svg += `<polygon points="${pts}" fill="none" stroke="#e4e3dc" stroke-width="1"/>`;
-    svg += `<text x="${cx+4}" y="${cy-r+4}" font-size="8" fill="#b0b0c0" font-family="DM Mono,monospace">${pct}</text>`;
+  if(statsAree.every(s=>s.score===null)) return '';
+  const W=320,H=320,cx=160,cy=160,R=120,N=statsAree.length;
+  const angles=statsAree.map((_,i)=>(i/N)*2*Math.PI-Math.PI/2);
+  let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">`;
+  [25,50,75,100].forEach(pct=>{
+    const r=R*pct/100;
+    const pts=angles.map(a=>`${cx+r*Math.cos(a)},${cy+r*Math.sin(a)}`).join(' ');
+    svg+=`<polygon points="${pts}" fill="none" stroke="#e4e3dc" stroke-width="1"/>`;
+    svg+=`<text x="${cx+4}" y="${cy-r+4}" font-size="8" fill="#b0b0c0" font-family="DM Mono,monospace">${pct}</text>`;
   });
-  angles.forEach((a, i) => {
-    svg += `<line x1="${cx}" y1="${cy}" x2="${cx+R*Math.cos(a)}" y2="${cy+R*Math.sin(a)}" stroke="#e4e3dc" stroke-width="1"/>`;
-    const lx = cx + (R+22)*Math.cos(a), ly = cy + (R+22)*Math.sin(a);
-    const label = statsAree[i].area.nome.split(' ').slice(0,2).join(' ');
-    svg += `<text x="${lx}" y="${ly}" font-size="9.5" fill="#50506a" font-family="DM Sans,sans-serif" text-anchor="middle" dominant-baseline="middle">${label}</text>`;
+  angles.forEach((a,i)=>{
+    svg+=`<line x1="${cx}" y1="${cy}" x2="${cx+R*Math.cos(a)}" y2="${cy+R*Math.sin(a)}" stroke="#e4e3dc" stroke-width="1"/>`;
+    const lx=cx+(R+22)*Math.cos(a),ly=cy+(R+22)*Math.sin(a);
+    svg+=`<text x="${lx}" y="${ly}" font-size="9.5" fill="#50506a" font-family="DM Sans,sans-serif" text-anchor="middle" dominant-baseline="middle">${statsAree[i].area.nome.split(' ').slice(0,2).join(' ')}</text>`;
   });
-  const scorePts = statsAree.map((s,i) => {
-    const val = s.score !== null ? s.score : 0;
-    const r = R * val/100;
-    return `${cx + r*Math.cos(angles[i])},${cy + r*Math.sin(angles[i])}`;
-  }).join(' ');
-  svg += `<polygon points="${scorePts}" fill="#2d5a8e22" stroke="#2d5a8e" stroke-width="2"/>`;
-  statsAree.forEach((s,i) => {
-    if (s.score === null) return;
-    const r = R * s.score/100;
-    svg += `<circle cx="${cx+r*Math.cos(angles[i])}" cy="${cy+r*Math.sin(angles[i])}" r="4" fill="#2d5a8e"/>`;
-  });
-  svg += `</svg>`;
-  const legendHtml = statsAree.map(s => `<div class="rl-item"><span class="rl-dot" style="background:${s.area.dot}"></span><span>${s.area.nome.split(' ').slice(0,3).join(' ')}${s.score!==null?` \u2014 <b>${s.score}</b>/100`:' \u2014 n.d.'}</span></div>`).join('');
-  return `<div class="report-section"><h3>Profilo funzionale per area (radar)</h3><div class="radar-wrap">${svg}<div class="radar-legend">${legendHtml}</div></div><div class="interp-box" style="margin-top:16px"><div class="ib-title">Come leggere il grafico</div><p>Il radar mostra il <strong>livello di funzionamento</strong> osservato in ciascuna macro-area su scala 0\u2013100. Autonomo\u00a0=\u00a03, Supportato\u00a0=\u00a02, Con aiuto\u00a0=\u00a01, Non raggiunto\u00a0=\u00a00. Le aree vicine al centro segnalano dove concentrare il supporto.</p></div></div>`;
+  const pts=statsAree.map((s,i)=>{const val=s.score!==null?s.score:0;const r=R*val/100;return`${cx+r*Math.cos(angles[i])},${cy+r*Math.sin(angles[i])}`}).join(' ');
+  svg+=`<polygon points="${pts}" fill="#2d5a8e22" stroke="#2d5a8e" stroke-width="2"/>`;
+  statsAree.forEach((s,i)=>{if(s.score===null)return;const r=R*s.score/100;svg+=`<circle cx="${cx+r*Math.cos(angles[i])}" cy="${cy+r*Math.sin(angles[i])}" r="4" fill="#2d5a8e"/>`;});
+  svg+=`</svg>`;
+  const leg=statsAree.map(s=>`<div class="rl-item"><span class="rl-dot" style="background:${s.area.dot}"></span><span>${s.area.nome.split(' ').slice(0,3).join(' ')}${s.score!==null?` \u2014 <b>${s.score}</b>/100`:' \u2014 n.d.'}</span></div>`).join('');
+  return `<div class="report-section"><h3>Profilo funzionale per area</h3><div class="radar-wrap">${svg}<div class="radar-legend">${leg}</div></div></div>`;
 }
 
 function buildBarreAree(statsAree) {
-  if (!statsAree.some(s => s.tot > 0)) return '';
-  const rows = statsAree.map(s => {
-    if (s.tot === 0) return '';
-    const pA = Math.round(s.cA/s.tot*100), pS = Math.round(s.cS/s.tot*100), pF = Math.round(s.cF/s.tot*100), pN = 100-pA-pS-pF;
-    const score = s.score !== null ? s.score : '\u2014';
-    return `<div class="bar-row"><div class="bar-label">${s.area.nome}</div><div class="bar-track">${s.cA>0?`<div class="bar-seg" style="width:${pA}%;background:#1a6644"></div>`:''}${s.cS>0?`<div class="bar-seg" style="width:${pS}%;background:#1a4d8a"></div>`:''}${s.cF>0?`<div class="bar-seg" style="width:${pF}%;background:#7a5000"></div>`:''}${s.cN>0?`<div class="bar-seg" style="width:${pN}%;background:#8a1a1a"></div>`:''}</div><div class="bar-pct">${score}</div></div>`;
+  if(!statsAree.some(s=>s.tot>0)) return '';
+  const rows=statsAree.map(s=>{
+    if(!s.tot) return '';
+    const pA=Math.round(s.cA/s.tot*100),pS=Math.round(s.cS/s.tot*100),pF=Math.round(s.cF/s.tot*100),pN=100-pA-pS-pF;
+    return `<div class="bar-row"><div class="bar-label">${s.area.nome}</div><div class="bar-track">${s.cA?`<div class="bar-seg" style="width:${pA}%;background:#1a6644"></div>`:''} ${s.cS?`<div class="bar-seg" style="width:${pS}%;background:#1a4d8a"></div>`:''} ${s.cF?`<div class="bar-seg" style="width:${pF}%;background:#7a5000"></div>`:''} ${s.cN?`<div class="bar-seg" style="width:${pN}%;background:#8a1a1a"></div>`:''}</div><div class="bar-pct">${s.score!==null?s.score:'\u2014'}</div></div>`;
   }).join('');
   return `<div class="report-section"><h3>Distribuzione livelli per macro-area</h3><div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;font-size:11px"><span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:#1a6644;border-radius:2px;display:inline-block"></span>Autonomo</span><span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:#1a4d8a;border-radius:2px;display:inline-block"></span>Supportato</span><span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:#7a5000;border-radius:2px;display:inline-block"></span>Con aiuto</span><span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:#8a1a1a;border-radius:2px;display:inline-block"></span>Non raggiunto</span></div><div class="bars-grid">${rows}</div></div>`;
 }
 
 function buildDonut(gA,gS,gF,gN,gTot) {
-  if (gTot === 0) return '';
-  const vals=[gA,gS,gF,gN], colors=['#1a6644','#1a4d8a','#7a5000','#8a1a1a'], labels=['Autonomo','Supportato','Con aiuto','Non raggiunto'];
-  const total = gA+gS+gF+gN, cx=90, cy=90, r=72, inner=44;
-  let startAngle = -Math.PI/2, paths = '';
-  vals.forEach((v,i) => {
-    if (!v) return;
-    const angle = (v/total)*2*Math.PI;
-    const x1=cx+r*Math.cos(startAngle), y1=cy+r*Math.sin(startAngle);
-    const x2=cx+r*Math.cos(startAngle+angle), y2=cy+r*Math.sin(startAngle+angle);
-    const xi1=cx+inner*Math.cos(startAngle), yi1=cy+inner*Math.sin(startAngle);
-    const xi2=cx+inner*Math.cos(startAngle+angle), yi2=cy+inner*Math.sin(startAngle+angle);
-    const lg = angle > Math.PI ? 1 : 0;
-    paths += `<path d="M${xi1},${yi1} L${x1},${y1} A${r},${r} 0 ${lg},1 ${x2},${y2} L${xi2},${yi2} A${inner},${inner} 0 ${lg},0 ${xi1},${yi1}" fill="${colors[i]}" opacity="0.9"/>`;
-    startAngle += angle;
+  if(!gTot) return '';
+  const vals=[gA,gS,gF,gN],colors=['#1a6644','#1a4d8a','#7a5000','#8a1a1a'],labels=['Autonomo','Supportato','Con aiuto','Non raggiunto'];
+  const total=gA+gS+gF+gN,cx=90,cy=90,r=72,inner=44;
+  let sa=-Math.PI/2,paths='';
+  vals.forEach((v,i)=>{
+    if(!v) return;
+    const angle=(v/total)*2*Math.PI;
+    const x1=cx+r*Math.cos(sa),y1=cy+r*Math.sin(sa),x2=cx+r*Math.cos(sa+angle),y2=cy+r*Math.sin(sa+angle);
+    const xi1=cx+inner*Math.cos(sa),yi1=cy+inner*Math.sin(sa),xi2=cx+inner*Math.cos(sa+angle),yi2=cy+inner*Math.sin(sa+angle);
+    paths+=`<path d="M${xi1},${yi1} L${x1},${y1} A${r},${r} 0 ${angle>Math.PI?1:0},1 ${x2},${y2} L${xi2},${yi2} A${inner},${inner} 0 ${angle>Math.PI?1:0},0 ${xi1},${yi1}" fill="${colors[i]}" opacity="0.9"/>`;
+    sa+=angle;
   });
-  const pctA = Math.round(gA/total*100);
-  const svg = `<svg viewBox="0 0 180 180" width="180" height="180" xmlns="http://www.w3.org/2000/svg">${paths}<text x="${cx}" y="${cy-8}" text-anchor="middle" font-size="22" font-weight="700" fill="#1c1c28" font-family="DM Mono,monospace">${pctA}%</text><text x="${cx}" y="${cy+10}" text-anchor="middle" font-size="10" fill="#9090aa" font-family="DM Sans,sans-serif">autonomo</text></svg>`;
-  const legend = vals.map((v,i) => v>0 ? `<div class="dl-row"><span class="dl-swatch" style="background:${colors[i]}"></span><span class="dl-name">${labels[i]}</span><span class="dl-val" style="color:${colors[i]}">${v} <span style="font-size:10px;font-weight:400;color:var(--ink-soft)">(${Math.round(v/total*100)}%)</span></span></div>` : '').join('');
-  return `<div class="report-section"><h3>Distribuzione globale dei livelli</h3><div class="donut-wrap">${svg}<div class="donut-legend">${legend}<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line);font-size:11px;color:var(--ink-soft)">Totale item compilati: <strong style="color:var(--ink)">${total}</strong></div></div></div></div>`;
+  const svg=`<svg viewBox="0 0 180 180" width="180" height="180" xmlns="http://www.w3.org/2000/svg">${paths}<text x="${cx}" y="${cy-8}" text-anchor="middle" font-size="22" font-weight="700" fill="#1c1c28" font-family="DM Mono,monospace">${Math.round(gA/total*100)}%</text><text x="${cx}" y="${cy+10}" text-anchor="middle" font-size="10" fill="#9090aa" font-family="DM Sans,sans-serif">autonomo</text></svg>`;
+  const leg=vals.map((v,i)=>v?`<div class="dl-row"><span class="dl-swatch" style="background:${colors[i]}"></span><span class="dl-name">${labels[i]}</span><span class="dl-val" style="color:${colors[i]}">${v} <span style="font-size:10px;font-weight:400;color:var(--ink-soft)">(${Math.round(v/total*100)}%)</span></span></div>`:'').join('');
+  return `<div class="report-section"><h3>Distribuzione globale</h3><div class="donut-wrap">${svg}<div class="donut-legend">${leg}<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line);font-size:11px;color:var(--ink-soft)">Totale item compilati: <strong style="color:var(--ink)">${total}</strong></div></div></div></div>`;
 }
 
 function buildTabellaAnalitica(statsAree) {
-  const labMap={A:'Autonomo',S:'Supportato',F:'Con aiuto',N:'Non raggiunto'}, clsMap={A:'p0',S:'p1',F:'p2',N:'p3'};
-  let rows = '';
-  statsAree.forEach(s => {
-    s.vis.forEach((it, idx) => {
-      const sc = SC[it.id];
-      if (!sc || sc === '\u2014') return;
-      rows += `<tr>${idx===0?`<td rowspan="${s.comp.length}" style="border-right:1px solid var(--line);vertical-align:top;padding-top:10px"><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:${s.area.dot};display:inline-block;flex-shrink:0"></span><span style="font-size:11px;font-weight:600;color:var(--ink-mid)">${s.area.nome}</span></span></td>`:''}<td style="font-size:12.5px">${it.nome}</td><td><span class="tbl-score pill ${clsMap[sc]}">${labMap[sc]}</span></td></tr>`;
+  let rows='';
+  statsAree.forEach(s=>{
+    s.vis.forEach((it,idx)=>{
+      const sc=SC[it.id];if(!sc||sc==='\u2014') return;
+      rows+=`<tr>${idx===0?`<td rowspan="${s.comp.length}" style="border-right:1px solid var(--line);vertical-align:top;padding-top:10px"><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:${s.area.dot};display:inline-block;flex-shrink:0"></span><span style="font-size:11px;font-weight:600;color:var(--ink-mid)">${s.area.nome}</span></span></td>`:''}<td style="font-size:12.5px">${it.nome}</td><td><span class="tbl-score pill ${clsMap[sc]}">${labMap[sc]}</span></td></tr>`;
     });
   });
-  if (!rows) return `<div class="report-section"><h3>Tabella analitica completa</h3><p style="color:var(--ink-soft);font-size:13px">Nessun item compilato ancora.</p></div>`;
-  return `<div class="report-section"><h3>Tabella analitica completa</h3><div style="overflow-x:auto"><table class="tbl"><thead><tr><th style="width:200px">Macro-area</th><th>Indicatore osservato</th><th style="width:130px">Livello</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+  if(!rows) return `<div class="report-section"><h3>Tabella analitica</h3><p style="color:var(--ink-soft);font-size:13px">Nessun item compilato ancora.</p></div>`;
+  return `<div class="report-section"><h3>Tabella analitica completa</h3><div style="overflow-x:auto"><table class="tbl"><thead><tr><th style="width:200px">Macro-area</th><th>Indicatore</th><th style="width:130px">Livello</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 
-function buildSintesi(statsAree, nome, dataFmt) {
-  const arOrd = [...statsAree].filter(s=>s.score!==null).sort((a,b)=>b.score-a.score);
-  const puntiForza = arOrd.slice(0,2);
-  const puntiAttenzione = [...arOrd].reverse().slice(0,2).filter(s=>s.score<60);
-  const itemForza = statsAree.flatMap(s => s.vis.filter(it=>SC[it.id]==='A')).slice(0,5);
-  const itemBisogno = statsAree.flatMap(s => s.vis.filter(it=>SC[it.id]==='N')).slice(0,5);
-
-  const totOsservati = statsAree.reduce((acc,s)=>acc+s.tot,0);
-  const testoIntro = totOsservati > 0
-    ? `Osservazione del ${dataFmt} \u2014 ${nome}. Sono stati compilati <strong>${totOsservati} indicatori</strong> su ${statsAree.length} macro-aree ICF-CY. Il profilo evidenzia le aree di maggiore autonomia e quelle in cui il bambino beneficia di supporto o non ha ancora raggiunto l\u2019obiettivo.`
-    : `Nessun indicatore compilato ancora. Compila la griglia per generare la sintesi.`;
-
-  const pForza = puntiForza.length ? `
-    <div class="interp-box strengths-box" style="margin-bottom:10px">
-      <div class="ib-title">Punti di forza</div>
-      ${puntiForza.map(s=>`<p style="margin-bottom:4px"><strong>${s.area.nome}</strong> \u2014 punteggio ${s.score}/100, ${s.cA} item autonomi su ${s.tot} osservati.</p>`).join('')}
-      ${itemForza.length ? `<ul>${itemForza.map(it=>`<li>${it.nome}</li>`).join('')}</ul>` : ''}
-    </div>` : '';
-
-  const pBisogno = (puntiAttenzione.length || itemBisogno.length) ? `
-    <div class="interp-box needs-box">
-      <div class="ib-title">Aree che richiedono attenzione</div>
-      ${puntiAttenzione.map(s=>`<p style="margin-bottom:4px"><strong>${s.area.nome}</strong> \u2014 punteggio ${s.score}/100, ${s.cN} item non ancora raggiunti su ${s.tot} osservati.</p>`).join('')}
-      ${itemBisogno.length ? `<ul>${itemBisogno.map(it=>`<li>${it.nome}</li>`).join('')}</ul>` : ''}
-    </div>` : '';
-
-  return `<div class="report-section"><h3>Sintesi</h3>
-    <div class="interp-box" style="margin-bottom:10px"><div class="ib-title">Quadro generale</div><p>${testoIntro}</p></div>
-    ${pForza}${pBisogno}
-  </div>`;
+function buildSintesi(statsAree,nome,dataFmt) {
+  const arOrd=[...statsAree].filter(s=>s.score!==null).sort((a,b)=>b.score-a.score);
+  const forza=arOrd.slice(0,2);
+  const attenzione=[...arOrd].reverse().slice(0,2).filter(s=>s.score<60);
+  const itemForza=statsAree.flatMap(s=>s.vis.filter(it=>SC[it.id]==='A')).slice(0,5);
+  const itemBisogno=statsAree.flatMap(s=>s.vis.filter(it=>SC[it.id]==='N')).slice(0,5);
+  const tot=statsAree.reduce((a,s)=>a+s.tot,0);
+  const intro=tot>0?`Osservazione del ${dataFmt} \u2014 ${nome}. Compilati <strong>${tot} indicatori</strong> su ${statsAree.length} macro-aree.`:`Nessun indicatore compilato.`;
+  const pF=forza.length?`<div class="interp-box strengths-box" style="margin-bottom:10px"><div class="ib-title">Punti di forza</div>${forza.map(s=>`<p style="margin-bottom:4px"><strong>${s.area.nome}</strong> \u2014 ${s.score}/100, ${s.cA} item autonomi su ${s.tot}.</p>`).join('')}${itemForza.length?`<ul>${itemForza.map(it=>`<li>${it.nome}</li>`).join('')}</ul>`:''}</div>`:'';
+  const pN=attenzione.length||itemBisogno.length?`<div class="interp-box needs-box"><div class="ib-title">Aree che richiedono attenzione</div>${attenzione.map(s=>`<p style="margin-bottom:4px"><strong>${s.area.nome}</strong> \u2014 ${s.score}/100, ${s.cN} item non raggiunti su ${s.tot}.</p>`).join('')}${itemBisogno.length?`<ul>${itemBisogno.map(it=>`<li>${it.nome}</li>`).join('')}</ul>`:''}</div>`:'';
+  return `<div class="report-section"><h3>Sintesi</h3><div class="interp-box" style="margin-bottom:10px"><div class="ib-title">Quadro generale</div><p>${intro}</p></div>${pF}${pN}</div>`;
 }
 
-function buildConfrontoTemporale(statsAree) {
-  let tableHtml = '';
-  if (storicoDati) {
-    const scStorico = storicoDati.punteggi||{}, scoreMap={A:3,S:2,F:1,N:0};
-    let rows='';
-    statsAree.forEach(s => s.vis.forEach(it => {
-      const cur=SC[it.id], old=scStorico[it.id];
-      if (!cur||cur==='\u2014') return;
-      const curV=scoreMap[cur]??null, oldV=scoreMap[old]??null;
-      let delta='';
-      if (curV!==null&&oldV!==null){const d=curV-oldV;if(d>0)delta=`<span class="delta-pos">\u25b2 migliorato</span>`;else if(d<0)delta=`<span class="delta-neg">\u25bc peggiorato</span>`;else delta=`<span class="delta-eq">\u2014 stabile</span>`;}else if(!old)delta=`<span class="delta-eq" style="font-style:italic">nuovo item</span>`;
-      const labMap={A:'Autonomo',S:'Supportato',F:'Con aiuto',N:'Non raggiunto'},clsMap={A:'p0',S:'p1',F:'p2',N:'p3'};
-      rows+=`<tr><td style="font-size:12px">${it.nome}</td><td>${old?`<span class="tbl-score pill ${clsMap[old]}">${labMap[old]}</span>`:'<span style="color:var(--ink-soft);font-size:11px">\u2014</span>'}</td><td><span class="tbl-score pill ${clsMap[cur]}">${labMap[cur]}</span></td><td>${delta}</td></tr>`;
-    }));
-    const dataStoricoFmt=storicoDati.meta?.dataOsservazione?new Date(storicoDati.meta.dataOsservazione).toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'}):'data precedente';
-    tableHtml=`<p style="font-size:12px;color:var(--ink-soft);margin-bottom:10px">Confronto con osservazione del <strong>${dataStoricoFmt}</strong></p><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Indicatore</th><th>Precedente</th><th>Attuale</th><th>Variazione</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-  } else {
-    tableHtml=`<div class="comp-info">Per visualizzare l'evoluzione nel tempo, importa un file JSON salvato da una rilevazione precedente.</div><div class="import-row"><label>Carica osservazione precedente:</label><label class="import-btn">\u2191 Importa file JSON<input type="file" accept=".json" style="display:none" onchange="importaStorico(event)"></label></div>`;
+// ─── STORICO ──────────────────────────────────────────────────────────────────
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('dz-over');
+  caricaFiles(Array.from(e.dataTransfer.files).filter(f=>f.name.endsWith('.json')));
+}
+
+function handleInputStorico(e) {
+  caricaFiles(Array.from(e.target.files));
+  e.target.value='';
+}
+
+function caricaFiles(files) {
+  if(!files.length) return;
+  let loaded=0;
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try {
+        const d=JSON.parse(ev.target.result);
+        const key=d.meta?.dataOsservazione||d.meta?.esportatoIl||String(Math.random());
+        if(!storicoList.find(x=>(x.meta?.dataOsservazione||x.meta?.esportatoIl)===key)) storicoList.push(d);
+      } catch(err){}
+      if(++loaded===files.length){
+        storicoList.sort((a,b)=>{
+          const da=a.meta?.dataOsservazione||a.meta?.esportatoIl||'';
+          const db=b.meta?.dataOsservazione||b.meta?.esportatoIl||'';
+          return da.localeCompare(db);
+        });
+        renderStorico();
+      }
+    };
+    reader.readAsText(file);
+  });
+}
+
+function rimuoviStorico(idx){storicoList.splice(idx,1);renderStorico();}
+
+function renderStorico() {
+  const el=document.getElementById('storico-content');
+  // — Drop zone + tag files —
+  const tags=storicoList.map((d,i)=>{
+    const dt=fmtData(d.meta?.dataOsservazione);
+    const nome=d.meta?.nome||'';
+    return `<span class="stor-tag">${dt}${nome?' \u00b7 '+nome:''}<button onclick="rimuoviStorico(${i})" title="Rimuovi">&times;</button></span>`;
+  }).join('');
+
+  const dropZone=`
+    <div class="report-section" style="margin-bottom:18px">
+      <h3>&#128337; Storico &amp; Crescita</h3>
+      <div id="drop-zone" class="drop-zone"
+        ondragover="event.preventDefault();this.classList.add('dz-over')"
+        ondragleave="this.classList.remove('dz-over')"
+        ondrop="handleDrop(event)"
+        onclick="document.getElementById('file-input-storico').click()">
+        <div style="font-size:32px;margin-bottom:8px;opacity:.45">&#128196;</div>
+        <div style="font-size:13px;font-weight:500;color:var(--ink-mid)">Trascina qui i file JSON delle osservazioni</div>
+        <div style="font-size:11px;color:var(--ink-soft);margin-top:4px">o clicca per selezionarli &mdash; puoi caricare pi&ugrave; file insieme</div>
+        <input id="file-input-storico" type="file" accept=".json" multiple style="display:none" onchange="handleInputStorico(event)">
+      </div>
+      ${storicoList.length?`
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:12px">
+          <div style="display:flex;gap:6px;flex-wrap:wrap">${tags}</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button onclick="esportaStoricoJSON()" class="btn btn-save" style="font-size:11px;padding:5px 11px">&#8595; Esporta JSON</button>
+            <button onclick="window.print()" class="btn btn-print" style="font-size:11px;padding:5px 11px">&#9113; Stampa PDF</button>
+            <button onclick="storicoList=[];renderStorico()" style="font-size:12px;color:var(--ink-soft);background:none;border:none;cursor:pointer;text-decoration:underline">Svuota</button>
+          </div>
+        </div>`:''
+      }
+    </div>`;
+
+  if(!storicoList.length){
+    el.innerHTML=dropZone;
+    return;
   }
-  return `<div class="report-section"><h3>Evoluzione nel tempo</h3>${tableHtml}</div>`;
+
+  // Calcola punteggi per area per ogni snapshot
+  const snapshots=storicoList.map(d=>({
+    data:d.meta?.dataOsservazione||d.meta?.esportatoIl||'',
+    label:fmtDataBreve(d.meta?.dataOsservazione||d.meta?.esportatoIl),
+    punteggi:d.punteggi||{}
+  }));
+
+  const areaPunti=AREE.map(area=>snapshots.map(sn=>scoreArea(area,sn.punteggi)));
+
+  // ── GRAFICO A LINEE (trend) ──────────────────────────────────────────────
+  const LW=620,LH=240,pL=54,pR=20,pT=20,pB=40;
+  const gW=LW-pL-pR,gH=LH-pT-pB;
+  const n=snapshots.length;
+  const xP=i=>pL+(n===1?gW/2:i*gW/(n-1));
+  const yP=v=>pT+gH-(v/100)*gH;
+
+  let svgL=`<svg viewBox="0 0 ${LW} ${LH}" width="100%" style="max-width:${LW}px;display:block" xmlns="http://www.w3.org/2000/svg">`;
+  [0,25,50,75,100].forEach(v=>{
+    const y=yP(v);
+    svgL+=`<line x1="${pL}" y1="${y}" x2="${LW-pR}" y2="${y}" stroke="#e4e3dc" stroke-width="${v===0||v===100?1.5:0.7}" stroke-dasharray="${v===0||v===100?'none':'4,4'}"/>`;
+    svgL+=`<text x="${pL-6}" y="${y+4}" font-size="10" fill="#9090aa" text-anchor="end" font-family="DM Mono,monospace">${v}</text>`;
+  });
+  snapshots.forEach((sn,i)=>{
+    const x=xP(i);
+    svgL+=`<text x="${x}" y="${LH-4}" font-size="10" fill="#50506a" text-anchor="middle" font-family="DM Sans,sans-serif">${sn.label}</text>`;
+  });
+  AREE.forEach((area,ai)=>{
+    const punti=areaPunti[ai];
+    const pts=punti.map((v,i)=>v!==null?{x:xP(i),y:yP(v),v}:null).filter(Boolean);
+    if(!pts.length) return;
+    if(pts.length>1){
+      svgL+=`<path d="${pts.map((p,pi)=>`${pi===0?'M':'L'}${p.x},${p.y}`).join(' ')}" fill="none" stroke="${area.dot}" stroke-width="2.2" opacity="0.85"/>`;
+    }
+    pts.forEach(p=>{
+      svgL+=`<circle cx="${p.x}" cy="${p.y}" r="4.5" fill="${area.dot}" stroke="#fff" stroke-width="1.5"><title>${area.nome}: ${p.v}/100</title></circle>`;
+      svgL+=`<text x="${p.x}" y="${p.y-9}" font-size="9" fill="${area.dot}" text-anchor="middle" font-family="DM Mono,monospace" font-weight="600">${p.v}</text>`;
+    });
+  });
+  svgL+=`</svg>`;
+
+  const legLinee=`<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;margin-bottom:24px">${AREE.map(a=>`<span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink-mid)"><span style="width:18px;height:3px;background:${a.dot};border-radius:2px;display:inline-block"></span>${a.nome.split(' ').slice(0,3).join(' ')}</span>`).join('')}</div>`;
+
+  // ── ISTOGRAMMA COMPARATIVO MACRO-AREE ───────────────────────────────────
+  // Mostra barre affiancate prima / ultima rilevazione per area
+  const prima=snapshots[0];
+  const ultima=snapshots[snapshots.length-1];
+  const IW=620,IH=240,iL=180,iR=20,iT=20,iB=40;
+  const igW=IW-iL-iR,igH=IH-iT-iB;
+  const nAree=AREE.length;
+  const groupW=igW/nAree;
+  const barW=Math.min(28, groupW*0.38);
+  const gap=4;
+
+  let svgI=`<svg viewBox="0 0 ${IW} ${IH}" width="100%" style="max-width:${IW}px;display:block" xmlns="http://www.w3.org/2000/svg">`;
+  [0,25,50,75,100].forEach(v=>{
+    const y=iT+igH-(v/100)*igH;
+    svgI+=`<line x1="${iL}" y1="${y}" x2="${IW-iR}" y2="${y}" stroke="#e4e3dc" stroke-width="${v===0||v===100?1.5:0.7}" stroke-dasharray="${v===0||v===100?'none':'4,4'}"/>`;
+    svgI+=`<text x="${iL-6}" y="${y+4}" font-size="10" fill="#9090aa" text-anchor="end" font-family="DM Mono,monospace">${v}</text>`;
+  });
+
+  AREE.forEach((area,ai)=>{
+    const cx=iL+ai*groupW+groupW/2;
+    const vP=areaPunti[ai][0]; // prima
+    const vU=areaPunti[ai][snapshots.length-1]; // ultima
+
+    // barra prima (semitrasparente)
+    if(vP!==null){
+      const bh=(vP/100)*igH;
+      const by=iT+igH-bh;
+      svgI+=`<rect x="${cx-barW-gap/2}" y="${by}" width="${barW}" height="${bh}" fill="${area.dot}" opacity="0.3" rx="3"/>`;
+      svgI+=`<text x="${cx-barW/2-gap/2}" y="${by-4}" font-size="9" fill="${area.dot}" text-anchor="middle" font-family="DM Mono,monospace" opacity="0.7">${vP}</text>`;
+    }
+    // barra ultima (piena)
+    if(vU!==null){
+      const bh=(vU/100)*igH;
+      const by=iT+igH-bh;
+      svgI+=`<rect x="${cx+gap/2}" y="${by}" width="${barW}" height="${bh}" fill="${area.dot}" opacity="0.9" rx="3"/>`;
+      svgI+=`<text x="${cx+barW/2+gap/2}" y="${by-4}" font-size="9" fill="${area.dot}" text-anchor="middle" font-family="DM Mono,monospace" font-weight="700">${vU}</text>`;
+      // freccia delta
+      if(vP!==null){
+        const delta=vU-vP;
+        if(delta!==0){
+          const arrow=delta>0?'\u25b2':'\u25bc';
+          const col=delta>0?'#1a6644':'#8a1a1a';
+          svgI+=`<text x="${cx+barW/2+gap/2+12}" y="${by-4}" font-size="9" fill="${col}" font-family="DM Sans,sans-serif" font-weight="700">${arrow}${Math.abs(delta)}</text>`;
+        }
+      }
+    }
+    // etichetta area asse X
+    const shortName=area.nome.split(' ').slice(0,1).join(' ');
+    svgI+=`<text x="${cx}" y="${IH-4}" font-size="9.5" fill="${area.dot}" text-anchor="middle" font-family="DM Sans,sans-serif" font-weight="600">${shortName}</text>`;
+  });
+  svgI+=`</svg>`;
+
+  const legIsto=`<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;margin-bottom:24px;font-size:11px;color:var(--ink-mid)">
+    <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:10px;background:#888;opacity:.3;border-radius:2px;display:inline-block"></span>Prima rilevazione (${prima.label})</span>
+    <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:10px;background:#888;opacity:.9;border-radius:2px;display:inline-block"></span>Ultima rilevazione (${ultima.label})</span>
+    <span style="display:flex;align-items:center;gap:6px"><span style="color:#1a6644;font-weight:700">\u25b2</span> miglioramento &nbsp; <span style="color:#8a1a1a;font-weight:700">\u25bc</span> calo</span>
+  </div>`;
+
+  // ── TABELLA NUMERICA PER AREA ────────────────────────────────────────────
+  const dateFmt=snapshots.map(sn=>sn.label);
+  const tabRows=AREE.map((area,ai)=>{
+    const punti=areaPunti[ai];
+    if(punti.every(v=>v===null)) return '';
+    const cells=punti.map((v,i)=>{
+      const prev=punti.slice(0,i).filter(x=>x!==null).at(-1);
+      let arrow='';
+      if(prev!==undefined&&v!==null){
+        if(v>prev) arrow=`<span style="color:var(--c0);font-size:10px;margin-left:2px">\u25b2</span>`;
+        else if(v<prev) arrow=`<span style="color:var(--c3);font-size:10px;margin-left:2px">\u25bc</span>`;
+      }
+      return `<td style="text-align:center;font-family:'DM Mono',monospace;font-size:12px;font-weight:${i===punti.length-1?700:400};color:${v===null?'#ccc':'var(--ink)'};padding:7px 10px">${v!==null?v+arrow:'\u2014'}</td>`;
+    }).join('');
+    return `<tr><td style="padding:7px 10px;font-size:12px"><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:${area.dot};display:inline-block;flex-shrink:0"></span>${area.nome}</span></td>${cells}</tr>`;
+  }).join('');
+
+  const tabArea=`<div style="overflow-x:auto;margin-bottom:24px"><table class="tbl"><thead><tr><th>Macro-area</th>${dateFmt.map(d=>`<th style="text-align:center">${d}</th>`).join('')}</tr></thead><tbody>${tabRows}</tbody></table></div>`;
+
+  // ── DELTA ITEM PER ITEM ─────────────────────────────────────────────────
+  const pPunteggi=storicoList[0].punteggi||{};
+  const uPunteggi=storicoList[storicoList.length-1].punteggi||{};
+  let migliorati=[],stabili=[],peggiorati=[],nuovi=[];
+  AREE.forEach(area=>{
+    area.items.forEach(it=>{
+      const cur=uPunteggi[it.id],old=pPunteggi[it.id];
+      if(!cur||cur==='\u2014') return;
+      const curV=scoreMap[cur]??null,oldV=scoreMap[old]??null;
+      if(oldV===null){nuovi.push({it,cur});return;}
+      const d=curV-oldV;
+      if(d>0) migliorati.push({it,cur,old});
+      else if(d<0) peggiorati.push({it,cur,old});
+      else stabili.push({it,cur,old});
+    });
+  });
+
+  function renderGroup(items,tipo){
+    if(!items.length) return '';
+    const cfg={
+      migliorati:{label:'Migliorati',icon:'\u25b2',col:'#1a6644',bg:'#eaf5ef',bc:'#b8ddc9'},
+      stabili:   {label:'Stabili',   icon:'\u2014', col:'#50506a',bg:'#f5f4ef',bc:'#cccbc2'},
+      peggiorati:{label:'Peggiorati',icon:'\u25bc',col:'#8a1a1a',bg:'#fdeaea',bc:'#e8b8b8'},
+      nuovi:     {label:'Item nuovi (assenti nella prima rilevazione)',icon:'\u2022',col:'#1a4d8a',bg:'#eaf0fb',bc:'#b8cce8'},
+    }[tipo];
+    const rows=items.map(({it,cur,old})=>`<tr>
+      <td style="font-size:12px;padding:7px 10px">${it.nome}</td>
+      <td style="padding:7px 10px">${old?`<span class="tbl-score pill ${clsMap[old]}">${labMap[old]}</span>`:'<span style="color:var(--ink-soft)">\u2014</span>'}</td>
+      <td style="padding:7px 10px"><span class="tbl-score pill ${clsMap[cur]}">${labMap[cur]}</span></td>
+    </tr>`).join('');
+    return `<div style="margin-bottom:14px">
+      <div class="dg-header" style="background:${cfg.bg};border:1px solid ${cfg.bc};color:${cfg.col}">
+        <span style="font-size:15px">${cfg.icon}</span>
+        <span>${cfg.label}</span>
+        <span style="margin-left:auto;font-family:'DM Mono',monospace;font-weight:400;color:var(--ink-soft)">${items.length}</span>
+      </div>
+      <div class="dg-body" style="border:1px solid ${cfg.bc}">
+        <table class="tbl" style="margin:0">
+          <thead><tr>
+            <th>Indicatore</th>
+            <th style="width:140px">Prima (${prima.label})</th>
+            <th style="width:140px">Ultima (${ultima.label})</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }
+
+  const testoRiep=migliorati.length||peggiorati.length?`<div class="interp-box" style="margin-bottom:18px"><div class="ib-title">Lettura della traiettoria</div><p>Tra la prima rilevazione (${prima.label}) e l'ultima (${ultima.label}): <strong>${migliorati.length} indicatori in miglioramento</strong>, <strong>${stabili.length} stabili</strong>${peggiorati.length?`, <strong style="color:var(--c3)">${peggiorati.length} in calo</strong>`:''}${nuovi.length?`, ${nuovi.length} nuovi item`:''}.`+'</p></div>':'';
+
+  el.innerHTML=dropZone+`
+    <div class="report-section">
+      <div class="sec-h4">Andamento nel tempo per macro-area (0&#8211;100)</div>
+      ${svgL}${legLinee}
+      <div class="sec-h4">Confronto prima vs ultima rilevazione per macro-area</div>
+      ${svgI}${legIsto}
+      <div class="sec-h4">Punteggio numerico per area</div>
+      ${tabArea}
+      ${testoRiep}
+      <div class="sec-h4">Variazione item per item</div>
+      ${renderGroup(migliorati,'migliorati')}
+      ${renderGroup(stabili,'stabili')}
+      ${renderGroup(peggiorati,'peggiorati')}
+      ${renderGroup(nuovi,'nuovi')}
+    </div>`;
 }
 
-function importaStorico(e) {
-  const file=e.target.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=ev=>{try{storicoDati=JSON.parse(ev.target.result);renderReport();}catch(err){alert('File non valido.');}};
-  reader.readAsText(file);
+function esportaStoricoJSON() {
+  const d={
+    esportato:new Date().toISOString(),
+    rilevazioni:storicoList.length,
+    snapshots:storicoList.map(d=>({
+      data:d.meta?.dataOsservazione||'',
+      nome:d.meta?.nome||'',
+      classe:d.meta?.classe||'',
+      punteggi:d.punteggi||{}
+    }))
+  };
+  const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='icf_storico_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
 }
 
+// ─── RIEPILOGO ────────────────────────────────────────────────────────────────
 function renderRecap() {
   let cA=0,cS=0,cF=0,cN=0,tot=0,comp=0;
   AREE.forEach(area=>area.items.forEach(it=>{
@@ -591,7 +792,6 @@ function renderRecap() {
   }));
   const pct=tot?Math.round(comp/tot*100):0;
   let html=`<div class="recap-grid"><div class="rc"><span class="rc-n rG">${pct}%</span><span class="rc-l">compilata</span></div><div class="rc"><span class="rc-n rA">${cA}</span><span class="rc-l">Autonomo</span></div><div class="rc"><span class="rc-n rS">${cS}</span><span class="rc-l">Supportato</span></div><div class="rc"><span class="rc-n rF">${cF}</span><span class="rc-l">Con aiuto</span></div><div class="rc"><span class="rc-n rN">${cN}</span><span class="rc-l">Non raggiunto</span></div></div>`;
-  const labMap={A:'Autonomo',S:'Supportato',F:'Con aiuto',N:'Non raggiunto'},clsMap={A:'p0',S:'p1',F:'p2',N:'p3'};
   AREE.forEach(area=>{
     const vis=area.items.filter(it=>{const r=document.getElementById('row-'+it.id);return r&&!r.classList.contains('hidden')&&SC[it.id]&&SC[it.id]!=='\u2014';});
     if(!vis.length&&!NT[area.id]) return;
@@ -603,6 +803,7 @@ function renderRecap() {
   document.getElementById('recap').innerHTML=html;
 }
 
+// ─── SALVA / RESET ────────────────────────────────────────────────────────────
 function salva() {
   const d={meta:{nome:document.getElementById('a-nome').value,dataNascita:document.getElementById('a-dn').value,fascia:document.getElementById('a-fascia').value,classe:document.getElementById('a-classe').value,dataOsservazione:document.getElementById('a-data').value,esportatoIl:new Date().toISOString()},punteggi:SC,note:NT};
   const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
@@ -626,11 +827,7 @@ window.addEventListener('beforeprint',()=>{
   const cl=document.getElementById('a-classe').value||'\u2014';
   document.getElementById('print-meta').textContent=`Bambino: ${nome}  |  Classe: ${cl}  |  Fascia: ${ft}  |  Data: ${data}`;
   document.querySelectorAll('.area-body').forEach(b=>b.classList.add('open'));
-  // Aggiorna i div di stampa con il testo corrente delle note
-  AREE.forEach(area => {
-    const pn = document.getElementById('pnt-' + area.id);
-    if (pn) pn.textContent = NT[area.id] || '';
-  });
+  AREE.forEach(area=>{const pn=document.getElementById('pnt-'+area.id);if(pn)pn.textContent=NT[area.id]||'';});
 });
 
 document.getElementById('a-data').value=new Date().toISOString().split('T')[0];
