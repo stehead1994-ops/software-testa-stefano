@@ -169,8 +169,14 @@
   /* ── GRID SOFTWARE ── */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.25rem;
+  }
+  @media (max-width: 1024px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .grid { grid-template-columns: 1fr; }
   }
 
   /* ── CARD ── */
@@ -487,82 +493,7 @@
 
   <div class="grid">
 
-    <!-- ── VERBALE GLO ── -->
-    <div class="card fade-up">
-      <div class="card-accent"></div>
-      <div class="card-body">
-        <div class="card-icon">📋</div>
-        <div class="card-cat">Inclusione &amp; BES</div>
-        <div class="card-title">Verbale del GLO</div>
-        <p class="card-desc">Compilazione guidata del verbale per il Gruppo di Lavoro Operativo. Gestisce partecipanti, sezioni PEI, pareri scritti e proposta al Dirigente. Salvataggio bozze in JSON.</p>
-        <div class="card-tags">
-          <span class="tag">HTML standalone</span>
-          <span class="tag">GLO / PEI</span>
-          <span class="tag">L. 104/1992</span>
-          <span class="tag">Stampa PDF</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <a class="btn-dl btn-dl-primary" href="VerbaleGLO.html" download>
-          ⬇ Scarica
-        </a>
-        <a class="btn-dl btn-dl-secondary" href="VerbaleGLO.html" target="_blank" title="Apri nel browser">
-          ↗
-        </a>
-      </div>
-    </div>
-
-    <!-- ── VALUTAZIONE PERSONALIZZATA ── -->
-    <div class="card fade-up">
-      <div class="card-accent"></div>
-      <div class="card-body">
-        <div class="card-icon">📝</div>
-        <div class="card-cat">Didattica &amp; Valutazione</div>
-        <div class="card-title">Valutazione Personalizzata</div>
-        <p class="card-desc">Strumento per la compilazione della valutazione personalizzata degli alunni. Gestisce le discipline, i giudizi e la stampa del documento finale in formato PDF.</p>
-        <div class="card-tags">
-          <span class="tag">HTML standalone</span>
-          <span class="tag">Valutazione</span>
-          <span class="tag">BES / DSA</span>
-          <span class="tag">Stampa PDF</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <a class="btn-dl btn-dl-primary" href="valutazione_disabilita (1).html" download>
-          ⬇ Scarica
-        </a>
-        <a class="btn-dl btn-dl-secondary" href="valutazione_disabilita (1).html" target="_blank" title="Apri nel browser">
-          ↗
-        </a>
-      </div>
-    </div>
-
-    <!-- ── GRIGLIA ICF-CY ── -->
-    <div class="card fade-up">
-      <div class="card-accent"></div>
-      <div class="card-body">
-        <div class="card-icon">🧩</div>
-        <div class="card-cat">Inclusione &amp; Osservazione</div>
-        <div class="card-title">Griglia ICF-CY</div>
-        <p class="card-desc">Griglia di osservazione scolastica basata sulla classificazione ICF-CY. Valuta 6 macro-aree funzionali (cognitive, comunicative, apprendimento, autonomia, relazioni, fattori contestuali) con report grafico e confronto temporale.</p>
-        <div class="card-tags">
-          <span class="tag">HTML standalone</span>
-          <span class="tag">ICF-CY</span>
-          <span class="tag">Osservazione</span>
-          <span class="tag">Report &amp; Grafici</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <a class="btn-dl btn-dl-primary" href="griglia_icf_cy.html" download>
-          ⬇ Scarica
-        </a>
-        <a class="btn-dl btn-dl-secondary" href="griglia_icf_cy.html" target="_blank" title="Apri nel browser">
-          ↗
-        </a>
-      </div>
-    </div>
-
-    <!-- ── BIBLIOTECA ── -->
+    <!-- 1. BIBLIOTECA -->
     <div class="card fade-up">
       <div class="card-accent"></div>
       <div class="card-body">
@@ -578,16 +509,96 @@
         </div>
       </div>
       <div class="card-footer">
-        <a class="btn-dl btn-dl-primary" href="biblioteca.html" download>
-          ⬇ Scarica
-        </a>
-        <a class="btn-dl btn-dl-secondary" href="biblioteca.html" target="_blank" title="Apri nel browser">
-          ↗
-        </a>
+        <a class="btn-dl btn-dl-primary" href="biblioteca.html" download>⬇ Scarica</a>
+        <a class="btn-dl btn-dl-secondary" href="biblioteca.html" target="_blank" title="Apri nel browser">↗</a>
       </div>
     </div>
 
-    <!-- ── ALLEGATO FIRME PDP ── -->
+    <!-- 2. GRIGLIA ICF-CY -->
+    <div class="card fade-up">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <div class="card-icon">🧩</div>
+        <div class="card-cat">Inclusione &amp; Osservazione</div>
+        <div class="card-title">Griglia ICF-CY</div>
+        <p class="card-desc">Griglia di osservazione scolastica basata sulla classificazione ICF-CY. Valuta 6 macro-aree funzionali (cognitive, comunicative, apprendimento, autonomia, relazioni, fattori contestuali) con report grafico e confronto temporale.</p>
+        <div class="card-tags">
+          <span class="tag">HTML standalone</span>
+          <span class="tag">ICF-CY</span>
+          <span class="tag">Osservazione</span>
+          <span class="tag">Report &amp; Grafici</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="btn-dl btn-dl-primary" href="griglia_icf_cy.html" download>⬇ Scarica</a>
+        <a class="btn-dl btn-dl-secondary" href="griglia_icf_cy.html" target="_blank" title="Apri nel browser">↗</a>
+      </div>
+    </div>
+
+    <!-- 3. VERBALE GLO -->
+    <div class="card fade-up">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <div class="card-icon">📋</div>
+        <div class="card-cat">Inclusione &amp; BES</div>
+        <div class="card-title">Verbale del GLO</div>
+        <p class="card-desc">Compilazione guidata del verbale per il Gruppo di Lavoro Operativo. Gestisce partecipanti, sezioni PEI, pareri scritti e proposta al Dirigente. Salvataggio bozze in JSON.</p>
+        <div class="card-tags">
+          <span class="tag">HTML standalone</span>
+          <span class="tag">GLO / PEI</span>
+          <span class="tag">L. 104/1992</span>
+          <span class="tag">Stampa PDF</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="btn-dl btn-dl-primary" href="VerbaleGLO.html" download>⬇ Scarica</a>
+        <a class="btn-dl btn-dl-secondary" href="VerbaleGLO.html" target="_blank" title="Apri nel browser">↗</a>
+      </div>
+    </div>
+
+    <!-- 4. VALUTAZIONE PERSONALIZZATA -->
+    <div class="card fade-up">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <div class="card-icon">📝</div>
+        <div class="card-cat">Didattica &amp; Valutazione</div>
+        <div class="card-title">Valutazione Personalizzata</div>
+        <p class="card-desc">Strumento per la compilazione della valutazione personalizzata degli alunni. Gestisce le discipline, i giudizi e la stampa del documento finale in formato PDF.</p>
+        <div class="card-tags">
+          <span class="tag">HTML standalone</span>
+          <span class="tag">Valutazione</span>
+          <span class="tag">BES / DSA</span>
+          <span class="tag">Stampa PDF</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="btn-dl btn-dl-primary" href="valutazione_disabilita (1).html" download>⬇ Scarica</a>
+        <a class="btn-dl btn-dl-secondary" href="valutazione_disabilita (1).html" target="_blank" title="Apri nel browser">↗</a>
+      </div>
+    </div>
+
+    <!-- 5. PDP BES/DSA -->
+    <div class="card fade-up">
+      <div class="card-accent" style="background:linear-gradient(90deg,#1a3a5c,#4a8fc4)"></div>
+      <div class="card-body">
+        <div class="card-icon" style="background:linear-gradient(135deg,#d6e8f7,#a8d4f5)">📋</div>
+        <div class="card-cat">Inclusione scolastica</div>
+        <div class="card-title">PDP BES / DSA</div>
+        <p class="card-desc">Compilazione digitale guidata del Piano Didattico Personalizzato per alunni BES e DSA. Supporta tutti e tre gli ordini (Infanzia, Primaria, Secondaria). Salvataggio bozze in JSON, esportazione PDF.</p>
+        <div class="card-tags">
+          <span class="tag">DSA</span>
+          <span class="tag">BES</span>
+          <span class="tag">Inclusione</span>
+          <span class="tag">PDF</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="btn-dl btn-dl-primary" href="PDP_BES_digitale.html" download>⬇ Scarica</a>
+        <a class="btn-dl btn-dl-secondary" href="PDP_BES_digitale.html" target="_blank" title="Apri nel browser">↗</a>
+      </div>
+    </div>
+
+    <!-- 6. ALLEGATO FIRME PDP -->
     <div class="card fade-up">
       <div class="card-accent"></div>
       <div class="card-body">
@@ -603,30 +614,8 @@
         </div>
       </div>
       <div class="card-footer">
-        <a class="btn-dl btn-dl-primary" href="allegato_firme_pdp.html" download>
-          ⬇ Scarica
-        </a>
-        <a class="btn-dl btn-dl-secondary" href="allegato_firme_pdp.html" target="_blank" title="Apri nel browser">
-          ↗
-        </a>
-      </div>
-    </div>
-
-    <!-- ── PROSSIMAMENTE ── -->
-    <div class="card fade-up card-coming">
-      <div class="card-accent" style="background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div>
-      <div class="badge-soon">Presto</div>
-      <div class="card-body">
-        <div class="card-icon" style="background:linear-gradient(135deg,#f1f5f9,#e2e8f0)">🗓</div>
-        <div class="card-cat">In sviluppo</div>
-        <div class="card-title">Prossimo software</div>
-        <p class="card-desc">Il prossimo strumento digitale sarà disponibile a breve.</p>
-        <div class="card-tags">
-          <span class="tag">In sviluppo</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="btn-dl btn-dl-primary" style="background:#94a3b8;cursor:default">In arrivo</span>
+        <a class="btn-dl btn-dl-primary" href="allegato_firme_pdp.html" download>⬇ Scarica</a>
+        <a class="btn-dl btn-dl-secondary" href="allegato_firme_pdp.html" target="_blank" title="Apri nel browser">↗</a>
       </div>
     </div>
 
