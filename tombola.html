@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<title>🎉 Tombola Magica!</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background: #0d1f3c;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    user-select: none;
+  }
+
+  /* Stelle di sfondo */
+  #stars-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle var(--dur, 2s) ease-in-out infinite alternate;
+  }
+  @keyframes twinkle {
+    from { opacity: 0.2; transform: scale(1); }
+    to { opacity: 1; transform: scale(1.4); }
+  }
+
+  /* Layout principale */
+  #main {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 10px;
+    gap: 8px;
+  }
+
+  /* Intestazione */
+  #header {
+    text-align: center;
+    flex-shrink: 0;
+  }
+  #title {
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-weight: 900;
+    background: linear-gradient(90deg, #FFD700, #FF6B35, #FF69B4, #00C8FF, #00E5B0, #FFD700);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbow 3s linear infinite;
+    text-shadow: none;
+    letter-spacing: 2px;
+  }
+  @keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+  #estratti-count {
+    font-size: clamp(0.85rem, 1.5vw, 1rem);
+    color: #FFD700;
+    margin-top: 2px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  /* Griglia numeri */
+  #grid-container {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+  }
+  #grid {
+    display: grid;
+    grid-template-columns: repeat(10, var(--cell-size, 60px));
+    grid-template-rows: repeat(9, var(--cell-size, 60px));
+    gap: var(--cell-gap, 4px);
+    width: var(--grid-w, 90vw);
+    height: var(--grid-h, auto);
+    flex-shrink: 0;
+  }
+  .num-cell {
+    width: var(--cell-size, 60px);
+    height: var(--cell-size, 60px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--cell-font, 1.2vw);
+    font-weight: 900;
+    border: 2px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.35);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: visible;
+    cursor: default;
+  }
+  .num-cell.estratto {
+    background: var(--cell-color, #FF6B35);
+    color: white;
+    border-color: rgba(255,255,255,0.8);
+    box-shadow: 0 0 12px var(--cell-glow, rgba(255,107,53,0.7)), inset 0 1px 0 rgba(255,255,255,0.3);
+    animation: cellPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes cellPop {
+    0% { transform: scale(0.3) rotate(-20deg); opacity: 0; }
+    60% { transform: scale(1.3) rotate(5deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  /* Colori per decine */
+  .d0 { --cell-color: #FF6B35; --cell-glow: rgba(255,107,53,0.7); }
+  .d1 { --cell-color: #FF69B4; --cell-glow: rgba(255,105,180,0.7); }
+  .d2 { --cell-color: #00C2FF; --cell-glow: rgba(0,194,255,0.7); }
+  .d3 { --cell-color: #00CFFF; --cell-glow: rgba(0,207,255,0.7); }
+  .d4 { --cell-color: #00D68F; --cell-glow: rgba(0,214,143,0.7); }
+  .d5 { --cell-color: #FFD700; --cell-glow: rgba(255,215,0,0.7); }
+  .d6 { --cell-color: #FF4757; --cell-glow: rgba(255,71,87,0.7); }
+  .d7 { --cell-color: #2ED573; --cell-glow: rgba(46,213,115,0.7); }
+  .d8 { --cell-color: #1E90FF; --cell-glow: rgba(30,144,255,0.7); }
+  .d9 { --cell-color: #FF6B9D; --cell-glow: rgba(255,107,157,0.7); }
+
+  /* Sacchetto in basso a destra */
+  #bag-zone {
+    position: fixed;
+    top: 10px;
+    right: 18px;
+    z-index: 100;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+  #bag-btn {
+    width: clamp(54px, 7vw, 80px);
+    height: clamp(54px, 7vw, 80px);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: radial-gradient(circle at 35% 35%, #8B4513, #4a1f00);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.6), inset 0 2px 6px rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.6rem, 4vw, 3rem); filter: hue-rotate(30deg);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+    overflow: visible;
+    animation: bagFloat 3s ease-in-out infinite;
+  }
+  @keyframes bagFloat {
+    0%, 100% { transform: translateY(0px) rotate(-2deg); }
+    50% { transform: translateY(-6px) rotate(2deg); }
+  }
+  #bag-btn:hover {
+    transform: scale(1.1) !important;
+    box-shadow: 0 10px 40px rgba(255,215,0,0.5), inset 0 2px 6px rgba(255,255,255,0.2);
+    animation: none;
+  }
+  #bag-btn:active {
+    transform: scale(0.95) !important;
+  }
+  #bag-btn.shaking {
+    animation: bagShake 0.6s ease-in-out !important;
+  }
+  @keyframes bagShake {
+    0%,100% { transform: rotate(0deg) scale(1.1); }
+    15% { transform: rotate(-18deg) scale(1.2); }
+    30% { transform: rotate(18deg) scale(1.2); }
+    45% { transform: rotate(-12deg) scale(1.15); }
+    60% { transform: rotate(12deg) scale(1.15); }
+    75% { transform: rotate(-6deg) scale(1.1); }
+  }
+  #bag-label {
+    font-size: clamp(0.65rem, 1.2vw, 0.9rem);
+    color: #FFD700;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    writing-mode: horizontal-tb;
+  }
+
+  /* Pannello numero estratto */
+  #numero-panel {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    pointer-events: none;
+    opacity: 0;
+  }
+  #numero-panel.show {
+    pointer-events: all;
+    opacity: 1;
+  }
+  #numero-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(10,0,30,0.85);
+    backdrop-filter: blur(4px);
+  }
+  #numero-bubble {
+    position: relative;
+    z-index: 1;
+    border-radius: 50%;
+    width: clamp(260px, 40vw, 520px);
+    height: clamp(260px, 40vw, 520px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.25), rgba(255,255,255,0.05) 60%),
+                var(--bubble-color, #FF6B35);
+    box-shadow: 0 0 60px var(--bubble-glow, rgba(255,107,53,0.8)),
+                0 0 120px var(--bubble-glow, rgba(255,107,53,0.4)),
+                inset 0 4px 20px rgba(255,255,255,0.2);
+    animation: bubbleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+  }
+  @keyframes bubbleIn {
+    0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+    70% { transform: scale(1.08) rotate(3deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  #numero-big {
+    font-size: clamp(7rem, 20vw, 18rem);
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  #numero-label {
+    font-size: clamp(1rem, 2.5vw, 2rem);
+    color: rgba(255,255,255,0.9);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  #tap-hint {
+    position: absolute;
+    bottom: clamp(20px, 4vw, 40px);
+    font-size: clamp(0.75rem, 1.5vw, 1.1rem);
+    color: rgba(255,255,255,0.6);
+    font-weight: 600;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  /* Coriandoli */
+  #confetti-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 300;
+    overflow: hidden;
+  }
+  .confetto {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -20px;
+    border-radius: 2px;
+    animation: fall var(--dur) linear var(--delay) forwards;
+  }
+  @keyframes fall {
+    0% { transform: translateY(-20px) rotate(0deg) translateX(0); opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateY(110vh) rotate(calc(var(--spin) * 720deg)) translateX(calc(var(--drift) * 100px)); opacity: 0; }
+  }
+
+  /* Schermata fine */
+  #fine-panel {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,0,30,0.95);
+    z-index: 400;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+  }
+  #fine-panel.show { display: flex; }
+  #fine-emoji { font-size: clamp(4rem, 10vw, 8rem); animation: bigBounce 0.8s ease-in-out infinite alternate; }
+  @keyframes bigBounce {
+    from { transform: translateY(0) scale(1); }
+    to { transform: translateY(-20px) scale(1.1); }
+  }
+  #fine-text {
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 900;
+    background: linear-gradient(90deg, #FFD700, #FF6B35, #FF69B4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+  }
+  #restart-btn {
+    padding: 16px 48px;
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    font-weight: 800;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #FFD700, #FF6B35);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(255,107,53,0.5);
+    transition: transform 0.2s ease;
+    letter-spacing: 1px;
+  }
+  #restart-btn:hover { transform: scale(1.05); }
+
+  /* Tooltip nome numero */
+  #nome-numero {
+    font-size: clamp(0.9rem, 2vw, 1.6rem);
+    color: rgba(255,255,255,0.85);
+    font-weight: 700;
+    font-style: italic;
+    margin-top: 4px;
+    text-align: center;
+    padding: 0 20px;
+  }
+</style>
+</head>
+<body>
+
+<div id="stars-bg"></div>
+
+<div id="main">
+  <div id="header">
+    <div id="title">🎉 TOMBOLA MAGICA 🎉</div>
+    <div id="estratti-count">Numeri estratti: <span id="count-num">0</span> / 90</div>
+  </div>
+  <div id="grid-container">
+    <div id="grid"></div>
+  </div>
+</div>
+
+<!-- Sacchetto -->
+<div id="bag-zone">
+  <button id="bag-btn" onclick="estraiNumero()" title="Pesca un numero!">👝</button>
+  <div id="bag-label">PESCA!</div>
+</div>
+
+<!-- Pannello numero estratto -->
+<div id="numero-panel" onclick="chiudiPannello()">
+  <div id="numero-backdrop"></div>
+  <div id="numero-bubble">
+    <div id="numero-big">?</div>
+    <div id="numero-label">⭐ USCITO! ⭐</div>
+    <div id="nome-numero"></div>
+    <div id="tap-hint">👆 Tocca per continuare</div>
+  </div>
+</div>
+
+<!-- Coriandoli -->
+<div id="confetti-container"></div>
+
+<!-- Fine gioco -->
+<div id="fine-panel" id="fine-panel">
+  <div id="fine-emoji">🏆</div>
+  <div id="fine-text">Tombola completata!<br>Tutti i 90 numeri!</div>
+  <button id="restart-btn" onclick="riavvia()">🔄 Nuova Partita</button>
+</div>
+
+<script>
+  // Stelle di sfondo
+  (function() {
+    const bg = document.getElementById('stars-bg');
+    for (let i = 0; i < 80; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const size = Math.random() * 3 + 1;
+      s.style.cssText = `
+        width:${size}px;height:${size}px;
+        left:${Math.random()*100}%;top:${Math.random()*100}%;
+        --dur:${1.5+Math.random()*3}s;
+        animation-delay:${Math.random()*3}s;
+      `;
+      bg.appendChild(s);
+    }
+  })();
+
+  // Nomi tradizionali napoletani della tombola
+  const nomi = {
+    1: "L'Acere", 2: "La Bella di Notte", 3: "La Gatta", 4: "Il Maialino",
+    5: "La Mano", 6: "La Sorpresa", 7: "Il Vaso di Fiori", 8: "La Nuvola",
+    9: "La Figliola", 10: "I Fagioli", 11: "I Topi", 12: "Il Soldato",
+    13: "Sant'Antonio", 14: "L'Ubriaco", 15: "Il Ragazzo", 16: "Il Sedere",
+    17: "La Sfortuna", 18: "Il Sangue", 19: "Le Risate", 20: "La Festa",
+    21: "La Donna Nuda", 22: "Il Matto", 23: "Il Muto", 24: "Le Guardie",
+    25: "Natale", 26: "Natale", 27: "Il Forno", 28: "Il Seno",
+    29: "Il Babbo", 30: "Il Tenente", 31: "Il Padrone", 32: "Il Capitone",
+    33: "Gli Anni", 34: "La Testa", 35: "L'Uccellino", 36: "Le Castagne",
+    37: "Il Monaco", 38: "Le Botte", 39: "Il Nodo", 40: "La Fontana",
+    41: "Il Coltello", 42: "Il Caffè", 43: "La Cosa", 44: "Le Prigioni",
+    45: "Il Vino", 46: "I Soldi", 47: "Il Morto", 48: "Il Morto che Parla",
+    49: "La Carne", 50: "Il Pane", 51: "Il Giardino", 52: "La Mamma",
+    53: "Il Piccolo", 54: "Il Cappello", 55: "La Musica", 56: "La Caduta",
+    57: "Il Gobbo", 58: "Il Fazzoletto", 59: "Il Militare", 60: "La Lamentela",
+    61: "Il Cacciatore", 62: "L'Ammazzato", 63: "La Sposa", 64: "Il Prete",
+    65: "Il Pianto", 66: "I Vecchietti", 67: "Il Chiavaccio", 68: "La Minestra",
+    69: "Il Capovolgimento", 70: "Il Palazzo", 71: "L'Uomo di Paglia", 72: "La Meraviglia",
+    73: "L'Ospedale", 74: "La Grotta", 75: "Il Lava", 76: "La Fontana",
+    77: "Le Gambe", 78: "La Bella", 79: "Il Ladro", 80: "La Bocca",
+    81: "I Fiori", 82: "La Tavola", 83: "Il Maleocchio", 84: "La Chiesa",
+    85: "Le Anime", 86: "L'Oro", 87: "Il Vaso", 88: "Le Orecchie",
+    89: "La Vecchia", 90: "La Paura"
+  };
+
+  const nomiSimpatici = {
+    1:"🥇 Il Campione!",2:"🌙 La Notte",3:"🐱 Il Micio",4:"🐷 Il Porcellino",
+    5:"✋ La Mano",6:"🎁 La Sorpresa",7:"🌸 Il Fiore",8:"☁️ La Nuvola",
+    9:"👧 La Bimba",10:"🫘 I Fagioli",11:"🐭 I Topolini",12:"🎖️ Il Soldato",
+    13:"🙏 Il Santo",14:"😵 Il Confuso",15:"🧒 Il Ragazzo",16:"😄 Che Risate!",
+    17:"🍀 Porta Fortuna!",18:"❤️ Il Cuore",19:"😂 Le Risate",20:"🎊 La Festa!",
+    21:"⭐ La Stella",22:"🃏 Il Jolly",23:"🤫 Il Silenzio",24:"👮 Le Guardie",
+    25:"🎄 Natale!",26:"🎁 Befana!",27:"🔥 Il Forno",28:"💝 L'Amore",
+    29:"👨 Il Papà",30:"🎶 La Canzone",31:"👑 Il Re",32:"🐟 Il Pesce",
+    33:"🎂 Gli Anni!",34:"🧠 La Testa",35:"🐦 L'Uccellino",36:"🌰 Le Castagne",
+    37:"⛪ Il Monaco",38:"🥁 Le Botti",39:"🪢 Il Nodo",40:"⛲ La Fontana",
+    41:"🔪 Il Coltello",42:"☕ Il Caffè",43:"🌟 La Cosa Magica",44:"🔒 Il Castello",
+    45:"🍷 Il Succo",46:"💰 I Soldi!",47:"👻 Il Fantasmino",48:"💬 Chi Parla?",
+    49:"🍖 La Merenda",50:"🍞 Il Panino",51:"🌿 Il Giardino",52:"❤️ La Mamma!",
+    53:"🐾 Il Cucciolo",54:"🎩 Il Cappello",55:"🎵 La Musica!",56:"🍂 L'Autunno",
+    57:"🐢 Il Guscio",58:"🧣 Il Fazzoletto",59:"🪖 Il Soldatino",60:"😢 Il Pianto",
+    61:"🏹 Il Cacciatore",62:"🌈 L'Arcobaleno",63:"💐 La Sposa",64:"⛪ Il Prete",
+    65:"😢 Le Lacrime",66:"👴👵 I Nonni!",67:"🔑 La Chiave",68:"🍜 La Minestra",
+    69:"🔄 Il Giro",70:"🏰 Il Palazzo",71:"🦸 Il Supereroe",72:"😲 La Meraviglia!",
+    73:"🏥 L'Ospedale",74:"🦇 La Grotta",75:"🌊 Il Mare",76:"⛲ La Piscina",
+    77:"🦵 Le Gambine",78:"😍 La Bella",79:"🦊 Il Furbo",80:"😀 La Bocca",
+    81:"🌺 I Fiori!",82:"🍽️ La Tavola",83:"😈 Il Malocchio",84:"⛪ La Chiesa",
+    85:"👼 Gli Angioletti",86:"✨ L'Oro!",87:"🏺 Il Vaso",88:"👂 Le Orecchie",
+    89:"👵 La Nonnina",90:"😱 LA PAURA!"
+  };
+
+  const coloriDecine = [
+    '#FF6B35','#FF69B4','#00C8FF','#00E5B0','#FFD700',
+    '#FF8C42','#00BFFF','#7CFC00','#FF4E91','#FFA500'
+  ];
+  const glowDecine = [
+    'rgba(255,107,53,0.8)','rgba(255,105,180,0.8)','rgba(0,200,255,0.8)',
+    'rgba(0,229,176,0.8)','rgba(255,215,0,0.8)','rgba(255,140,66,0.8)',
+    'rgba(0,191,255,0.8)','rgba(124,252,0,0.8)','rgba(255,78,145,0.8)',
+    'rgba(255,165,0,0.8)'
+  ];
+
+  let numeriRimasti = Array.from({length:90}, (_,i)=>i+1);
+  let numeriEstratti = [];
+  let panelAperto = false;
+
+  // Costruisci griglia
+  const grid = document.getElementById('grid');
+  for (let n = 1; n <= 90; n++) {
+    const cell = document.createElement('div');
+    cell.className = 'num-cell';
+    cell.id = 'cell-' + n;
+    cell.textContent = n;
+    grid.appendChild(cell);
+  }
+
+  function getDecina(n) {
+    if (n === 90) return 9;
+    return Math.floor((n-1) / 10);
+  }
+
+  function estraiNumero() {
+    if (panelAperto || numeriRimasti.length === 0) return;
+
+    const btn = document.getElementById('bag-btn');
+    btn.classList.add('shaking');
+    btn.style.animation = '';
+
+    setTimeout(() => {
+      btn.classList.remove('shaking');
+      btn.style.animation = 'bagFloat 3s ease-in-out infinite';
+
+      const idx = Math.floor(Math.random() * numeriRimasti.length);
+      const n = numeriRimasti.splice(idx, 1)[0];
+      numeriEstratti.push(n);
+
+      // Aggiorna griglia
+      const cell = document.getElementById('cell-' + n);
+      const decina = getDecina(n);
+      cell.classList.add('estratto', 'd' + decina);
+
+      // Aggiorna contatore
+      document.getElementById('count-num').textContent = numeriEstratti.length;
+
+      // Mostra pannello
+      mostraPannello(n);
+
+      // Coriandoli
+      lanciaCoriandoli(40);
+
+      if (numeriRimasti.length === 0) {
+        setTimeout(() => {
+          chiudiPannello();
+          setTimeout(mostraFine, 600);
+        }, 2500);
+      }
+    }, 700);
+  }
+
+  function mostraPannello(n) {
+    const decina = getDecina(n);
+    const colore = coloriDecine[decina];
+    const glow = glowDecine[decina];
+
+    const bubble = document.getElementById('numero-bubble');
+    bubble.style.setProperty('--bubble-color', colore);
+    bubble.style.setProperty('--bubble-glow', glow);
+    bubble.style.background = `radial-gradient(circle at 35% 30%, rgba(255,255,255,0.25), rgba(255,255,255,0.05) 60%), ${colore}`;
+    bubble.style.boxShadow = `0 0 60px ${glow}, 0 0 120px ${glow.replace('0.8','0.4')}, inset 0 4px 20px rgba(255,255,255,0.2)`;
+
+    document.getElementById('numero-big').textContent = n;
+    document.getElementById('nome-numero').textContent = nomiSimpatici[n] || '';
+
+    const panel = document.getElementById('numero-panel');
+    panel.style.transition = 'opacity 0.3s ease';
+    panel.classList.add('show');
+    panelAperto = true;
+
+    // Rimuovi e ricrea l'animazione della bubble
+    bubble.style.animation = 'none';
+    bubble.offsetHeight;
+    bubble.style.animation = 'bubbleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+  }
+
+  function chiudiPannello() {
+    if (!panelAperto) return;
+    const panel = document.getElementById('numero-panel');
+    panel.style.opacity = '0';
+    setTimeout(() => {
+      panel.classList.remove('show');
+      panel.style.opacity = '';
+      panelAperto = false;
+    }, 300);
+  }
+
+  function lanciaCoriandoli(n) {
+    const container = document.getElementById('confetti-container');
+    const colori = ['#FFD700','#FF6B35','#FF69B4','#00C8FF','#00E5B0','#FF8C42','#00BFFF','#7CFC00','#FF4E91','#FFA500','#FF6B9D','#98FB98'];
+    for (let i = 0; i < n; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetto';
+      const col = colori[Math.floor(Math.random() * colori.length)];
+      const left = Math.random() * 100;
+      const dur = (1.5 + Math.random() * 2).toFixed(2);
+      const delay = (Math.random() * 0.5).toFixed(2);
+      const spin = Math.random() > 0.5 ? 1 : -1;
+      const drift = (Math.random() * 2 - 1).toFixed(2);
+      const w = 6 + Math.floor(Math.random() * 10);
+      const h = 6 + Math.floor(Math.random() * 10);
+      c.style.cssText = `
+        left:${left}%;background:${col};
+        width:${w}px;height:${h}px;
+        --dur:${dur}s;--delay:${delay}s;--spin:${spin};--drift:${drift};
+        border-radius:${Math.random()>0.5 ? '50%' : '2px'};
+      `;
+      container.appendChild(c);
+      setTimeout(() => c.remove(), (parseFloat(dur)+parseFloat(delay)+0.5)*1000);
+    }
+  }
+
+  function mostraFine() {
+    lanciaCoriandoli(100);
+    document.getElementById('fine-panel').classList.add('show');
+  }
+
+  function riavvia() {
+    numeriRimasti = Array.from({length:90}, (_,i)=>i+1);
+    numeriEstratti = [];
+    panelAperto = false;
+    document.getElementById('count-num').textContent = '0';
+    document.getElementById('fine-panel').classList.remove('show');
+    for (let n = 1; n <= 90; n++) {
+      const cell = document.getElementById('cell-' + n);
+      cell.className = 'num-cell';
+    }
+  }
+
+  // Tasto spazio / Invio per estrarre
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' || e.code === 'Enter') {
+      e.preventDefault();
+      if (panelAperto) chiudiPannello();
+      else estraiNumero();
+    }
+    if (e.code === 'Escape') chiudiPannello();
+  });
+
+  function resizeGrid() {
+    const header = document.getElementById('header');
+    // Misura tutto quello che occupa spazio verticale fuori dalla griglia
+    const mainPadding = 20;   // padding top+bottom del #main (10px*2)
+    const mainGap = 8;         // gap tra header e grid-container
+    const headerH = header.offsetHeight;
+    const availW = window.innerWidth - mainPadding;
+    const availH = window.innerHeight - mainPadding - mainGap - headerH;
+    // Griglia 10 colonne x 9 righe (numeri 1-90)
+    const COLS = 10, ROWS = 9;
+    // Dimensione massima che sta sia in larghezza che in altezza
+    // cellW = (availW - gap*(COLS-1)) / COLS
+    // cellH = (availH - gap*(ROWS-1)) / ROWS
+    // vogliamo celle quadrate: cellW == cellH
+    // Proviamo con gap stimato e iteriamo
+    let gap = 4;
+    let cellFromW = (availW - gap*(COLS-1)) / COLS;
+    let cellFromH = (availH - gap*(ROWS-1)) / ROWS;
+    let cellSize = Math.floor(Math.min(cellFromW, cellFromH));
+    // Ricalcola gap proporzionale
+    gap = Math.max(2, Math.floor(cellSize * 0.06));
+    cellFromW = (availW - gap*(COLS-1)) / COLS;
+    cellFromH = (availH - gap*(ROWS-1)) / ROWS;
+    cellSize = Math.floor(Math.min(cellFromW, cellFromH));
+    const gridW = cellSize * COLS + gap * (COLS-1);
+    const gridH = cellSize * ROWS + gap * (ROWS-1);
+    document.documentElement.style.setProperty('--grid-w', gridW + 'px');
+    document.documentElement.style.setProperty('--grid-h', gridH + 'px');
+    document.documentElement.style.setProperty('--cell-size', cellSize + 'px');
+    document.documentElement.style.setProperty('--cell-gap', gap + 'px');
+    document.documentElement.style.setProperty('--cell-font', Math.max(10, cellSize * 0.38) + 'px');
+  }
+  resizeGrid();
+  window.addEventListener('resize', resizeGrid);
+
+</script>
+</body>
+</html>
