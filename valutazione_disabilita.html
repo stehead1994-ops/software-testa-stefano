@@ -768,16 +768,17 @@ async function avviaPDF() {
   .desc-trad.rtl{direction:rtl;text-align:right;}
   .lingua-tag{display:inline-block;background:#e8f0ff;color:#1d6a8e;border-radius:10px;padding:1px 8px;font-size:8pt;font-weight:700;margin-bottom:10px;letter-spacing:0.06em;}
   .gruppo-docenti-riga{margin-top:28px;border-top:1px solid #ccc;padding-top:14px;text-align:center;font-family:'Playfair Display',serif;font-size:10.5pt;color:#111;}
-  .timbro-centrato{text-align:center;margin:16px auto 0;font-family:'Playfair Display',serif;font-size:9.5pt;color:#666;font-style:italic;}
-  .timbro-cerchio{width:90px;height:90px;border:1px solid #aaa;border-radius:50%;margin:8px auto 0;}
-  .firme-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:end;margin-top:20px;}
+  .firme-grid{display:grid;grid-template-columns:1fr 100px 1fr 1fr;gap:14px;align-items:end;margin-top:20px;}
   .firma-col{font-family:'Playfair Display',serif;font-size:9.5pt;color:#444;font-style:italic;text-align:center;}
   .firma-col .label{margin-bottom:8px;line-height:1.6;}
   .firma-col .label strong{color:#111;font-style:normal;display:block;}
   .firma-col .label .sottotitolo{font-size:8pt;font-weight:400;font-style:italic;display:block;}
   .firma-col .linea{height:55px;border-bottom:1px solid #aaa;margin:0 4px;}
+  .timbro-col{text-align:center;font-family:'Playfair Display',serif;font-size:8.5pt;color:#666;font-style:italic;}
+  .timbro-col .timbro-cerchio{width:90px;height:90px;border:1px solid #aaa;border-radius:50%;margin:6px auto 0;}
   .copyright{margin-top:16px;text-align:center;font-size:8pt;color:#aaa;}
-  @media print{body{padding:18px 24px;}}
+  @page{margin:0;size:A4;}
+  @media print{body{padding:1.5cm 2cm;}}
 </style></head><body>
 <div class="intestazione"><img src="data:image/jpeg;base64,${logoB64}" alt="IC Castelcovati"></div>
 <div class="titolo-doc">VALUTAZIONE PERSONALIZZATA – D.I. 153/2023${lingaInfo?` / ${(labelMap&&labelMap['VALUTAZIONE PERSONALIZZATA'])||''}`:''}</div>
@@ -788,14 +789,14 @@ async function avviaPDF() {
 </div>
 ${corpo}
 <div class="gruppo-docenti-riga">${firmaHtml} — Classe <strong>${dati.classe} ${dati.sez}</strong></div>
-<div class="timbro-centrato">
-  Timbro della Scuola
-  <div class="timbro-cerchio"></div>
-</div>
 <div class="firme-grid">
   <div class="firma-col">
     <div class="label">Il Coordinatore della Classe <strong>${dati.classe} ${dati.sez}</strong>${dati.coordinatore ? `<strong>${dati.coordinatore}</strong>` : ''}</div>
     <div class="linea"></div>
+  </div>
+  <div class="timbro-col">
+    Timbro della Scuola
+    <div class="timbro-cerchio"></div>
   </div>
   <div class="firma-col">
     <div class="label"><strong>Il Dirigente Scolastico<span class="sottotitolo">dell'Istituto Comprensivo di Castelcovati</span></strong></div>
