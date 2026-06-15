@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Benvenuti nel Blog dell'Archivio — L'Archivio del Maestro Stefano Testa</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blu:    #003087;
+    --blu2:   #00205c;
+    --verde:  #1D9E75;
+    --verde2: #085041;
+    --oro:    #c8a84b;
+    --bianco: #ffffff;
+    --grigio: #f4f6f9;
+    --testo:  #1a1a2e;
+    --sub:    #5a6a85;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--grigio);
+    color: var(--testo);
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  header {
+    background: linear-gradient(135deg, var(--blu2) 0%, var(--blu) 60%, #004ab3 100%);
+    color: var(--bianco);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 110% 120%, rgba(29,158,117,.25) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at -10% -10%, rgba(200,168,75,.15) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  header::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 3.5rem 2rem 3rem;
+  }
+
+  .breadcrumb {
+    font-size: 13px;
+    margin-bottom: 1.4rem;
+  }
+  .breadcrumb a {
+    color: rgba(255,255,255,.75);
+    text-decoration: none;
+    transition: color .15s;
+  }
+  .breadcrumb a:hover { color: #fff; }
+  .breadcrumb span { color: rgba(255,255,255,.4); margin: 0 6px; }
+  .breadcrumb strong { color: var(--oro); }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--oro);
+    margin-bottom: 1.2rem;
+  }
+
+  .article-meta .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.4);
+  }
+
+  .article-meta .date {
+    color: rgba(255,255,255,.65);
+    letter-spacing: normal;
+    text-transform: none;
+    font-weight: 500;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4.2vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    letter-spacing: -.5px;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(255,255,255,.75);
+    line-height: 1.7;
+  }
+
+  /* ── DIVISORE ── */
+  .wave {
+    display: block;
+    width: 100%;
+    height: 60px;
+    background: var(--grigio);
+    clip-path: ellipse(55% 100% at 50% 100%);
+    margin-top: -2px;
+  }
+
+  /* ── CONTENUTO ── */
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
+  }
+
+  .article-body {
+    background: var(--bianco);
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    padding: 2.5rem 2.5rem;
+  }
+
+  .article-body h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--blu2);
+    margin: 1.8rem 0 .9rem;
+  }
+
+  .article-body h2:first-child {
+    margin-top: 0;
+  }
+
+  .article-body p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--testo);
+    margin-bottom: 1.1rem;
+  }
+
+  .article-body ul, .article-body ol {
+    margin: 0 0 1.1rem 1.4rem;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--testo);
+  }
+
+  .article-body li {
+    margin-bottom: .4rem;
+  }
+
+  .article-body strong {
+    color: var(--blu2);
+  }
+
+  .article-body a {
+    color: var(--blu);
+    text-decoration: underline;
+    text-decoration-color: #dce8ff;
+  }
+
+  .callout {
+    background: #e1f5ee;
+    border-left: 3px solid var(--verde);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    font-size: 14px;
+    color: var(--verde2);
+    margin: 1.5rem 0;
+    line-height: 1.7;
+  }
+
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #f0f4ff;
+    color: var(--blu);
+    font-weight: 500;
+    border: 1px solid #dce8ff;
+  }
+
+  /* ── NAVIGAZIONE ARTICOLO ── */
+  .article-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    gap: 1rem;
+  }
+
+  .nav-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blu);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: var(--bianco);
+    border: 1px solid #dce8ff;
+    transition: opacity .15s, transform .1s;
+  }
+
+  .nav-link:hover { opacity: .85; transform: translateY(-1px); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--blu2);
+    color: rgba(255,255,255,.55);
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  footer strong { color: rgba(255,255,255,.85); }
+  footer a { color: rgba(255,255,255,.75); text-decoration: none; }
+  footer a:hover { color: #fff; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .hero-inner { padding: 2.5rem 1.25rem 2rem; }
+    .article-body { padding: 1.8rem 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hero-inner">
+    <div class="breadcrumb">
+      <a href="../index.html">L'Archivio del Maestro Stefano Testa</a>
+      <span>/</span>
+      <a href="index.html">Blog &amp; Aggiornamenti</a>
+      <span>/</span>
+      <strong>Articolo</strong>
+    </div>
+    <div class="article-meta">
+      Intelligenza Artificiale
+      <span class="dot"></span>
+      <span class="date">13 Giugno 2026</span>
+    </div>
+    <h1 class="hero-title">Benvenuti nel Blog dell'Archivio</h1>
+    <p class="hero-sub">
+      Una nuova sezione dedicata agli aggiornamenti su AI ed educazione, alle novità
+      degli strumenti dell'Archivio e a riflessioni su didattica e inclusione.
+    </p>
+  </div>
+  <div class="wave"></div>
+</header>
+
+<main>
+  <div class="article-body">
+
+    <p>
+      Da oggi L'Archivio del Maestro Stefano Testa si arricchisce di una nuova sezione:
+      il <strong>Blog &amp; Aggiornamenti</strong>. Questo spazio nasce per raccogliere
+      riflessioni, novità e approfondimenti su un tema che attraversa sempre più
+      la scuola italiana: l'intelligenza artificiale applicata alla didattica e
+      all'inclusione.
+    </p>
+
+    <h2>Perché un blog</h2>
+    <p>
+      Gli strumenti raccolti in questo Archivio &mdash; dal Verbale GLO al PDP
+      BES/DSA, dalla Griglia ICF-CY al Lettore Diagnosi DSA-BES &mdash; nascono
+      da esigenze concrete del lavoro quotidiano a scuola. Allo stesso modo,
+      questo blog vuole essere uno spazio per condividere in modo semplice e
+      diretto:
+    </p>
+    <ul>
+      <li>aggiornamenti sugli strumenti dell'Archivio (nuove funzionalità, correzioni, novità);</li>
+      <li>novità rilevanti dal mondo dell'intelligenza artificiale applicata alla scuola
+        (nuovi modelli, strumenti per la didattica, novità su Gemini, NotebookLM, ChatGPT
+        e altri assistenti AI);</li>
+      <li>riflessioni su inclusione, BES/DSA e tecnologie assistive;</li>
+      <li>segnalazioni di normativa e iniziative del Ministero o di INDIRE quando
+        rilevanti per il lavoro quotidiano a scuola.</li>
+    </ul>
+
+    <div class="callout">
+      💡 <strong>Per i colleghi:</strong> questo spazio è pensato per essere utile
+      nel lavoro di tutti i giorni. Le segnalazioni più interessanti diventeranno
+      spunto per nuovi articoli, sempre con un occhio attento a cosa può davvero
+      semplificare la vita a scuola.
+    </div>
+
+    <h2>Cosa aspettarsi nei prossimi articoli</h2>
+    <p>
+      I prossimi contenuti seguiranno un ritmo regolare, basato anche su un digest
+      settimanale di aggiornamenti selezionati dal mondo dell'AI e della scuola.
+      Da lì nasceranno gli articoli più interessanti: novità su strumenti utili
+      per l'inclusione, aggiornamenti sui modelli AI più rilevanti per la didattica,
+      e naturalmente tutte le novità sugli strumenti di questo Archivio.
+    </p>
+
+    <p>
+      Buona lettura, e a presto con i prossimi aggiornamenti!
+    </p>
+
+    <div class="article-tags">
+      <span class="tag">AI &amp; Educazione</span>
+      <span class="tag">Novità Archivio</span>
+      <span class="tag">Blog</span>
+    </div>
+  </div>
+
+  <div class="article-nav">
+    <a href="index.html" class="nav-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Tutti gli articoli
+    </a>
+    <a href="../index.html" class="nav-link">
+      Torna all'Archivio
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+    </a>
+  </div>
+</main>
+
+<footer>
+  <strong>L'Archivio del Maestro Stefano Testa</strong> &mdash; Blog &amp; Aggiornamenti<br>
+  Istituto Comprensivo di Castelcovati &mdash; Via Martiri di Piazza Loggia 12, 25030 Castelcovati (BS)<br>
+  &copy; <span id="anno"></span> Stefano Testa &mdash; Tutti i diritti riservati
+</footer>
+
+<script>
+  document.getElementById("anno").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
