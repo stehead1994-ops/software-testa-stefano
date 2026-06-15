@@ -526,6 +526,174 @@
     .navbar-link { font-size: 12px; padding: 5px 10px; }
   }
 
+
+  /* ── LAYOUT CON SIDEBAR ── */
+  .page-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 2rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    align-items: start;
+  }
+
+  .sidebar-nav {
+    position: sticky;
+    top: 70px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    padding: 2rem 0 5rem;
+  }
+
+  .sidebar-block {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+  }
+
+  .sidebar-block-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sub);
+    padding: .8rem 1.1rem .5rem;
+    border-bottom: 1px solid #f0f4f8;
+  }
+
+  /* Ricerca */
+  .search-wrap {
+    padding: .8rem 1.1rem;
+    position: relative;
+  }
+
+  .search-wrap input {
+    width: 100%;
+    padding: 8px 12px 8px 33px;
+    border-radius: 9px;
+    border: 1.5px solid #dce8ff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--testo);
+    background: var(--grigio);
+    outline: none;
+    transition: border-color .15s;
+  }
+
+  .search-wrap input:focus { border-color: var(--blu); }
+
+  .search-icon {
+    position: absolute;
+    left: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--sub);
+    pointer-events: none;
+  }
+
+  /* Categorie sidebar */
+  .cat-nav-list {
+    list-style: none;
+    padding: .4rem 0;
+  }
+
+  .cat-nav-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .5rem 1.1rem;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--sub);
+    transition: background .12s, color .12s;
+    border-left: 3px solid transparent;
+    gap: .5rem;
+  }
+
+  .cat-nav-list li:hover {
+    background: #f0f4ff;
+    color: var(--blu2);
+  }
+
+  .cat-nav-list li.active {
+    background: #eef2ff;
+    color: var(--blu);
+    font-weight: 600;
+    border-left-color: var(--blu);
+  }
+
+  .cat-nav-count {
+    font-size: 10px;
+    background: #e8efff;
+    color: var(--blu);
+    border-radius: 20px;
+    padding: 1px 7px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .cat-nav-list li.active .cat-nav-count {
+    background: var(--blu);
+    color: #fff;
+  }
+
+  /* Contenuto principale */
+  .main-content {
+    padding: 2rem 0 5rem;
+    min-width: 0;
+  }
+
+  /* Barra ricerca risultati */
+  .search-results-bar {
+    display: none;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: 1.5rem;
+    padding: .7rem 1rem;
+    background: #eef2ff;
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--blu2);
+  }
+
+  .search-results-bar.visible { display: flex; }
+
+  .search-clear {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--blu);
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  /* Override main padding (ora gestito da .main-content) */
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  @media (max-width: 860px) {
+    .page-layout { grid-template-columns: 1fr; }
+    .sidebar-nav {
+      position: static;
+      padding: 1.5rem 0 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .8rem;
+    }
+    .sidebar-block:first-child { grid-column: 1 / -1; }
+    .main-content { padding-top: 0; }
+  }
+
+  @media (max-width: 480px) {
+    .sidebar-nav { grid-template-columns: 1fr; }
+  }
+
 </style>
 </head>
 <body>
@@ -560,7 +728,7 @@
 
 <main>
 
-  <div class="section-label">Guide &amp; Vademecum</div>
+  <div class="section-label" data-section="guide">Guide &amp; Vademecum</div>
 
   <div class="grid">
 
@@ -570,7 +738,7 @@
       <div class="card-body">
         <div class="card-icon" style="background:linear-gradient(135deg,#e8f0fe,#d6e8ff)">📘</div>
         <div class="card-cat">Vademecum &amp; Buone Prassi</div>
-        <div class="card-title">Le Buone Prassi per l'Inclusione</div>
+        <div class="card-title">Fare inclusione</div>
         <p class="card-desc">Vademecum operativo sul sostegno didattico per l'IC di Castelcovati: normativa, ruoli, procedure, PEI, GLO e indicazioni pratiche per docenti di sostegno e curricolari.</p>
         <div class="card-tags">
           <span class="tag">Vademecum</span>
@@ -616,7 +784,7 @@
 
   </div>
 
-  <div class="section-label">Disabilità &amp; Sostegno</div>
+  <div class="section-label" data-section="disabilita">Disabilità &amp; Sostegno</div>
 
   <div class="grid">
 
@@ -698,7 +866,7 @@
 
   </div>
 
-  <div class="section-label">Valutazione &amp; DSA-BES</div>
+  <div class="section-label" data-section="valutazione">Valutazione &amp; DSA-BES</div>
 
   <div class="grid">
 
@@ -729,7 +897,7 @@
 
   </div>
 
-  <div class="section-label">Gestione scolastica</div>
+  <div class="section-label" data-section="gestione">Gestione scolastica</div>
 
   <div class="grid">
 
@@ -760,7 +928,7 @@
 
   </div>
 
-  <div class="section-label">App e Giochi Didattici</div>
+  <div class="section-label" data-section="app">App e Giochi Didattici</div>
 
   <div class="grid">
 
@@ -870,5 +1038,112 @@
 <script>
   document.getElementById("anno").textContent = new Date().getFullYear();
 </script>
+
+<script id="sidebar-script">
+(function() {
+  // Mappa sezione label -> data-section
+  const sectionMap = {
+    'guide': 'guide',
+    'disabilita': 'disabilita',
+    'valutazione': 'valutazione',
+    'gestione': 'gestione',
+    'app': 'app',
+    'blog': 'blog',
+  };
+
+  // Raggruppa le card per sezione
+  function getCardsBySection() {
+    const groups = {};
+    const labels = document.querySelectorAll('.section-label[data-section]');
+    labels.forEach(label => {
+      const section = label.getAttribute('data-section');
+      const grid = label.nextElementSibling;
+      if (!grid) return;
+      const cards = Array.from(grid.querySelectorAll('.card, .chi-sono-card'));
+      groups[section] = { label, grid, cards };
+    });
+    return groups;
+  }
+
+  let activeSection = 'tutti';
+  let searchQuery = '';
+
+  function applyFilters() {
+    const groups = getCardsBySection();
+    const counts = { tutti: 0 };
+    Object.keys(sectionMap).forEach(s => counts[s] = 0);
+
+    Object.entries(groups).forEach(([section, { label, grid, cards }]) => {
+      const sectionMatch = activeSection === 'tutti' || activeSection === section;
+      let sectionVisible = false;
+
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        const searchMatch = !searchQuery || text.includes(searchQuery);
+        const show = sectionMatch && searchMatch;
+        card.style.display = show ? '' : 'none';
+        if (show) {
+          counts[section] = (counts[section] || 0) + 1;
+          counts.tutti++;
+          sectionVisible = true;
+        }
+      });
+
+      label.style.display = sectionMatch ? '' : 'none';
+      grid.style.display = sectionMatch ? '' : 'none';
+    });
+
+    // Aggiorna contatori sidebar
+    Object.entries(counts).forEach(([s, n]) => {
+      const el = document.getElementById('cnc-' + s);
+      if (el) el.textContent = n;
+    });
+
+    // Barra risultati ricerca
+    const bar = document.getElementById('search-results-bar');
+    const txt = document.getElementById('search-results-text');
+    if (searchQuery) {
+      bar.classList.add('visible');
+      txt.textContent = counts.tutti === 1 ? '1 risultato per "' + searchQuery + '"' : counts.tutti + ' risultati per "' + searchQuery + '"';
+    } else {
+      bar.classList.remove('visible');
+    }
+  }
+
+  // Categoria sidebar
+  document.getElementById('cat-nav-list').addEventListener('click', function(e) {
+    const li = e.target.closest('li[data-section]');
+    if (!li) return;
+    document.querySelectorAll('.cat-nav-list li').forEach(el => el.classList.remove('active'));
+    li.classList.add('active');
+    activeSection = li.getAttribute('data-section');
+    searchQuery = '';
+    document.getElementById('main-search').value = '';
+    applyFilters();
+  });
+
+  // Ricerca
+  document.getElementById('main-search').addEventListener('input', function(e) {
+    searchQuery = e.target.value.toLowerCase().trim();
+    if (searchQuery) {
+      activeSection = 'tutti';
+      document.querySelectorAll('.cat-nav-list li').forEach(el => el.classList.remove('active'));
+      document.querySelector('.cat-nav-list li[data-section="tutti"]').classList.add('active');
+    }
+    applyFilters();
+  });
+
+  // Cancella ricerca
+  document.getElementById('search-clear').addEventListener('click', function() {
+    document.getElementById('main-search').value = '';
+    searchQuery = '';
+    applyFilters();
+  });
+
+  // Init
+  applyFilters();
+})();
+</script>
+
 </body>
 </html>
