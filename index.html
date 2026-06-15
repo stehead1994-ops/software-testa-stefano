@@ -694,6 +694,33 @@
 </header>
 
 <main>
+<div class="page-layout">
+  <aside class="sidebar-nav">
+    <div class="sidebar-block">
+      <div class="sidebar-block-title">Cerca</div>
+      <div class="search-wrap">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="main-search" placeholder="Cerca strumenti..." />
+      </div>
+    </div>
+    <div class="sidebar-block">
+      <div class="sidebar-block-title">Sezioni</div>
+      <ul class="cat-nav-list" id="cat-nav-list">
+        <li class="active" data-section="tutti">Tutti <span class="cat-nav-count" id="cnc-tutti">0</span></li>
+        <li data-section="guide">📚 Guide &amp; Vademecum <span class="cat-nav-count" id="cnc-guide">0</span></li>
+        <li data-section="disabilita">♿ Disabilità &amp; Sostegno <span class="cat-nav-count" id="cnc-disabilita">0</span></li>
+        <li data-section="valutazione">📊 Valutazione &amp; DSA-BES <span class="cat-nav-count" id="cnc-valutazione">0</span></li>
+        <li data-section="gestione">🏫 Gestione scolastica <span class="cat-nav-count" id="cnc-gestione">0</span></li>
+        <li data-section="app">🎮 App e Giochi Didattici <span class="cat-nav-count" id="cnc-app">0</span></li>
+      </ul>
+    </div>
+  </aside>
+  <div class="main-content">
+    <div class="search-results-bar" id="search-results-bar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span id="search-results-text"></span>
+      <span class="search-clear" id="search-clear">✕ Cancella ricerca</span>
+    </div>
 
   <div class="section-label" data-section="guide">Guide &amp; Vademecum</div>
 
@@ -951,6 +978,8 @@
 
   </div>
 
+  </div><!-- /.main-content -->
+</div><!-- /.page-layout -->
 </main>
 
 <div class="chi-sono-section">
