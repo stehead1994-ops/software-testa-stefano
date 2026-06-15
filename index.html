@@ -474,6 +474,8 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
   }
 
   .navbar-brand span { color: var(--oro); }
@@ -509,9 +511,10 @@
 
   .navbar-link-blog {
     background: var(--oro);
-    color: var(--blu2) !important;
+    color: #00205c !important;
     font-weight: 700 !important;
     padding: 6px 16px;
+    border-radius: 8px;
   }
 
   .navbar-link-blog:hover {
@@ -521,9 +524,9 @@
 
   body { padding-top: 52px; }
 
-  @media (max-width: 480px) {
-    .navbar-brand { font-size: 13px; }
-    .navbar-link { font-size: 12px; padding: 5px 10px; }
+  @media (max-width: 600px) {
+    .navbar-brand { font-size: 12px; }
+    .navbar-link { font-size: 11px; padding: 5px 8px; }
   }
 
 
