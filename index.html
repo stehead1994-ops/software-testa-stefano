@@ -437,9 +437,108 @@
   /* ── FIRMA NEL FOOTER ── */
 
 
+
+  /* ── NAVBAR ── */
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(0, 32, 92, 0.97);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    height: 52px;
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .navbar-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .navbar-brand span { color: var(--oro); }
+
+  .navbar-links {
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+    flex-shrink: 0;
+  }
+
+  .navbar-link {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,.75);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: background .15s, color .15s;
+    white-space: nowrap;
+  }
+
+  .navbar-link:hover {
+    background: rgba(255,255,255,.1);
+    color: #fff;
+  }
+
+  .navbar-link.active {
+    background: rgba(200,168,75,.15);
+    color: var(--oro);
+    font-weight: 600;
+  }
+
+  .navbar-link-blog {
+    background: var(--oro);
+    color: var(--blu2) !important;
+    font-weight: 700 !important;
+    padding: 6px 16px;
+  }
+
+  .navbar-link-blog:hover {
+    background: #d4b05a !important;
+    color: var(--blu2) !important;
+  }
+
+  body { padding-top: 52px; }
+
+  @media (max-width: 480px) {
+    .navbar-brand { font-size: 13px; }
+    .navbar-link { font-size: 12px; padding: 5px 10px; }
+  }
+
 </style>
 </head>
 <body>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-brand">L'Archivio del <span>Maestro Stefano Testa</span></a>
+    <div class="navbar-links">
+      <a href="index.html" class="navbar-link active">🏠 Archivio</a>
+      <a href="blog/index.html" class="navbar-link navbar-link-blog">✍️ Blog &amp; News</a>
+    </div>
+  </div>
+</nav>
+
 
 <header>
   <div class="hero-inner">
