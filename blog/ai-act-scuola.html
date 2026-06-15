@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Act e scuola: cosa cambia davvero per docenti e dirigenti — L'Archivio del Maestro Stefano Testa</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blu:    #003087;
+    --blu2:   #00205c;
+    --verde:  #1D9E75;
+    --verde2: #085041;
+    --oro:    #c8a84b;
+    --bianco: #ffffff;
+    --grigio: #f4f6f9;
+    --testo:  #1a1a2e;
+    --sub:    #5a6a85;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--grigio);
+    color: var(--testo);
+    min-height: 100vh;
+  }
+
+  /* ── NAVBAR ── */
+  .navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(0,32,92,.97);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    height: 52px;
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .navbar-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .navbar-brand span { color: var(--oro); }
+
+  .navbar-links { display: flex; align-items: center; gap: .25rem; }
+
+  .navbar-link {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,.75);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: background .15s, color .15s;
+  }
+
+  .navbar-link:hover { background: rgba(255,255,255,.1); color: #fff; }
+
+  .navbar-link-blog {
+    background: var(--oro);
+    color: var(--blu2) !important;
+    font-weight: 700 !important;
+    padding: 6px 16px;
+    border-radius: 8px;
+  }
+
+  body { padding-top: 52px; }
+
+  /* ── HERO ── */
+  header {
+    background: linear-gradient(135deg, var(--blu2) 0%, var(--blu) 60%, #004ab3 100%);
+    color: var(--bianco);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 110% 120%, rgba(29,158,117,.25) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at -10% -10%, rgba(200,168,75,.15) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  header::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 3.5rem 2rem 3rem;
+  }
+
+  .breadcrumb {
+    font-size: 13px;
+    margin-bottom: 1.4rem;
+  }
+  .breadcrumb a { color: rgba(255,255,255,.75); text-decoration: none; }
+  .breadcrumb a:hover { color: #fff; }
+  .breadcrumb span { color: rgba(255,255,255,.4); margin: 0 6px; }
+  .breadcrumb strong { color: var(--oro); }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--oro);
+    margin-bottom: 1.2rem;
+  }
+
+  .article-meta .dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.4); }
+  .article-meta .date { color: rgba(255,255,255,.65); letter-spacing: normal; text-transform: none; font-weight: 500; }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4.2vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    letter-spacing: -.5px;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(255,255,255,.75);
+    line-height: 1.7;
+  }
+
+  .wave {
+    display: block;
+    width: 100%;
+    height: 60px;
+    background: var(--grigio);
+    clip-path: ellipse(55% 100% at 50% 100%);
+    margin-top: -2px;
+  }
+
+  /* ── CONTENUTO ── */
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
+  }
+
+  .article-body {
+    background: var(--bianco);
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    padding: 2.5rem;
+  }
+
+  .article-body h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 21px;
+    color: var(--blu2);
+    margin: 2rem 0 .8rem;
+    line-height: 1.3;
+  }
+
+  .article-body h2:first-child { margin-top: 0; }
+
+  .article-body p {
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--testo);
+    margin-bottom: 1rem;
+  }
+
+  .article-body ul, .article-body ol {
+    margin: 0 0 1rem 1.4rem;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--testo);
+  }
+
+  .article-body li { margin-bottom: .5rem; }
+
+  .article-body strong { color: var(--blu2); }
+
+  .article-body a { color: var(--blu); text-decoration: underline; text-decoration-color: #dce8ff; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: 10px;
+    padding: 1.1rem 1.3rem;
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 1.5rem 0;
+  }
+
+  .callout-verde {
+    background: #e1f5ee;
+    border-left: 3px solid var(--verde);
+    color: var(--verde2);
+  }
+
+  .callout-blu {
+    background: #eef2ff;
+    border-left: 3px solid var(--blu);
+    color: var(--blu2);
+  }
+
+  .callout-oro {
+    background: #fdf6e3;
+    border-left: 3px solid var(--oro);
+    color: #7a5c00;
+  }
+
+  /* ── TABELLA RUOLI ── */
+  .ruoli-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .8rem;
+    margin: 1.5rem 0;
+  }
+
+  .ruolo-card {
+    background: var(--grigio);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+    border: 1px solid #e2e8f0;
+  }
+
+  .ruolo-card .ruolo-titolo {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--blu);
+    margin-bottom: .5rem;
+  }
+
+  .ruolo-card p {
+    font-size: 13px;
+    color: var(--sub);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: .5rem;
+  }
+
+  .badge-verde { background: #d1fae5; color: #065f46; }
+  .badge-rosso { background: #fee2e2; color: #991b1b; }
+  .badge-oro { background: #fef3c7; color: #92400e; }
+
+  /* ── TAGS ── */
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #f0f4ff;
+    color: var(--blu);
+    font-weight: 500;
+    border: 1px solid #dce8ff;
+  }
+
+  /* ── NAVIGAZIONE ── */
+  .article-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    gap: 1rem;
+  }
+
+  .nav-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blu);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: var(--bianco);
+    border: 1px solid #dce8ff;
+    transition: opacity .15s, transform .1s;
+  }
+
+  .nav-link:hover { opacity: .85; transform: translateY(-1px); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--blu2);
+    color: rgba(255,255,255,.55);
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  footer strong { color: rgba(255,255,255,.85); }
+  footer a { color: rgba(255,255,255,.75); text-decoration: none; }
+  footer a:hover { color: #fff; }
+
+  @media (max-width: 600px) {
+    .hero-inner { padding: 2.5rem 1.25rem 2rem; }
+    .article-body { padding: 1.8rem 1.4rem; }
+    .ruoli-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="navbar-brand">L'Archivio del <span>Maestro Stefano Testa</span></a>
+    <div class="navbar-links">
+      <a href="../index.html" class="navbar-link">🏠 Archivio</a>
+      <a href="index.html" class="navbar-link navbar-link-blog">✍️ Blog &amp; News</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="hero-inner">
+    <div class="breadcrumb">
+      <a href="../index.html">L'Archivio del Maestro Stefano Testa</a>
+      <span>/</span>
+      <a href="index.html">Blog &amp; Aggiornamenti</a>
+      <span>/</span>
+      <strong>Articolo</strong>
+    </div>
+    <div class="article-meta">
+      Normativa &amp; Scuola
+      <span class="dot"></span>
+      <span class="date">15 Giugno 2026</span>
+    </div>
+    <h1 class="hero-title">AI Act e scuola: cosa cambia davvero per docenti e dirigenti</h1>
+    <p class="hero-sub">
+      Dal 2 febbraio 2025 è entrato in vigore l'obbligo di alfabetizzazione sull'IA per tutto il personale scolastico. Non è fantascienza normativa: riguarda noi, adesso.
+    </p>
+  </div>
+  <div class="wave"></div>
+</header>
+
+<main>
+  <div class="article-body">
+
+    <p>
+      Nelle ultime settimane qualche collega me lo ha chiesto: <strong>"Ma questo AI Act ci riguarda davvero?"</strong>
+      La risposta breve è sì. La risposta più onesta è: ci riguarda, ma ancora brancoliamo un po' nel buio — e non siamo i soli.
+      Questo articolo prova a fare chiarezza su cosa sapere, senza perdersi nei tecnicismi.
+    </p>
+
+    <h2>Cos'è l'AI Act in due righe</h2>
+
+    <p>
+      Il <strong>Regolamento UE 2024/1689</strong> — conosciuto come AI Act — è la prima legge europea sull'intelligenza artificiale. È entrato in vigore il 1° agosto 2024 e si applica progressivamente: dal <strong>2 febbraio 2025</strong> è già operativo l'articolo che ci interessa di più come scuola, quello sull'<strong>alfabetizzazione AI</strong>.
+    </p>
+
+    <div class="callout callout-blu">
+      📌 <strong>Articolo 4 AI Act:</strong> chi usa sistemi di intelligenza artificiale (i cosiddetti <em>deployer</em>) deve garantire che il proprio personale abbia un livello sufficiente di alfabetizzazione sull'IA. Le scuole sono deployer — anche se non lo sanno.
+    </div>
+
+    <h2>La scuola è un deployer. Sempre.</h2>
+
+    <p>
+      Questa è la parte che sorprende di più. Non serve avere comprato un chatbot o un sistema di AI avanzato: se la scuola usa <strong>registro elettronico, classificazione automatica della posta, strumenti di reportistica, piattaforme digitali</strong> — e tutte le scuole lo fanno — sta già usando sistemi che rientrano nella definizione di AI dell'Unione Europea.
+    </p>
+
+    <p>
+      Questo significa che l'obbligo formativo non è facoltativo e non è solo per chi usa ChatGPT in classe. <strong>Riguarda tutto il personale</strong>: docenti, ATA, DSGA, collaboratori scolastici, dirigenti.
+    </p>
+
+    <h2>Cosa deve fare (concretamente) ogni figura</h2>
+
+    <div class="ruoli-grid">
+      <div class="ruolo-card">
+        <div class="ruolo-titolo">👩‍🏫 Docenti</div>
+        <p>Capire come funziona l'IA generativa, usarla criticamente in classe, saper riconoscere contenuti generati dall'AI e bias algoritmici.</p>
+      </div>
+      <div class="ruolo-card">
+        <div class="ruolo-titolo">🗂️ Personale ATA</div>
+        <p>Consapevolezza dei sistemi automatizzati già in uso, gestione dei dati, capire cosa fa il software che usa ogni giorno.</p>
+      </div>
+      <div class="ruolo-card">
+        <div class="ruolo-titolo">📊 DSGA</div>
+        <p>Governance dei dati, valutazione dei sistemi AI adottati dalla scuola, conformità GDPR in relazione all'AI.</p>
+      </div>
+      <div class="ruolo-card">
+        <div class="ruolo-titolo">🏫 Dirigenti</div>
+        <p>Responsabilità dell'istituto come deployer, elaborazione del Piano AI di istituto, adempimenti formali AI Act.</p>
+      </div>
+    </div>
+
+    <h2>E le Linee guida MIM?</h2>
+
+    <p>
+      A questa cornice europea si affianca il piano nazionale: le <strong>Linee guida del Ministero</strong> richiedono che ogni istituto elabori un <strong>documento di pianificazione per l'adozione dell'IA</strong> e preveda percorsi formativi per il personale. Non è più una buona pratica opzionale — è un adempimento istituzionale.
+    </p>
+
+    <div class="callout callout-oro">
+      ⚠️ <strong>Attenzione:</strong> la formazione sull'AI Act deve essere <em>documentata</em>. Non basta fare un'ora di aggiornamento informale: serve un percorso tracciabile, con attestato, che dimostri che l'istituzione ha adempiuto all'obbligo dell'articolo 4.
+    </div>
+
+    <h2>Cosa stiamo facendo alla nostra scuola</h2>
+
+    <p>
+      Al nostro Istituto Comprensivo abbiamo iniziato a muoverci sul fronte del <strong>DigComp</strong> — il quadro europeo delle competenze digitali — inserendo alcuni obiettivi nei documenti di programmazione. Un primo passo concreto, anche se onestamente sul fronte dell'AI Act specifico c'è ancora molto da costruire: su cosa si può fare, cosa no, come documentare, come formare il personale in modo efficace.
+    </p>
+
+    <p>
+      Credo sia la situazione della maggior parte delle scuole italiane in questo momento. E non è una colpa — la normativa è nuova, la sua applicazione concreta alla realtà scolastica non è sempre immediata da interpretare.
+    </p>
+
+    <h2>Tre cose da fare subito</h2>
+
+    <ol>
+      <li><strong>Verificare</strong> quali strumenti digitali usa la scuola e capire se rientrano nella definizione di AI (quasi certamente sì).</li>
+      <li><strong>Pianificare</strong> un percorso formativo per il personale — anche asincrono — che rilasci un attestato valido ai fini dell'articolo 4.</li>
+      <li><strong>Documentare</strong> tutto: il Piano AI di istituto, le formazioni erogate, le misure adottate.</li>
+    </ol>
+
+    <div class="callout callout-verde">
+      💡 <strong>Spunto pratico:</strong> se non sapete da dove partire, il <strong>DigCompEdu</strong> (framework europeo per le competenze digitali dei docenti) e il <strong>DigComp 3.0</strong> sono ottimi punti di riferimento anche per strutturare la formazione sull'AI in modo coerente con i documenti di programmazione già esistenti.
+    </div>
+
+    <h2>La sintesi in una frase</h2>
+
+    <p>
+      L'AI Act non è una questione per esperti di informatica: è una questione di responsabilità istituzionale. La scuola usa l'IA — consapevolmente o no — e deve formare il personale di conseguenza. Iniziare adesso, anche in piccolo, è meglio che aspettare una circolare ministeriale che spieghi tutto.
+    </p>
+
+    <p>
+      Nei prossimi mesi continuerò ad aggiornare questo blog con le novità normative e con gli strumenti pratici che trovo utili nel lavoro quotidiano. Se avete domande o esperienze da condividere sulla vostra scuola, scrivetemi.
+    </p>
+
+    <div class="article-tags">
+      <span class="tag">AI Act</span>
+      <span class="tag">Normativa</span>
+      <span class="tag">Intelligenza Artificiale</span>
+      <span class="tag">Formazione docenti</span>
+      <span class="tag">DigComp</span>
+      <span class="tag">Inclusione</span>
+    </div>
+  </div>
+
+  <div class="article-nav">
+    <a href="index.html" class="nav-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Tutti gli articoli
+    </a>
+    <a href="../index.html" class="nav-link">
+      Torna all'Archivio
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+</main>
+
+<footer>
+  <strong>L'Archivio del Maestro Stefano Testa</strong> &mdash; Blog &amp; Aggiornamenti<br>
+  <a href="index.html">&larr; Torna al Blog</a> &mdash; &copy; <span id="anno"></span> Stefano Testa &mdash; Tutti i diritti riservati
+</footer>
+
+<script>
+  document.getElementById("anno").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
