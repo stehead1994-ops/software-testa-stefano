@@ -356,6 +356,72 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </a>
   </div>
+  <!-- ── DOMANDE & CONFRONTO ── -->
+  <div style="margin-top:2.5rem;padding-top:2rem;border-top:1px solid #e2e8f0;max-width:640px">
+    <h3 style="font-family:'Playfair Display',serif;font-size:18px;color:#00205c;margin-bottom:.5rem">Domande &amp; Confronto</h3>
+    <p style="font-size:13.5px;color:#5a6a85;margin-bottom:1.4rem;line-height:1.6">
+      Hai una domanda su questo articolo o vuoi aggiungere la tua esperienza? Scrivi liberamente qui sotto,
+      senza bisogno di nessun account: il messaggio arriva direttamente a me.
+    </p>
+
+    <form id="domanda-form" action="https://formspree.io/f/xdarnrln" method="POST">
+      <input type="hidden" name="articolo" value="Ore di sostegno nel GLO: quando ognuno vede la disabilità a modo suo">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div>
+          <label for="df-nome" style="display:block;font-size:11.5px;color:#5a6a85;margin-bottom:4px">Nome (facoltativo)</label>
+          <input type="text" id="df-nome" name="nome" placeholder="Il tuo nome"
+                 style="width:100%;padding:9px 11px;border:1px solid #dce8ff;border-radius:8px;font-size:13.5px;font-family:inherit;box-sizing:border-box">
+        </div>
+        <div>
+          <label for="df-email" style="display:block;font-size:11.5px;color:#5a6a85;margin-bottom:4px">Email (se vuoi una risposta)</label>
+          <input type="email" id="df-email" name="email" placeholder="nome@esempio.it"
+                 style="width:100%;padding:9px 11px;border:1px solid #dce8ff;border-radius:8px;font-size:13.5px;font-family:inherit;box-sizing:border-box">
+        </div>
+      </div>
+      <div style="margin-bottom:12px">
+        <label for="df-messaggio" style="display:block;font-size:11.5px;color:#5a6a85;margin-bottom:4px">La tua domanda o commento</label>
+        <textarea id="df-messaggio" name="messaggio" rows="4" required placeholder="Scrivi qui..."
+                  style="width:100%;padding:9px 11px;border:1px solid #dce8ff;border-radius:8px;font-size:13.5px;font-family:inherit;resize:vertical;box-sizing:border-box"></textarea>
+      </div>
+      <button type="submit" id="df-submit"
+              style="background:linear-gradient(135deg,#003087,#0044c8);color:#fff;border:none;padding:10px 24px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer">
+        Invia
+      </button>
+      <div id="df-msg" style="margin-top:10px;font-size:12.5px"></div>
+    </form>
+
+    <script>
+      document.getElementById('domanda-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const btn = document.getElementById('df-submit');
+        const msg = document.getElementById('df-msg');
+        btn.disabled = true;
+        btn.textContent = 'Invio in corso...';
+        try {
+          const resp = await fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'Accept': 'application/json' }
+          });
+          if (resp.ok) {
+            msg.style.color = '#1D9E75';
+            msg.textContent = '✓ Messaggio inviato, grazie! Ti rispondero appena possibile.';
+            form.reset();
+          } else {
+            msg.style.color = '#c0392b';
+            msg.textContent = 'Si e verificato un problema. Riprova tra poco.';
+          }
+        } catch (err) {
+          msg.style.color = '#c0392b';
+          msg.textContent = 'Si e verificato un problema di connessione. Riprova.';
+        }
+        btn.disabled = false;
+        btn.textContent = 'Invia';
+      });
+    </script>
+  </div>
+
 </main>
 
 <footer>
