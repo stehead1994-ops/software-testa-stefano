@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BJBGYSKRRV"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-BJBGYSKRRV');
-</script>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>L'Archivio del Maestro Stefano Testa</title>
@@ -785,7 +776,7 @@
         <li class="active" data-section="tutti">Tutti <span class="cat-nav-count" id="cnc-tutti">0</span></li>
         <li data-section="guide">📚 Guide &amp; Vademecum <span class="cat-nav-count" id="cnc-guide">0</span></li>
         <li data-section="disabilita">♿ Disabilità &amp; Sostegno <span class="cat-nav-count" id="cnc-disabilita">0</span></li>
-        <li data-section="valutazione">📊 Strumenti DSA-BES <span class="cat-nav-count" id="cnc-valutazione">0</span></li>
+        <li data-section="valutazione">📊 Valutazione &amp; DSA-BES <span class="cat-nav-count" id="cnc-valutazione">0</span></li>
         <li data-section="gestione">🏫 Gestione scolastica <span class="cat-nav-count" id="cnc-gestione">0</span></li>
         <li data-section="app">🎮 App e Giochi Didattici <span class="cat-nav-count" id="cnc-app">0</span></li>
       </ul>
@@ -936,7 +927,7 @@
 
   </div>
 
-  <div class="section-label" data-section="valutazione">Strumenti DSA-BES</div>
+  <div class="section-label" data-section="valutazione">Valutazione &amp; DSA-BES</div>
 
   <div class="grid">
 
@@ -960,31 +951,6 @@
           ⬇ Scarica
         </a>
         <a class="btn-dl btn-dl-secondary" href="allegato_firme_pdp.html" target="_blank" title="Apri nel browser">
-          ↗
-        </a>
-      </div>
-    </div>
-
-    <!-- ── MOTIVAZIONE NON STESURA PDP ── -->
-    <div class="card fade-up">
-      <div class="card-accent"></div>
-      <div class="card-body">
-        <div class="card-icon">📋</div>
-        <div class="card-cat">Inclusione &amp; BES</div>
-        <div class="card-title">Motivazione Non Stesura PDP</div>
-        <p class="card-desc">Modulo digitale per la dichiarazione di non stesura del PDP per alunni con diagnosi BES, ad uso del Gruppo Docenti o del Consiglio di Classe. Motivazioni personalizzabili e stampa diretta.</p>
-        <div class="card-tags">
-          <span class="tag">HTML standalone</span>
-          <span class="tag">PDP / DSA / BES</span>
-          <span class="tag">Non stesura</span>
-          <span class="tag">Stampa PDF</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <a class="btn-dl btn-dl-primary" href="motivazione_non_stesura_pdp.html" download>
-          ⬇ Scarica
-        </a>
-        <a class="btn-dl btn-dl-secondary" href="motivazione_non_stesura_pdp.html" target="_blank" title="Apri nel browser">
           ↗
         </a>
       </div>
@@ -1082,6 +1048,72 @@
   </div><!-- /.main-content -->
 </div><!-- /.page-layout -->
 </main>
+
+<div class="chi-sono-section" style="border-top:1px solid #e2e8f0">
+  <div class="chi-sono-inner">
+    <div class="section-label">Domande &amp; Confronto</div>
+    <p style="font-size:14px;color:var(--sub);margin-bottom:1.8rem;max-width:700px">
+      Hai una domanda su uno strumento, un suggerimento o vuoi segnalare qualcosa?
+      Scrivi liberamente qui sotto, senza bisogno di nessun account: il messaggio arriva direttamente a me.
+    </p>
+
+    <form id="domanda-form" action="https://formspree.io/f/xdarnrln" method="POST" style="max-width:560px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div>
+          <label for="df-nome" style="display:block;font-size:12px;color:var(--sub);margin-bottom:5px">Nome (facoltativo)</label>
+          <input type="text" id="df-nome" name="nome" placeholder="Il tuo nome"
+                 style="width:100%;padding:10px 12px;border:1px solid #dce8ff;border-radius:8px;font-size:14px;font-family:inherit">
+        </div>
+        <div>
+          <label for="df-email" style="display:block;font-size:12px;color:var(--sub);margin-bottom:5px">Email (se vuoi una risposta)</label>
+          <input type="email" id="df-email" name="email" placeholder="nome@esempio.it"
+                 style="width:100%;padding:10px 12px;border:1px solid #dce8ff;border-radius:8px;font-size:14px;font-family:inherit">
+        </div>
+      </div>
+      <div style="margin-bottom:14px">
+        <label for="df-messaggio" style="display:block;font-size:12px;color:var(--sub);margin-bottom:5px">La tua domanda o commento</label>
+        <textarea id="df-messaggio" name="messaggio" rows="4" required placeholder="Scrivi qui..."
+                  style="width:100%;padding:10px 12px;border:1px solid #dce8ff;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical"></textarea>
+      </div>
+      <button type="submit" id="df-submit"
+              style="background:linear-gradient(135deg,var(--blu),#0044c8);color:#fff;border:none;padding:11px 26px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">
+        Invia
+      </button>
+      <div id="df-msg" style="margin-top:12px;font-size:13px"></div>
+    </form>
+
+    <script>
+      const dfForm = document.getElementById('domanda-form');
+      dfForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('df-submit');
+        const msg = document.getElementById('df-msg');
+        btn.disabled = true;
+        btn.textContent = 'Invio in corso...';
+        try {
+          const resp = await fetch(dfForm.action, {
+            method: 'POST',
+            body: new FormData(dfForm),
+            headers: { 'Accept': 'application/json' }
+          });
+          if (resp.ok) {
+            msg.style.color = '#1D9E75';
+            msg.textContent = '✓ Messaggio inviato, grazie! Ti risponderò appena possibile.';
+            dfForm.reset();
+          } else {
+            msg.style.color = '#c0392b';
+            msg.textContent = 'Si è verificato un problema. Riprova tra poco.';
+          }
+        } catch (err) {
+          msg.style.color = '#c0392b';
+          msg.textContent = 'Si è verificato un problema di connessione. Riprova.';
+        }
+        btn.disabled = false;
+        btn.textContent = 'Invia';
+      });
+    </script>
+  </div>
+</div>
 
 <div class="chi-sono-section">
   <div class="chi-sono-inner">
