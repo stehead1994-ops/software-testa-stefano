@@ -91,6 +91,76 @@
     text-transform: uppercase; letter-spacing: 0.03em;
   }
 
+  /* ── FIRMA: trigger cliccabile nel form ── */
+  .firma-trigger {
+    position: relative;
+    border: 1.5px dashed var(--bordo); border-radius: 8px;
+    background: #fafbfd; cursor: pointer; overflow: hidden;
+    max-width: 420px; transition: border-color 0.15s, background 0.15s;
+  }
+  .firma-trigger:hover { border-color: var(--verde); background: var(--luce); }
+  .firma-trigger:hover .firma-trigger-overlay { opacity: 1; }
+  #firma-anteprima { display: block; width: 100%; height: 110px; pointer-events: none; }
+  .firma-trigger-overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.85);
+    font-size: 0.85rem; font-weight: 600; color: var(--verde);
+    opacity: 0; transition: opacity 0.15s; pointer-events: none;
+  }
+  .firma-trigger.ha-firma .firma-trigger-overlay { background: rgba(255,255,255,0.55); }
+
+  /* ── FIRMA: overlay dedicato a schermo intero ── */
+  .firma-overlay {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    background: rgba(10,15,30,0.55);
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .firma-overlay.aperto { display: flex; }
+  .firma-pannello {
+    background: white; border-radius: 14px;
+    width: 100%; max-width: 640px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;
+  }
+  .firma-pannello-header {
+    background: var(--blu); color: white;
+    padding: 14px 20px; font-size: 0.9rem; font-weight: 700;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .firma-chiudi {
+    background: none; border: none; color: white;
+    font-size: 1.4rem; line-height: 1; cursor: pointer; opacity: 0.8; padding: 0 4px;
+  }
+  .firma-chiudi:hover { opacity: 1; }
+  .firma-superficie-wrap {
+    position: relative;
+    background: repeating-linear-gradient(0deg, #fafbfd, #fafbfd 24px, #f0f2f6 25px);
+    border-bottom: 1px solid var(--bordo);
+  }
+  .firma-canvas {
+    display: block; width: 100%; height: 240px;
+    cursor: crosshair; touch-action: none;
+  }
+  .firma-placeholder {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    font-size: 0.9rem; color: #bbb; pointer-events: none;
+  }
+  .firma-pannello-footer {
+    padding: 14px 20px; display: flex; justify-content: flex-end; gap: 10px;
+  }
+  .btn-clear-firma {
+    background: none; border: 1px solid #ddd; border-radius: 6px;
+    color: #888; font-size: 0.8rem; cursor: pointer; padding: 8px 16px;
+    transition: background 0.15s;
+  }
+  .btn-clear-firma:hover { background: #fdecea; color: #c0392b; border-color: #f5c6c2; }
+  .btn-conferma-firma {
+    background: var(--verde); border: none; border-radius: 6px;
+    color: white; font-size: 0.84rem; font-weight: 700; cursor: pointer;
+    padding: 8px 20px; transition: background 0.15s;
+  }
+  .btn-conferma-firma:hover { background: #178c66; }
+
   /* ── BOTTONI ── */
   .azioni { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
   .btn { display: inline-flex; align-items: center; gap: 7px; padding: 11px 24px; border-radius: 8px; font-size: 0.9rem; font-weight: 700; cursor: pointer; border: none; transition: opacity 0.15s, transform 0.1s; letter-spacing: 0.02em; }
@@ -134,6 +204,10 @@
     .btn-aggiungi, .btn-rimuovi { display: none !important; }
     .riepilogo-doc { background: transparent !important; border: 1pt solid #ccc; font-size: 10.5pt; line-height: 1.9; }
     .riga-firma-stampa { margin-top: 22pt; }
+    .firma-overlay { display: none !important; }
+    .firma-trigger { border: 1pt solid #ccc; cursor: default; max-width: 280px; }
+    .firma-trigger-overlay { display: none !important; }
+    #firma-anteprima { height: 80px; }
   }
 </style>
 </head>
@@ -310,6 +384,33 @@
           <input type="text" id="nome-coordinatore" placeholder="Nome e Cognome">
         </div>
       </div>
+      <div style="margin-top:16px;">
+        <label>Firma del coordinatore</label>
+        <div class="firma-trigger" id="firma-trigger" onclick="apriFirma()">
+          <canvas id="firma-anteprima"></canvas>
+          <div class="firma-trigger-overlay" id="firma-trigger-overlay">
+            <span>&#9998; Clicca per firmare</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAY FIRMA -->
+  <div class="firma-overlay" id="firma-overlay">
+    <div class="firma-pannello">
+      <div class="firma-pannello-header">
+        <span>&#9998; Firma del coordinatore</span>
+        <button type="button" class="firma-chiudi" onclick="chiudiFirmaSenzaSalvare()" title="Chiudi senza salvare">&times;</button>
+      </div>
+      <div class="firma-superficie-wrap">
+        <canvas id="canvas-firma" class="firma-canvas"></canvas>
+        <div class="firma-placeholder" id="firma-placeholder">Tieni premuto e disegna la firma</div>
+      </div>
+      <div class="firma-pannello-footer">
+        <button type="button" class="btn-clear-firma" onclick="clearFirma()">Cancella</button>
+        <button type="button" class="btn-conferma-firma" onclick="confermaFirma()">&#10003; Fatto</button>
+      </div>
     </div>
   </div>
 
@@ -422,8 +523,148 @@ function aggiornaTesto() {
   document.getElementById('label-firma-gruppo').innerHTML = labelFirma;
 }
 
+/* ── FIRMA: overlay dedicato, tieni premuto e disegna ── */
+var firmaCanvas, firmaCtx, firmaDisegnando = false, firmaHaContenuto = false, firmaInizializzata = false;
+
+function apriFirma() {
+  document.getElementById('firma-overlay').classList.add('aperto');
+  document.body.style.overflow = 'hidden';
+  // Il canvas va inizializzato/ridimensionato SOLO ora che l'overlay e'
+  // davvero visibile: prima sarebbe display:none e avrebbe dimensioni 0x0.
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      if (!firmaInizializzata) { initFirma(); firmaInizializzata = true; }
+      else { ridimensionaCanvasFirma(); ridisegnaDaAnteprima(); }
+    });
+  });
+}
+
+function chiudiFirmaSenzaSalvare() {
+  document.getElementById('firma-overlay').classList.remove('aperto');
+  document.body.style.overflow = '';
+}
+
+function confermaFirma() {
+  salvaAnteprimaFirma();
+  chiudiFirmaSenzaSalvare();
+}
+
+function initFirma() {
+  firmaCanvas = document.getElementById('canvas-firma');
+  if (!firmaCanvas) return;
+  firmaCtx = firmaCanvas.getContext('2d');
+  ridimensionaCanvasFirma();
+
+  // MOUSE / TRACKPAD: tieni premuto per disegnare, rilascia per sollevare la penna
+  firmaCanvas.addEventListener('mousedown', function(e) {
+    firmaDisegnando = true;
+    var pos = posCanvas(e);
+    firmaCtx.beginPath();
+    firmaCtx.moveTo(pos.x, pos.y);
+  });
+  firmaCanvas.addEventListener('mousemove', function(e) {
+    if (!firmaDisegnando) return;
+    var pos = posCanvas(e);
+    firmaCtx.lineTo(pos.x, pos.y);
+    firmaCtx.stroke();
+    segnaFirmaPiena();
+  });
+  window.addEventListener('mouseup', function() { firmaDisegnando = false; });
+
+  // TOUCH / PENNA: stesso comportamento (tocco = giù, sollevamento = su)
+  firmaCanvas.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    firmaDisegnando = true;
+    var pos = posCanvasTouch(e.touches[0]);
+    firmaCtx.beginPath();
+    firmaCtx.moveTo(pos.x, pos.y);
+  }, { passive: false });
+  firmaCanvas.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    if (!firmaDisegnando) return;
+    var pos = posCanvasTouch(e.touches[0]);
+    firmaCtx.lineTo(pos.x, pos.y);
+    firmaCtx.stroke();
+    segnaFirmaPiena();
+  }, { passive: false });
+  firmaCanvas.addEventListener('touchend', function() { firmaDisegnando = false; });
+}
+
+function ridimensionaCanvasFirma() {
+  if (!firmaCanvas) return;
+  var dpr = window.devicePixelRatio || 1;
+  var rect = firmaCanvas.getBoundingClientRect();
+  if (rect.width === 0 || rect.height === 0) return;
+  firmaCanvas.width = Math.round(rect.width * dpr);
+  firmaCanvas.height = Math.round(rect.height * dpr);
+  firmaCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  firmaCtx.strokeStyle = '#1a1a2e';
+  firmaCtx.lineWidth = 2.2;
+  firmaCtx.lineCap = 'round';
+  firmaCtx.lineJoin = 'round';
+}
+
+function posCanvas(e) {
+  var rect = firmaCanvas.getBoundingClientRect();
+  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+}
+function posCanvasTouch(t) {
+  var rect = firmaCanvas.getBoundingClientRect();
+  return { x: t.clientX - rect.left, y: t.clientY - rect.top };
+}
+function segnaFirmaPiena() {
+  firmaHaContenuto = true;
+  var ph = document.getElementById('firma-placeholder');
+  if (ph) ph.style.display = 'none';
+}
+
+/* Salva il contenuto del canvas grande nell'anteprima piccola del form */
+function salvaAnteprimaFirma() {
+  var anteprima = document.getElementById('firma-anteprima');
+  if (!anteprima) return;
+  var dpr = window.devicePixelRatio || 1;
+  var rect = anteprima.getBoundingClientRect();
+  anteprima.width = Math.round(rect.width * dpr) || 400;
+  anteprima.height = Math.round(rect.height * dpr) || 110;
+  var actx = anteprima.getContext('2d');
+  actx.setTransform(1, 0, 0, 1, 0, 0);
+  actx.clearRect(0, 0, anteprima.width, anteprima.height);
+  if (firmaHaContenuto) {
+    actx.drawImage(firmaCanvas, 0, 0, anteprima.width, anteprima.height);
+    document.getElementById('firma-trigger').classList.add('ha-firma');
+    document.getElementById('firma-trigger-overlay').innerHTML = '<span>&#9998; Modifica firma</span>';
+  }
+}
+
+/* Riporta nel canvas grande quanto gia' presente nell'anteprima, per poter continuare/correggere */
+function ridisegnaDaAnteprima() {
+  if (!firmaCtx) return;
+  firmaCtx.clearRect(0, 0, firmaCanvas.width, firmaCanvas.height);
+  if (!firmaHaContenuto) return;
+  var anteprima = document.getElementById('firma-anteprima');
+  var rect = firmaCanvas.getBoundingClientRect();
+  firmaCtx.drawImage(anteprima, 0, 0, anteprima.width, anteprima.height, 0, 0, rect.width, rect.height);
+}
+
+function clearFirma() {
+  if (!firmaCtx) return;
+  firmaCtx.clearRect(0, 0, firmaCanvas.width, firmaCanvas.height);
+  firmaHaContenuto = false;
+  var ph = document.getElementById('firma-placeholder');
+  if (ph) ph.style.display = 'block';
+  var anteprima = document.getElementById('firma-anteprima');
+  if (anteprima) anteprima.getContext('2d').clearRect(0, 0, anteprima.width, anteprima.height);
+  var trig = document.getElementById('firma-trigger');
+  if (trig) trig.classList.remove('ha-firma');
+  var ov = document.getElementById('firma-trigger-overlay');
+  if (ov) ov.innerHTML = '<span>&#9998; Clicca per firmare</span>';
+}
+
 /* ── STAMPA ── */
-function stampa() { aggiornaTesto(); window.print(); }
+function stampa() {
+  aggiornaTesto();
+  window.print();
+}
 
 /* ── RESET ── */
 function resetModulo() {
@@ -438,6 +679,7 @@ function resetModulo() {
   var gg = String(oggi.getDate()).padStart(2,'0');
   var mm = String(oggi.getMonth()+1).padStart(2,'0');
   document.getElementById('luogo-data').value = 'Castelcovati, ' + gg + '/' + mm + '/' + oggi.getFullYear();
+  clearFirma();
   aggiornaTesto();
 }
 </script>
