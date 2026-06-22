@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/</loc>
+    <priority>1.0</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <!-- Blog AI -->
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/blog/index.html</loc>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/blog/ai-act-scuola.html</loc>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/blog/articolo-esempio.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <!-- Inclusione -->
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/inclusione/index.html</loc>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/inclusione/news/index.html</loc>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/inclusione/news/benvenuto.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/inclusione/news/continuita-vs-ruolo.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/inclusione/news/glossario-inclusione.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/inclusione/news/ore-glo.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <!-- Biblioteca -->
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/biblioteca/index.html</loc>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <!-- Guide & Vademecum -->
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/vademecum_sostegno_castelcovati.html</loc>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/buone_prassi_dsa_bes.html</loc>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <!-- Software Disabilità & Sostegno -->
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/VerbaleGLO.html</loc>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/griglia_icf_cy.html</loc>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/valutazione_disabilita.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <!-- Software DSA & BES -->
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/PDP_BES_digitale.html</loc>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/allegato_firme_pdp.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/motivazione_non_stesura_pdp.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <!-- Gestione scolastica -->
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/biblioteca.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <!-- App e Giochi Didattici -->
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/favole_magiche.html</loc>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/tombola.html</loc>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+</urlset>
