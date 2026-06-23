@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terza fase della riforma della disabilità: cosa cambia per le scuole lombarde – Blog Inclusione</title>
+  <meta name="description" content="Dal 1° marzo 2026 la riforma del D.Lgs. 62/2024 si estende a Bergamo, Como, Milano, Mantova, Pavia e Sondrio. Guida operativa per docenti e Funzioni Strumentali." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --verde:   #1D9E75;
+      --verde-d: #157a5a;
+      --verde-l: #e8f7f2;
+      --blu:     #003087;
+      --oro:     #c8a84b;
+      --testo:   #1a1a2e;
+      --grigio:  #6b7280;
+      --bg:      #f8faf9;
+      --white:   #ffffff;
+      --radius:  10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--testo);
+      line-height: 1.75;
+    }
+
+    /* ─── NAVBAR ─────────────────────────────────────────── */
+    nav {
+      background: var(--verde);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    }
+    nav .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: #fff;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    nav a {
+      color: rgba(255,255,255,.85);
+      text-decoration: none;
+      font-size: .85rem;
+      font-weight: 500;
+      transition: color .2s;
+    }
+    nav a:hover { color: #fff; }
+    nav .spacer { flex: 1; }
+
+    /* ─── HERO ───────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, var(--verde) 0%, var(--verde-d) 100%);
+      color: #fff;
+      padding: 64px 32px 48px;
+      text-align: center;
+    }
+    .hero .category-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.2);
+      border: 1px solid rgba(255,255,255,.4);
+      color: #fff;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      line-height: 1.25;
+      max-width: 780px;
+      margin: 0 auto 16px;
+    }
+    .hero .subtitle {
+      font-size: 1.05rem;
+      opacity: .9;
+      max-width: 640px;
+      margin: 0 auto 28px;
+    }
+    .hero .meta {
+      font-size: .82rem;
+      opacity: .8;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+    .hero .meta span { display: flex; align-items: center; gap: 5px; }
+
+    /* ─── LAYOUT ─────────────────────────────────────────── */
+    .page-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 32px;
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 24px 60px;
+    }
+    @media (max-width: 820px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+    }
+
+    /* ─── ARTICLE ────────────────────────────────────────── */
+    article {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+      padding: 40px 44px;
+    }
+    @media (max-width: 600px) { article { padding: 24px 18px; } }
+
+    article h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--verde-d);
+      margin: 36px 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--verde-l);
+    }
+    article h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--testo);
+      margin: 24px 0 10px;
+    }
+    article p { margin-bottom: 16px; font-size: .97rem; }
+    article ul, article ol {
+      margin: 12px 0 20px 20px;
+      font-size: .97rem;
+    }
+    article li { margin-bottom: 8px; }
+    article strong { color: var(--verde-d); }
+
+    /* callout */
+    .callout {
+      border-left: 4px solid var(--verde);
+      background: var(--verde-l);
+      padding: 16px 20px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 24px 0;
+      font-size: .95rem;
+    }
+    .callout.warning {
+      border-color: var(--oro);
+      background: #fdf8ee;
+    }
+    .callout.blu {
+      border-color: var(--blu);
+      background: #eef1f8;
+    }
+    .callout strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: .85rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .callout.warning strong { color: #92660a; }
+    .callout.blu strong { color: var(--blu); }
+
+    /* tabella */
+    .table-wrap { overflow-x: auto; margin: 20px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .88rem;
+    }
+    th {
+      background: var(--verde);
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: var(--verde-l); }
+
+    /* normativa tag */
+    .norma {
+      display: inline-block;
+      background: var(--verde);
+      color: #fff;
+      font-size: .72rem;
+      font-weight: 600;
+      padding: 2px 9px;
+      border-radius: 12px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
+    /* sezione finale autore */
+    .autore-box {
+      margin-top: 40px;
+      padding: 20px 24px;
+      background: var(--verde-l);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .autore-box .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--verde);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .autore-box .nome { font-weight: 600; font-size: .95rem; }
+    .autore-box .ruolo { font-size: .82rem; color: var(--grigio); }
+
+    /* tag */
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+    .tag {
+      background: var(--verde-l);
+      color: var(--verde-d);
+      border: 1px solid #b2dfce;
+      font-size: .78rem;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    /* ─── SIDEBAR ────────────────────────────────────────── */
+    .sidebar { display: flex; flex-direction: column; gap: 24px; }
+
+    .sidebar-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 10px rgba(0,0,0,.06);
+      padding: 22px 20px;
+    }
+    .sidebar-card h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--verde-d);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--verde-l);
+    }
+
+    /* TOC */
+    .toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+    .toc li {
+      counter-increment: toc;
+      padding: 6px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: .85rem;
+      display: flex;
+      gap: 8px;
+    }
+    .toc li::before {
+      content: counter(toc);
+      background: var(--verde);
+      color: #fff;
+      font-size: .72rem;
+      font-weight: 700;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .toc a { color: var(--testo); text-decoration: none; }
+    .toc a:hover { color: var(--verde); }
+
+    /* correlati */
+    .correlati a {
+      display: block;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+      color: var(--verde-d);
+      text-decoration: none;
+      font-size: .85rem;
+      font-weight: 500;
+    }
+    .correlati a:hover { color: var(--verde); }
+
+    /* norma pill sidebar */
+    .norma-list { display: flex; flex-direction: column; gap: 6px; }
+    .norma-item {
+      background: var(--verde-l);
+      border-left: 3px solid var(--verde);
+      padding: 6px 10px;
+      font-size: .8rem;
+      border-radius: 0 6px 6px 0;
+    }
+    .norma-item strong { color: var(--verde-d); display: block; font-size: .78rem; }
+
+    /* footer */
+    footer {
+      background: var(--blu);
+      color: rgba(255,255,255,.7);
+      text-align: center;
+      padding: 20px;
+      font-size: .82rem;
+    }
+    footer a { color: var(--oro); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="logo" href="../index.html">🐧 L'Archivio del Maestro</a>
+  <a href="../../index.html">Home</a>
+  <a href="../index.html">Blog Inclusione</a>
+  <div class="spacer"></div>
+  <a href="../../index.html#strumenti">Strumenti</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="category-badge">📋 Normativa &amp; Aggiornamenti</div>
+  <h1>Terza fase della riforma della disabilità: cosa cambia nelle scuole lombarde</h1>
+  <p class="subtitle">
+    Dal 1° marzo 2026 il D.Lgs. 62/2024 si estende a Bergamo, Como, Milano, Mantova, Pavia e Sondrio.
+    Guida operativa per docenti e Funzioni Strumentali.
+  </p>
+  <div class="meta">
+    <span>✍️ Stefano Testa</span>
+    <span>📅 Giugno 2026</span>
+    <span>🕐 Lettura: ~8 minuti</span>
+    <span>📄 Fonte: Protocollo G1.2026.0026841 del 16/06/2026</span>
+  </div>
+</div>
+
+<!-- CORPO PAGINA -->
+<div class="page-layout">
+
+  <!-- ARTICOLO -->
+  <article>
+
+    <p>
+      Il 16 giugno 2026 la Direzione Generale Welfare di Regione Lombardia ha pubblicato 
+      la nota protocollata <strong>G1.2026.0026841</strong>, con le prime indicazioni operative per
+      l'applicazione della <strong>DGR 2446/2024</strong> nell'ambito della terza fase della riforma
+      della disabilità (D.Lgs. 3 maggio 2024, n. 62).
+    </p>
+    <p>
+      Si tratta di un documento che ogni scuola delle province coinvolte dovrebbe leggere
+      con attenzione: stabilisce chi ha diritto al sostegno, con quale documentazione,
+      e cosa succede quando i verbali scadono nel mezzo di una transizione normativa ancora in corso.
+    </p>
+
+    <div class="callout">
+      <strong>📍 Le fasi della sperimentazione in Lombardia</strong>
+      La riforma si è dispiegata per gradi. La <strong>Provincia di Brescia</strong> era già 
+      provincia sperimentale da <strong>gennaio 2025</strong> (seconda fase), e le scuole bresciane 
+      lavorano con il nuovo sistema da oltre un anno. Dal <strong>1° marzo 2026</strong> la 
+      sperimentazione si estende alle province di <strong>Bergamo, Como, Milano, Mantova, Pavia 
+      e Sondrio</strong> (terza fase): per queste la nota è una novità operativa concreta; 
+      per Brescia è invece una conferma e un consolidamento di quanto già in atto.
+    </div>
+
+    <!-- 1 -->
+    <h2 id="contesto">1. Il contesto: perché esiste questa nota</h2>
+    <p>
+      Il D.Lgs. 62/2024 ha avviato una riforma profonda del sistema di accertamento della disabilità in Italia,
+      spostando il baricentro dai Collegi di Accertamento delle ASST/ATS all'<strong>INPS</strong>, 
+      che diventa l'ente unico responsabile della valutazione e del rilascio del cosiddetto 
+      <em>verbale unico</em>.
+    </p>
+    <p>
+      Il problema: il passaggio tra il vecchio e il nuovo sistema non è istantaneo. Ci sono famiglie
+      con certificazioni vecchie che scadono proprio adesso, altri bambini che si iscrivono alla scuola
+      dell'infanzia per la prima volta, alunni che arrivano da altre regioni. La nota serve
+      esattamente a evitare che la transizione normativa si traduca in un <strong>vuoto di tutele</strong>.
+    </p>
+    <p>
+      Vale la pena sottolinearlo: per le scuole della <strong>Provincia di Brescia</strong> — 
+      che come provincia sperimentale di seconda fase ha già avviato il percorso da gennaio 2025 — 
+      molte di queste procedure non sono nuove. Chi opera in quel contesto ha già familiarità 
+      con il CMI, con il CMDF e con la gestione delle certificazioni in transizione. 
+      Per le sei province di terza fase, invece, settembre 2026 sarà il primo vero banco di prova.
+    </p>
+
+    <!-- 2 -->
+    <h2 id="accertamento">2. Come funziona il nuovo accertamento</h2>
+    <p>
+      Il punto di ingresso del nuovo sistema è il <strong>Certificato Medico Introduttivo (CMI)</strong>,
+      compilabile direttamente sulla piattaforma INPS da <em>qualsiasi medico abilitato</em> 
+      — non più solo da specialisti del Collegio multidisciplinare. All'interno del CMI si richiede 
+      formalmente il sostegno scolastico e si carica il <strong>CMDF</strong> 
+      (Certificato Medico Diagnostico Funzionale), prodotto dai servizi sanitari di riferimento.
+    </p>
+    <p>
+      La <strong>Commissione medica INPS</strong> valuta la documentazione, anche in modalità 
+      esclusivamente documentale, senza visita in presenza. L'esito è il <strong>verbale unico INPS</strong>,
+      che sostituirà progressivamente l'EVIS e tutti i documenti precedenti.
+      Il verbale sarà consultabile nel cassetto previdenziale del cittadino su portale INPS.
+    </p>
+
+    <div class="callout warning">
+      <strong>⚠️ Attenzione per le famiglie (province di terza fase)</strong>
+      Per le scuole di Bergamo, Como, Milano, Mantova, Pavia e Sondrio la procedura è nuova 
+      e va gestita interamente sul portale INPS. È opportuno informare le famiglie in anticipo, 
+      soprattutto quelle con verbali in scadenza nel 2026, affinché avviino per tempo la richiesta 
+      del CMI. Le scuole bresciane, già operative con il nuovo sistema da gennaio 2025, 
+      possono fare da riferimento per le buone pratiche.
+    </div>
+
+    <!-- 3 -->
+    <h2 id="certificazioni">3. La validità delle certificazioni: i tre casi</h2>
+    <p>
+      Questo è il cuore operativo della nota. Le situazioni possibili sono tre, e per ciascuna 
+      la risposta è diversa.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo di certificazione</th>
+            <th>Situazione</th>
+            <th>Validità</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="norma">Art. 3 c.3 L.104</span> (gravità)</td>
+            <td>Qualsiasi origine, qualsiasi scadenza</td>
+            <td><strong>Prorogata fino al termine degli studi</strong>, indipendentemente dalla data sul verbale</td>
+          </tr>
+          <tr>
+            <td><span class="norma">Art. 3 c.1 L.104</span> (non gravità)</td>
+            <td>Emessa con DGR 2446/2024, in rinnovo nel 2026</td>
+            <td>Valida fino all'emissione del <strong>nuovo verbale unico INPS</strong></td>
+          </tr>
+          <tr>
+            <td><span class="norma">Art. 3 c.1 L.104</span> (non gravità)</td>
+            <td>Precedente alla DGR 2446/2024 (vecchi Collegi), in rinnovo nel 2026</td>
+            <td>Valida fino all'emissione del <strong>nuovo verbale unico INPS</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Cosa significa concretamente per la scuola</h3>
+    <p>
+      Per gli alunni <strong>art. 3 c.3</strong>: la scuola non deve fare nulla, il verbale non scade
+      più. Non va comunicato alle famiglie che "devono rinnovare" — sarebbe un'indicazione sbagliata.
+    </p>
+    <p>
+      Per gli alunni <strong>art. 3 c.1</strong> con verbale in scadenza: la scuola mantiene
+      attivo il sostegno e le misure di inclusione nell'attesa del nuovo verbale INPS. 
+      Non può sospendere le ore di sostegno in attesa di nuova documentazione.
+      È buona prassi però informare la famiglia di avviare il procedimento INPS per tempo.
+    </p>
+
+    <div class="callout blu">
+      <strong>📌 Principio di non regressione</strong>
+      Tutto ciò si fonda sull'art. 35 del D.Lgs. 62/2024: durante la fase transitoria,
+      nessuna persona con disabilità può perdere prestazioni, sostegni o misure già riconosciute.
+      Una scuola che mantenesse il sostegno in attesa del verbale INPS non sta 
+      commettendo irregolarità — sta applicando la norma.
+    </div>
+
+    <!-- 4 -->
+    <h2 id="infanzia">4. Prima infanzia e scuola dell'infanzia</h2>
+
+    <h3>Nidi e sezioni primavera</h3>
+    <p>
+      Per i bambini che frequentano nidi d'infanzia, sezioni primavera o servizi educativi 
+      analoghi <strong>non esiste una certificazione scolastica formale</strong>: la procedura 
+      di accertamento ai fini dell'inclusione scolastica (art. 5 c.6 D.Lgs. 66/2017) 
+      parte solo dalla scuola dell'infanzia.
+    </p>
+    <p>
+      Per attivare i supporti nei servizi di prima infanzia è sufficiente:
+    </p>
+    <ul>
+      <li>Verbale di invalidità INPS</li>
+      <li>Certificazione L.104 (o nuovo verbale unico INPS)</li>
+      <li>Profilo di funzionamento redatto dal servizio sanitario di presa in carico (NPI/UONPIA), che attesti la necessità di supporti all'inclusione</li>
+    </ul>
+
+    <h3>Nuovi iscritti alla scuola dell'infanzia a.s. 2026/2027</h3>
+    <p>
+      Alcuni bambini entreranno in scuola dell'infanzia a settembre 2026 già con la L.104,
+      ma senza aver mai fatto domanda di sostegno scolastico (perché finora non ne avevano 
+      ancora titolo per età). Per questi bambini la nota prevede una soluzione semplificata:
+      è sufficiente presentare alla scuola la <strong>copia della L.104</strong> e 
+      l'<strong>attestazione della domanda inoltrata sul portale INPS</strong>.
+    </p>
+    <p>
+      La scuola deve accettare questa documentazione provvisoria e attivare le misure 
+      di accoglienza. Il verbale definitivo INPS arriverà nel corso dell'anno.
+    </p>
+
+    <!-- 5 -->
+    <h2 id="altre-regioni">5. Alunni provenienti da altre regioni</h2>
+    <p>
+      Le certificazioni L.104 rilasciate in qualsiasi altra regione italiana 
+      (che seguono percorsi diversi, spesso non ancora riformati) sono pienamente valide 
+      in Lombardia <strong>fino alla naturale scadenza</strong> indicata sul verbale.
+    </p>
+    <p>
+      Non è necessario avviare alcuna procedura di rinnovo lombarda finché la certificazione
+      è in corso di validità. La scuola accetta il verbale della regione di provenienza 
+      senza ulteriori richieste alla famiglia.
+    </p>
+
+    <!-- 6 -->
+    <h2 id="checklist">6. Checklist operativa per la Funzione Strumentale</h2>
+    <p>
+      A inizio anno scolastico, per ogni alunno con disabilità vale la pena verificare:
+    </p>
+    <ul>
+      <li>
+        <strong>Tipo di riconoscimento:</strong> art. 3 c.3 (gravità) o art. 3 c.1 (non gravità)?
+      </li>
+      <li>
+        <strong>Data di scadenza del verbale:</strong> scade nel 2026 o è già scaduto?
+      </li>
+      <li>
+        <strong>Origine della certificazione:</strong> vecchio Collegio (DPCM 165/2007), DGR 2446/2024 o altra regione?
+      </li>
+      <li>
+        <strong>Famiglia informata?</strong> Sa che deve avviare il CMI su INPS (per i casi art. 3 c.1 in rinnovo)?
+      </li>
+      <li>
+        <strong>Per nuovi iscritti infanzia:</strong> è presente attestazione domanda INPS?
+      </li>
+    </ul>
+
+    <div class="callout">
+      <strong>💡 Suggerimento</strong>
+      Prepara un'unica comunicazione alle famiglie degli alunni con verbale in scadenza nel 2026,
+      spiegando che il sostegno <em>non si interromperà</em> nell'attesa del nuovo verbale INPS,
+      ma che è importante avviare per tempo la procedura CMI. Un tono rassicurante evita 
+      molte telefonate ansiose a settembre.
+    </div>
+
+    <!-- 7 -->
+    <h2 id="riferimenti">7. Riferimenti normativi essenziali</h2>
+    <ul>
+      <li><strong>D.Lgs. 3 maggio 2024, n. 62</strong> – Riforma della disabilità (art. 35: principio di non regressione)</li>
+      <li><strong>DGR Lombardia XII/2446/2024</strong> – Linee operative regionali per l'accertamento e l'inclusione scolastica</li>
+      <li><strong>D.Lgs. 13 aprile 2017, n. 66</strong> – Norme per l'inclusione scolastica (art. 5 c.6: servizi prima infanzia)</li>
+      <li><strong>L. 5 febbraio 1992, n. 104</strong> – Legge quadro sulla disabilità (art. 3: condizione di disabilità)</li>
+      <li><strong>Circolare INPS n. 42 del 17/02/2025</strong> – Continuità delle certificazioni in rinnovo</li>
+      <li><strong>DPCM 185/2006 e DPCM 165/2007</strong> – Disciplina dei Collegi di Accertamento (sistema precedente)</li>
+      <li><strong>Protocollo G1.2026.0026841 del 16/06/2026</strong> – Nota Regione Lombardia DGW, oggetto della presente analisi</li>
+    </ul>
+
+    <!-- CONCLUSIONE -->
+    <h2 id="conclusioni">Conclusioni</h2>
+    <p>
+      La nota del 16 giugno 2026 non introduce diritti nuovi: <em>consolida e protegge quelli esistenti</em>
+      in un momento di cambiamento del sistema. Il messaggio centrale è chiaro: 
+      nessun alunno con disabilità deve perdere il sostegno a causa di ritardi burocratici 
+      legati alla transizione verso il verbale unico INPS.
+    </p>
+    <p>
+      Per chi lavora nelle scuole di Bergamo, Como, Milano, Mantova, Pavia e Sondrio,
+      questo documento è un riferimento operativo imprescindibile per settembre 2026 — 
+      l'avvio di qualcosa di sostanzialmente nuovo. Per le scuole bresciane, che hanno già 
+      percorso questa strada da oltre un anno come provincia sperimentale, è invece l'occasione 
+      per consolidare le pratiche acquisite e — perché no — <strong>condividerle con i colleghi 
+      delle nuove province</strong>. L'esperienza di chi è già entrato nella riforma è una 
+      risorsa preziosa: usarla sarebbe il modo migliore per trasformare la sperimentazione 
+      in qualcosa che funziona davvero per tutti.
+    </p>
+
+    <!-- TAG -->
+    <div class="tags">
+      <span class="tag">D.Lgs. 62/2024</span>
+      <span class="tag">DGR 2446/2024</span>
+      <span class="tag">Riforma disabilità</span>
+      <span class="tag">Verbale INPS</span>
+      <span class="tag">Inclusione scolastica</span>
+      <span class="tag">L.104/1992</span>
+      <span class="tag">Funzione Strumentale</span>
+      <span class="tag">Lombardia</span>
+      <span class="tag">Sostegno</span>
+      <span class="tag">PEI</span>
+    </div>
+
+    <!-- AUTORE -->
+    <div class="autore-box">
+      <div class="avatar">🐧</div>
+      <div>
+        <div class="nome">Maestro Stefano Testa</div>
+        <div class="ruolo">
+          Funzione Strumentale Inclusione, DSA e BES — IC "Martin Luther King" Castelcovati (BS)<br>
+          Docente a contratto — Università Cattolica del Sacro Cuore<br>
+          Formatore AI e Inclusione
+        </div>
+      </div>
+    </div>
+
+  </article>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- TOC -->
+    <div class="sidebar-card toc">
+      <h4>📑 Indice dell'articolo</h4>
+      <ol>
+        <li><a href="#contesto">Perché esiste questa nota</a></li>
+        <li><a href="#accertamento">Il nuovo accertamento INPS</a></li>
+        <li><a href="#certificazioni">Validità delle certificazioni</a></li>
+        <li><a href="#infanzia">Prima infanzia e scuola infanzia</a></li>
+        <li><a href="#altre-regioni">Alunni da altre regioni</a></li>
+        <li><a href="#checklist">Checklist operativa</a></li>
+        <li><a href="#riferimenti">Riferimenti normativi</a></li>
+        <li><a href="#conclusioni">Conclusioni</a></li>
+      </ol>
+    </div>
+
+    <!-- NORMATIVA DI RIFERIMENTO -->
+    <div class="sidebar-card">
+      <h4>⚖️ Normativa chiave</h4>
+      <div class="norma-list">
+        <div class="norma-item">
+          <strong>D.Lgs. 62/2024</strong>
+          Riforma disabilità — art. 35 non regressione
+        </div>
+        <div class="norma-item">
+          <strong>DGR XII/2446/2024</strong>
+          Linee operative Regione Lombardia
+        </div>
+        <div class="norma-item">
+          <strong>L.104/1992 art. 3</strong>
+          Condizione di disabilità (c.1 e c.3)
+        </div>
+        <div class="norma-item">
+          <strong>D.Lgs. 66/2017</strong>
+          Inclusione scolastica e PEI
+        </div>
+        <div class="norma-item">
+          <strong>Circolare INPS n. 42/2025</strong>
+          Continuità certificazioni
+        </div>
+      </div>
+    </div>
+
+    <!-- ARTICOLI CORRELATI -->
+    <div class="sidebar-card correlati">
+      <h4>📚 Articoli correlati</h4>
+      <a href="glossario-inclusione.html">Le parole dell'inclusione: glossario per docenti</a>
+      <a href="ore-sostegno-glo.html">Ore di sostegno nel GLO: quando ognuno vede la disabilità a modo suo</a>
+      <a href="continuita-sostegno.html">Continuità sì, ma per chi?</a>
+    </div>
+
+    <!-- STRUMENTI -->
+    <div class="sidebar-card">
+      <h4>🛠️ Strumenti utili</h4>
+      <p style="font-size:.85rem; color:var(--grigio); margin-bottom:12px;">
+        Dall'Archivio del Maestro Stefano, strumenti gratuiti e offline per la scuola inclusiva.
+      </p>
+      <a href="../../VerbaleGLO.html"
+         style="display:block;background:var(--verde);color:#fff;text-align:center;padding:9px;border-radius:8px;font-size:.85rem;font-weight:600;text-decoration:none;margin-bottom:8px;">
+        📋 VerbaleGLO
+      </a>
+      <a href="../../valutazione_disabilita.html"
+         style="display:block;background:var(--verde-l);color:var(--verde-d);text-align:center;padding:9px;border-radius:8px;font-size:.85rem;font-weight:600;text-decoration:none;border:1px solid #b2dfce;">
+        📊 Valutazione Personalizzata
+      </a>
+    </div>
+
+  </aside>
+
+</div>
+
+<footer>
+  © 2026 Stefano Testa — 
+  <a href="https://stehead1994-ops.github.io/software-testa-stefano/">L'Archivio del Maestro Stefano Testa</a>
+  · DOI <a href="https://doi.org/10.5281/zenodo.20668859">10.5281/zenodo.20668859</a>
+</footer>
+
+</body>
+</html>
