@@ -2989,7 +2989,7 @@ function renderFamiglia() {
 }
 
 // ─── TOGGLE SEZIONI ───
-function toggle(id) {
+window.toggle = function toggle(id) {
   const body = document.getElementById('body-' + id);
   const tog = document.getElementById('tog-' + id);
   if (!body) return;
@@ -3009,6 +3009,28 @@ function setPAP(btn, cls) {
 }
 
 
+
+
+// ── Esponi funzioni PDP su window per onclick inline ──
+window.toggle              = toggle;
+window.setGrado            = setGrado;
+window.setGradoSelect      = setGradoSelect;
+window.setPAP              = setPAP;
+window.toggleSuggerimenti  = toggleSuggerimenti;
+window.toggleGuida         = toggleGuida;
+window.aggiungiRiga        = aggiungiRiga;
+window.rimuoviRiga         = rimuoviRiga;
+window.apriFirma           = apriFirma;
+window.chiudiFirma         = chiudiFirma;
+window.clearSignature      = clearSignature;
+window.cancellaFirmaModal  = cancellaFirmaModal;
+window.aggiornaPercentuale = aggiornaPercentuale;
+window.mostraTipoDSA       = mostraTipoDSA;
+window.mostraAvvisoConsiglio = mostraAvvisoConsiglio;
+window.toggleSub           = toggleSub;
+window.resetForm           = resetForm;
+window.salvaBozza          = salvaBozza;
+window.esportaPDF          = esportaPDF;
 
 </script>
 
