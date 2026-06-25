@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestionale PDP – IC Martin Luther King</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blu: #1a3a5c;
+  --blu-mid: #2d5986;
+  --azzurro: #4a8fc4;
+  --azzurro-light: #d6e8f7;
+  --verde: #2e7d5e;
+  --verde-light: #d4ede4;
+  --arancio: #c0621a;
+  --arancio-light: #fce8d5;
+  --rosso: #c0392b;
+  --rosso-light: #fdecea;
+  --grigio-bg: #f4f6f9;
+  --grigio-bordo: #cbd5e1;
+  --testo: #1e2a38;
+  --testo-soft: #4a5568;
+  --bianco: #ffffff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: var(--testo); min-height: 100vh; }
+
+/* ─── SCHERMATE ─── */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ─── LOGIN ─── */
+#screen-login {
+  align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--blu) 0%, var(--blu-mid) 100%);
+}
+.login-box {
+  background: white; border-radius: 20px; padding: 48px 40px;
+  width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  text-align: center;
+}
+.login-logo { font-size: 3rem; margin-bottom: 12px; }
+.login-istituto { font-size: 0.78rem; color: var(--testo-soft); margin-bottom: 4px; }
+.login-title { font-family: 'Lora', serif; font-size: 1.5rem; font-weight: 600; color: var(--blu); margin-bottom: 32px; }
+.btn-google {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  width: 100%; padding: 14px 20px; border: 2px solid var(--grigio-bordo);
+  border-radius: 12px; background: white; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem; font-weight: 600; color: var(--testo); transition: all 0.2s;
+}
+.btn-google:hover { border-color: var(--azzurro); background: var(--azzurro-light); }
+.btn-google img { width: 22px; }
+.login-note { font-size: 0.75rem; color: var(--testo-soft); margin-top: 20px; line-height: 1.5; }
+
+/* ─── ACCESSO IN ATTESA ─── */
+#screen-attesa {
+  align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--blu) 0%, var(--blu-mid) 100%);
+}
+.attesa-box {
+  background: white; border-radius: 20px; padding: 48px 40px;
+  max-width: 440px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
+.attesa-icon { font-size: 3rem; margin-bottom: 16px; }
+.attesa-title { font-family: 'Lora', serif; font-size: 1.3rem; color: var(--blu); margin-bottom: 10px; }
+.attesa-msg { font-size: 0.85rem; color: var(--testo-soft); line-height: 1.6; margin-bottom: 24px; }
+.btn-logout-attesa {
+  background: none; border: 1.5px solid var(--grigio-bordo); border-radius: 8px;
+  padding: 9px 20px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+  cursor: pointer; color: var(--testo-soft);
+}
+
+/* ─── HEADER COMUNE ─── */
+.app-header {
+  background: var(--blu); color: white; padding: 0 28px;
+  display: flex; align-items: center; justify-content: space-between; height: 60px;
+  flex-shrink: 0;
+}
+.header-brand { font-family: 'Lora', serif; font-size: 1rem; font-weight: 600; }
+.header-user { display: flex; align-items: center; gap: 10px; font-size: 0.82rem; }
+.header-user img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); }
+.btn-header { background: rgba(255,255,255,0.15); border: none; color: white; padding: 6px 14px; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; cursor: pointer; }
+.btn-header:hover { background: rgba(255,255,255,0.25); }
+
+/* ─── DASHBOARD MASTER ─── */
+#screen-master { flex-direction: column; }
+.master-body { flex: 1; max-width: 1000px; width: 100%; margin: 0 auto; padding: 32px 24px; }
+.master-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+.master-top h1 { font-family: 'Lora', serif; font-size: 1.4rem; color: var(--blu); }
+.btn-primary { background: var(--blu); color: white; border: none; border-radius: 10px; padding: 11px 22px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-primary:hover { background: var(--blu-mid); }
+.btn-secondary { background: var(--grigio-bg); color: var(--testo-soft); border: 1.5px solid var(--grigio-bordo); border-radius: 10px; padding: 10px 20px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500; cursor: pointer; }
+.btn-danger { background: var(--rosso); color: white; border: none; border-radius: 8px; padding: 8px 16px; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; cursor: pointer; }
+
+/* TABS MASTER */
+.master-tabs { display: flex; gap: 4px; margin-bottom: 24px; background: white; padding: 4px; border-radius: 12px; border: 1px solid var(--grigio-bordo); width: fit-content; }
+.tab-btn { padding: 8px 20px; border: none; border-radius: 9px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; background: transparent; color: var(--testo-soft); transition: all 0.18s; }
+.tab-btn.active { background: var(--blu); color: white; }
+
+/* LISTA PDP */
+.pdp-lista { display: flex; flex-direction: column; gap: 12px; }
+.pdp-card {
+  background: white; border-radius: 12px; border: 1px solid var(--grigio-bordo);
+  padding: 16px 20px; display: flex; align-items: center; gap: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: box-shadow 0.15s;
+}
+.pdp-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.1); }
+.pdp-card-info { flex: 1; }
+.pdp-card-nome { font-weight: 700; font-size: 0.95rem; }
+.pdp-card-meta { font-size: 0.78rem; color: var(--testo-soft); margin-top: 3px; }
+.pdp-card-stato { font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+.stato-bozza { background: var(--arancio-light); color: var(--arancio); }
+.stato-in-corso { background: var(--azzurro-light); color: var(--blu); }
+.stato-protocollato { background: var(--verde-light); color: var(--verde); }
+.pdp-card-pw { font-family: monospace; background: var(--grigio-bg); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; border: 1px solid var(--grigio-bordo); }
+.pdp-card-azioni { display: flex; gap: 8px; }
+.btn-sm { padding: 6px 14px; border-radius: 7px; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+.btn-sm-blu { background: var(--azzurro-light); color: var(--blu); }
+.btn-sm-blu:hover { background: var(--azzurro); color: white; }
+.btn-sm-verde { background: var(--verde-light); color: var(--verde); }
+.btn-sm-verde:hover { background: var(--verde); color: white; }
+.btn-sm-rosso { background: var(--rosso-light); color: var(--rosso); }
+.btn-sm-rosso:hover { background: var(--rosso); color: white; }
+
+/* LISTA UTENTI */
+.utenti-lista { display: flex; flex-direction: column; gap: 10px; }
+.utente-card {
+  background: white; border-radius: 12px; border: 1px solid var(--grigio-bordo);
+  padding: 14px 20px; display: flex; align-items: center; gap: 14px;
+}
+.utente-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--grigio-bg); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--testo-soft); font-size: 1rem; flex-shrink: 0; }
+.utente-info { flex: 1; }
+.utente-nome { font-weight: 600; font-size: 0.9rem; }
+.utente-email { font-size: 0.78rem; color: var(--testo-soft); }
+.utente-ruolo { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.ruolo-master { background: #e8d5fb; color: #6b21a8; }
+.ruolo-admin { background: var(--azzurro-light); color: var(--blu); }
+.ruolo-attesa { background: var(--arancio-light); color: var(--arancio); }
+.utente-azioni { display: flex; gap: 8px; align-items: center; }
+
+/* ─── ACCESSO PDP (per colleghi con password) ─── */
+#screen-pdp-login {
+  align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--blu) 0%, var(--blu-mid) 100%);
+}
+.pdp-login-box {
+  background: white; border-radius: 20px; padding: 40px 36px;
+  max-width: 420px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.25); text-align: center;
+}
+.pdp-login-logo { font-size: 2.5rem; margin-bottom: 12px; }
+.pdp-login-title { font-family: 'Lora', serif; font-size: 1.2rem; color: var(--blu); margin-bottom: 6px; }
+.pdp-login-sub { font-size: 0.8rem; color: var(--testo-soft); margin-bottom: 28px; line-height: 1.5; }
+.pw-input {
+  width: 100%; padding: 13px 16px; border: 2px solid var(--grigio-bordo); border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; margin-bottom: 12px;
+  text-align: center; letter-spacing: 0.1em;
+}
+.pw-input:focus { border-color: var(--azzurro); }
+.pw-errore { font-size: 0.78rem; color: var(--rosso); margin-bottom: 10px; display: none; }
+.btn-accedi { width: 100%; padding: 13px; background: var(--blu); color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
+.btn-accedi:hover { background: var(--blu-mid); }
+
+/* ─── EDITOR PDP ─── */
+#screen-editor { flex-direction: column; }
+.editor-header {
+  background: var(--blu); color: white; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between; height: 56px; flex-shrink: 0;
+}
+.editor-alunno { font-family: 'Lora', serif; font-size: 1rem; }
+.editor-stato { display: flex; align-items: center; gap: 12px; font-size: 0.8rem; }
+.autosave-indicator { display: flex; align-items: center; gap: 6px; opacity: 0.8; }
+.autosave-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; }
+.autosave-dot.saving { background: #facc15; animation: pulse 0.8s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+.editor-azioni { display: flex; gap: 8px; }
+.editor-body { display: flex; flex: 1; overflow: hidden; }
+
+/* SIDEBAR MATERIE */
+.sidebar-materie {
+  width: 220px; background: white; border-right: 1px solid var(--grigio-bordo);
+  overflow-y: auto; flex-shrink: 0; padding: 16px 0;
+}
+.sidebar-section { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--testo-soft); padding: 6px 16px 4px; }
+.sidebar-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+  font-size: 0.85rem; cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent;
+  color: var(--testo-soft);
+}
+.sidebar-item:hover { background: var(--grigio-bg); color: var(--testo); }
+.sidebar-item.active { background: var(--azzurro-light); border-left-color: var(--azzurro); color: var(--blu); font-weight: 600; }
+.sidebar-item .check { width: 16px; height: 16px; border-radius: 50%; background: var(--grigio-bordo); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; }
+.sidebar-item.compilata .check { background: var(--verde); color: white; }
+
+/* AREA EDITING */
+.area-editing { flex: 1; overflow-y: auto; padding: 28px 32px; background: var(--grigio-bg); }
+.sezione-editor { background: white; border-radius: 12px; border: 1px solid var(--grigio-bordo); margin-bottom: 20px; overflow: hidden; }
+.sezione-editor-header { background: var(--azzurro-light); padding: 12px 18px; font-weight: 700; font-size: 0.9rem; color: var(--blu); display: flex; align-items: center; gap: 8px; }
+.sezione-editor-body { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.campo-editor label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--testo-soft); display: block; margin-bottom: 5px; }
+.campo-editor input, .campo-editor select, .campo-editor textarea {
+  width: 100%; padding: 9px 12px; border: 1.5px solid var(--grigio-bordo); border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none; resize: vertical;
+}
+.campo-editor input:focus, .campo-editor select:focus, .campo-editor textarea:focus { border-color: var(--azzurro); }
+.campo-editor textarea { min-height: 80px; }
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* ─── MODALE NUOVO PDP ─── */
+.modale-overlay { position: fixed; inset: 0; background: rgba(26,58,92,0.7); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modale-overlay.open { display: flex; }
+.modale-box { background: white; border-radius: 16px; padding: 32px; width: 100%; max-width: 500px; box-shadow: 0 12px 40px rgba(0,0,0,0.25); }
+.modale-title { font-family: 'Lora', serif; font-size: 1.15rem; color: var(--blu); margin-bottom: 20px; }
+.modale-campo { margin-bottom: 14px; }
+.modale-campo label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--testo-soft); display: block; margin-bottom: 5px; }
+.modale-campo input, .modale-campo select {
+  width: 100%; padding: 10px 13px; border: 1.5px solid var(--grigio-bordo); border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none;
+}
+.modale-campo input:focus, .modale-campo select:focus { border-color: var(--azzurro); }
+.modale-pw-generata { font-family: monospace; font-size: 1.1rem; background: var(--grigio-bg); border: 1.5px solid var(--grigio-bordo); border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+.modale-azioni { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+.pw-note { font-size: 0.75rem; color: var(--testo-soft); margin-top: 8px; line-height: 1.4; }
+
+/* ─── TOAST ─── */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--blu); color: white; padding: 12px 20px; border-radius: 10px; font-size: 0.85rem; font-weight: 500; z-index: 9999; display: none; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+.toast.show { display: block; animation: slideUp 0.3s ease; }
+.toast.verde { background: var(--verde); }
+.toast.rosso { background: var(--rosso); }
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ─── VUOTO ─── */
+.lista-vuota { text-align: center; padding: 60px 20px; color: var(--testo-soft); }
+.lista-vuota-icon { font-size: 3rem; margin-bottom: 12px; }
+.lista-vuota h3 { font-size: 1rem; margin-bottom: 6px; color: var(--testo); }
+.lista-vuota p { font-size: 0.83rem; }
+
+/* Presenza live */
+.presenza-live { display: flex; gap: 6px; align-items: center; }
+.presenza-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--azzurro); color: white; font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid white; margin-left: -6px; }
+.presenza-avatar:first-child { margin-left: 0; }
+
+@media (max-width: 640px) {
+  .sidebar-materie { display: none; }
+  .row-2 { grid-template-columns: 1fr; }
+  .pdp-card { flex-wrap: wrap; }
+  .master-body { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     SCHERMATE
+═══════════════════════════════════════════════ -->
+
+<!-- LOGIN -->
+<div id="screen-login" class="screen active">
+  <div class="login-box">
+    <div class="login-logo">📋</div>
+    <div class="login-istituto">IC "Martin Luther King" – Castelcovati (BS)</div>
+    <div class="login-title">Gestionale PDP DSA/BES</div>
+    <button class="btn-google" onclick="loginGoogle()">
+      <img src="https://www.google.com/favicon.ico" alt="Google">
+      Accedi con Google istituzionale
+    </button>
+    <div class="login-note">Accesso riservato agli account <strong>@primaria.iccastelcovati.edu.it</strong><br>Gli account devono essere approvati dall'amministratore.</div>
+  </div>
+</div>
+
+<!-- IN ATTESA DI APPROVAZIONE -->
+<div id="screen-attesa" class="screen">
+  <div class="attesa-box">
+    <div class="attesa-icon">⏳</div>
+    <div class="attesa-title">Accesso in attesa di approvazione</div>
+    <div class="attesa-msg" id="attesa-msg">Hai effettuato l'accesso con successo. Il tuo account è in attesa di approvazione da parte dell'amministratore del sistema. Riceverai l'accesso a breve.</div>
+    <button class="btn-logout-attesa" onclick="logout()">Esci</button>
+  </div>
+</div>
+
+<!-- DASHBOARD MASTER/ADMIN -->
+<div id="screen-master" class="screen">
+  <header class="app-header">
+    <div class="header-brand">📋 Gestionale PDP – IC Martin Luther King</div>
+    <div class="header-user">
+      <img id="master-avatar" src="" alt="">
+      <span id="master-nome"></span>
+      <span id="master-ruolo-badge" style="font-size:0.7rem;background:rgba(255,255,255,0.2);padding:3px 8px;border-radius:10px;"></span>
+      <button class="btn-header" onclick="logout()">Esci</button>
+    </div>
+  </header>
+  <div class="master-body">
+    <div class="master-top">
+      <h1 id="master-welcome">Dashboard</h1>
+      <button class="btn-primary" onclick="apriNuovoPDP()" id="btn-nuovo-pdp">+ Nuovo PDP</button>
+    </div>
+    <div class="master-tabs">
+      <button class="tab-btn active" onclick="showTab('pdp')">📄 PDP</button>
+      <button class="tab-btn" onclick="showTab('utenti')" id="tab-utenti-btn">👥 Utenti</button>
+    </div>
+    <div id="tab-pdp">
+      <div class="pdp-lista" id="lista-pdp">
+        <div class="lista-vuota"><div class="lista-vuota-icon">📂</div><h3>Nessun PDP ancora</h3><p>Clicca "+ Nuovo PDP" per iniziare</p></div>
+      </div>
+    </div>
+    <div id="tab-utenti" style="display:none">
+      <div class="utenti-lista" id="lista-utenti"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ACCESSO PDP CON PASSWORD -->
+<div id="screen-pdp-login" class="screen">
+  <div class="pdp-login-box">
+    <div class="pdp-login-logo">🔐</div>
+    <div class="pdp-login-title">Accedi al PDP</div>
+    <div class="pdp-login-sub">Inserisci la password che ti è stata comunicata dal coordinatore per aprire il Piano Didattico Personalizzato.</div>
+    <input type="password" class="pw-input" id="pdp-pw-input" placeholder="Password PDP" onkeydown="if(event.key==='Enter') verificaPW()">
+    <div class="pw-errore" id="pdp-pw-errore">Password non corretta. Riprova.</div>
+    <button class="btn-accedi" onclick="verificaPW()">Apri PDP</button>
+    <div style="margin-top:16px">
+      <button class="btn-secondary" onclick="mostraLogin()" style="font-size:0.8rem;width:100%">← Torna al login</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDITOR PDP -->
+<div id="screen-editor" class="screen">
+  <header class="editor-header">
+    <div class="editor-alunno" id="editor-alunno-nome">PDP</div>
+    <div class="editor-stato">
+      <div class="presenza-live" id="presenza-live"></div>
+      <div class="autosave-indicator">
+        <div class="autosave-dot" id="autosave-dot"></div>
+        <span id="autosave-label">Salvato</span>
+      </div>
+      <div class="editor-azioni">
+        <button class="btn-header" onclick="esportaPDF()">🖨️ PDF</button>
+        <button class="btn-header" id="btn-protocolla" onclick="protocolla()" style="background:rgba(46,125,94,0.4)">✅ Protocolla e invia</button>
+        <button class="btn-header" onclick="tornaHome()">← Esci</button>
+      </div>
+    </div>
+  </header>
+  <div class="editor-body">
+    <nav class="sidebar-materie" id="sidebar-materie"></nav>
+    <main class="area-editing" id="area-editing"></main>
+  </div>
+</div>
+
+<!-- MODALE NUOVO PDP -->
+<div class="modale-overlay" id="modale-nuovo-pdp">
+  <div class="modale-box">
+    <div class="modale-title">📄 Crea nuovo PDP</div>
+    <div class="modale-campo">
+      <label>Cognome e nome alunno/a</label>
+      <input type="text" id="new-alunno" placeholder="es. Rossi Mario">
+    </div>
+    <div class="row-2">
+      <div class="modale-campo">
+        <label>Grado scolastico</label>
+        <select id="new-grado">
+          <option value="infanzia">Scuola dell'Infanzia</option>
+          <option value="primaria" selected>Scuola Primaria</option>
+          <option value="secondaria">Scuola Secondaria I grado</option>
+        </select>
+      </div>
+      <div class="modale-campo">
+        <label>Classe</label>
+        <input type="text" id="new-classe" placeholder="es. 3A">
+      </div>
+    </div>
+    <div class="modale-campo">
+      <label>Anno scolastico</label>
+      <input type="text" id="new-anno" placeholder="2025/2026" value="2025/2026">
+    </div>
+    <div class="modale-campo">
+      <label>Password di accesso per i docenti</label>
+      <div class="modale-pw-generata">
+        <span id="pw-generata" style="letter-spacing:0.1em"></span>
+        <button onclick="generaPW()" style="background:none;border:none;cursor:pointer;font-size:0.8rem;color:var(--testo-soft);">🔄 rigenera</button>
+      </div>
+      <div class="pw-note">⚠️ Comunica questa password ai colleghi del Consiglio di Classe. Ogni PDP ha la sua password univoca.</div>
+    </div>
+    <div class="modale-azioni">
+      <button class="btn-secondary" onclick="chiudiNuovoPDP()">Annulla</button>
+      <button class="btn-primary" onclick="creaPDP()">Crea PDP</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODALE INVIA PDF -->
+<div class="modale-overlay" id="modale-invia">
+  <div class="modale-box">
+    <div class="modale-title">📤 Protocolla e invia PDF</div>
+    <div class="modale-campo">
+      <label>Email destinatari aggiuntivi</label>
+      <input type="text" id="invia-email" placeholder="es. famiglia@email.it, specialista@struttura.it">
+      <div class="pw-note">Il PDF verrà inviato automaticamente a te e alla cartella Drive istituzionale. Aggiungi qui altri destinatari separati da virgola.</div>
+    </div>
+    <div class="modale-campo">
+      <label>Note per il protocollo</label>
+      <textarea id="invia-note" placeholder="Note aggiuntive da includere nell'email di invio…" style="min-height:60px;width:100%;border:1.5px solid var(--grigio-bordo);border-radius:8px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;resize:vertical;"></textarea>
+    </div>
+    <div class="modale-azioni">
+      <button class="btn-secondary" onclick="document.getElementById('modale-invia').classList.remove('open')">Annulla</button>
+      <button class="btn-primary" onclick="inviaProtocollato()" style="background:var(--verde)">✅ Confirma e invia</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════
+     FIREBASE + LOGICA APP
+═══════════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc,
+  collection, onSnapshot, serverTimestamp, query, orderBy }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ─── CONFIG FIREBASE ───
+const firebaseConfig = {
+  apiKey: "AIzaSyBvVnUPvmD5m6AUDSyps54iGfat1qw7L34",
+  authDomain: "pdp-ic-martinlutherking.firebaseapp.com",
+  projectId: "pdp-ic-martinlutherking",
+  storageBucket: "pdp-ic-martinlutherking.firebasestorage.app",
+  messagingSenderId: "457588742003",
+  appId: "1:457588742003:web:9245e4a04c8ee97273d706"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// ─── STATO GLOBALE ───
+let utenteCorrente = null;
+let ruoloCorrente  = null;
+let pdpCorrenteId  = null;
+let pdpCorrenteDoc = null;
+let unsubPDP       = null;
+let autosaveTimer  = null;
+
+// ─── DOMINI CONSENTITI ───
+const DOMINI_CONSENTITI = ['primaria.iccastelcovati.edu.it', 'iccastelcovati.edu.it'];
+
+// ─── AUTH ───
+window.loginGoogle = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  } catch(e) {
+    mostraToast('Errore di accesso: ' + e.message, 'rosso');
+  }
+};
+
+window.logout = async () => {
+  if (unsubPDP) { unsubPDP(); unsubPDP = null; }
+  await signOut(auth);
+};
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { mostraSchermata('login'); return; }
+  utenteCorrente = user;
+
+  // Controlla dominio
+  const email = user.email || '';
+  const dominio = email.split('@')[1] || '';
+  const dominioOk = DOMINI_CONSENTITI.some(d => dominio === d);
+
+  // Se non è nel dominio giusto, mostra attesa con messaggio diverso
+  if (!dominio || !dominioOk) {
+    document.getElementById('attesa-msg').textContent =
+      `L'account ${email} non appartiene al dominio istituzionale. Contatta l'amministratore.`;
+    mostraSchermata('attesa');
+    return;
+  }
+
+  // Controlla/crea profilo utente in Firestore
+  const uRef = doc(db, 'utenti', user.uid);
+  const uSnap = await getDoc(uRef);
+
+  if (!uSnap.exists()) {
+    // Primo accesso: crea profilo in attesa
+    await setDoc(uRef, {
+      nome: user.displayName, email: user.email,
+      foto: user.photoURL, ruolo: 'attesa',
+      creatoIl: serverTimestamp()
+    });
+    mostraSchermata('attesa');
+    return;
+  }
+
+  const profilo = uSnap.data();
+  ruoloCorrente = profilo.ruolo;
+
+  if (ruoloCorrente === 'attesa') { mostraSchermata('attesa'); return; }
+
+  // Master o admin → dashboard
+  document.getElementById('master-avatar').src = user.photoURL || '';
+  document.getElementById('master-nome').textContent = user.displayName?.split(' ')[0] || '';
+  document.getElementById('master-ruolo-badge').textContent = ruoloCorrente === 'master' ? '👑 Master' : '🔑 Admin';
+
+  // Solo master vede tab utenti e può creare PDP
+  const tabUtenti = document.getElementById('tab-utenti-btn');
+  const btnNuovo  = document.getElementById('btn-nuovo-pdp');
+  if (ruoloCorrente !== 'master') {
+    if (tabUtenti) tabUtenti.style.display = 'none';
+    if (btnNuovo)  btnNuovo.style.display  = 'none';
+  }
+
+  document.getElementById('master-welcome').textContent =
+    `Benvenuto, ${user.displayName?.split(' ')[0] || 'Stefano'} 👋`;
+
+  mostraSchermata('master');
+  caricaPDP();
+  if (ruoloCorrente === 'master') caricaUtenti();
+});
+
+// ─── NAVIGAZIONE ───
+function mostraSchermata(nome) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + nome)?.classList.add('active');
+}
+window.mostraLogin = () => mostraSchermata('login');
+window.tornaHome   = () => {
+  if (unsubPDP) { unsubPDP(); unsubPDP = null; }
+  pdpCorrenteId = null;
+  if (utenteCorrente && (ruoloCorrente === 'master' || ruoloCorrente === 'admin')) {
+    mostraSchermata('master');
+  } else {
+    mostraSchermata('pdp-login');
+  }
+};
+
+// ─── TABS MASTER ───
+window.showTab = (tab) => {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-pdp').style.display    = tab === 'pdp'     ? 'block' : 'none';
+  document.getElementById('tab-utenti').style.display = tab === 'utenti'  ? 'block' : 'none';
+};
+
+// ─── CARICA LISTA PDP ───
+function caricaPDP() {
+  const q = query(collection(db, 'pdp'), orderBy('creatoIl', 'desc'));
+  onSnapshot(q, (snap) => {
+    const lista = document.getElementById('lista-pdp');
+    if (snap.empty) {
+      lista.innerHTML = `<div class="lista-vuota"><div class="lista-vuota-icon">📂</div><h3>Nessun PDP ancora</h3><p>Clicca "+ Nuovo PDP" per iniziare</p></div>`;
+      return;
+    }
+    lista.innerHTML = snap.docs.map(d => {
+      const p = d.data();
+      const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : 'stato-bozza';
+      const statoLabel = p.stato === 'protocollato' ? '✅ Protocollato' : p.stato === 'in-corso' ? '✏️ In corso' : '📝 Bozza';
+      return `
+      <div class="pdp-card">
+        <div class="pdp-card-info">
+          <div class="pdp-card-nome">${p.alunno || '—'}</div>
+          <div class="pdp-card-meta">${p.grado || ''} · Classe ${p.classe || '—'} · ${p.anno || ''}</div>
+        </div>
+        <span class="pdp-card-stato ${statoClass}">${statoLabel}</span>
+        <div class="pdp-card-pw" title="Password di accesso">🔑 ${p.password || '—'}</div>
+        <div class="pdp-card-azioni">
+          <button class="btn-sm btn-sm-blu" onclick="apriEditor('${d.id}')">Apri</button>
+          ${ruoloCorrente === 'master' ? `<button class="btn-sm btn-sm-rosso" onclick="eliminaPDP('${d.id}','${p.alunno}')">Elimina</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  });
+}
+
+// ─── CARICA UTENTI (solo master) ───
+function caricaUtenti() {
+  const q = query(collection(db, 'utenti'), orderBy('creatoIl', 'desc'));
+  onSnapshot(q, (snap) => {
+    const lista = document.getElementById('lista-utenti');
+    lista.innerHTML = snap.docs.map(d => {
+      const u = d.data();
+      const ruoloClass = u.ruolo === 'master' ? 'ruolo-master' : u.ruolo === 'admin' ? 'ruolo-admin' : 'ruolo-attesa';
+      const ruoloLabel = u.ruolo === 'master' ? '👑 Master' : u.ruolo === 'admin' ? '🔑 Admin' : '⏳ In attesa';
+      const iniziali = (u.nome || u.email || '?').split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+      return `
+      <div class="utente-card">
+        ${u.foto ? `<img src="${u.foto}" class="utente-avatar" style="width:40px;height:40px;border-radius:50%;object-fit:cover">` : `<div class="utente-avatar">${iniziali}</div>`}
+        <div class="utente-info">
+          <div class="utente-nome">${u.nome || '—'}</div>
+          <div class="utente-email">${u.email || '—'}</div>
+        </div>
+        <span class="utente-ruolo ${ruoloClass}">${ruoloLabel}</span>
+        <div class="utente-azioni">
+          ${u.ruolo === 'attesa' ? `<button class="btn-sm btn-sm-verde" onclick="approvaUtente('${d.id}','admin')">Approva</button>` : ''}
+          ${u.ruolo === 'admin' && d.id !== utenteCorrente?.uid ? `<button class="btn-sm btn-sm-rosso" onclick="revokaUtente('${d.id}')">Revoca</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  });
+}
+
+window.approvaUtente = async (uid, ruolo) => {
+  await updateDoc(doc(db, 'utenti', uid), { ruolo });
+  mostraToast('✅ Utente approvato!', 'verde');
+};
+window.revokaUtente = async (uid) => {
+  if (!confirm('Revocare l\'accesso a questo utente?')) return;
+  await updateDoc(doc(db, 'utenti', uid), { ruolo: 'attesa' });
+  mostraToast('Accesso revocato', 'rosso');
+};
+
+// ─── NUOVO PDP ───
+window.generaPW = () => {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const pw = Array.from({length: 8}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  document.getElementById('pw-generata').textContent = pw;
+};
+
+window.apriNuovoPDP = () => {
+  generaPW();
+  document.getElementById('new-alunno').value = '';
+  document.getElementById('new-classe').value = '';
+  document.getElementById('modale-nuovo-pdp').classList.add('open');
+};
+window.chiudiNuovoPDP = () => document.getElementById('modale-nuovo-pdp').classList.remove('open');
+
+window.creaPDP = async () => {
+  const alunno   = document.getElementById('new-alunno').value.trim();
+  const grado    = document.getElementById('new-grado').value;
+  const classe   = document.getElementById('new-classe').value.trim();
+  const anno     = document.getElementById('new-anno').value.trim();
+  const password = document.getElementById('pw-generata').textContent.trim();
+  if (!alunno || !password) { mostraToast('Inserisci nome alunno e password', 'rosso'); return; }
+  try {
+    await addDoc(collection(db, 'pdp'), {
+      alunno, grado, classe, anno, password,
+      stato: 'bozza', dati: {},
+      creatoIl: serverTimestamp(),
+      creatoD: utenteCorrente.email
+    });
+    chiudiNuovoPDP();
+    mostraToast('✅ PDP creato!', 'verde');
+  } catch(e) {
+    mostraToast('Errore: ' + e.message, 'rosso');
+  }
+};
+
+window.eliminaPDP = async (id, nome) => {
+  if (!confirm(`Eliminare il PDP di ${nome}? L'operazione è irreversibile.`)) return;
+  await deleteDoc(doc(db, 'pdp', id));
+  mostraToast('PDP eliminato', 'rosso');
+};
+
+// ─── ACCESSO CON PASSWORD (colleghi) ───
+window.verificaPW = async () => {
+  const pw = document.getElementById('pdp-pw-input').value.trim().toUpperCase();
+  const errEl = document.getElementById('pdp-pw-errore');
+  errEl.style.display = 'none';
+  if (!pw) return;
+  // Cerca tra tutti i PDP quello con questa password
+  const q = query(collection(db, 'pdp'));
+  const snap = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
+    .then(m => m.getDocs(m.query(collection(db, 'pdp'))));
+  const trovato = snap.docs.find(d => (d.data().password || '').toUpperCase() === pw);
+  if (!trovato) { errEl.style.display = 'block'; return; }
+  apriEditor(trovato.id);
+};
+
+// ─── EDITOR PDP ───
+window.apriEditor = (id) => {
+  pdpCorrenteId = id;
+  if (unsubPDP) unsubPDP();
+  unsubPDP = onSnapshot(doc(db, 'pdp', id), (snap) => {
+    if (!snap.exists()) return;
+    pdpCorrenteDoc = snap.data();
+    renderEditor(pdpCorrenteDoc);
+  });
+  mostraSchermata('editor');
+};
+
+function renderEditor(pdp) {
+  document.getElementById('editor-alunno-nome').textContent =
+    `${pdp.alunno || 'PDP'} — ${pdp.classe || ''} (${pdp.anno || ''})`;
+
+  const dati = pdp.dati || {};
+  const isProtocollato = pdp.stato === 'protocollato';
+
+  // Sidebar sezioni
+  const sezioni = ['Dati alunno', 'Tipologia PDP', 'Analisi bisogni', 'Abilità', 'Strategie per disciplina', 'Osservazioni famiglia', 'Firme'];
+  document.getElementById('sidebar-materie').innerHTML =
+    `<div class="sidebar-section">Sezioni</div>` +
+    sezioni.map((s, i) => `
+      <div class="sidebar-item ${dati['compilata_s'+i] ? 'compilata' : ''}" onclick="scrollASezione('s${i}')">
+        <div class="check">${dati['compilata_s'+i] ? '✓' : ''}</div>
+        ${s}
+      </div>`).join('');
+
+  // Area editing — sezioni principali
+  const lock = isProtocollato ? 'disabled' : '';
+  document.getElementById('area-editing').innerHTML = `
+
+    <div class="sezione-editor" id="s0">
+      <div class="sezione-editor-header">1. Dati relativi all'alunno/a</div>
+      <div class="sezione-editor-body">
+        <div class="row-2">
+          <div class="campo-editor"><label>Cognome e nome</label><input ${lock} type="text" data-campo="alunno_nome" value="${esc(dati.alunno_nome||pdp.alunno||'')}"></div>
+          <div class="campo-editor"><label>Data di nascita</label><input ${lock} type="date" data-campo="data_nascita" value="${esc(dati.data_nascita||'')}"></div>
+        </div>
+        <div class="row-2">
+          <div class="campo-editor"><label>Classe</label><input ${lock} type="text" data-campo="classe" value="${esc(dati.classe||pdp.classe||'')}"></div>
+          <div class="campo-editor"><label>Anno scolastico</label><input ${lock} type="text" data-campo="anno" value="${esc(dati.anno||pdp.anno||'')}"></div>
+        </div>
+        <div class="campo-editor"><label>Plesso</label>
+          <select ${lock} data-campo="plesso">
+            <option value="">— seleziona —</option>
+            <option ${dati.plesso==='Castelcovati'?'selected':''}>Castelcovati</option>
+            <option ${dati.plesso==='Comezzano Cizzago'?'selected':''}>Comezzano Cizzago</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="sezione-editor" id="s1">
+      <div class="sezione-editor-header">2. Tipologia PDP</div>
+      <div class="sezione-editor-body">
+        <div class="campo-editor"><label>Tipo</label>
+          <select ${lock} data-campo="tipo_pdp">
+            <option value="">— seleziona —</option>
+            <option ${dati.tipo_pdp==='DSA'?'selected':''}>DSA – Disturbi Specifici dell'Apprendimento</option>
+            <option ${dati.tipo_pdp==='BES'?'selected':''}>BES – Bisogni Educativi Speciali</option>
+            <option ${dati.tipo_pdp==='NAI'?'selected':''}>Svantaggio linguistico / NAI</option>
+            <option ${dati.tipo_pdp==='CDC'?'selected':''}>Decisione del Consiglio di Classe</option>
+          </select>
+        </div>
+        <div class="campo-editor"><label>Diagnosi specialistica</label><input ${lock} type="text" data-campo="diagnosi" value="${esc(dati.diagnosi||'')}" placeholder="es. DSA – Dislessia e Disortografia"></div>
+        <div class="row-2">
+          <div class="campo-editor"><label>Redatta da</label><input ${lock} type="text" data-campo="specialista" value="${esc(dati.specialista||'')}"></div>
+          <div class="campo-editor"><label>In data</label><input ${lock} type="date" data-campo="data_diagnosi" value="${esc(dati.data_diagnosi||'')}"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sezione-editor" id="s2">
+      <div class="sezione-editor-header">3. Analisi dei bisogni e del contesto</div>
+      <div class="sezione-editor-body">
+        <div class="campo-editor"><label>Risorse dell'alunno/a</label><textarea ${lock} data-campo="risorse_alunno" placeholder="Punti di forza, interessi, atteggiamenti…">${esc(dati.risorse_alunno||'')}</textarea></div>
+        <div class="campo-editor"><label>Criticità</label><textarea ${lock} data-campo="criticita" placeholder="Difficoltà emerse, aree di fragilità…">${esc(dati.criticita||'')}</textarea></div>
+        <div class="campo-editor"><label>Interventi specialistici</label><textarea ${lock} data-campo="interventi" placeholder="es. Logopedista – dott.ssa Bianchi – sedute settimanali…">${esc(dati.interventi||'')}</textarea></div>
+      </div>
+    </div>
+
+    <div class="sezione-editor" id="s3">
+      <div class="sezione-editor-header">4. Abilità strumentali e profilo</div>
+      <div class="sezione-editor-body">
+        <div class="campo-editor"><label>Lettura</label><textarea ${lock} data-campo="abilita_lettura" placeholder="Descrizione delle abilità di lettura e obiettivi…">${esc(dati.abilita_lettura||'')}</textarea></div>
+        <div class="campo-editor"><label>Scrittura</label><textarea ${lock} data-campo="abilita_scrittura" placeholder="Descrizione delle abilità di scrittura e obiettivi…">${esc(dati.abilita_scrittura||'')}</textarea></div>
+        <div class="campo-editor"><label>Calcolo</label><textarea ${lock} data-campo="abilita_calcolo" placeholder="Descrizione delle abilità di calcolo e obiettivi…">${esc(dati.abilita_calcolo||'')}</textarea></div>
+        <div class="campo-editor"><label>Attenzione e motivazione</label><textarea ${lock} data-campo="abilita_attenzione" placeholder="Profilo attentivo, motivazione, gestione emotiva…">${esc(dati.abilita_attenzione||'')}</textarea></div>
+      </div>
+    </div>
+
+    <div class="sezione-editor" id="s4">
+      <div class="sezione-editor-header">5. Strategie per disciplina</div>
+      <div class="sezione-editor-body">
+        ${['Italiano','Matematica','Storia e Geografia','Scienze','Inglese','Tecnologia','Arte e Immagine','Musica','Scienze Motorie','IRC / Alternativa'].map(m => `
+          <details style="border:1.5px solid var(--grigio-bordo);border-radius:8px;overflow:hidden;margin-bottom:4px">
+            <summary style="padding:10px 14px;font-weight:600;font-size:0.88rem;cursor:pointer;background:var(--grigio-bg)">${m}</summary>
+            <div style="padding:14px;display:flex;flex-direction:column;gap:10px">
+              <div class="campo-editor"><label>Strumenti compensativi</label><textarea ${lock} data-campo="str_${slug(m)}" placeholder="Strumenti specifici per ${m}…">${esc(dati['str_'+slug(m)]||'')}</textarea></div>
+              <div class="campo-editor"><label>Misure dispensative</label><textarea ${lock} data-campo="mis_${slug(m)}" placeholder="Misure per ${m}…">${esc(dati['mis_'+slug(m)]||'')}</textarea></div>
+              <div class="campo-editor"><label>Criteri valutativi</label><textarea ${lock} data-campo="val_${slug(m)}" placeholder="Criteri di valutazione per ${m}…">${esc(dati['val_'+slug(m)]||'')}</textarea></div>
+            </div>
+          </details>`).join('')}
+      </div>
+    </div>
+
+    <div class="sezione-editor" id="s5">
+      <div class="sezione-editor-header">6. Osservazioni della famiglia</div>
+      <div class="sezione-editor-body">
+        <div class="campo-editor"><label>Con chi svolge i compiti?</label><textarea ${lock} data-campo="fam_compiti" placeholder="…">${esc(dati.fam_compiti||'')}</textarea></div>
+        <div class="campo-editor"><label>Come si approccia allo studio?</label><textarea ${lock} data-campo="fam_approccio" placeholder="…">${esc(dati.fam_approccio||'')}</textarea></div>
+        <div class="campo-editor"><label>Strumenti di supporto usati a casa</label><textarea ${lock} data-campo="fam_strumenti" placeholder="…">${esc(dati.fam_strumenti||'')}</textarea></div>
+      </div>
+    </div>
+
+    <div class="sezione-editor" id="s6">
+      <div class="sezione-editor-header">7. Firme</div>
+      <div class="sezione-editor-body">
+        <div class="row-2">
+          <div class="campo-editor"><label>Coordinatore di classe</label><input ${lock} type="text" data-campo="firma_coord" value="${esc(dati.firma_coord||'')}" placeholder="Nome e cognome"></div>
+          <div class="campo-editor"><label>Data condivisione con famiglia</label><input ${lock} type="date" data-campo="data_firma" value="${esc(dati.data_firma||'')}"></div>
+        </div>
+        <div class="campo-editor"><label>Genitore/Tutore</label><input ${lock} type="text" data-campo="firma_genitore" value="${esc(dati.firma_genitore||'')}" placeholder="Nome e cognome"></div>
+        <div class="campo-editor"><label>Dirigente Scolastico</label><input type="text" value="Tecla Fogliata" disabled style="background:var(--grigio-bg);color:var(--testo-soft)"></div>
+      </div>
+    </div>
+
+    ${isProtocollato ? '<div style="text-align:center;padding:20px;color:var(--verde);font-weight:700">✅ PDP protocollato — sola lettura</div>' : ''}
+  `;
+
+  // Autosave su ogni modifica
+  if (!isProtocollato) {
+    document.querySelectorAll('#area-editing [data-campo]').forEach(el => {
+      el.addEventListener('input', () => scheduleAutosave());
+    });
+  }
+}
+
+function esc(s) { return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function slug(s) { return s.toLowerCase().replace(/[^a-z0-9]/g,'_'); }
+
+window.scrollASezione = (id) => {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+// ─── AUTOSAVE ───
+function scheduleAutosave() {
+  clearTimeout(autosaveTimer);
+  const dot = document.getElementById('autosave-dot');
+  const lbl = document.getElementById('autosave-label');
+  if (dot) dot.classList.add('saving');
+  if (lbl) lbl.textContent = 'Salvataggio…';
+  autosaveTimer = setTimeout(salvaOra, 1500);
+}
+
+async function salvaOra() {
+  if (!pdpCorrenteId) return;
+  const nuoviDati = {};
+  document.querySelectorAll('#area-editing [data-campo]').forEach(el => {
+    nuoviDati[el.dataset.campo] = el.value;
+  });
+  try {
+    await updateDoc(doc(db, 'pdp', pdpCorrenteId), {
+      dati: nuoviDati, stato: 'in-corso', ultimoAgg: serverTimestamp()
+    });
+    const dot = document.getElementById('autosave-dot');
+    const lbl = document.getElementById('autosave-label');
+    if (dot) { dot.classList.remove('saving'); }
+    if (lbl) lbl.textContent = 'Salvato ✓';
+  } catch(e) {
+    document.getElementById('autosave-label').textContent = '⚠️ Errore';
+  }
+}
+
+// ─── PROTOCOLLA ───
+window.protocolla = () => {
+  document.getElementById('modale-invia').classList.add('open');
+};
+
+window.inviaProtocollato = async () => {
+  await updateDoc(doc(db, 'pdp', pdpCorrenteId), { stato: 'protocollato', protocollato: serverTimestamp() });
+  document.getElementById('modale-invia').classList.remove('open');
+  mostraToast('✅ PDP protocollato e inviato!', 'verde');
+  esportaPDF();
+};
+
+// ─── PDF ───
+window.esportaPDF = () => window.print();
+
+// ─── TOAST ───
+window.mostraToast = (msg, tipo='') => {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (tipo ? ' ' + tipo : '');
+  setTimeout(() => t.classList.remove('show'), 3000);
+};
+
+// Esponi funzioni usate nei template HTML
+window.apriEditor   = apriEditor;
+window.caricaPDP    = caricaPDP;
+window.caricaUtenti = caricaUtenti;
+
+</script>
+
+</body>
+</html>
