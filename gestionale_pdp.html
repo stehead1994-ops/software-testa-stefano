@@ -136,8 +136,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 .utente-ruolo { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
 .ruolo-master { background: #e8d5fb; color: #6b21a8; }
 .ruolo-admin { background: var(--azzurro-light); color: var(--blu); }
+.ruolo-docente { background: var(--verde-light); color: var(--verde); }
 .ruolo-attesa { background: var(--arancio-light); color: var(--arancio); }
-.utente-azioni { display: flex; gap: 8px; align-items: center; }
+.utente-azioni { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.ruolo-select { font-size:0.78rem; padding:4px 8px; border:1.5px solid var(--grigio-bordo); border-radius:6px; font-family:"DM Sans",sans-serif; cursor:pointer; }
 
 /* ─── ACCESSO PDP (per colleghi con password) ─── */
 #screen-pdp-login {
@@ -1170,15 +1172,18 @@ onAuthStateChanged(auth, async (user) => {
   // Master o admin → dashboard
   document.getElementById('master-avatar').src = user.photoURL || '';
   document.getElementById('master-nome').textContent = user.displayName?.split(' ')[0] || '';
-  document.getElementById('master-ruolo-badge').textContent = ruoloCorrente === 'master' ? '👑 Master' : '🔑 Admin';
+  document.getElementById('master-ruolo-badge').textContent =
+    ruoloCorrente === 'master' ? '👑 Master' :
+    ruoloCorrente === 'admin'  ? '🔑 Referente' : '✏️ Docente';
 
-  // Solo master vede tab utenti e può creare PDP
+  // Visibilità per ruolo
   const tabUtenti = document.getElementById('tab-utenti-btn');
   const btnNuovo  = document.getElementById('btn-nuovo-pdp');
-  if (ruoloCorrente !== 'master') {
-    if (tabUtenti) tabUtenti.style.display = 'none';
-    if (btnNuovo)  btnNuovo.style.display  = 'none';
-  }
+
+  // Tab utenti: visibile solo a master
+  if (tabUtenti) tabUtenti.style.display = ruoloCorrente === 'master' ? '' : 'none';
+  // Crea PDP: master e admin/referente
+  if (btnNuovo)  btnNuovo.style.display  = ['master','admin'].includes(ruoloCorrente) ? '' : 'none';
 
   document.getElementById('master-welcome').textContent =
     `Benvenuto, ${user.displayName?.split(' ')[0] || 'Stefano'} 👋`;
@@ -1247,11 +1252,41 @@ function caricaUtenti() {
   const q = query(collection(db, 'utenti'), orderBy('creatoIl', 'desc'));
   onSnapshot(q, (snap) => {
     const lista = document.getElementById('lista-utenti');
+    // Conta master esistenti
+    const nMaster = snap.docs.filter(d => d.data().ruolo === 'master').length;
+
     lista.innerHTML = snap.docs.map(d => {
       const u = d.data();
-      const ruoloClass = u.ruolo === 'master' ? 'ruolo-master' : u.ruolo === 'admin' ? 'ruolo-admin' : 'ruolo-attesa';
-      const ruoloLabel = u.ruolo === 'master' ? '👑 Master' : u.ruolo === 'admin' ? '🔑 Admin' : '⏳ In attesa';
+      const isSelf = d.id === utenteCorrente?.uid;
+      const ruoloClass = {
+        master: 'ruolo-master', admin: 'ruolo-admin',
+        docente: 'ruolo-docente', attesa: 'ruolo-attesa'
+      }[u.ruolo] || 'ruolo-attesa';
+      const ruoloLabel = {
+        master: '👑 Master', admin: '🔑 Referente',
+        docente: '✏️ Docente', attesa: '⏳ In attesa'
+      }[u.ruolo] || '⏳ In attesa';
       const iniziali = (u.nome || u.email || '?').split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+
+      // Azioni disponibili per il master su questo utente
+      let azioni = '';
+
+      if (u.ruolo === 'attesa') {
+        azioni += `<button class="btn-sm btn-sm-verde" onclick="cambiaRuolo('${d.id}','docente')">Approva come Docente</button>`;
+        azioni += `<button class="btn-sm btn-sm-blu" onclick="cambiaRuolo('${d.id}','admin')">Approva come Referente</button>`;
+        azioni += `<button class="btn-sm btn-sm-rosso" onclick="eliminaUtente('${d.id}','${u.nome||u.email}')">🗑</button>`;
+      } else if (!isSelf) {
+        // Selettore ruolo
+        azioni += `<select class="ruolo-select" onchange="cambiaRuolo('${d.id}',this.value)" style="font-size:0.78rem;padding:4px 8px;border:1.5px solid var(--grigio-bordo);border-radius:6px;font-family:'DM Sans',sans-serif">
+          <option value="docente" ${u.ruolo==='docente'?'selected':''}>✏️ Docente</option>
+          <option value="admin" ${u.ruolo==='admin'?'selected':''}>🔑 Referente</option>
+          ${nMaster < 3 || u.ruolo==='master' ? `<option value="master" ${u.ruolo==='master'?'selected':''}>👑 Master</option>` : ''}
+        </select>`;
+        azioni += `<button class="btn-sm btn-sm-rosso" onclick="eliminaUtente('${d.id}','${u.nome||u.email}')">🗑</button>`;
+      } else {
+        azioni += `<span style="font-size:0.75rem;color:var(--testo-soft)">Account personale</span>`;
+      }
+
       return `
       <div class="utente-card">
         ${u.foto ? `<img src="${u.foto}" class="utente-avatar" style="width:40px;height:40px;border-radius:50%;object-fit:cover">` : `<div class="utente-avatar">${iniziali}</div>`}
@@ -1260,23 +1295,28 @@ function caricaUtenti() {
           <div class="utente-email">${u.email || '—'}</div>
         </div>
         <span class="utente-ruolo ${ruoloClass}">${ruoloLabel}</span>
-        <div class="utente-azioni">
-          ${u.ruolo === 'attesa' ? `<button class="btn-sm btn-sm-verde" onclick="approvaUtente('${d.id}','admin')">Approva</button>` : ''}
-          ${u.ruolo === 'admin' && d.id !== utenteCorrente?.uid ? `<button class="btn-sm btn-sm-rosso" onclick="revokaUtente('${d.id}')">Revoca</button>` : ''}
-        </div>
+        <div class="utente-azioni">${azioni}</div>
       </div>`;
     }).join('');
   });
 }
 
-window.approvaUtente = async (uid, ruolo) => {
-  await updateDoc(doc(db, 'utenti', uid), { ruolo });
-  mostraToast('✅ Utente approvato!', 'verde');
+window.cambiaRuolo = async (uid, nuovoRuolo) => {
+  // Blocca se si tenta di aggiungere un 4° master
+  if (nuovoRuolo === 'master') {
+    const snap = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
+      .then(m => m.getDocs(m.collection(db, 'utenti')));
+    const nMaster = snap.docs.filter(d => d.data().ruolo === 'master').length;
+    if (nMaster >= 3) { mostraToast('⚠️ Massimo 3 Master consentiti', 'rosso'); return; }
+  }
+  await updateDoc(doc(db, 'utenti', uid), { ruolo: nuovoRuolo });
+  mostraToast('✅ Ruolo aggiornato', 'verde');
 };
-window.revokaUtente = async (uid) => {
-  if (!confirm('Revocare l\'accesso a questo utente?')) return;
-  await updateDoc(doc(db, 'utenti', uid), { ruolo: 'attesa' });
-  mostraToast('Accesso revocato', 'rosso');
+
+window.eliminaUtente = async (uid, nome) => {
+  if (!confirm(`Eliminare definitivamente l'utente "${nome}"? L'operazione è irreversibile.`)) return;
+  await deleteDoc(doc(db, 'utenti', uid));
+  mostraToast('Utente eliminato', 'rosso');
 };
 
 // ─── AGGIUNGI DOCENTI IN BLOCCO ───
