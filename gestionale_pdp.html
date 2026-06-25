@@ -304,6 +304,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
       </div>
     </div>
     <div id="tab-utenti" style="display:none">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+        <button class="btn-primary" onclick="apriAggiungiDocenti()">+ Aggiungi docenti</button>
+      </div>
       <div class="utenti-lista" id="lista-utenti"></div>
     </div>
   </div>
@@ -408,6 +411,23 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
   </div>
 </div>
 
+<!-- MODALE AGGIUNGI DOCENTI -->
+<div class="modale-overlay" id="modale-aggiungi-docenti">
+  <div class="modale-box">
+    <div class="modale-title">👥 Aggiungi docenti</div>
+    <div class="modale-campo">
+      <label>Inserisci i nomi utente — uno per riga</label>
+      <textarea id="docenti-input" placeholder="mario.rossi&#10;anna.bianchi&#10;giuseppe.verdi" style="width:100%;min-height:140px;border:1.5px solid var(--grigio-bordo);border-radius:8px;padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;resize:vertical;"></textarea>
+      <div style="font-size:0.75rem;color:var(--testo-soft);margin-top:6px">Il dominio <strong>@primaria.iccastelcovati.edu.it</strong> viene aggiunto automaticamente.</div>
+    </div>
+    <div id="docenti-risultato" style="display:none;margin-top:10px;font-size:0.82rem;padding:10px 12px;border-radius:8px;"></div>
+    <div class="modale-azioni">
+      <button class="btn-secondary" onclick="document.getElementById('modale-aggiungi-docenti').classList.remove('open')">Annulla</button>
+      <button class="btn-primary" onclick="aggiungiDocenti()">Aggiungi</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- ═══════════════════════════════════════════════
@@ -479,21 +499,40 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   // Controlla/crea profilo utente in Firestore
+  // Prima cerca per UID (profilo già consolidato)
   const uRef = doc(db, 'utenti', user.uid);
   const uSnap = await getDoc(uRef);
 
   if (!uSnap.exists()) {
-    // Primo accesso: crea profilo in attesa
-    await setDoc(uRef, {
-      nome: user.displayName, email: user.email,
-      foto: user.photoURL, ruolo: 'attesa',
-      creatoIl: serverTimestamp()
-    });
-    mostraSchermata('attesa');
-    return;
+    // Cerca se il master ha pre-creato il profilo tramite email
+    const emailDocId = user.email.replace(/\./g, '_').replace('@', '__at__');
+    const preRef = doc(db, 'utenti', emailDocId);
+    const preSnap = await getDoc(preRef);
+
+    if (preSnap.exists() && preSnap.data().ruolo === 'docente') {
+      // Profilo pre-creato trovato: consolida con UID reale e aggiorna foto/nome Google
+      await setDoc(uRef, {
+        ...preSnap.data(),
+        nome: user.displayName || preSnap.data().nome,
+        foto: user.photoURL,
+        uid: user.uid,
+        primoAccessoIl: serverTimestamp()
+      });
+      // Rimuovi il profilo temporaneo con emailDocId
+      await deleteDoc(preRef);
+    } else {
+      // Nessun profilo pre-creato: crea in attesa
+      await setDoc(uRef, {
+        nome: user.displayName, email: user.email,
+        foto: user.photoURL, ruolo: 'attesa',
+        creatoIl: serverTimestamp()
+      });
+      mostraSchermata('attesa');
+      return;
+    }
   }
 
-  const profilo = uSnap.data();
+  const profilo = (await getDoc(uRef)).data();
   ruoloCorrente = profilo.ruolo;
 
   if (ruoloCorrente === 'attesa') { mostraSchermata('attesa'); return; }
@@ -608,6 +647,46 @@ window.revokaUtente = async (uid) => {
   if (!confirm('Revocare l\'accesso a questo utente?')) return;
   await updateDoc(doc(db, 'utenti', uid), { ruolo: 'attesa' });
   mostraToast('Accesso revocato', 'rosso');
+};
+
+// ─── AGGIUNGI DOCENTI IN BLOCCO ───
+const DOMINIO = '@primaria.iccastelcovati.edu.it';
+
+window.apriAggiungiDocenti = () => {
+  document.getElementById('docenti-input').value = '';
+  document.getElementById('docenti-risultato').style.display = 'none';
+  document.getElementById('modale-aggiungi-docenti').classList.add('open');
+};
+
+window.aggiungiDocenti = async () => {
+  const raw = document.getElementById('docenti-input').value;
+  const righe = raw.split('\n').map(r => r.trim().toLowerCase()).filter(r => r.length > 0);
+  if (righe.length === 0) { mostraToast('Inserisci almeno un nome utente', 'rosso'); return; }
+
+  const risultati = [];
+  for (const nome of righe) {
+    const email = nome.includes('@') ? nome : nome + DOMINIO;
+    // Usa email come ID documento (sostituisce . e @ per Firestore)
+    const docId = email.replace(/\./g, '_').replace('@', '__at__');
+    const uRef = doc(db, 'utenti', docId);
+    const uSnap = await getDoc(uRef);
+    if (uSnap.exists()) {
+      risultati.push(`⚠️ ${email} — già presente`);
+    } else {
+      await setDoc(uRef, {
+        nome: nome.split('.').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' '),
+        email, foto: null, ruolo: 'docente',
+        creatoIl: serverTimestamp(), creatoD: utenteCorrente.email
+      });
+      risultati.push(`✅ ${email} — aggiunto`);
+    }
+  }
+
+  const el = document.getElementById('docenti-risultato');
+  el.style.display = 'block';
+  el.style.background = '#eef6fc';
+  el.style.border = '1px solid var(--azzurro)';
+  el.innerHTML = risultati.join('<br>');
 };
 
 // ─── NUOVO PDP ───
