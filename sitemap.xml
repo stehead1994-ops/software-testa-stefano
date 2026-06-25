@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
+  <!-- Podcast -->
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/podcast.html</loc>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
   <!-- Homepage -->
   <url>
     <loc>https://stehead1994-ops.github.io/software-testa-stefano/</loc>
