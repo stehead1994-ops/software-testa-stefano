@@ -246,6 +246,636 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
   .pdp-card { flex-wrap: wrap; }
   .master-body { padding: 16px 12px; }
 }
+
+/* ── CSS PDP integrato ── */
+
+  :root {
+    --blu: #1a3a5c;
+    --blu-mid: #2d5986;
+    --azzurro: #4a8fc4;
+    --azzurro-light: #d6e8f7;
+    --verde: #2e7d5e;
+    --verde-light: #d4ede4;
+    --arancio: #c0621a;
+    --arancio-light: #fce8d5;
+    --grigio-bg: #f4f6f9;
+    --grigio-bordo: #cbd5e1;
+    --testo: #1e2a38;
+    --testo-soft: #4a5568;
+    --bianco: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--grigio-bg);
+    color: var(--testo);
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    background: white;
+    border-bottom: 3px solid var(--blu);
+    padding: 0;
+  }
+  .header-inner {
+    max-width: 900px; margin: 0 auto;
+    display: flex; flex-direction: column; align-items: stretch;
+  }
+  .intestazione-img {
+    width: 100%; height: auto; display: block;
+  }
+  .pdp-title {
+    font-family: 'Lora', serif; font-size: 1.3rem; font-weight: 600;
+    color: white; background: var(--blu);
+    text-align: center; padding: 10px 24px; letter-spacing: 0.02em;
+  }
+
+  /* ─── SELETTORE GRADO ─── */
+  .grado-bar {
+    background: var(--blu-mid);
+    padding: 14px 40px;
+    display: flex; gap: 10px; justify-content: center;
+  }
+  .grado-btn {
+    background: transparent; border: 2px solid rgba(255,255,255,0.35);
+    color: white; padding: 8px 22px; border-radius: 30px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .grado-btn:hover { border-color: var(--azzurro); background: rgba(74,143,196,0.2); }
+  .grado-btn.active { background: var(--azzurro); border-color: var(--azzurro); }
+
+  /* ─── MAIN ─── */
+  .main { max-width: 900px; margin: 0 auto; padding: 32px 24px 60px; }
+
+  /* ─── SEZIONI ─── */
+  .sezione {
+    background: var(--bianco);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 1px solid var(--grigio-bordo);
+  }
+  .sezione-header {
+    padding: 14px 22px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer; user-select: none;
+  }
+  .sezione-header:hover { filter: brightness(0.97); }
+  .sezione-numero {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: white; color: inherit;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.82rem; font-weight: 700; flex-shrink: 0;
+  }
+  .sezione-titolo { font-weight: 600; font-size: 0.95rem; flex: 1; }
+  .sezione-toggle { font-size: 1rem; transition: transform 0.25s; }
+  .sezione-toggle.open { transform: rotate(180deg); }
+  .sezione-body { padding: 20px 22px; border-top: 1px solid var(--grigio-bordo); display: none; }
+  .sezione-body.open { display: block; }
+
+  /* colori per sezioni */
+  .s-blu .sezione-header { background: var(--azzurro-light); color: var(--blu); }
+  .s-blu .sezione-numero { background: var(--blu); color: white; }
+  .s-verde .sezione-header { background: var(--verde-light); color: var(--verde); }
+  .s-verde .sezione-numero { background: var(--verde); color: white; }
+  .s-arancio .sezione-header { background: var(--arancio-light); color: var(--arancio); }
+  .s-arancio .sezione-numero { background: var(--arancio); color: white; }
+
+  /* ─── FORM ELEMENTS ─── */
+  .campo { margin-bottom: 16px; }
+  .campo label {
+    display: block; font-size: 0.8rem; font-weight: 600;
+    color: var(--testo-soft); text-transform: uppercase;
+    letter-spacing: 0.05em; margin-bottom: 5px;
+  }
+  .campo input[type="text"],
+  .campo input[type="date"],
+  .campo select,
+  .campo textarea {
+    width: 100%; padding: 9px 13px;
+    border: 1.5px solid var(--grigio-bordo);
+    border-radius: 8px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; color: var(--testo);
+    background: var(--grigio-bg); transition: border 0.18s;
+    outline: none; resize: vertical;
+  }
+  .campo input:focus, .campo select:focus, .campo textarea:focus {
+    border-color: var(--azzurro); background: white;
+    box-shadow: 0 0 0 3px rgba(74,143,196,0.15);
+  }
+  .campo textarea { min-height: 80px; }
+
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+  /* ─── TIPOLOGIA PDP (checkbox) ─── */
+  .tipologia-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+  .tipo-card {
+    display: flex; align-items: flex-start; gap: 10px;
+    border: 1.5px solid var(--grigio-bordo); border-radius: 10px;
+    padding: 10px 14px; cursor: pointer; transition: all 0.18s;
+    background: var(--grigio-bg); flex: 1 1 200px; min-width: 180px;
+  }
+  .tipo-card input[type="radio"] { margin-top: 3px; flex-shrink: 0; accent-color: var(--azzurro); }
+  .tipo-card:has(input:checked) {
+    border-color: var(--azzurro); background: var(--azzurro-light);
+  }
+  .tipo-label { font-weight: 600; font-size: 0.88rem; }
+  .tipo-desc { font-size: 0.78rem; color: var(--testo-soft); margin-top: 2px; }
+
+  /* ─── TABELLA DIAGNOSI ─── */
+  .table-form { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  .table-form th {
+    background: var(--grigio-bg); font-size: 0.78rem; font-weight: 600;
+    color: var(--testo-soft); text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 8px 10px; border: 1px solid var(--grigio-bordo); text-align: left;
+  }
+  .table-form td { padding: 6px 8px; border: 1px solid var(--grigio-bordo); }
+  .table-form td input, .table-form td textarea {
+    width: 100%; border: none; background: transparent;
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+    color: var(--testo); outline: none; resize: none;
+  }
+  .table-form td textarea { min-height: 40px; }
+
+  /* ─── TABELLA ANALISI BISOGNI ─── */
+  .analisi-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .analisi-table th {
+    padding: 8px 10px; font-size: 0.78rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.04em; color: var(--testo-soft);
+    background: var(--grigio-bg); border: 1px solid var(--grigio-bordo);
+  }
+  .analisi-table td { border: 1px solid var(--grigio-bordo); padding: 4px 8px; vertical-align: top; }
+  .analisi-table .row-label {
+    font-weight: 600; font-size: 0.82rem; color: var(--testo-soft);
+    background: var(--grigio-bg); white-space: nowrap; padding: 8px 10px;
+  }
+  .analisi-table textarea {
+    width: 100%; border: none; background: transparent;
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+    resize: none; outline: none; min-height: 52px;
+  }
+
+  /* ─── CHECKLIST ABILITÀ ─── */
+  .abilita-lista { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+  .abilita-item {
+    border: 1.5px solid var(--grigio-bordo); border-radius: 10px;
+    overflow: hidden;
+  }
+  .abilita-header {
+    background: var(--grigio-bg); padding: 10px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .abilita-nome { font-weight: 600; font-size: 0.9rem; }
+  .abilita-checks { display: flex; flex-wrap: wrap; gap: 6px; }
+  .check-pill {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 0.75rem; padding: 3px 10px;
+    border: 1.5px solid var(--grigio-bordo); border-radius: 20px;
+    cursor: pointer; background: white; transition: all 0.15s;
+  }
+  .check-pill input { accent-color: var(--arancio); }
+  .check-pill:has(input:checked) {
+    background: var(--arancio-light); border-color: var(--arancio);
+    color: var(--arancio);
+  }
+  .abilita-body { padding: 10px 14px; }
+  .abilita-body label { font-size: 0.78rem; font-weight: 600; color: var(--testo-soft); display: block; margin-bottom: 4px; }
+  .abilita-body textarea {
+    width: 100%; border: 1.5px solid var(--grigio-bordo); border-radius: 8px;
+    padding: 7px 10px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+    resize: vertical; min-height: 56px; outline: none; transition: border 0.18s;
+  }
+  .abilita-body textarea:focus { border-color: var(--azzurro); }
+
+  /* ─── TABELLA STRATEGIE MATERIE ─── */
+  .materia-lista { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+  .materia-card {
+    border: 1.5px solid var(--grigio-bordo); border-radius: 10px; overflow: hidden;
+  }
+  .materia-header {
+    background: var(--blu); color: white; padding: 9px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .materia-nome { font-weight: 600; font-size: 0.9rem; }
+  .materia-firma { font-size: 0.75rem; opacity: 0.7; }
+  .materia-firma input {
+    background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.5);
+    color: white; font-family: 'DM Sans', sans-serif; font-size: 0.78rem;
+    width: 140px; outline: none;
+  }
+  .materia-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .materia-campo { padding: 10px 12px; border-top: 1px solid var(--grigio-bordo); }
+  .materia-campo:nth-child(odd) { border-right: 1px solid var(--grigio-bordo); }
+  .materia-campo:nth-child(3), .materia-campo:nth-child(4) { border-top: 1px solid var(--grigio-bordo); }
+  .materia-campo label { font-size: 0.72rem; font-weight: 700; color: var(--testo-soft); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px; }
+  .materia-campo textarea {
+    width: 100%; border: none; font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+    resize: none; min-height: 60px; outline: none; color: var(--testo);
+  }
+
+  /* ─── MATERIA BODY V2 (strumenti oggettivi) ─── */
+  .materia-body-v2 { padding: 14px 16px; display: flex; flex-direction: column; gap: 16px; }
+  .materia-campo-full label {
+    font-size: 0.74rem; font-weight: 700; color: var(--testo-soft);
+    text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 8px;
+  }
+  .label-hint { font-weight: 400; text-transform: none; letter-spacing: 0; color: #94a3b8; font-size: 0.72rem; }
+
+  .label-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .guida-btn {
+    background: var(--verde-light); color: var(--verde); border: 1.5px solid var(--verde);
+    border-radius: 18px; padding: 4px 12px; font-size: 0.72rem; font-weight: 600;
+    cursor: pointer; white-space: nowrap; transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+  }
+  .guida-btn:hover { background: var(--verde); color: white; }
+  .guida-panel {
+    background: #f3faf7; border: 1.5px solid var(--verde); border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 12px;
+  }
+  .guida-titolo { font-weight: 700; color: var(--verde); font-size: 0.82rem; margin-bottom: 8px; }
+  .guida-lista { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+  .guida-lista li { font-size: 0.8rem; color: var(--testo); line-height: 1.4; }
+  .guida-evidenza {
+    background: #fef3e2; border: 1px solid var(--arancio); border-radius: 6px;
+    padding: 7px 10px; margin-left: -10px; list-style: none;
+  }
+  .guida-evidenza em { font-style: normal; font-weight: 700; color: var(--arancio); }
+  .guida-fonte { margin-top: 10px; font-size: 0.68rem; color: var(--testo-soft); font-style: italic; }
+
+  .info-box-tempistiche {
+    background: #eef6fc; border: 1.5px solid var(--azzurro); border-radius: 10px;
+    padding: 12px 16px; margin-top: 14px;
+  }
+  .info-box-titolo { font-weight: 700; color: var(--blu); font-size: 0.85rem; margin-bottom: 8px; }
+  .info-box-tempistiche .guida-lista li { font-size: 0.82rem; }
+
+  .avviso-consiglio {
+    background: #eef6fc; border: 1.5px solid var(--azzurro); border-radius: 10px;
+    padding: 11px 16px; margin-top: 14px; font-size: 0.82rem; color: var(--testo); line-height: 1.45;
+  }
+
+  .materia-campo-full textarea {
+    width: 100%; border: 1.5px solid var(--grigio-bordo); border-radius: 8px;
+    padding: 8px 11px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+    resize: vertical; min-height: 56px; outline: none; color: var(--testo);
+  }
+
+  /* ─── BLOCCO "A DISCREZIONE" ─── */
+  textarea.campo-discrezione-errore, input.campo-discrezione-errore {
+    border-color: #c0392b !important; background: #fdecea !important;
+    box-shadow: 0 0 0 3px rgba(192,57,43,0.15) !important;
+  }
+  .discrezione-avviso {
+    display: none; align-items: flex-start; gap: 8px;
+    background: #fdecea; border: 1.5px solid #c0392b; border-radius: 8px;
+    padding: 8px 12px; margin-top: 6px; font-size: 0.78rem; color: #8a2417; line-height: 1.4;
+  }
+  .discrezione-avviso.show { display: flex; }
+  .discrezione-banner {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1100;
+    background: #c0392b; color: white; text-align: center;
+    padding: 12px 20px; font-size: 0.88rem; font-weight: 600;
+    display: none; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .discrezione-banner.show { display: flex; }
+  .discrezione-banner button {
+    background: white; color: #c0392b; border: none; border-radius: 6px;
+    padding: 5px 14px; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+  }
+  .materia-campo-full textarea:focus { border-color: var(--azzurro); }
+
+  /* Righe dinamiche: strumenti / misure dispensative */
+  .righe-dinamiche { display: flex; flex-direction: column; gap: 8px; }
+  .riga-dinamica {
+    display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: center;
+  }
+  .riga-dinamica input[type="text"] {
+    border: 1.5px solid var(--grigio-bordo); border-radius: 7px;
+    padding: 7px 11px; font-family: 'DM Sans', sans-serif; font-size: 0.84rem;
+    outline: none; color: var(--testo); background: white;
+  }
+  .riga-dinamica input.riga-nome { font-weight: 500; }
+  .riga-dinamica input.riga-quando { color: var(--testo-soft); }
+  .riga-dinamica input:focus { border-color: var(--azzurro); background: #f7fbff; }
+  .riga-rimuovi {
+    background: #fdecea; color: #c0392b; border: 1.5px solid #f0c4be;
+    border-radius: 7px; width: 30px; height: 30px; cursor: pointer; font-size: 0.85rem;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0;
+  }
+  .riga-rimuovi:hover { background: #c0392b; color: white; }
+  .add-riga-btn {
+    margin-top: 8px; background: var(--azzurro-light); color: var(--blu);
+    border: 1.5px dashed var(--azzurro); border-radius: 8px;
+    padding: 7px 14px; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+  }
+  .add-riga-btn:hover { background: var(--azzurro); color: white; }
+
+  .suggerimenti-panel {
+    background: #eef6fc; border: 1.5px solid var(--azzurro); border-radius: 10px;
+    padding: 10px 14px; margin-bottom: 10px;
+  }
+  .suggerimenti-titolo { font-weight: 700; color: var(--blu); font-size: 0.8rem; margin-bottom: 7px; }
+  .suggerimenti-lista { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+  .suggerimenti-lista li { font-size: 0.78rem; color: var(--testo); line-height: 1.35; }
+
+  /* Motivazione obbligatoria per soglie percentuali fuori range */
+  .motivazione-box {
+    margin-top: 10px; background: #fdecea; border: 1.5px solid #c0392b;
+    border-radius: 8px; padding: 9px 12px;
+  }
+  .motivazione-label { display: block; font-size: 0.74rem; font-weight: 700; color: #8a2417; margin-bottom: 6px; }
+  .motivazione-testo {
+    width: 100%; border: 1.5px solid #e8b4ac; border-radius: 7px;
+    padding: 7px 10px; font-family: 'DM Sans', sans-serif; font-size: 0.83rem;
+    outline: none; resize: vertical; min-height: 44px; background: white;
+  }
+  .motivazione-testo:focus { border-color: #c0392b; }
+
+  /* Criteri valutativi: checklist multi-selezione */
+  .criteri-grid { display: flex; flex-direction: column; gap: 7px; margin-top: 4px; }
+  .criterio-check {
+    display: flex; align-items: flex-start; gap: 9px; cursor: pointer;
+    padding: 7px 10px; border: 1.5px solid var(--grigio-bordo); border-radius: 8px;
+    background: var(--grigio-bg); transition: all 0.15s; font-size: 0.83rem; line-height: 1.35;
+  }
+  .criterio-check input { accent-color: var(--verde); margin-top: 2px; flex-shrink: 0; }
+  .criterio-check:has(input:checked) { background: var(--verde-light); border-color: var(--verde); font-weight: 500; }
+
+  /* Misure dispensative oggettive */
+  .misure-oggettive-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .misura-box {
+    border: 1.5px solid var(--grigio-bordo); border-radius: 8px; padding: 8px 12px; background: var(--grigio-bg);
+  }
+  .misura-check { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 500; }
+  .misura-check input { accent-color: var(--verde); }
+
+  /* Misura fissa (non disattivabile) — font/formattazione DSA */
+  .misura-fissa { background: #eef6fc; border-color: var(--azzurro); }
+  .misura-check-fissa { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 500; }
+  .misura-lucchetto { font-size: 0.78rem; }
+  .font-fisso-valore {
+    font-weight: 700; color: var(--blu); font-size: 0.88rem;
+    background: white; border: 1.5px solid var(--azzurro); border-radius: 6px;
+    padding: 6px 10px; display: inline-block;
+  }
+
+  /* Campo "perché" per domande chiuse/aperte */
+  .perche-testo {
+    width: 100%; border: 1.5px solid var(--grigio-bordo); border-radius: 7px;
+    padding: 7px 10px; font-family: 'DM Sans', sans-serif; font-size: 0.83rem;
+    outline: none; resize: vertical; min-height: 44px; background: white;
+  }
+  .perche-testo:focus { border-color: var(--azzurro); }
+  .misura-sub { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--grigio-bordo); }
+  .misura-select {
+    width: 100%; padding: 6px 9px; border: 1.5px solid var(--grigio-bordo); border-radius: 6px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; background: white; outline: none;
+  }
+  .percent-row { display: flex; align-items: center; gap: 10px; }
+  .percent-slider { flex: 1; accent-color: var(--verde); }
+  .percent-value { font-weight: 700; color: var(--verde); font-size: 0.85rem; min-width: 38px; text-align: right; }
+  .percent-hint { font-size: 0.72rem; color: var(--testo-soft); margin-top: 6px; line-height: 1.3; }
+  .misura-note {
+    width: 100%; border: 1.5px solid var(--grigio-bordo); border-radius: 8px;
+    padding: 8px 11px; font-family: 'DM Sans', sans-serif; font-size: 0.83rem; outline: none; resize: vertical; min-height: 44px;
+  }
+
+
+  /* ─── SEZIONE FAMIGLIA ─── */
+  .famiglia-lista { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+  .fam-item { border: 1.5px solid var(--grigio-bordo); border-radius: 8px; overflow: hidden; }
+  .fam-q { background: var(--grigio-bg); padding: 9px 14px; font-size: 0.85rem; font-weight: 600; color: var(--testo-soft); }
+  .fam-a { padding: 0; }
+  .fam-a textarea {
+    width: 100%; border: none; font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+    resize: none; min-height: 52px; outline: none; padding: 9px 14px; color: var(--testo);
+  }
+  .fam-a textarea:focus { background: #f0f7ff; }
+
+  .fam-gruppo-label {
+    font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--verde); margin: 14px 0 8px;
+    padding-bottom: 4px; border-bottom: 2px solid var(--verde-light);
+  }
+  .fam-num { font-weight: 700; color: var(--verde); margin-right: 4px; }
+
+  /* ─── SEZIONE INFANZIA: CAMPI ESPERIENZA ─── */
+  .campo-exp { border: 1.5px solid var(--grigio-bordo); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+  .campo-exp-header { background: var(--verde-light); color: var(--verde); padding: 10px 14px; font-weight: 700; font-size: 0.9rem; }
+  .campo-exp-indicatori { padding: 8px 14px; font-size: 0.8rem; color: var(--testo-soft); background: #f9fbf9; border-bottom: 1px solid var(--grigio-bordo); }
+  .campo-exp-indicatori ul { margin-left: 14px; }
+  .campo-exp-body { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; }
+  .ceb { padding: 10px 12px; border-top: 1px solid var(--grigio-bordo); }
+  .ceb:nth-child(1), .ceb:nth-child(2) { border-right: 1px solid var(--grigio-bordo); }
+  .ceb label { font-size: 0.72rem; font-weight: 700; color: var(--testo-soft); text-transform: uppercase; letter-spacing: 0.04em; display: block; margin-bottom: 4px; }
+  .ceb textarea { width: 100%; border: none; font-family: 'DM Sans', sans-serif; font-size: 0.84rem; resize: none; min-height: 56px; outline: none; }
+
+  /* ─── PRESENZA/ASSENZA/PARZIALE selector ─── */
+  .pap-group { display: flex; gap: 6px; margin-bottom: 6px; }
+  .pap-btn {
+    flex: 1; padding: 5px; text-align: center; font-size: 0.72rem; font-weight: 600;
+    border: 1.5px solid var(--grigio-bordo); border-radius: 6px; cursor: pointer;
+    transition: all 0.15s; background: white;
+  }
+  .pap-btn.sel-p { background: var(--verde-light); border-color: var(--verde); color: var(--verde); }
+  .pap-btn.sel-a { background: #fde8e8; border-color: #c0392b; color: #c0392b; }
+  .pap-btn.sel-pp { background: var(--arancio-light); border-color: var(--arancio); color: var(--arancio); }
+
+  /* ─── DSA CHECK CARDS ─── */
+  .dsa-check-card {
+    display: flex; align-items: flex-start; gap: 10px;
+    border: 1.5px solid var(--grigio-bordo); border-radius: 10px;
+    padding: 10px 14px; cursor: pointer; transition: all 0.18s;
+    background: var(--grigio-bg);
+  }
+  .dsa-check-card input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; accent-color: var(--azzurro); }
+  .dsa-check-card:has(input:checked) { border-color: var(--azzurro); background: var(--azzurro-light); }
+
+  /* ─── COMORBIDITÀ PILLS ─── */
+  .comor-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 13px; border: 1.5px solid var(--grigio-bordo);
+    border-radius: 20px; cursor: pointer; font-size: 0.82rem;
+    background: white; transition: all 0.15s;
+  }
+  .comor-pill input { accent-color: var(--arancio); }
+  .comor-pill:has(input:checked) { background: var(--arancio-light); border-color: var(--arancio); color: var(--arancio); font-weight: 600; }
+
+  /* ─── NOTE finali ─── */
+  .note-finale {
+    background: var(--bianco); border-radius: 12px; padding: 20px 22px;
+    border: 1.5px solid var(--grigio-bordo); margin-bottom: 24px;
+  }
+  .note-finale label { font-size: 0.8rem; font-weight: 700; color: var(--testo-soft); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 8px; }
+  .note-finale textarea {
+    width: 100%; border: 1.5px solid var(--grigio-bordo); border-radius: 8px;
+    padding: 10px 13px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    resize: vertical; min-height: 80px; outline: none;
+  }
+  .note-finale textarea:focus { border-color: var(--azzurro); }
+
+  /* ─── FIRME ─── */
+  .firme-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 10px; }
+  .firma-box { border: 1.5px dashed var(--grigio-bordo); border-radius: 10px; padding: 12px 14px; }
+  .firma-box label { font-size: 0.75rem; font-weight: 700; color: var(--testo-soft); text-transform: uppercase; display: block; margin-bottom: 6px; }
+  .firma-box input {
+    width: 100%; border: none; border-bottom: 1.5px solid var(--grigio-bordo);
+    padding: 4px 0; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; outline: none;
+  }
+  .firma-nota {
+    font-size: 0.7rem; color: var(--testo-soft); margin-top: 10px;
+    background: var(--grigio-bg); padding: 6px 8px; border-radius: 6px;
+    line-height: 1.3;
+  }
+  .firma-box-pad { padding-bottom: 10px; }
+  .signature-preview {
+    position: relative; margin-top: 10px; min-height: 90px;
+    border: 1.5px dashed var(--azzurro); border-radius: 8px;
+    background: var(--azzurro-light); overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.18s;
+  }
+  .signature-preview:hover { background: #cfe6f9; }
+  .signature-preview img { max-width: 100%; max-height: 90px; display: block; }
+  .signature-preview-ph { color: var(--blu); font-size: 0.85rem; font-weight: 600; }
+  .signature-preview.has-signature { background: white; border-style: solid; border-color: var(--grigio-bordo); cursor: default; }
+  .signature-preview.has-signature:hover { background: #f0f7ff; cursor: pointer; }
+  .signature-actions { margin-top: 6px; display: flex; justify-content: flex-end; }
+  .sig-btn {
+    background: none; border: none; color: var(--testo-soft);
+    font-size: 0.75rem; cursor: pointer; padding: 2px 6px; border-radius: 4px;
+  }
+  .sig-btn:hover { background: var(--grigio-bg); color: var(--arancio); }
+
+
+  /* ─── BOTTOM ACTIONS ─── */
+  .bottom-bar {
+    position: sticky; bottom: 0; background: white;
+    border-top: 1px solid var(--grigio-bordo);
+    padding: 14px 24px; display: flex; gap: 12px; justify-content: flex-end;
+    max-width: 900px; margin: 0 auto; border-radius: 0 0 12px 12px;
+  }
+  .btn {
+    padding: 10px 24px; border-radius: 8px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
+  }
+  .btn-secondary { background: var(--grigio-bg); color: var(--testo-soft); border: 1.5px solid var(--grigio-bordo); }
+  .btn-secondary:hover { background: var(--grigio-bordo); }
+  .btn-primary { background: var(--blu); color: white; }
+  .btn-primary:hover { background: var(--blu-mid); }
+  .btn-print { background: var(--verde); color: white; }
+  .btn-print:hover { filter: brightness(0.9); }
+
+  /* ─── SEPARATORE SEZIONE ─── */
+  .sep-label {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--testo-soft);
+    display: flex; align-items: center; gap: 10px; margin: 6px 0 14px;
+  }
+  .sep-label::before, .sep-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--grigio-bordo);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 640px) {
+    .header { padding: 20px 18px 16px; }
+    .main { padding: 20px 12px 80px; }
+    .grado-bar { padding: 12px 18px; flex-wrap: wrap; }
+    .row-2, .row-3 { grid-template-columns: 1fr; }
+    .materia-body { grid-template-columns: 1fr; }
+    .misure-oggettive-grid { grid-template-columns: 1fr; }
+    .riga-dinamica { grid-template-columns: 1fr; }
+    .campo-exp-body { grid-template-columns: 1fr; }
+    .firme-grid { grid-template-columns: 1fr; }
+    .bottom-bar { flex-direction: column; }
+  }
+
+  @media print {
+    .grado-bar, .bottom-bar, .sezione-toggle, #dropzone,
+    [style*="position:sticky"], [style*="position: sticky"] { display: none !important; }
+
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { background: white; font-size: 10pt; }
+    .header { border-bottom: 2pt solid #1a3a5c; }
+    .intestazione-img { max-width: 100%; }
+    .main { max-width: 100%; padding: 0; }
+
+    .sezione { box-shadow: none; border: 1pt solid #ccc; page-break-inside: avoid; margin-bottom: 12pt; }
+    .sezione-body { display: block !important; padding: 10pt 14pt; }
+    .sezione-header { padding: 8pt 14pt; }
+
+    /* Campi compilati leggibili */
+    input[type="text"], input[type="date"], select, textarea {
+      border: none; border-bottom: 1pt solid #aaa;
+      background: transparent !important;
+      font-size: 9.5pt; padding: 2pt 0;
+      resize: none; width: 100%;
+    }
+    textarea { min-height: 0 !important; }
+
+    /* Checkbox/radio: mostra solo i selezionati */
+    .tipo-card { border: none; padding: 0; background: transparent; }
+    .tipo-card:has(input:not(:checked)) { display: none; }
+    .dsa-check-card:has(input:not(:checked)) { display: none; }
+    .comor-pill:has(input:not(:checked)) { display: none; }
+    .check-pill:has(input:not(:checked)) { display: none; }
+
+    .tipologia-grid { flex-direction: column; gap: 4pt; }
+    .tipo-card:has(input:checked) { background: #e8f3fc; padding: 6pt 10pt; border-radius: 4pt; }
+
+    .materia-card { page-break-inside: avoid; margin-bottom: 8pt; }
+    .materia-body { grid-template-columns: 1fr 1fr; }
+    .materia-campo { padding: 6pt 8pt; }
+    .suggerimenti-panel { display: none !important; }
+    .riga-rimuovi, .add-riga-btn { display: none !important; }
+    .riga-dinamica { grid-template-columns: 1fr 1fr; gap: 6pt; page-break-inside: avoid; }
+    .riga-dinamica:has(input.riga-nome:placeholder-shown) { display: none; }
+    .criterio-check:has(input:not(:checked)) { display: none; }
+    .criterio-check { border: none; background: transparent; padding: 2pt 0; }
+    .motivazione-box { border: 1pt solid #c0392b; }
+    .misura-fissa { border: 1pt solid #4a8fc4; background: #eef6fc; }
+    .perche-testo { border: 1pt solid #ccc; }
+    .misura-box:has(.misura-check input:not(:checked)) { opacity: 0.45; }
+    .misure-oggettive-grid { grid-template-columns: 1fr 1fr; }
+    .percent-slider { display: none; }
+    .percent-row::after { content: attr(data-print); }
+    .guida-btn { display: none; }
+    .guida-panel { display: none !important; }
+    .info-box-tempistiche { display: none !important; }
+    .avviso-consiglio { display: none !important; }
+
+    .abilita-item { page-break-inside: avoid; }
+    .abilita-checks { flex-wrap: wrap; }
+    .check-pill:has(input:checked) { background: #fce8d5; }
+
+    .fam-item { page-break-inside: avoid; }
+
+    .analisi-table td, .analisi-table th { font-size: 9pt; }
+    .table-form td, .table-form th { font-size: 9pt; }
+
+    .firma-box { border: 1pt dashed #999; }
+    .signature-actions, .firma-nota { display: none; }
+    .signature-preview { border: none; background: transparent; cursor: default; }
+    .signature-preview-ph { display: none; }
+    #firma-modal { display: none !important; }
+
+    /* Nascondi bottoni PAP non selezionati */
+    .pap-btn:not(.sel-p):not(.sel-a):not(.sel-pp) { display: none; }
+    .pap-btn.sel-p::before { content: "✅ Presente"; }
+    .pap-btn.sel-a::before { content: "❌ Assente"; }
+    .pap-btn.sel-pp::before { content: "⚡ Parziale"; }
+
+    @page { margin: 1.5cm; size: A4; }
+  }
+
 </style>
 </head>
 <body>
@@ -746,152 +1376,104 @@ window.verificaPW = async () => {
   apriEditor(trovato.id);
 };
 
-// ─── EDITOR PDP ───
+// ─── EDITOR PDP (form reale integrato) ───
 window.apriEditor = (id) => {
   pdpCorrenteId = id;
   if (unsubPDP) unsubPDP();
+  // Carica il form PDP nell'area editing (una sola volta)
+  _iniettaFormPDP();
   unsubPDP = onSnapshot(doc(db, 'pdp', id), (snap) => {
     if (!snap.exists()) return;
     pdpCorrenteDoc = snap.data();
-    renderEditor(pdpCorrenteDoc);
+    _aggiornaHeaderEditor(pdpCorrenteDoc);
+    _ripristinaDatiFirebase(pdpCorrenteDoc.dati || {}, pdpCorrenteDoc.grado || 'primaria');
   });
   mostraSchermata('editor');
 };
 
-function renderEditor(pdp) {
+let _formIniettato = false;
+
+function _iniettaFormPDP() {
+  if (_formIniettato) return;
+  _formIniettato = true;
+  const area = document.getElementById('area-editing');
+  area.innerHTML = _PDP_FORM_HTML;
+  // Aggiorna sidebar con le sezioni reali del PDP
+  const sezioni = [
+    {id:'s1', label:'1. Dati alunno'},
+    {id:'s2', label:'2. Tipologia PDP'},
+    {id:'s3', label:'3. Osservazioni'},
+    {id:'s4-scuole', label:'4. Abilità'},
+    {id:'s5', label:'5. Strategie per disciplina'},
+    {id:'s6', label:'6. Osservazioni famiglia'},
+    {id:'s-firme', label:'7. Firme'},
+  ];
+  document.getElementById('sidebar-materie').innerHTML =
+    '<div class="sidebar-section">Sezioni</div>' +
+    sezioni.map(s => `<div class="sidebar-item" onclick="document.getElementById('${s.id}')?.scrollIntoView({behavior:'smooth',block:'start'})">${s.label}</div>`).join('');
+  // Avvia autosave su tutti gli eventi del form
+  _collegaAutosave();
+}
+
+function _aggiornaHeaderEditor(pdp) {
   document.getElementById('editor-alunno-nome').textContent =
     `${pdp.alunno || 'PDP'} — ${pdp.classe || ''} (${pdp.anno || ''})`;
-
-  const dati = pdp.dati || {};
   const isProtocollato = pdp.stato === 'protocollato';
+  const btnP = document.getElementById('btn-protocolla');
+  if (btnP) btnP.style.display = isProtocollato ? 'none' : '';
+}
 
-  // Sidebar sezioni
-  const sezioni = ['Dati alunno', 'Tipologia PDP', 'Analisi bisogni', 'Abilità', 'Strategie per disciplina', 'Osservazioni famiglia', 'Firme'];
-  document.getElementById('sidebar-materie').innerHTML =
-    `<div class="sidebar-section">Sezioni</div>` +
-    sezioni.map((s, i) => `
-      <div class="sidebar-item ${dati['compilata_s'+i] ? 'compilata' : ''}" onclick="scrollASezione('s${i}')">
-        <div class="check">${dati['compilata_s'+i] ? '✓' : ''}</div>
-        ${s}
-      </div>`).join('');
-
-  // Area editing — sezioni principali
-  const lock = isProtocollato ? 'disabled' : '';
-  document.getElementById('area-editing').innerHTML = `
-
-    <div class="sezione-editor" id="s0">
-      <div class="sezione-editor-header">1. Dati relativi all'alunno/a</div>
-      <div class="sezione-editor-body">
-        <div class="row-2">
-          <div class="campo-editor"><label>Cognome e nome</label><input ${lock} type="text" data-campo="alunno_nome" value="${esc(dati.alunno_nome||pdp.alunno||'')}"></div>
-          <div class="campo-editor"><label>Data di nascita</label><input ${lock} type="date" data-campo="data_nascita" value="${esc(dati.data_nascita||'')}"></div>
-        </div>
-        <div class="row-2">
-          <div class="campo-editor"><label>Classe</label><input ${lock} type="text" data-campo="classe" value="${esc(dati.classe||pdp.classe||'')}"></div>
-          <div class="campo-editor"><label>Anno scolastico</label><input ${lock} type="text" data-campo="anno" value="${esc(dati.anno||pdp.anno||'')}"></div>
-        </div>
-        <div class="campo-editor"><label>Plesso</label>
-          <select ${lock} data-campo="plesso">
-            <option value="">— seleziona —</option>
-            <option ${dati.plesso==='Castelcovati'?'selected':''}>Castelcovati</option>
-            <option ${dati.plesso==='Comezzano Cizzago'?'selected':''}>Comezzano Cizzago</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="sezione-editor" id="s1">
-      <div class="sezione-editor-header">2. Tipologia PDP</div>
-      <div class="sezione-editor-body">
-        <div class="campo-editor"><label>Tipo</label>
-          <select ${lock} data-campo="tipo_pdp">
-            <option value="">— seleziona —</option>
-            <option ${dati.tipo_pdp==='DSA'?'selected':''}>DSA – Disturbi Specifici dell'Apprendimento</option>
-            <option ${dati.tipo_pdp==='BES'?'selected':''}>BES – Bisogni Educativi Speciali</option>
-            <option ${dati.tipo_pdp==='NAI'?'selected':''}>Svantaggio linguistico / NAI</option>
-            <option ${dati.tipo_pdp==='CDC'?'selected':''}>Decisione del Consiglio di Classe</option>
-          </select>
-        </div>
-        <div class="campo-editor"><label>Diagnosi specialistica</label><input ${lock} type="text" data-campo="diagnosi" value="${esc(dati.diagnosi||'')}" placeholder="es. DSA – Dislessia e Disortografia"></div>
-        <div class="row-2">
-          <div class="campo-editor"><label>Redatta da</label><input ${lock} type="text" data-campo="specialista" value="${esc(dati.specialista||'')}"></div>
-          <div class="campo-editor"><label>In data</label><input ${lock} type="date" data-campo="data_diagnosi" value="${esc(dati.data_diagnosi||'')}"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="sezione-editor" id="s2">
-      <div class="sezione-editor-header">3. Analisi dei bisogni e del contesto</div>
-      <div class="sezione-editor-body">
-        <div class="campo-editor"><label>Risorse dell'alunno/a</label><textarea ${lock} data-campo="risorse_alunno" placeholder="Punti di forza, interessi, atteggiamenti…">${esc(dati.risorse_alunno||'')}</textarea></div>
-        <div class="campo-editor"><label>Criticità</label><textarea ${lock} data-campo="criticita" placeholder="Difficoltà emerse, aree di fragilità…">${esc(dati.criticita||'')}</textarea></div>
-        <div class="campo-editor"><label>Interventi specialistici</label><textarea ${lock} data-campo="interventi" placeholder="es. Logopedista – dott.ssa Bianchi – sedute settimanali…">${esc(dati.interventi||'')}</textarea></div>
-      </div>
-    </div>
-
-    <div class="sezione-editor" id="s3">
-      <div class="sezione-editor-header">4. Abilità strumentali e profilo</div>
-      <div class="sezione-editor-body">
-        <div class="campo-editor"><label>Lettura</label><textarea ${lock} data-campo="abilita_lettura" placeholder="Descrizione delle abilità di lettura e obiettivi…">${esc(dati.abilita_lettura||'')}</textarea></div>
-        <div class="campo-editor"><label>Scrittura</label><textarea ${lock} data-campo="abilita_scrittura" placeholder="Descrizione delle abilità di scrittura e obiettivi…">${esc(dati.abilita_scrittura||'')}</textarea></div>
-        <div class="campo-editor"><label>Calcolo</label><textarea ${lock} data-campo="abilita_calcolo" placeholder="Descrizione delle abilità di calcolo e obiettivi…">${esc(dati.abilita_calcolo||'')}</textarea></div>
-        <div class="campo-editor"><label>Attenzione e motivazione</label><textarea ${lock} data-campo="abilita_attenzione" placeholder="Profilo attentivo, motivazione, gestione emotiva…">${esc(dati.abilita_attenzione||'')}</textarea></div>
-      </div>
-    </div>
-
-    <div class="sezione-editor" id="s4">
-      <div class="sezione-editor-header">5. Strategie per disciplina</div>
-      <div class="sezione-editor-body">
-        ${['Italiano','Matematica','Storia e Geografia','Scienze','Inglese','Tecnologia','Arte e Immagine','Musica','Scienze Motorie','IRC / Alternativa'].map(m => `
-          <details style="border:1.5px solid var(--grigio-bordo);border-radius:8px;overflow:hidden;margin-bottom:4px">
-            <summary style="padding:10px 14px;font-weight:600;font-size:0.88rem;cursor:pointer;background:var(--grigio-bg)">${m}</summary>
-            <div style="padding:14px;display:flex;flex-direction:column;gap:10px">
-              <div class="campo-editor"><label>Strumenti compensativi</label><textarea ${lock} data-campo="str_${slug(m)}" placeholder="Strumenti specifici per ${m}…">${esc(dati['str_'+slug(m)]||'')}</textarea></div>
-              <div class="campo-editor"><label>Misure dispensative</label><textarea ${lock} data-campo="mis_${slug(m)}" placeholder="Misure per ${m}…">${esc(dati['mis_'+slug(m)]||'')}</textarea></div>
-              <div class="campo-editor"><label>Criteri valutativi</label><textarea ${lock} data-campo="val_${slug(m)}" placeholder="Criteri di valutazione per ${m}…">${esc(dati['val_'+slug(m)]||'')}</textarea></div>
-            </div>
-          </details>`).join('')}
-      </div>
-    </div>
-
-    <div class="sezione-editor" id="s5">
-      <div class="sezione-editor-header">6. Osservazioni della famiglia</div>
-      <div class="sezione-editor-body">
-        <div class="campo-editor"><label>Con chi svolge i compiti?</label><textarea ${lock} data-campo="fam_compiti" placeholder="…">${esc(dati.fam_compiti||'')}</textarea></div>
-        <div class="campo-editor"><label>Come si approccia allo studio?</label><textarea ${lock} data-campo="fam_approccio" placeholder="…">${esc(dati.fam_approccio||'')}</textarea></div>
-        <div class="campo-editor"><label>Strumenti di supporto usati a casa</label><textarea ${lock} data-campo="fam_strumenti" placeholder="…">${esc(dati.fam_strumenti||'')}</textarea></div>
-      </div>
-    </div>
-
-    <div class="sezione-editor" id="s6">
-      <div class="sezione-editor-header">7. Firme</div>
-      <div class="sezione-editor-body">
-        <div class="row-2">
-          <div class="campo-editor"><label>Coordinatore di classe</label><input ${lock} type="text" data-campo="firma_coord" value="${esc(dati.firma_coord||'')}" placeholder="Nome e cognome"></div>
-          <div class="campo-editor"><label>Data condivisione con famiglia</label><input ${lock} type="date" data-campo="data_firma" value="${esc(dati.data_firma||'')}"></div>
-        </div>
-        <div class="campo-editor"><label>Genitore/Tutore</label><input ${lock} type="text" data-campo="firma_genitore" value="${esc(dati.firma_genitore||'')}" placeholder="Nome e cognome"></div>
-        <div class="campo-editor"><label>Dirigente Scolastico</label><input type="text" value="Tecla Fogliata" disabled style="background:var(--grigio-bg);color:var(--testo-soft)"></div>
-      </div>
-    </div>
-
-    ${isProtocollato ? '<div style="text-align:center;padding:20px;color:var(--verde);font-weight:700">✅ PDP protocollato — sola lettura</div>' : ''}
-  `;
-
-  // Autosave su ogni modifica
-  if (!isProtocollato) {
-    document.querySelectorAll('#area-editing [data-campo]').forEach(el => {
-      el.addEventListener('input', () => scheduleAutosave());
-    });
+function _ripristinaDatiFirebase(dati, grado) {
+  // Imposta grado
+  if (typeof setGrado === 'function') setGrado(grado);
+  // Ripristina tutti i campi con data-campo
+  Object.entries(dati).forEach(([campo, val]) => {
+    const el = document.querySelector(`[data-campo="${campo}"]`);
+    if (!el) return;
+    if (el.type === 'checkbox') { el.checked = !!val; }
+    else if (el.type === 'radio') { el.checked = (el.value === val); }
+    else { el.value = val; }
+    // Triggera change per aggiornare UI dipendenti (toggleSub, mostraTipoDSA ecc.)
+    el.dispatchEvent(new Event('change', {bubbles: true}));
+  });
+  // Ripristina righe dinamiche
+  if (dati._righe) {
+    try {
+      const righe = JSON.parse(dati._righe);
+      righe.forEach(({containerId, items}) => {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        items.forEach(item => {
+          const div = document.createElement('div');
+          div.innerHTML = (containerId.startsWith('strumenti') ? rigaStrumentoHTML() : rigaMisuraHTML()).trim();
+          const row = div.firstElementChild;
+          const inputs = row.querySelectorAll('input[type="text"]');
+          if (inputs[0]) inputs[0].value = item[0] || '';
+          if (inputs[1]) inputs[1].value = item[1] || '';
+          container.appendChild(row);
+        });
+      });
+    } catch(e) {}
+  }
+  // Ripristina PAP buttons (infanzia)
+  if (dati._pap) {
+    try {
+      JSON.parse(dati._pap).forEach(({i, cls}) => {
+        const btns = document.querySelectorAll('.pap-btn');
+        if (btns[i] && cls) { btns[i].classList.remove('sel-p','sel-a','sel-pp'); btns[i].classList.add(cls); }
+      });
+    } catch(e) {}
   }
 }
 
-function esc(s) { return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
-function slug(s) { return s.toLowerCase().replace(/[^a-z0-9]/g,'_'); }
-
-window.scrollASezione = (id) => {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
+function _collegaAutosave() {
+  const area = document.getElementById('area-editing');
+  if (!area) return;
+  // Ascolta input (testo, textarea, slider) e change (select, checkbox, radio)
+  area.addEventListener('input', () => scheduleAutosave());
+  area.addEventListener('change', () => scheduleAutosave());
+}
 
 // ─── AUTOSAVE ───
 function scheduleAutosave() {
@@ -906,12 +1488,51 @@ function scheduleAutosave() {
 async function salvaOra() {
   if (!pdpCorrenteId) return;
   const nuoviDati = {};
+
+  // Campi con data-campo (text, textarea, select, date, range)
   document.querySelectorAll('#area-editing [data-campo]').forEach(el => {
-    nuoviDati[el.dataset.campo] = el.value;
+    if (el.type === 'checkbox') nuoviDati[el.dataset.campo] = el.checked;
+    else if (el.type === 'radio') { if (el.checked) nuoviDati[el.dataset.campo] = el.value; }
+    else nuoviDati[el.dataset.campo] = el.value;
   });
+
+  // Radio e checkbox con name (tipo_pdp, dsa_tipo ecc.)
+  document.querySelectorAll('#area-editing input[name]').forEach(el => {
+    if (el.type === 'radio' && el.checked) nuoviDati['radio_' + el.name] = el.value;
+    if (el.type === 'checkbox') nuoviDati['cb_' + el.name + '_' + el.value] = el.checked;
+  });
+
+  // Grado corrente
+  nuoviDati['_grado'] = (typeof gradoCorrente !== 'undefined') ? gradoCorrente : 'primaria';
+
+  // Righe dinamiche (strumenti e misure)
+  const righeData = [];
+  document.querySelectorAll('#area-editing .righe-dinamiche').forEach(container => {
+    if (!container.id) return;
+    const items = [];
+    container.querySelectorAll('.riga-dinamica').forEach(riga => {
+      const inputs = riga.querySelectorAll('input[type="text"]');
+      items.push([inputs[0]?.value || '', inputs[1]?.value || '']);
+    });
+    righeData.push({containerId: container.id, items});
+  });
+  if (righeData.length) nuoviDati['_righe'] = JSON.stringify(righeData);
+
+  // PAP buttons (infanzia)
+  const papBtns = document.querySelectorAll('#area-editing .pap-btn');
+  if (papBtns.length) {
+    const papData = [];
+    papBtns.forEach((b, i) => {
+      const cls = ['sel-p','sel-a','sel-pp'].find(c => b.classList.contains(c)) || '';
+      papData.push({i, cls});
+    });
+    nuoviDati['_pap'] = JSON.stringify(papData);
+  }
+
   try {
     await updateDoc(doc(db, 'pdp', pdpCorrenteId), {
-      dati: nuoviDati, stato: 'in-corso', ultimoAgg: serverTimestamp()
+      dati: nuoviDati, stato: 'in-corso', ultimoAgg: serverTimestamp(),
+      grado: nuoviDati['_grado']
     });
     const dot = document.getElementById('autosave-dot');
     const lbl = document.getElementById('autosave-label');
@@ -949,6 +1570,1405 @@ window.mostraToast = (msg, tipo='') => {
 window.apriEditor   = apriEditor;
 window.caricaPDP    = caricaPDP;
 window.caricaUtenti = caricaUtenti;
+
+
+// ── Form HTML PDP (integrato) ──
+const _PDP_FORM_HTML = `<div class="grado-bar">
+  <button class="grado-btn" onclick="setGrado('infanzia')">🌱 Scuola dell'Infanzia</button>
+  <button class="grado-btn active" onclick="setGrado('primaria')">📚 Scuola Primaria</button>
+  <button class="grado-btn" onclick="setGrado('secondaria')">🎓 Scuola Secondaria I grado</button>
+</div>
+
+<!-- MAIN FORM -->
+<div class="main">
+
+  <!-- 1. DATI ALUNNO -->
+  <div class="sezione s-blu" id="s1">
+    <div class="sezione-header" onclick="toggle('s1')">
+      <div class="sezione-numero">1</div>
+      <div class="sezione-titolo">Dati relativi all'alunno/a</div>
+      <div class="sezione-toggle open" id="tog-s1">▼</div>
+    </div>
+    <div class="sezione-body open" id="body-s1">
+      <div class="row-2">
+        <div class="campo"><label>Cognome e nome</label><input type="text" placeholder="es. Rossi Mario"></div>
+        <div class="campo"><label>Data e luogo di nascita</label><input type="text" placeholder="gg/mm/aaaa – Comune"></div>
+      </div>
+      <div class="row-3">
+        <div class="campo"><label>Grado scolastico</label>
+          <select id="select-grado" onchange="setGradoSelect(this.value)">
+            <option value="infanzia">Scuola dell'Infanzia</option>
+            <option value="primaria" selected>Scuola Primaria</option>
+            <option value="secondaria">Scuola Secondaria I grado</option>
+          </select>
+        </div>
+        <div class="campo"><label>Classe / Sezione</label>
+          <div style="display:flex;gap:8px;">
+            <select id="select-classe" onchange="aggiornaVisibilitaDSA()" style="flex:1">
+              <option value="">— classe —</option>
+              <option value="1">Classe 1ª</option>
+              <option value="2">Classe 2ª</option>
+              <option value="3">Classe 3ª</option>
+              <option value="4">Classe 4ª</option>
+              <option value="5">Classe 5ª</option>
+            </select>
+            <input type="text" placeholder="Sezione (es. A)" style="width:90px">
+          </div>
+        </div>
+        <div class="campo"><label>Plesso</label>
+          <select>
+            <option value="">— seleziona —</option>
+            <option>Castelcovati</option>
+            <option>Comezzano Cizzago</option>
+          </select>
+        </div>
+      </div>
+      <div class="campo" style="max-width:250px">
+        <label>Anno Scolastico</label>
+        <input type="text" placeholder="es. 2025/2026">
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. TIPOLOGIA PDP -->
+  <div class="sezione s-blu" id="s2">
+    <div class="sezione-header" onclick="toggle('s2')">
+      <div class="sezione-numero">2</div>
+      <div class="sezione-titolo">Tipologia di PDP</div>
+      <div class="sezione-toggle open" id="tog-s2">▼</div>
+    </div>
+    <div class="sezione-body open" id="body-s2">
+      <div class="tipologia-grid">
+        <label class="tipo-card">
+          <input type="radio" name="tipo_pdp" value="dsa" onchange="mostraTipoDSA(true); mostraAvvisoConsiglio(false)">
+          <div>
+            <div class="tipo-label">📘 DSA – Disturbi Specifici dell'Apprendimento</div>
+            <div class="tipo-desc">L. 170/2010 – diagnosi specialistica</div>
+          </div>
+        </label>
+        <label class="tipo-card">
+          <input type="radio" name="tipo_pdp" value="diagnosi" onchange="mostraTipoDSA(false); mostraAvvisoConsiglio(false)">
+          <div>
+            <div class="tipo-label">📋 Altra diagnosi specialistica</div>
+            <div class="tipo-desc">BES con certificazione non DSA</div>
+          </div>
+        </label>
+        <label class="tipo-card">
+          <input type="radio" name="tipo_pdp" value="linguistico" onchange="mostraTipoDSA(false); mostraAvvisoConsiglio(false)">
+          <div>
+            <div class="tipo-label">🌍 Svantaggio linguistico / NAI</div>
+            <div class="tipo-desc">Direttiva 27/12/2012, CM 8/2013</div>
+          </div>
+        </label>
+        <label class="tipo-card">
+          <input type="radio" name="tipo_pdp" value="consiglio" onchange="mostraTipoDSA(false); mostraAvvisoConsiglio(true)">
+          <div>
+            <div class="tipo-label">👩‍🏫 Decisione del Consiglio di Classe</div>
+            <div class="tipo-desc">Delibera del gruppo docenti, senza certificazione — richiede l'accordo della famiglia</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="avviso-consiglio" id="avviso-consiglio" style="display:none">
+        ℹ️ <strong>PDP scelto dal Consiglio di Classe:</strong> a differenza del PDP per certificazione, in questo caso la famiglia deve essere d'accordo con la scelta. In assenza di accordo, la decisione finale resta comunque al Consiglio di Classe, che deve verbalizzare le eventuali motivazioni di non condivisione da parte della famiglia.
+      </div>
+
+      <!-- PANNELLO DSA -->
+      <div id="pannello-dsa" style="display:none; margin-top:18px; border:1.5px solid var(--azzurro); border-radius:12px; overflow:hidden;">
+        <div style="background:var(--azzurro-light); padding:10px 16px; font-weight:700; font-size:0.88rem; color:var(--blu);">
+          📘 Tipologia di DSA — seleziona una o più voci
+        </div>
+        <div style="padding:14px 16px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+            <label class="dsa-check-card">
+              <input type="checkbox" name="dsa_tipo" value="dislessia">
+              <div>
+                <div class="tipo-label">Dislessia</div>
+                <div class="tipo-desc">Difficoltà nella lettura (decodifica)</div>
+              </div>
+            </label>
+            <label class="dsa-check-card">
+              <input type="checkbox" name="dsa_tipo" value="disortografia">
+              <div>
+                <div class="tipo-label">Disortografia</div>
+                <div class="tipo-desc">Difficoltà nella correttezza ortografica</div>
+              </div>
+            </label>
+            <label class="dsa-check-card">
+              <input type="checkbox" name="dsa_tipo" value="disgrafia">
+              <div>
+                <div class="tipo-label">Disgrafia</div>
+                <div class="tipo-desc">Difficoltà nel controllo grafo-motorio</div>
+              </div>
+            </label>
+            <label class="dsa-check-card">
+              <input type="checkbox" name="dsa_tipo" value="discalculia">
+              <div>
+                <div class="tipo-label">Discalculia</div>
+                <div class="tipo-desc">Difficoltà nell'elaborazione numerica e calcolo</div>
+              </div>
+            </label>
+          </div>
+
+          <div style="border-top:1px solid var(--grigio-bordo); padding-top:14px;">
+            <div style="font-size:0.8rem; font-weight:700; color:var(--testo-soft); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;">
+              Eventuali comorbidità
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+              <label class="comor-pill"><input type="checkbox" name="comorbidita" value="adhd"> ADHD</label>
+              <label class="comor-pill"><input type="checkbox" name="comorbidita" value="dcd"> DCD – Disprassia</label>
+              <label class="comor-pill"><input type="checkbox" name="comorbidita" value="ansia"> Disturbi d'ansia</label>
+              <label class="comor-pill"><input type="checkbox" name="comorbidita" value="linguaggio"> Disturbi del linguaggio</label>
+              <label class="comor-pill"><input type="checkbox" name="comorbidita" value="altro_comor"> Altro</label>
+            </div>
+            <div style="margin-top:10px;" id="comor-altro-box" style="display:none">
+              <input type="text" id="comor-altro-testo" placeholder="Specifica altra comorbidità…" style="width:100%;padding:7px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px">
+        <div class="sep-label">Dati diagnosi specialistica</div>
+        <table class="table-form">
+          <thead>
+            <tr>
+              <th>Diagnosi specialistica</th>
+              <th>Redatta da</th>
+              <th>Presso</th>
+              <th>In data</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="text" placeholder="es. DSA – Dislessia e Disortografia"></td>
+              <td><input type="text" placeholder="Nome specialista"></td>
+              <td><input type="text" placeholder="Struttura / Ente"></td>
+              <td><input type="date"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="info-box-tempistiche">
+          <div class="info-box-titolo">⏱️ Quando consegnare il PDP</div>
+          <ul class="guida-lista">
+            <li>Se la certificazione/diagnosi è stata consegnata <strong>prima dell'inizio dell'anno scolastico</strong>: il PDP va redatto entro <strong>tre mesi</strong> dall'inizio delle lezioni</li>
+            <li>Se la certificazione viene consegnata <strong>in corso d'anno</strong>: il PDP va redatto <strong>il prima possibile</strong> — le osservazioni didattiche sono le stesse che i docenti hanno già potuto fare durante l'anno; l'alunno/a non cambia per la semplice ricezione della certificazione</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. ANALISI BISOGNI E CONTESTO -->
+  <div class="sezione s-verde" id="s3">
+    <div class="sezione-header" onclick="toggle('s3')">
+      <div class="sezione-numero">3</div>
+      <div class="sezione-titolo">Analisi dei bisogni e del contesto</div>
+      <div class="sezione-toggle" id="tog-s3">▼</div>
+    </div>
+    <div class="sezione-body" id="body-s3">
+      <table class="analisi-table">
+        <thead>
+          <tr>
+            <th style="width:100px"></th>
+            <th>Alunno/a<br><small style="font-weight:400;text-transform:none">Interessi, atteggiamenti, comportamenti a scuola</small></th>
+            <th>Contesto classe<br><small style="font-weight:400;text-transform:none">Risorse alunni, aula, docenti</small></th>
+            <th>Contesto ambientale<br><small style="font-weight:400;text-transform:none">Famiglia, contesto sociale</small></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-label">✅ Risorse</td>
+            <td><textarea placeholder="Punti di forza…"></textarea></td>
+            <td><textarea placeholder="Risorse disponibili…"></textarea></td>
+            <td><textarea placeholder="Supporti familiari/sociali…"></textarea></td>
+          </tr>
+          <tr>
+            <td class="row-label">⚠️ Criticità</td>
+            <td><textarea placeholder="Difficoltà emerse…"></textarea></td>
+            <td><textarea placeholder="Limitazioni…"></textarea></td>
+            <td><textarea placeholder="Criticità ambientali…"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="campo" style="margin-top:14px">
+        <label>Interventi specialistici / strutture socio-sanitarie del territorio</label>
+        <textarea placeholder="es. Logopedista – dott.ssa Bianchi – sedute settimanali; Psicologo scolastico…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4a. SEZIONE INFANZIA: CAMPI ESPERIENZA -->
+  <div class="sezione s-verde" id="s4-infanzia" style="display:none">
+    <div class="sezione-header" onclick="toggle('s4-infanzia')">
+      <div class="sezione-numero">4</div>
+      <div class="sezione-titolo">Osservazioni e strategie per Campi di Esperienza</div>
+      <div class="sezione-toggle" id="tog-s4-infanzia">▼</div>
+    </div>
+    <div class="sezione-body" id="body-s4-infanzia">
+      <p style="font-size:0.82rem;color:var(--testo-soft);margin-bottom:14px">
+        Per ogni campo seleziona la <strong>presenza/assenza/presenza parziale</strong> degli indicatori, poi compila le strategie.
+      </p>
+
+      <!-- Campo 1 -->
+      <div class="campo-exp">
+        <div class="campo-exp-header">🤝 Il sé e l'altro</div>
+        <div class="campo-exp-indicatori">
+          <ul>
+            <li>Esprime bisogni, emozioni e pensieri in modo comprensibile</li>
+            <li>Interagisce con coetanei e adulti</li>
+            <li>Rispetta semplici regole del vivere insieme</li>
+            <li>Mostra appartenenza al gruppo e riconosce qualcuno diverso da sé</li>
+          </ul>
+        </div>
+        <div class="campo-exp-body">
+          <div class="ceb">
+            <label>Presenza indicatori</label>
+            <div class="pap-group">
+              <div class="pap-btn" onclick="setPAP(this,'sel-p')">✅ Presente</div>
+              <div class="pap-btn" onclick="setPAP(this,'sel-a')">❌ Assente</div>
+              <div class="pap-btn" onclick="setPAP(this,'sel-pp')">⚡ Parziale</div>
+            </div>
+          </div>
+          <div class="ceb">
+            <label>Strategie metodologiche</label>
+            <textarea placeholder="Strategie adottate…"></textarea>
+          </div>
+          <div class="ceb">
+            <label>Strumenti comp. / misure disp.</label>
+            <textarea placeholder="Strumenti e misure…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campo 2 -->
+      <div class="campo-exp">
+        <div class="campo-exp-header">🏃 Il corpo e il movimento</div>
+        <div class="campo-exp-indicatori">
+          <ul>
+            <li>Usa il proprio corpo con consapevolezza negli spazi</li>
+            <li>Parla del corpo, delle parti, dei ritmi</li>
+            <li>Sperimenta movimenti e giochi motori</li>
+            <li>Mostra cura di sé, autonomia in momenti quotidiani</li>
+          </ul>
+        </div>
+        <div class="campo-exp-body">
+          <div class="ceb">
+            <label>Presenza indicatori</label>
+            <div class="pap-group">
+              <div class="pap-btn" onclick="setPAP(this,'sel-p')">✅ Presente</div>
+              <div class="pap-btn" onclick="setPAP(this,'sel-a')">❌ Assente</div>
+              <div class="pap-btn" onclick="setPAP(this,'sel-pp')">⚡ Parziale</div>
+            </div>
+          </div>
+          <div class="ceb">
+            <label>Strategie metodologiche</label>
+            <textarea placeholder="Strategie adottate…"></textarea>
+          </div>
+          <div class="ceb">
+            <label>Strumenti comp. / misure disp.</label>
+            <textarea placeholder="Strumenti e misure…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campo 3 -->
+      <div class="campo-exp">
+        <div class="campo-exp-header">🎨 Immagini, suoni, colori</div>
+        <div class="campo-exp-indicatori">
+          <ul>
+            <li>Esplora materiali espressivi (disegno, pittura, manipolazione)</li>
+            <li>Partecipa a giochi musicali, riconosce ritmi/sonori</li>
+            <li>Drammatizza, inventa storie, utilizza linguaggi non verbali</li>
+            <li>Mostra curiosità e creatività nei linguaggi</li>
+          </ul>
+        </div>
+        <div class="campo-exp-body">
+          <div class="ceb">
+            <label>Presenza indicatori</label>
+            <div class="pap-group">
+              <div class="pap-btn" onclick="setPAP(this,'sel-p')">✅ Presente</div>
+              <div class="pap-btn" onclick="setPAP(this,'sel-a')">❌ Assente</div>
+              <div class="pap-btn" onclick="setPAP(this,'sel-pp')">⚡ Parziale</div>
+            </div>
+          </div>
+          <div class="ceb">
+            <label>Strategie metodologiche</label>
+            <textarea placeholder="Strategie adottate…"></textarea>
+          </div>
+          <div class="ceb">
+            <label>Strumenti comp. / misure disp.</label>
+            <textarea placeholder="Strumenti e misure…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campo 4 -->
+      <div class="campo-exp">
+        <div class="campo-exp-header">💬 I discorsi e le parole</div>
+        <div class="campo-exp-indicatori">
+          <ul>
+            <li>Ascolta storie, dialoga, pone domande</li>
+            <li>Esprime con parole idee e sentimenti</li>
+            <li>Sperimenta scrittura/lettura in modo spontaneo</li>
+            <li>Usa la lingua italiana in contesti scolastici</li>
+          </ul>
+        </div>
+        <div class="campo-exp-body">
+          <div class="ceb">
+            <label>Presenza indicatori</label>
+            <div class="pap-group">
+              <div class="pap-btn" onclick="setPAP(this,'sel-p')">✅ Presente</div>
+              <div class="pap-btn" onclick="setPAP(this,'sel-a')">❌ Assente</div>
+              <div class="pap-btn" onclick="setPAP(this,'sel-pp')">⚡ Parziale</div>
+            </div>
+          </div>
+          <div class="ceb">
+            <label>Strategie metodologiche</label>
+            <textarea placeholder="Strategie adottate…"></textarea>
+          </div>
+          <div class="ceb">
+            <label>Strumenti comp. / misure disp.</label>
+            <textarea placeholder="Strumenti e misure…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campo 5 -->
+      <div class="campo-exp">
+        <div class="campo-exp-header">🔢 La conoscenza del mondo</div>
+        <div class="campo-exp-indicatori">
+          <ul>
+            <li>Osserva oggetti e materiali, li raggruppa o discrimina</li>
+            <li>Usa termini spaziali/temporali (sopra/sotto, prima/dopo)</li>
+            <li>Osserva fenomeni naturali, mostra curiosità</li>
+            <li>Usa materiali per misurare, confrontare quantità e forme</li>
+          </ul>
+        </div>
+        <div class="campo-exp-body">
+          <div class="ceb">
+            <label>Presenza indicatori</label>
+            <div class="pap-group">
+              <div class="pap-btn" onclick="setPAP(this,'sel-p')">✅ Presente</div>
+              <div class="pap-btn" onclick="setPAP(this,'sel-a')">❌ Assente</div>
+              <div class="pap-btn" onclick="setPAP(this,'sel-pp')">⚡ Parziale</div>
+            </div>
+          </div>
+          <div class="ceb">
+            <label>Strategie metodologiche</label>
+            <textarea placeholder="Strategie adottate…"></textarea>
+          </div>
+          <div class="ceb">
+            <label>Strumenti comp. / misure disp.</label>
+            <textarea placeholder="Strumenti e misure…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="campo" style="margin-top:10px">
+        <label>Eventuali note</label>
+        <textarea placeholder="Note aggiuntive…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4b. ABILITÀ STRUMENTALI (Primaria + Secondaria) -->
+  <div class="sezione s-verde" id="s4-scuole">
+    <div class="sezione-header" onclick="toggle('s4-scuole')">
+      <div class="sezione-numero">4</div>
+      <div class="sezione-titolo">Abilità strumentali, profilo emotivo, attentivo</div>
+      <div class="sezione-toggle" id="tog-s4-scuole">▼</div>
+    </div>
+    <div class="sezione-body" id="body-s4-scuole">
+      <p style="font-size:0.82rem;color:var(--testo-soft);margin-bottom:14px">Seleziona i <strong>punti di debolezza</strong> e descrivi gli obiettivi per ciascuna abilità.</p>
+
+      <div class="abilita-lista">
+
+        <!-- Lettura -->
+        <div class="abilita-item">
+          <div class="abilita-header">
+            <div class="abilita-nome">📖 Lettura</div>
+            <div class="abilita-checks">
+              <label class="check-pill"><input type="checkbox"> Decodifica</label>
+              <label class="check-pill"><input type="checkbox"> Comprensione</label>
+              <label class="check-pill"><input type="checkbox"> Recupero informazioni</label>
+            </div>
+          </div>
+          <div class="abilita-body">
+            <label>Obiettivi da raggiungere</label>
+            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+          </div>
+        </div>
+
+        <!-- Scrittura -->
+        <div class="abilita-item">
+          <div class="abilita-header">
+            <div class="abilita-nome">✏️ Scrittura</div>
+            <div class="abilita-checks">
+              <label class="check-pill"><input type="checkbox"> Spazio foglio</label>
+              <label class="check-pill"><input type="checkbox"> Controllo grafo-motorio</label>
+              <label class="check-pill"><input type="checkbox"> Correttezza ortografica</label>
+              <label class="check-pill"><input type="checkbox"> Produzione</label>
+            </div>
+          </div>
+          <div class="abilita-body">
+            <label>Obiettivi da raggiungere</label>
+            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+          </div>
+        </div>
+
+        <!-- Calcolo -->
+        <div class="abilita-item">
+          <div class="abilita-header">
+            <div class="abilita-nome">🔢 Calcolo</div>
+            <div class="abilita-checks">
+              <label class="check-pill"><input type="checkbox"> Conoscenza numerica</label>
+              <label class="check-pill"><input type="checkbox"> Procedure di calcolo</label>
+            </div>
+          </div>
+          <div class="abilita-body">
+            <label>Obiettivi da raggiungere</label>
+            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+          </div>
+        </div>
+
+        <!-- Controllo motorio -->
+        <div class="abilita-item">
+          <div class="abilita-header">
+            <div class="abilita-nome">🏃 Controllo motorio</div>
+            <div class="abilita-checks">
+              <label class="check-pill"><input type="checkbox"> Controllo impulso</label>
+              <label class="check-pill"><input type="checkbox"> Comportamenti non finalizzati</label>
+              <label class="check-pill"><input type="checkbox"> Comportamenti disturbanti</label>
+            </div>
+          </div>
+          <div class="abilita-body">
+            <label>Obiettivi da raggiungere</label>
+            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+          </div>
+        </div>
+
+        <!-- Comportamento relazionale -->
+        <div class="abilita-item">
+          <div class="abilita-header">
+            <div class="abilita-nome">🤝 Comportamento relazionale</div>
+            <div class="abilita-checks">
+              <label class="check-pill"><input type="checkbox"> Rispetto regole</label>
+              <label class="check-pill"><input type="checkbox"> Rispetto ambienti/materiali</label>
+              <label class="check-pill"><input type="checkbox"> Verso compagni</label>
+              <label class="check-pill"><input type="checkbox"> Verso adulti</label>
+            </div>
+          </div>
+          <div class="abilita-body">
+            <label>Obiettivi da raggiungere</label>
+            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+          </div>
+        </div>
+
+        <!-- Gestione emotiva -->
+        <div class="abilita-item">
+          <div class="abilita-header">
+            <div class="abilita-nome">💛 Gestione emotiva</div>
+            <div class="abilita-checks">
+              <label class="check-pill"><input type="checkbox"> Consapevolezza emotiva</label>
+              <label class="check-pill"><input type="checkbox"> Autoregolazione emotiva</label>
+            </div>
+          </div>
+          <div class="abilita-body">
+            <label>Obiettivi da raggiungere</label>
+            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+          </div>
+        </div>
+
+        <!-- Attenzione -->
+        <div class="abilita-item">
+          <div class="abilita-header">
+            <div class="abilita-nome">🎯 Attenzione</div>
+            <div class="abilita-checks">
+              <label class="check-pill"><input type="checkbox"> Attivazione al compito</label>
+              <label class="check-pill"><input type="checkbox"> Mantenimento attenzione</label>
+              <label class="check-pill"><input type="checkbox"> Selettività</label>
+              <label class="check-pill"><input type="checkbox"> Memoria di lavoro</label>
+            </div>
+          </div>
+          <div class="abilita-body">
+            <label>Obiettivi da raggiungere</label>
+            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+          </div>
+        </div>
+
+        <!-- Motivazione -->
+        <div class="abilita-item">
+          <div class="abilita-header">
+            <div class="abilita-nome">⭐ Motivazione</div>
+            <div class="abilita-checks">
+              <label class="check-pill"><input type="checkbox"> Partecipazione dialogo</label>
+              <label class="check-pill"><input type="checkbox"> Consapevolezza difficoltà</label>
+              <label class="check-pill"><input type="checkbox"> Punti di forza</label>
+              <label class="check-pill"><input type="checkbox"> Autostima</label>
+            </div>
+          </div>
+          <div class="abilita-body">
+            <label>Obiettivi da raggiungere</label>
+            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. STRATEGIE DI INTERVENTO PER MATERIA -->
+  <div class="sezione s-arancio" id="s5">
+    <div class="sezione-header" onclick="toggle('s5')">
+      <div class="sezione-numero">5</div>
+      <div class="sezione-titolo">Strategie di intervento per disciplina</div>
+      <div class="sezione-toggle" id="tog-s5">▼</div>
+    </div>
+    <div class="sezione-body" id="body-s5">
+      <div class="materia-lista" id="materie-container">
+        <!-- generato da JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. OSSERVAZIONI FAMIGLIA -->
+  <div class="sezione s-verde" id="s6">
+    <div class="sezione-header" onclick="toggle('s6')">
+      <div class="sezione-numero">6</div>
+      <div class="sezione-titolo">Osservazioni della famiglia</div>
+      <div class="sezione-toggle" id="tog-s6">▼</div>
+    </div>
+    <div class="sezione-body" id="body-s6">
+      <div class="sep-label">Sezione 1 – Studio a casa</div>
+      <div class="famiglia-lista" id="famiglia-s1">
+        <!-- generato da JS -->
+      </div>
+      <div class="sep-label" style="margin-top:16px">Sezione 2 – Organizzazione e strumenti</div>
+      <div class="famiglia-lista" id="famiglia-s2">
+        <!-- generato da JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. PUNTO DI VISTA ALUNNO (solo Secondaria) -->
+  <div class="sezione s-blu" id="s7" style="display:none">
+    <div class="sezione-header" onclick="toggle('s7')">
+      <div class="sezione-numero">7</div>
+      <div class="sezione-titolo">Il punto di vista dell'alunno/a</div>
+      <div class="sezione-toggle" id="tog-s7">▼</div>
+    </div>
+    <div class="sezione-body" id="body-s7">
+      <p style="font-size:0.82rem;color:var(--testo-soft);margin-bottom:12px">Raccogliere la prospettiva dell'alunno/a sulla propria esperienza scolastica.</p>
+      <div class="famiglia-lista">
+        <div class="fam-item">
+          <div class="fam-q">Come ti senti a scuola?</div>
+          <div class="fam-a"><textarea placeholder="Risposta dell'alunno/a…"></textarea></div>
+        </div>
+        <div class="fam-item">
+          <div class="fam-q">Quale materia/attività ti piace di più? Perché?</div>
+          <div class="fam-a"><textarea placeholder="Risposta dell'alunno/a…"></textarea></div>
+        </div>
+        <div class="fam-item">
+          <div class="fam-q">Cosa ti risulta più difficile?</div>
+          <div class="fam-a"><textarea placeholder="Risposta dell'alunno/a…"></textarea></div>
+        </div>
+        <div class="fam-item">
+          <div class="fam-q">Quali strumenti o aiuti ti sembrano più utili?</div>
+          <div class="fam-a"><textarea placeholder="Risposta dell'alunno/a…"></textarea></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTE FINALI -->
+  <div class="note-finale">
+    <label>📝 Eventuali note e annotazioni aggiuntive</label>
+    <textarea placeholder="Note integrative, aggiornamenti, osservazioni successive…"></textarea>
+  </div>
+
+  <!-- FIRME -->
+  <div class="sezione s-blu" id="s-firme">
+    <div class="sezione-header" onclick="toggle('s-firme')">
+      <div class="sezione-numero">✍️</div>
+      <div class="sezione-titolo">Firme e approvazione</div>
+      <div class="sezione-toggle" id="tog-s-firme">▼</div>
+    </div>
+    <div class="sezione-body" id="body-s-firme">
+      <p style="font-size:0.82rem;color:var(--testo-soft);margin-bottom:14px">
+        Il presente PDP è stato condiviso con la famiglia in data: 
+        <input type="date" style="border:none;border-bottom:1.5px solid var(--grigio-bordo);background:transparent;outline:none;font-family:'DM Sans',sans-serif;font-size:0.88rem;margin-left:6px">
+      </p>
+
+      <div class="firme-grid">
+
+        <!-- Dirigente: solo testo, firma digitale via protocollo -->
+        <div class="firma-box">
+          <label>Dirigente Scolastico</label>
+          <input type="text" value="Tecla Fogliata" placeholder="Nome e cognome">
+          <div class="firma-nota">📎 Firmato digitalmente ai sensi del CAD – protocollo informatico</div>
+        </div>
+
+        <!-- Coordinatore: nome + firma grafica -->
+        <div class="firma-box firma-box-pad">
+          <label>Coordinatore di classe</label>
+          <input type="text" placeholder="Nome e cognome">
+          <div class="signature-preview" id="prev-sig-coordinatore" onclick="apriFirma('sig-coordinatore')">
+            <img id="img-sig-coordinatore" style="display:none">
+            <span class="signature-preview-ph">✍️ Tocca per firmare</span>
+          </div>
+          <div class="signature-actions">
+            <button type="button" class="sig-btn" onclick="clearSignature('sig-coordinatore')">🗑️ Cancella firma</button>
+          </div>
+        </div>
+
+        <!-- Genitore: nome + firma grafica -->
+        <div class="firma-box firma-box-pad">
+          <label>Genitore/Tutore</label>
+          <input type="text" placeholder="Nome e cognome">
+          <div class="signature-preview" id="prev-sig-genitore" onclick="apriFirma('sig-genitore')">
+            <img id="img-sig-genitore" style="display:none">
+            <span class="signature-preview-ph">✍️ Tocca per firmare</span>
+          </div>
+          <div class="signature-actions">
+            <button type="button" class="sig-btn" onclick="clearSignature('sig-genitore')">🗑️ Cancella firma</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ZONA CARICA BOZZA (drag & drop) -->
+<!-- MODALE FIRMA A SCHERMO INTERO -->
+<div id="firma-modal" style="display:none; position:fixed; inset:0; z-index:1000; background:rgba(26,58,92,0.92); flex-direction:column; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:white; border-radius:16px; padding:20px; width:100%; max-width:720px; box-shadow:0 8px 32px rgba(0,0,0,0.35);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <div id="firma-modal-titolo" style="font-weight:700; color:var(--blu); font-size:1.05rem;">✍️ Firma</div>
+      <button onclick="chiudiFirma(false)" style="background:none; border:none; font-size:1.3rem; cursor:pointer; color:var(--testo-soft); line-height:1;">✕</button>
+    </div>
+    <p style="font-size:0.8rem; color:var(--testo-soft); margin-bottom:10px;">Disegna la firma con il dito, mouse o penna. Premi "Conferma" per salvarla.</p>
+    <div style="border:2px solid var(--azzurro); border-radius:10px; overflow:hidden; background:#fafcff;">
+      <canvas id="firma-modal-canvas" style="display:block; width:100%; height:280px; touch-action:none; cursor:crosshair;"></canvas>
+    </div>
+    <div style="display:flex; justify-content:space-between; gap:10px; margin-top:14px;">
+      <button class="btn btn-secondary" onclick="cancellaFirmaModal()">🗑️ Cancella</button>
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-secondary" onclick="chiudiFirma(false)">Annulla</button>
+        <button class="btn btn-primary" onclick="chiudiFirma(true)">✅ Conferma firma</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALE PASSWORD -->
+<div id="password-modal" style="display:none; position:fixed; inset:0; z-index:1100; background:rgba(26,58,92,0.92); flex-direction:column; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:white; border-radius:16px; padding:28px 32px; width:100%; max-width:420px; box-shadow:0 8px 32px rgba(0,0,0,0.35);">
+    <div style="font-size:1.8rem; text-align:center; margin-bottom:8px;">🔒</div>
+    <div id="pw-modal-titolo" style="font-weight:700; color:var(--blu); font-size:1.05rem; text-align:center; margin-bottom:6px;"></div>
+    <div id="pw-modal-msg" style="font-size:0.82rem; color:var(--testo-soft); text-align:center; margin-bottom:20px; line-height:1.45;"></div>
+    <input type="password" id="pw-modal-input"
+      placeholder="Password…"
+      style="width:100%; padding:11px 14px; border:1.5px solid var(--grigio-bordo); border-radius:10px; font-family:'DM Sans',sans-serif; font-size:1rem; outline:none; margin-bottom:10px;">
+    <div id="pw-modal-errore" style="display:none; color:#c0392b; font-size:0.78rem; margin-bottom:8px; text-align:center;"></div>
+    <div style="display:flex; gap:10px;">
+      <button onclick="chiudiModalePassword()" style="flex:1; padding:10px; border:1.5px solid var(--grigio-bordo); background:white; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:0.9rem; cursor:pointer;">Annulla</button>
+      <button id="pw-modal-btn" style="flex:2; padding:10px; background:var(--blu); color:white; border:none; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:0.9rem; font-weight:700; cursor:pointer;"></button>
+    </div>
+  </div>
+</div>
+
+<div id="dropzone" style="display:none; position:fixed; inset:0; z-index:999; background:rgba(26,58,92,0.85); flex-direction:column; align-items:center; justify-content:center; gap:16px;">
+  <div style="background:white; border-radius:16px; padding:40px 48px; text-align:center; max-width:400px; box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+    <div style="font-size:3rem; margin-bottom:12px;">📂</div>
+    <div style="font-size:1.1rem; font-weight:700; color:var(--blu); margin-bottom:8px;">Carica bozza PDP</div>
+    <div style="font-size:0.85rem; color:var(--testo-soft); margin-bottom:20px;">Trascina qui il file <strong>.json</strong> salvato in precedenza, oppure clicca per selezionarlo</div>
+    <div id="drop-area"
+      style="border:2.5px dashed var(--azzurro); border-radius:12px; padding:32px 24px; cursor:pointer; transition:background 0.2s;"
+      ondragover="event.preventDefault(); this.style.background='var(--azzurro-light)'"
+      ondragleave="this.style.background=''"
+      ondrop="handleDrop(event)"
+      onclick="document.getElementById('file-input-json').click()">
+      <div style="font-size:2rem; margin-bottom:8px;">⬆️</div>
+      <div style="font-size:0.85rem; color:var(--testo-soft);">Trascina il file <strong>.pdp</strong> qui<br>o clicca per sfogliare</div>
+    </div>
+    <input type="file" id="file-input-json" accept=".pdp,.json" style="display:none" onchange="handleFileInput(this)">
+    <button onclick="chiudiDropzone()" style="margin-top:16px; background:none; border:none; color:var(--testo-soft); font-size:0.85rem; cursor:pointer; text-decoration:underline;">Annulla</button>
+  </div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div style="background:white; padding:14px 24px; border-top:2px solid var(--grigio-bordo); display:flex; gap:10px; justify-content:space-between; align-items:center; position:sticky; bottom:0; box-shadow:0 -2px 12px rgba(0,0,0,0.07);">
+  <div style="display:flex; gap:8px;">
+    <button class="btn btn-secondary" onclick="resetForm()">🔄 Azzera</button>
+    <button class="btn btn-secondary" onclick="apriDropzone()" title="Carica una bozza .json salvata in precedenza">📂 Carica bozza</button>
+  </div>
+  <div style="display:flex; gap:8px;">
+    <button class="btn btn-print" onclick="esportaPDF()">🖨️ Esporta PDF</button>
+    <button class="btn btn-primary" onclick="salvaBozza()">🔒 Salva e cifra (.pdp)</button>
+  </div>
+</div>`;
+
+// ── Funzioni PDP integrate ──
+
+// ─── FIRMA GRAFICA — MODALE A SCHERMO INTERO ───
+// Memorizza le firme salvate come dataURL, per id (es. 'sig-coordinatore')
+const signatureData = {};
+let firmaCorrenteId = null;
+let modalCtx = null;
+let modalDrawing = false;
+
+const FIRMA_TITOLI = {
+  'sig-coordinatore': '✍️ Firma del Coordinatore di classe',
+  'sig-genitore': '✍️ Firma del Genitore/Tutore'
+};
+
+function apriFirma(id) {
+  firmaCorrenteId = id;
+  document.getElementById('firma-modal-titolo').textContent = FIRMA_TITOLI[id] || '✍️ Firma';
+
+  const modal = document.getElementById('firma-modal');
+  modal.style.display = 'flex';
+
+  const canvas = document.getElementById('firma-modal-canvas');
+  const ratio = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * ratio;
+  canvas.height = rect.height * ratio;
+  modalCtx = canvas.getContext('2d');
+  modalCtx.scale(ratio, ratio);
+  modalCtx.lineWidth = 2.4;
+  modalCtx.lineCap = 'round';
+  modalCtx.lineJoin = 'round';
+  modalCtx.strokeStyle = '#1a3a5c';
+  modalCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Se c'è già una firma salvata, mostrala per poterla correggere
+  if (signatureData[id]) {
+    const img = new Image();
+    img.onload = () => modalCtx.drawImage(img, 0, 0, rect.width, rect.height);
+    img.src = signatureData[id];
+  }
+}
+
+function getModalPos(e) {
+  const canvas = document.getElementById('firma-modal-canvas');
+  const r = canvas.getBoundingClientRect();
+  const ev = e.touches ? e.touches[0] : e;
+  return { x: ev.clientX - r.left, y: ev.clientY - r.top };
+}
+
+function modalStart(e) {
+  e.preventDefault();
+  modalDrawing = true;
+  const p = getModalPos(e);
+  modalCtx.beginPath();
+  modalCtx.moveTo(p.x, p.y);
+}
+function modalMove(e) {
+  if (!modalDrawing) return;
+  e.preventDefault();
+  const p = getModalPos(e);
+  modalCtx.lineTo(p.x, p.y);
+  modalCtx.stroke();
+}
+function modalEnd() { modalDrawing = false; }
+
+function cancellaFirmaModal() {
+  const canvas = document.getElementById('firma-modal-canvas');
+  modalCtx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function chiudiFirma(conferma) {
+  const modal = document.getElementById('firma-modal');
+  const canvas = document.getElementById('firma-modal-canvas');
+
+  if (conferma && firmaCorrenteId) {
+    // Verifica se il canvas è vuoto (tutto trasparente)
+    const ctx = canvas.getContext('2d');
+    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    let isEmpty = true;
+    for (let i = 3; i < pixels.length; i += 4) {
+      if (pixels[i] !== 0) { isEmpty = false; break; }
+    }
+    if (!isEmpty) {
+      signatureData[firmaCorrenteId] = canvas.toDataURL('image/png');
+    } else {
+      delete signatureData[firmaCorrenteId];
+    }
+    aggiornaPreviewFirma(firmaCorrenteId);
+  }
+
+  modal.style.display = 'none';
+  firmaCorrenteId = null;
+}
+
+function aggiornaPreviewFirma(id) {
+  const preview = document.getElementById('prev-' + id);
+  const img = document.getElementById('img-' + id);
+  const ph = preview.querySelector('.signature-preview-ph');
+  if (signatureData[id]) {
+    img.src = signatureData[id];
+    img.style.display = 'block';
+    if (ph) ph.style.display = 'none';
+    preview.classList.add('has-signature');
+  } else {
+    img.style.display = 'none';
+    if (ph) ph.style.display = 'block';
+    preview.classList.remove('has-signature');
+  }
+}
+
+function clearSignature(id) {
+  delete signatureData[id];
+  aggiornaPreviewFirma(id);
+}
+
+// Collega gli eventi al canvas del modale (una sola volta)
+function initModalCanvasEvents() {
+  const canvas = document.getElementById('firma-modal-canvas');
+  if (!canvas || canvas._eventsBound) return;
+  canvas.addEventListener('mousedown', modalStart);
+  canvas.addEventListener('mousemove', modalMove);
+  canvas.addEventListener('mouseup', modalEnd);
+  canvas.addEventListener('mouseleave', modalEnd);
+  canvas.addEventListener('touchstart', modalStart, { passive: false });
+  canvas.addEventListener('touchmove', modalMove, { passive: false });
+  canvas.addEventListener('touchend', modalEnd);
+  canvas._eventsBound = true;
+}
+
+// ─── DSA PANEL ───
+function mostraTipoDSA(show) {
+  document.getElementById('pannello-dsa').style.display = show ? 'block' : 'none';
+}
+
+function mostraAvvisoConsiglio(show) {
+  const el = document.getElementById('avviso-consiglio');
+  if (el) el.style.display = show ? 'block' : 'none';
+}
+
+// Toggle campo "Altro" comorbidità
+document.addEventListener('change', function(e) {
+  if (e.target && e.target.name === 'comorbidita' && e.target.value === 'altro_comor') {
+    document.getElementById('comor-altro-box').style.display = e.target.checked ? 'block' : 'none';
+  }
+  // Aggiorna visibilità DSA quando cambia classe
+  if (e.target && e.target.id === 'select-classe') aggiornaVisibilitaDSA();
+});
+
+// ─── MATERIE ───
+const MATERIE_BASE_PRIMARIA = ['Italiano','Storia e Geografia','Matematica','Scienze','Inglese','Tecnologia','Arte e Immagine','Musica','Scienze Motorie'];
+const MATERIE_BASE_SECONDARIA = ['Italiano','Storia e Geografia','Matematica','Scienze','Inglese','Francese','Tecnologia','Arte e Immagine','Musica','Scienze Motorie'];
+
+// ─── BANCA STRUMENTI COMPENSATIVI PER AREA DISCIPLINARE ───
+// Ogni strumento è etichettato con le aree per cui ha senso. Se selezionato fuori area, compare un avviso.
+// ─── SUGGERIMENTI STRUMENTI COMPENSATIVI PER AREA DISCIPLINARE ───
+// Solo a scopo di consultazione (guida): NON sono checkbox precompilate.
+// Ogni docente scrive nel campo libero gli strumenti pensati per il singolo alunno/a.
+const SUGGERIMENTI_STRUMENTI = {
+  linguistica: [
+    'Sintesi vocale per la lettura del testo',
+    'Audiolibro / testo audio del libro di testo',
+    'Videoscrittura con correttore ortografico',
+    'Tabelle/schemi grammaticali e sintattici',
+    'Tabella delle coniugazioni verbali',
+    'Mappa concettuale costruita dall\'alunno o fornita dal docente (da specificare)'
+  ],
+  matematica: [
+    'Calcolatrice (anche parlante)',
+    'Tavola pitagorica / formulari',
+    'Mappa o schema procedurale per la risoluzione di problemi',
+    'Linea dei numeri'
+  ],
+  scientifica: [
+    'Sintesi vocale per la lettura del testo',
+    'Calcolatrice',
+    'Mappa concettuale costruita dall\'alunno o fornita dal docente',
+    'Formulari e tabelle di riferimento'
+  ],
+  lingue: [
+    'Dizionario digitale / traduttore',
+    'Sintesi vocale',
+    'Tabelle grammaticali e delle coniugazioni verbali',
+    'Mappa concettuale o lessicale'
+  ],
+  geo_storia: [
+    'Linea del tempo / schema cronologico',
+    'Carte geografiche guida (non mute)',
+    'Mappa concettuale costruita dall\'alunno o fornita dal docente',
+    'Audiolibro / testo audio del libro di testo'
+  ],
+  tecnologia: [
+    'Calcolatrice',
+    'Schemi e procedure guidate per i passaggi operativi',
+    'PC/tablet per la produzione scritta'
+  ],
+  tutte: [
+    'Registratore vocale per appunti/lezione (uso personale dello studente)',
+    'PC/tablet per la produzione scritta',
+    'Software dedicati: SODILINUX, EasyDida (per Windows)',
+    'Strumenti specifici da valutare in base all\'attività proposta'
+  ]
+};
+
+// Mappa materia → area disciplinare di riferimento (per i suggerimenti guida)
+const MATERIA_AREA = {
+  'Italiano': 'linguistica', 'Storia e Geografia': 'geo_storia', 'Matematica': 'matematica',
+  'Scienze': 'scientifica', 'Inglese': 'lingue', 'Francese': 'lingue',
+  'Tecnologia': 'tecnologia', 'Arte e Immagine': 'tutte', 'Musica': 'tutte',
+  'Scienze Motorie': 'tutte', 'IRC / Alternativa': 'tutte'
+};
+
+let materiaCounter = 0;
+
+function renderMaterie(g) {
+  const container = document.getElementById('materie-container');
+  if (g === 'infanzia') { container.innerHTML = ''; return; }
+  materiaCounter = 0;
+  let base = g === 'secondaria' ? [...MATERIE_BASE_SECONDARIA] : [...MATERIE_BASE_PRIMARIA];
+  const html = base.map(m => materiaCard(m)).join('') + ircCard();
+  container.innerHTML = html;
+}
+
+function materiaCard(nome) {
+  const uid = 'mat' + (materiaCounter++);
+  const area = MATERIA_AREA[nome] || 'tutte';
+  return `
+  <div class="materia-card" data-area="${area}">
+    <div class="materia-header">
+      <div class="materia-nome">${nome}</div>
+      <div class="materia-firma">Firma docente: <input type="text" placeholder="…………………………"></div>
+    </div>
+    <div class="materia-body-v2">
+
+      ${blocStrumenti(uid, area, nome)}
+      ${blocMisureDispensative(uid)}
+      ${blocMisureOggettive(uid)}
+
+      <div class="materia-campo-full">
+        <label>Strategie metodologiche specifiche</label>
+        <textarea placeholder="es. Anticipazione dell'argomento prima della lezione; verifica orale programmata; consegna delle istruzioni una alla volta…"></textarea>
+      </div>
+    </div>
+  </div>`;
+}
+
+function blocStrumenti(uid, area, nomeMateria) {
+  const suggerimenti = SUGGERIMENTI_STRUMENTI[area] || SUGGERIMENTI_STRUMENTI.tutte;
+  return `
+  <div class="materia-campo-full">
+    <div class="label-row">
+      <label style="margin-bottom:0">Strumenti compensativi <span class="label-hint">— uno per riga, specificando quando viene usato</span></label>
+      <button type="button" class="guida-btn" onclick="toggleSuggerimenti('${uid}')">💡 Suggerimenti per ${nomeMateria || 'questa disciplina'}</button>
+    </div>
+    <div class="suggerimenti-panel" id="suggerimenti-${uid}" style="display:none">
+      <div class="suggerimenti-titolo">Spunti coerenti con questa disciplina <span class="label-hint">(non vincolanti — valutare sempre il singolo alunno/a)</span></div>
+      <ul class="suggerimenti-lista">
+        ${suggerimenti.map(s => `<li>${s}</li>`).join('')}
+      </ul>
+    </div>
+    <div class="righe-dinamiche" id="strumenti-righe-${uid}">
+      ${rigaStrumentoHTML()}
+    </div>
+    <button type="button" class="add-riga-btn" onclick="aggiungiRiga('strumenti-righe-${uid}', rigaStrumentoHTML)">➕ Aggiungi strumento</button>
+  </div>`;
+}
+
+function rigaStrumentoHTML() {
+  return `
+  <div class="riga-dinamica">
+    <input type="text" class="riga-nome" placeholder="Strumento compensativo (es. sintesi vocale per la lettura)">
+    <input type="text" class="riga-quando" placeholder="Quando viene usato (es. in tutte le verifiche scritte)">
+    <button type="button" class="riga-rimuovi" onclick="rimuoviRiga(this)" title="Rimuovi">✕</button>
+  </div>`;
+}
+
+function blocMisureDispensative(uid) {
+  return `
+  <div class="materia-campo-full">
+    <label>Misure dispensative e adattamenti <span class="label-hint">— una per riga, specificando quando si applica</span></label>
+    <div class="righe-dinamiche" id="misure-righe-${uid}">
+      ${rigaMisuraHTML()}
+    </div>
+    <button type="button" class="add-riga-btn" onclick="aggiungiRiga('misure-righe-${uid}', rigaMisuraHTML)">➕ Aggiungi misura/adattamento</button>
+  </div>`;
+}
+
+function rigaMisuraHTML() {
+  return `
+  <div class="riga-dinamica">
+    <input type="text" class="riga-nome" placeholder="Misura/adattamento (es. dispensa dalla lettura ad alta voce)">
+    <input type="text" class="riga-quando" placeholder="Quando si applica (es. durante le interrogazioni)">
+    <button type="button" class="riga-rimuovi" onclick="rimuoviRiga(this)" title="Rimuovi">✕</button>
+  </div>`;
+}
+
+function aggiungiRiga(containerId, templateFn) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const div = document.createElement('div');
+  div.innerHTML = templateFn().trim();
+  container.appendChild(div.firstElementChild);
+}
+
+function rimuoviRiga(btn) {
+  const container = btn.closest('.righe-dinamiche');
+  const righe = container.querySelectorAll('.riga-dinamica');
+  if (righe.length <= 1) {
+    // Mantieni sempre almeno una riga, ma la svuota
+    const riga = btn.closest('.riga-dinamica');
+    riga.querySelectorAll('input').forEach(i => i.value = '');
+    return;
+  }
+  btn.closest('.riga-dinamica').remove();
+}
+
+function toggleSuggerimenti(uid) {
+  const el = document.getElementById('suggerimenti-' + uid);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// ─── CRITERI VALUTATIVI: elenco fisso a selezione multipla ───
+const CRITERI_VALUTATIVI = [
+  'Il contenuto prevale sulla forma (non si penalizzano errori ortografici/grafici legati al disturbo)',
+  'Valutazione del processo risolutivo, oltre che del risultato finale',
+  'I punti dei descrittori riferiti al disturbo sono ridistribuiti sugli altri descrittori della griglia',
+  'Valorizzazione delle conoscenze e dei contenuti rispetto alla correttezza formale/sintattica',
+  'Considerazione dei progressi rispetto alla situazione di partenza',
+  'Valutazione coerente con gli strumenti e le misure indicate nel PDP',
+];
+
+function blocCriteriValutativi(uid) {
+  return `
+  <div class="materia-campo-full">
+    <label>Criteri valutativi <span class="label-hint">— seleziona uno o più criteri applicati</span></label>
+    <div class="criteri-grid">
+      ${CRITERI_VALUTATIVI.map((c, i) => `
+        <label class="criterio-check">
+          <input type="checkbox" id="criterio-${uid}-${i}">
+          <span>${c}</span>
+        </label>`).join('')}
+    </div>
+  </div>`;
+}
+
+function blocMisureOggettive(uid) {
+  return `
+  <div class="materia-campo-full">
+    <div class="label-row">
+      <label style="margin-bottom:0">Tempistiche e riduzione delle verifiche</label>
+      <button type="button" class="guida-btn" onclick="toggleGuida('${uid}')">📖 Guida alla strutturazione della verifica</button>
+    </div>
+
+    <div class="guida-panel" id="guida-${uid}" style="display:none">
+      <div class="guida-titolo">Indicazioni per la strutturazione di verifiche e criteri valutativi</div>
+      <ul class="guida-lista">
+        <li class="guida-evidenza"><strong>Niente "a discrezione del docente":</strong> questa dicitura va abolita ovunque nel PDP. Non esiste discrezionalità: ogni misura, strumento o adattamento deve specificare <em>come</em> e <em>quando</em> si applica (es. non "tempo aggiuntivo a discrezione" ma "tempo aggiuntivo del 30% in tutte le verifiche scritte")</li>
+        <li><strong>Valutazione con strumenti compensativi:</strong> la valutazione è proporzionata alla progettazione del PDP — fare correttamente il compito con gli strumenti previsti equivale al massimo. Il massimale <u>non si abbassa</u> per la sola presenza di strategie, strumenti compensativi o misure dispensative</li>
+        <li><strong>Formato testo:</strong> Arial corpo 12, interlinea ampia (1,5 o doppia)</li>
+        <li><strong>Tipologia domande:</strong> prevedere anche domande chiuse; le domande aperte sono possibili ma da valutare caso per caso, non come unica modalità</li>
+        <li><strong>Criteri valutativi:</strong> scelta didattica calibrata sul singolo alunno/a e coerente con quanto previsto nel PDP</li>
+        <li><strong>Tempo aggiuntivo:</strong> massimo 30%; oltre tale soglia va indicata obbligatoriamente la motivazione</li>
+        <li><strong>Riduzione della prova:</strong> range canonico 20%–30%; sotto il 20% o sopra il 30% va indicata obbligatoriamente la motivazione</li>
+        <li><strong>Strumenti:</strong> gli strumenti compensativi indicati nel PDP devono poter essere utilizzati anche durante le verifiche, non solo nel lavoro quotidiano</li>
+        <li><strong>Mappe e schemi nelle prove:</strong> non esiste un obbligo normativo di autorizzazione preventiva — la scelta è del singolo docente, in base alla libertà di insegnamento. Il docente deve però specificare con chiarezza cosa intende consentire (es. mappa costruita dall'alunno vs mappa fornita) e indicarlo nel PDP</li>
+        <li><strong>Esami di Stato:</strong> gli strumenti compensativi indicati nel PDP sono utilizzabili anche in assenza di diagnosi (decisione del Consiglio di Classe). Il presidente di commissione non può rifiutare strumenti previsti dal PDP. <u>Non è invece possibile dispensare né ridurre la prova in nessun caso</u> agli esami</li>
+        <li><strong>Mappa agli esami:</strong> consentita solo se non è così fitta di informazioni da poter essere considerata un riassunto/appunti della prova</li>
+        <li><strong>Registratore:</strong> diritto dell'alunno/a con DSA se necessario e previsto nel PDP. L'uso è strettamente personale dello studente; eventuali condivisioni di registrazioni con terzi sono penalmente rilevanti. Non costituisce lesione per il/la docente</li>
+        <li><strong>Quando dispensare:</strong> solo se realmente necessario, non per principio generale. Esempio concreto: dispensa dallo scritto di una delle due lingue straniere, o anche da un'intera disciplina, se la necessità lo giustifica</li>
+        <li><strong>Obiettivi disciplinari:</strong> non vanno semplificati né ridotti — restano gli stessi della classe. Cambiano gli strumenti e le modalità per raggiungerli, non gli obiettivi fondanti</li>
+        <li><strong>Se strumenti e misure non sono sufficienti:</strong> il PDP non è un lasciapassare automatico all'ammissione alla classe successiva. La valutazione resta calibrata sul singolo alunno/a, ma in caso di immaturità o non prontezza si può comunque orientare nuovamente o non ammettere</li>
+      </ul>
+      <div class="guida-fonte">Fonte: incontro formativo CTI — Valutazione alunni DSA/BES, prof. Dell'Acqua, Ufficio IV MIM</div>
+    </div>
+
+    <div class="misure-oggettive-grid">
+
+      <div class="misura-box misura-fissa">
+        <div class="misura-check misura-check-fissa">
+          <span class="misura-lucchetto" title="Sempre applicato — non disattivabile">🔒</span>
+          <span>Font e formattazione testo</span>
+        </div>
+        <div class="misura-sub" style="display:block">
+          <div class="font-fisso-valore">Arial 12 – interlinea 1,5</div>
+          <div class="percent-hint">Impostazione standard applicata a tutte le verifiche, non disattivabile.</div>
+        </div>
+      </div>
+
+      <div class="misura-box">
+        <label class="misura-check">
+          <input type="checkbox" id="tempo-${uid}" onchange="toggleSub('tempo-sub-${uid}', this.checked)">
+          <span>Tempo aggiuntivo nelle verifiche <span class="label-hint">(max 30%)</span></span>
+        </label>
+        <div class="misura-sub" id="tempo-sub-${uid}" style="display:none">
+          <div class="percent-row">
+            <input type="range" min="0" max="50" step="5" value="30" class="percent-slider"
+              data-tipo="tempo" data-uid="${uid}"
+              oninput="aggiornaPercentuale(this)">
+            <span class="percent-value">30%</span>
+          </div>
+          <div class="motivazione-box" id="tempo-motiv-${uid}" style="display:none">
+            <label class="motivazione-label">⚠️ Motivazione obbligatoria — tempo aggiuntivo superiore al 30%</label>
+            <textarea class="motivazione-testo" placeholder="Spiega perché è necessario superare la soglia massima del 30%…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="misura-box">
+        <label class="misura-check">
+          <input type="checkbox" id="riduzione-${uid}" onchange="toggleSub('riduzione-sub-${uid}', this.checked)">
+          <span>Riduzione quantitativa della prova <span class="label-hint">(canonica 20–30%)</span></span>
+        </label>
+        <div class="misura-sub" id="riduzione-sub-${uid}" style="display:none">
+          <div class="percent-row">
+            <input type="range" min="0" max="50" step="5" value="25" class="percent-slider"
+              data-tipo="riduzione" data-uid="${uid}"
+              oninput="aggiornaPercentuale(this)">
+            <span class="percent-value">25%</span>
+          </div>
+          <div class="percent-hint">Specificare il criterio di riduzione (es. numero esercizi, item, domande) nel campo strumenti/misure sopra.</div>
+          <div class="motivazione-box" id="riduzione-motiv-${uid}" style="display:none">
+            <label class="motivazione-label">⚠️ Motivazione obbligatoria — fuori dal range canonico 20–30%</label>
+            <textarea class="motivazione-testo" placeholder="Spiega perché la riduzione necessaria è inferiore al 20% o superiore al 30%…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="misura-box">
+        <label class="misura-check">
+          <input type="checkbox" id="domandechiuse-${uid}" checked onchange="toggleSub('domandechiuse-sub-${uid}', this.checked)">
+          <span>Presenza di domande chiuse nella verifica</span>
+        </label>
+        <div class="misura-sub" id="domandechiuse-sub-${uid}" style="display:block">
+          <textarea class="perche-testo" placeholder="Perché: spiega il motivo della scelta (es. riduce il carico di scrittura, facilita il riconoscimento della risposta corretta)…"></textarea>
+        </div>
+      </div>
+
+      <div class="misura-box">
+        <label class="misura-check">
+          <input type="checkbox" id="domandeaperte-${uid}" onchange="toggleSub('domandeaperte-sub-${uid}', this.checked)">
+          <span>Presenza di domande aperte</span>
+        </label>
+        <div class="misura-sub" id="domandeaperte-sub-${uid}" style="display:none">
+          <textarea class="perche-testo" placeholder="Perché: spiega il motivo della scelta in base al PDP (valutare caso per caso, non come unica modalità)…"></textarea>
+        </div>
+      </div>
+
+      <div class="misura-box">
+        <label class="misura-check">
+          <input type="checkbox" id="oral-${uid}">
+          <span>Possibilità di interrogazione programmata</span>
+        </label>
+      </div>
+
+    </div>
+
+    ${blocCriteriValutativi(uid)}
+  </div>`;
+}
+
+function aggiornaPercentuale(slider) {
+  const val = parseInt(slider.value, 10);
+  slider.nextElementSibling.textContent = val + '%';
+  const uid = slider.dataset.uid;
+  const tipo = slider.dataset.tipo;
+
+  if (tipo === 'tempo') {
+    const motivBox = document.getElementById('tempo-motiv-' + uid);
+    if (motivBox) motivBox.style.display = val > 30 ? 'block' : 'none';
+  } else if (tipo === 'riduzione') {
+    const motivBox = document.getElementById('riduzione-motiv-' + uid);
+    if (motivBox) motivBox.style.display = (val < 20 || val > 30) ? 'block' : 'none';
+  }
+}
+
+function toggleGuida(uid) {
+  const el = document.getElementById('guida-' + uid);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleSub(id, show) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = show ? 'block' : 'none';
+}
+
+function ircCard() {
+  const uid = 'mat' + (materiaCounter++);
+  return `
+  <div class="materia-card" data-area="tutte">
+    <div class="materia-header" style="flex-wrap:wrap;gap:8px;">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;">
+        <select class="materia-nome-select"
+          style="background:transparent;border:none;color:white;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.9rem;outline:none;cursor:pointer;">
+          <option value="irc">IRC – Insegnamento Religione Cattolica</option>
+          <option value="alt">Attività Alternativa alla Religione</option>
+        </select>
+      </div>
+      <div class="materia-firma">Firma docente: <input type="text" placeholder="…………………………"></div>
+    </div>
+    <div class="materia-body-v2">
+      ${blocStrumenti(uid, 'tutte', 'IRC / Attività Alternativa')}
+      ${blocMisureDispensative(uid)}
+      ${blocMisureOggettive(uid)}
+      <div class="materia-campo-full">
+        <label>Strategie metodologiche specifiche</label>
+        <textarea placeholder="es. Lavoro cooperativo, supporto visivo, materiali semplificati…"></textarea>
+      </div>
+    </div>
+  </div>`;
+}
+
+
+const FAMIGLIA_S1 = [
+  { gruppo: 'Studio a casa – organizzazione e supporto', domande: [
+    'Con chi svolge i compiti e le attività di studio? Accetta/chiede il supporto di qualcuno?',
+    'Genitori/parenti/adulti riescono ad essere presenti/monitorare durante lo svolgimento o a conclusione di esso?',
+    'Come si approccia ai compiti e alle attività di studio?',
+    'In quale momento della giornata predilige lo svolgimento e in quale ambiente (casa, biblioteca…)?',
+    'Mantiene la concentrazione? Per quanto tempo?',
+    'Come è la postura? Movimento? Ordine nella zona di lavoro?'
+  ]}
+];
+
+const FAMIGLIA_S2 = [
+  { gruppo: 'Organizzazione e strumenti', domande: [
+    'Come organizza il contenuto di studio (ordine quaderno, scrittura, vv.ee.)?',
+    'Utilizza dei supporti per lo studio (audiolibri, mappe, calcolatrici, sintesi vocali… si veda all. 1 per altri strumenti)?',
+    'Organizza e prepara da solo zaino e materiale per il giorno successivo?'
+  ]}
+];
+
+let gradoCorrente = 'primaria';
+let classeCorrente = '';
+
+// Determina se il DSA deve essere nascosto (infanzia o classi 1-2 primaria)
+function dsaNascosto() {
+  if (gradoCorrente === 'infanzia') return true;
+  if (gradoCorrente === 'primaria') {
+    const cl = document.getElementById('select-classe');
+    const val = cl ? cl.value : '';
+    if (val === '1' || val === '2') return true;
+  }
+  return false;
+}
+
+function aggiornaVisibilitaDSA() {
+  const nascosto = dsaNascosto();
+  const cards = document.querySelectorAll('.tipo-card');
+  const dsaCard = document.querySelector('.tipo-card input[value="dsa"]')?.closest('.tipo-card');
+  if (!dsaCard) return;
+
+  if (nascosto) {
+    dsaCard.style.display = 'none';
+    // Se era selezionato DSA, deseleziona
+    const dsaRadio = dsaCard.querySelector('input');
+    if (dsaRadio && dsaRadio.checked) {
+      dsaRadio.checked = false;
+      mostraTipoDSA(false);
+    }
+  } else {
+    dsaCard.style.display = '';
+  }
+}
+
+function setGrado(g) {
+  gradoCorrente = g;
+  document.querySelectorAll('.grado-btn').forEach((b,i) => {
+    const gradi = ['infanzia','primaria','secondaria'];
+    b.classList.toggle('active', gradi[i] === g);
+  });
+  document.getElementById('select-grado').value = g;
+
+  // Aggiorna menu classe
+  aggiornaSelectClasse(g);
+
+  // Mostra/nascondi sezioni
+  document.getElementById('s4-infanzia').style.display = g === 'infanzia' ? 'block' : 'none';
+  document.getElementById('s4-scuole').style.display = g !== 'infanzia' ? 'block' : 'none';
+  document.getElementById('s5').style.display = 'block'; // sempre visibile (infanzia ha s4-infanzia che fa da s5)
+  if (g === 'infanzia') document.getElementById('s5').style.display = 'none';
+  document.getElementById('s7').style.display = g === 'secondaria' ? 'block' : 'none';
+
+  aggiornaVisibilitaDSA();
+  renderMaterie(g);
+}
+
+function setGradoSelect(v) { setGrado(v); }
+
+function aggiornaSelectClasse(g) {
+  const sel = document.getElementById('select-classe');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— classe —</option>';
+  if (g === 'primaria') {
+    ['1','2','3','4','5'].forEach(n => {
+      const o = document.createElement('option');
+      o.value = n; o.textContent = 'Classe ' + n + 'ª';
+      sel.appendChild(o);
+    });
+  } else if (g === 'secondaria') {
+    ['1','2','3'].forEach(n => {
+      const o = document.createElement('option');
+      o.value = n; o.textContent = 'Classe ' + n + 'ª';
+      sel.appendChild(o);
+    });
+  } else {
+    ['Piccoli (3 anni)','Medi (4 anni)','Grandi (5 anni)'].forEach(n => {
+      const o = document.createElement('option');
+      o.value = n; o.textContent = n;
+      sel.appendChild(o);
+    });
+  }
+}
+
+function renderFamiglia() {
+  const c1 = document.getElementById('famiglia-s1');
+  const c2 = document.getElementById('famiglia-s2');
+
+  c1.innerHTML = FAMIGLIA_S1.map(gruppo => `
+    <div class="fam-gruppo-label">${gruppo.gruppo}</div>
+    ${gruppo.domande.map((q, i) => `
+    <div class="fam-item">
+      <div class="fam-q"><span class="fam-num">${i+1}.</span> ${q}</div>
+      <div class="fam-a"><textarea placeholder="Risposta della famiglia…"></textarea></div>
+    </div>`).join('')}
+  `).join('');
+
+  c2.innerHTML = FAMIGLIA_S2.map(gruppo => `
+    <div class="fam-gruppo-label">${gruppo.gruppo}</div>
+    ${gruppo.domande.map((q, i) => `
+    <div class="fam-item">
+      <div class="fam-q"><span class="fam-num">${i+1}.</span> ${q}</div>
+      <div class="fam-a"><textarea placeholder="Risposta della famiglia…"></textarea></div>
+    </div>`).join('')}
+  `).join('');
+}
+
+// ─── TOGGLE SEZIONI ───
+function toggle(id) {
+  const body = document.getElementById('body-' + id);
+  const tog = document.getElementById('tog-' + id);
+  if (!body) return;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  body.style.display = isOpen ? 'none' : 'block';
+  if (tog) tog.classList.toggle('open', !isOpen);
+}
+
+// ─── PAP BUTTONS ───
+function setPAP(btn, cls) {
+  const group = btn.parentElement;
+  group.querySelectorAll('.pap-btn').forEach(b => {
+    b.classList.remove('sel-p','sel-a','sel-pp');
+  });
+  btn.classList.add(cls);
+}
+
+
 
 </script>
 
