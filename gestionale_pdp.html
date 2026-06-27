@@ -948,8 +948,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 <div id="screen-pdp-login" class="screen">
   <div class="pdp-login-box">
     <div class="pdp-login-logo">🔐</div>
-    <div class="pdp-login-title">Accedi al PDP</div>
-    <div class="pdp-login-sub">Inserisci la password che ti è stata comunicata dal coordinatore per aprire il Piano Didattico Personalizzato.</div>
+    <div class="pdp-login-title" id="pdp-login-title">Accedi al PDP</div>
+    <div class="pdp-login-sub" id="pdp-login-sub">Inserisci la password che ti è stata comunicata dal coordinatore per aprire il Piano Didattico Personalizzato.</div>
     <input type="password" class="pw-input" id="pdp-pw-input" placeholder="Password PDP" onkeydown="if(event.key==='Enter') verificaPW()">
     <div class="pw-errore" id="pdp-pw-errore">Password non corretta. Riprova.</div>
     <button class="btn-accedi" onclick="verificaPW()">Apri PDP</button>
@@ -1169,12 +1169,21 @@ onAuthStateChanged(auth, async (user) => {
 
   if (ruoloCorrente === 'attesa') { mostraSchermata('attesa'); return; }
 
-  // Master o admin → dashboard
+  // Docente → schermata inserimento password PDP
+  if (ruoloCorrente === 'docente') {
+    const nome = user.displayName?.split(' ')[0] || 'Docente';
+    document.getElementById('pdp-login-title').textContent = `Ciao, ${nome} 👋`;
+    document.getElementById('pdp-login-sub').textContent =
+      'Inserisci la password del PDP che ti è stata comunicata dal coordinatore per accedere al documento.';
+    mostraSchermata('pdp-login');
+    return;
+  }
+
+  // Master o Referente → dashboard
   document.getElementById('master-avatar').src = user.photoURL || '';
   document.getElementById('master-nome').textContent = user.displayName?.split(' ')[0] || '';
   document.getElementById('master-ruolo-badge').textContent =
-    ruoloCorrente === 'master' ? '👑 Master' :
-    ruoloCorrente === 'admin'  ? '🔑 Referente' : '✏️ Docente';
+    ruoloCorrente === 'master' ? '👑 Master' : '🔑 Referente';
 
   // Visibilità per ruolo
   const tabUtenti = document.getElementById('tab-utenti-btn');
@@ -1182,11 +1191,11 @@ onAuthStateChanged(auth, async (user) => {
 
   // Tab utenti: visibile solo a master
   if (tabUtenti) tabUtenti.style.display = ruoloCorrente === 'master' ? '' : 'none';
-  // Crea PDP: master e admin/referente
+  // Crea PDP: master e referente
   if (btnNuovo)  btnNuovo.style.display  = ['master','admin'].includes(ruoloCorrente) ? '' : 'none';
 
   document.getElementById('master-welcome').textContent =
-    `Benvenuto, ${user.displayName?.split(' ')[0] || 'Stefano'} 👋`;
+    `Benvenuto, ${user.displayName?.split(' ')[0] || ''} 👋`;
 
   mostraSchermata('master');
   caricaPDP();
@@ -1199,13 +1208,16 @@ function mostraSchermata(nome) {
   document.getElementById('screen-' + nome)?.classList.add('active');
 }
 window.mostraLogin = () => mostraSchermata('login');
-window.tornaHome   = () => {
+window.tornaHome = () => {
   if (unsubPDP) { unsubPDP(); unsubPDP = null; }
   pdpCorrenteId = null;
-  if (utenteCorrente && (ruoloCorrente === 'master' || ruoloCorrente === 'admin')) {
-    mostraSchermata('master');
-  } else {
+  _formIniettato = false;
+  if (ruoloCorrente === 'docente') {
+    document.getElementById('pdp-pw-input').value = '';
+    document.getElementById('pdp-pw-errore').style.display = 'none';
     mostraSchermata('pdp-login');
+  } else {
+    mostraSchermata('master');
   }
 };
 
