@@ -1023,25 +1023,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
   </div>
 </div>
 
-<!-- MODALE INVIA PDF -->
-<div class="modale-overlay" id="modale-invia">
-  <div class="modale-box">
-    <div class="modale-title">📤 Protocolla e invia PDF</div>
-    <div class="modale-campo">
-      <label>Email destinatari aggiuntivi</label>
-      <input type="text" id="invia-email" placeholder="es. famiglia@email.it, specialista@struttura.it">
-      <div class="pw-note">Il PDF verrà inviato automaticamente a te e alla cartella Drive istituzionale. Aggiungi qui altri destinatari separati da virgola.</div>
-    </div>
-    <div class="modale-campo">
-      <label>Note per il protocollo</label>
-      <textarea id="invia-note" placeholder="Note aggiuntive da includere nell'email di invio…" style="min-height:60px;width:100%;border:1.5px solid var(--grigio-bordo);border-radius:8px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;resize:vertical;"></textarea>
-    </div>
-    <div class="modale-azioni">
-      <button class="btn-secondary" onclick="document.getElementById('modale-invia').classList.remove('open')">Annulla</button>
-      <button class="btn-primary" onclick="inviaProtocollato()" style="background:var(--verde)">✅ Confirma e invia</button>
-    </div>
-  </div>
-</div>
+<!-- modale-invia rimosso: protocollazione gestita direttamente -->
 
 <!-- MODALE AGGIUNGI DOCENTI -->
 <div class="modale-overlay" id="modale-aggiungi-docenti">
@@ -1069,7 +1051,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc,
+import { getFirestore, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc,
   collection, onSnapshot, serverTimestamp, query, orderBy }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
@@ -1242,16 +1224,18 @@ function caricaPDP() {
       const p = d.data();
       const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : 'stato-bozza';
       const statoLabel = p.stato === 'protocollato' ? '✅ Protocollato' : p.stato === 'in-corso' ? '✏️ In corso' : '📝 Bozza';
+      const dataProtocollazione = p.protocollato_data_str ? `<div style="font-size:0.72rem;color:var(--verde);margin-top:3px">📅 ${p.protocollato_data_str}</div>` : '';
       return `
       <div class="pdp-card">
         <div class="pdp-card-info">
           <div class="pdp-card-nome">${p.alunno || '—'}</div>
           <div class="pdp-card-meta">${p.grado || ''} · Classe ${p.classe || '—'} · ${p.anno || ''}</div>
+          ${dataProtocollazione}
         </div>
         <span class="pdp-card-stato ${statoClass}">${statoLabel}</span>
         <div class="pdp-card-pw" title="Password di accesso">🔑 ${p.password || '—'}</div>
         <div class="pdp-card-azioni">
-          <button class="btn-sm btn-sm-blu" onclick="apriEditor('${d.id}')">Apri</button>
+          <button class="btn-sm btn-sm-blu" onclick="apriEditor('${d.id}')">Apri${p.stato === 'protocollato' ? ' / PDF' : ''}</button>
           ${ruoloCorrente === 'master' ? `<button class="btn-sm btn-sm-rosso" onclick="eliminaPDP('${d.id}','${p.alunno}')">Elimina</button>` : ''}
         </div>
       </div>`;
@@ -1314,10 +1298,8 @@ function caricaUtenti() {
 }
 
 window.cambiaRuolo = async (uid, nuovoRuolo) => {
-  // Blocca se si tenta di aggiungere un 4° master
   if (nuovoRuolo === 'master') {
-    const snap = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
-      .then(m => m.getDocs(m.collection(db, 'utenti')));
+    const snap = await getDocs(collection(db, 'utenti'));
     const nMaster = snap.docs.filter(d => d.data().ruolo === 'master').length;
     if (nMaster >= 3) { mostraToast('⚠️ Massimo 3 Master consentiti', 'rosso'); return; }
   }
@@ -1419,28 +1401,40 @@ window.verificaPW = async () => {
   const errEl = document.getElementById('pdp-pw-errore');
   errEl.style.display = 'none';
   if (!pw) return;
-  // Cerca tra tutti i PDP quello con questa password
-  const q = query(collection(db, 'pdp'));
-  const snap = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
-    .then(m => m.getDocs(m.query(collection(db, 'pdp'))));
-  const trovato = snap.docs.find(d => (d.data().password || '').toUpperCase() === pw);
-  if (!trovato) { errEl.style.display = 'block'; return; }
-  apriEditor(trovato.id);
+  try {
+    const snap = await getDocs(collection(db, 'pdp'));
+    const trovato = snap.docs.find(d => (d.data().password || '').toUpperCase() === pw);
+    if (!trovato) { errEl.style.display = 'block'; return; }
+    apriEditor(trovato.id);
+  } catch(e) {
+    errEl.textContent = 'Errore di connessione. Riprova.';
+    errEl.style.display = 'block';
+  }
 };
 
 // ─── EDITOR PDP (form reale integrato) ───
 window.apriEditor = (id) => {
   pdpCorrenteId = id;
   if (unsubPDP) unsubPDP();
-  // Carica il form PDP nell'area editing (una sola volta)
+  // Reinizializza sempre il form per ogni PDP
+  _formIniettato = false;
   _iniettaFormPDP();
-  unsubPDP = onSnapshot(doc(db, 'pdp', id), (snap) => {
+  mostraSchermata('editor');
+  // Prima lettura: carica dati e poi collega autosave
+  getDoc(doc(db, 'pdp', id)).then((snap) => {
     if (!snap.exists()) return;
     pdpCorrenteDoc = snap.data();
     _aggiornaHeaderEditor(pdpCorrenteDoc);
     _ripristinaDatiFirebase(pdpCorrenteDoc.dati || {}, pdpCorrenteDoc.grado || 'primaria');
+    // Collega autosave DOPO aver ripristinato i dati
+    _collegaAutosave();
   });
-  mostraSchermata('editor');
+  // Listener realtime per aggiornamenti da altri utenti
+  unsubPDP = onSnapshot(doc(db, 'pdp', id), (snap) => {
+    if (!snap.exists()) return;
+    pdpCorrenteDoc = snap.data();
+    _aggiornaHeaderEditor(pdpCorrenteDoc);
+  });
 };
 
 let _formIniettato = false;
@@ -1450,7 +1444,6 @@ function _iniettaFormPDP() {
   _formIniettato = true;
   const area = document.getElementById('area-editing');
   area.innerHTML = _PDP_FORM_HTML;
-  // Aggiorna sidebar con le sezioni reali del PDP
   const sezioni = [
     {id:'s1', label:'1. Dati alunno'},
     {id:'s2', label:'2. Tipologia PDP'},
@@ -1463,8 +1456,6 @@ function _iniettaFormPDP() {
   document.getElementById('sidebar-materie').innerHTML =
     '<div class="sidebar-section">Sezioni</div>' +
     sezioni.map(s => `<div class="sidebar-item" onclick="document.getElementById('${s.id}')?.scrollIntoView({behavior:'smooth',block:'start'})">${s.label}</div>`).join('');
-  // Avvia autosave su tutti gli eventi del form
-  _collegaAutosave();
 }
 
 function _aggiornaHeaderEditor(pdp) {
@@ -1473,6 +1464,15 @@ function _aggiornaHeaderEditor(pdp) {
   const isProtocollato = pdp.stato === 'protocollato';
   const btnP = document.getElementById('btn-protocolla');
   if (btnP) btnP.style.display = isProtocollato ? 'none' : '';
+  if (isProtocollato && !document.getElementById('banner-protocollato')) {
+    _mostraBannerProtocollato(
+      pdp.protocollato_da || '—',
+      pdp.protocollato_data_str || '—'
+    );
+    // Blocca campi
+    document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = true);
+    document.querySelectorAll('#area-editing button:not(.guida-btn)').forEach(el => el.disabled = true);
+  }
 }
 
 function _ripristinaDatiFirebase(dati, grado) {
@@ -1597,15 +1597,48 @@ async function salvaOra() {
 
 // ─── PROTOCOLLA ───
 window.protocolla = () => {
-  document.getElementById('modale-invia').classList.add('open');
+  if (!confirm('Confermi la protocollazione di questo PDP?\n\nIl documento verrà marcato come completato e passerà in sola lettura. Potrai scaricarlo in PDF dalla dashboard.')) return;
+  _protocollaNow();
 };
 
-window.inviaProtocollato = async () => {
-  await updateDoc(doc(db, 'pdp', pdpCorrenteId), { stato: 'protocollato', protocollato: serverTimestamp() });
-  document.getElementById('modale-invia').classList.remove('open');
-  mostraToast('✅ PDP protocollato e inviato!', 'verde');
-  esportaPDF();
-};
+async function _protocollaNow() {
+  const now = new Date();
+  const chi = utenteCorrente?.displayName || utenteCorrente?.email || 'Utente';
+  await updateDoc(doc(db, 'pdp', pdpCorrenteId), {
+    stato: 'protocollato',
+    protocollato: serverTimestamp(),
+    protocollato_da: chi,
+    protocollato_data_str: now.toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' })
+  });
+  mostraToast('✅ PDP protocollato!', 'verde');
+  // Aggiorna header e banner
+  const btnP = document.getElementById('btn-protocolla');
+  if (btnP) btnP.style.display = 'none';
+  _mostraBannerProtocollato(chi, now.toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' }));
+  // Blocca tutti i campi
+  document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = true);
+  document.querySelectorAll('#area-editing button:not(.guida-btn)').forEach(el => el.disabled = true);
+}
+
+function _mostraBannerProtocollato(chi, data) {
+  const area = document.getElementById('area-editing');
+  if (!area || document.getElementById('banner-protocollato')) return;
+  const banner = document.createElement('div');
+  banner.id = 'banner-protocollato';
+  banner.style.cssText = `
+    position: sticky; top: 0; z-index: 100;
+    background: var(--verde); color: white;
+    padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;
+    font-size: 0.85rem; font-weight: 600; border-radius: 0 0 10px 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  `;
+  banner.innerHTML = `
+    <span>✅ PDP protocollato il ${data} da ${chi} — documento in sola lettura</span>
+    <button onclick="esportaPDF()" style="background:white;color:var(--verde);border:none;border-radius:6px;padding:6px 14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.82rem;">🖨️ Scarica PDF</button>
+  `;
+  area.prepend(banner);
+}
+
 
 // ─── PDF ───
 window.esportaPDF = () => window.print();
