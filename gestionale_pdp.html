@@ -1708,12 +1708,12 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
     </div>
     <div class="sezione-body open" id="body-s1">
       <div class="row-2">
-        <div class="campo"><label>Cognome e nome</label><input type="text" placeholder="es. Rossi Mario"></div>
-        <div class="campo"><label>Data e luogo di nascita</label><input type="text" placeholder="gg/mm/aaaa – Comune"></div>
+        <div class="campo"><label>Cognome e nome</label><input type="text" data-campo="s1_nome" placeholder="es. Rossi Mario"></div>
+        <div class="campo"><label>Data e luogo di nascita</label><input type="text" data-campo="s1_nascita" placeholder="gg/mm/aaaa – Comune"></div>
       </div>
       <div class="row-3">
         <div class="campo"><label>Grado scolastico</label>
-          <select id="select-grado" onchange="setGradoSelect(this.value)">
+          <select id="select-grado" data-campo="s1_grado" onchange="setGradoSelect(this.value)">
             <option value="infanzia">Scuola dell'Infanzia</option>
             <option value="primaria" selected>Scuola Primaria</option>
             <option value="secondaria">Scuola Secondaria I grado</option>
@@ -1721,7 +1721,7 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
         </div>
         <div class="campo"><label>Classe / Sezione</label>
           <div style="display:flex;gap:8px;">
-            <select id="select-classe" onchange="aggiornaVisibilitaDSA()" style="flex:1">
+            <select id="select-classe" data-campo="s1_classe" onchange="aggiornaVisibilitaDSA()" style="flex:1">
               <option value="">— classe —</option>
               <option value="1">Classe 1ª</option>
               <option value="2">Classe 2ª</option>
@@ -1729,11 +1729,11 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
               <option value="4">Classe 4ª</option>
               <option value="5">Classe 5ª</option>
             </select>
-            <input type="text" placeholder="Sezione (es. A)" style="width:90px">
+            <input type="text" data-campo="s1_sezione" placeholder="Sezione (es. A)" style="width:90px">
           </div>
         </div>
         <div class="campo"><label>Plesso</label>
-          <select>
+          <select data-campo="s1_plesso">
             <option value="">— seleziona —</option>
             <option>Castelcovati</option>
             <option>Comezzano Cizzago</option>
@@ -1742,7 +1742,7 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
       </div>
       <div class="campo" style="max-width:250px">
         <label>Anno Scolastico</label>
-        <input type="text" placeholder="es. 2025/2026">
+        <input type="text" data-campo="s1_anno" placeholder="es. 2025/2026">
       </div>
     </div>
   </div>
@@ -1839,7 +1839,7 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
               <label class="comor-pill"><input type="checkbox" name="comorbidita" value="altro_comor"> Altro</label>
             </div>
             <div style="margin-top:10px;" id="comor-altro-box" style="display:none">
-              <input type="text" id="comor-altro-testo" placeholder="Specifica altra comorbidità…" style="width:100%;padding:7px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;">
+              <input data-campo="s2_comor_altro" type="text" id="comor-altro-testo" placeholder="Specifica altra comorbidità…" style="width:100%;padding:7px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;">
             </div>
           </div>
         </div>
@@ -1858,9 +1858,9 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </thead>
           <tbody>
             <tr>
-              <td><input type="text" placeholder="es. DSA – Dislessia e Disortografia"></td>
-              <td><input type="text" placeholder="Nome specialista"></td>
-              <td><input type="text" placeholder="Struttura / Ente"></td>
+              <td><input data-campo="s2_diagnosi_tipo" type="text" placeholder="es. DSA – Dislessia e Disortografia"></td>
+              <td><input data-campo="s2_specialista_nome" type="text" placeholder="Nome specialista"></td>
+              <td><input data-campo="s2_specialista_ente" type="text" placeholder="Struttura / Ente"></td>
               <td><input type="date"></td>
             </tr>
           </tbody>
@@ -1897,22 +1897,22 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
         <tbody>
           <tr>
             <td class="row-label">✅ Risorse</td>
-            <td><textarea placeholder="Punti di forza…"></textarea></td>
-            <td><textarea placeholder="Risorse disponibili…"></textarea></td>
-            <td><textarea placeholder="Supporti familiari/sociali…"></textarea></td>
+            <td><textarea data-campo="s3_risorse_forza" placeholder="Punti di forza…"></textarea></td>
+            <td><textarea data-campo="s3_risorse_disponibili" placeholder="Risorse disponibili…"></textarea></td>
+            <td><textarea data-campo="s3_risorse_familiari" placeholder="Supporti familiari/sociali…"></textarea></td>
           </tr>
           <tr>
             <td class="row-label">⚠️ Criticità</td>
-            <td><textarea placeholder="Difficoltà emerse…"></textarea></td>
-            <td><textarea placeholder="Limitazioni…"></textarea></td>
-            <td><textarea placeholder="Criticità ambientali…"></textarea></td>
+            <td><textarea data-campo="s3_criticita_difficolta" placeholder="Difficoltà emerse…"></textarea></td>
+            <td><textarea data-campo="s3_criticita_limitazioni" placeholder="Limitazioni…"></textarea></td>
+            <td><textarea data-campo="s3_criticita_ambientali" placeholder="Criticità ambientali…"></textarea></td>
           </tr>
         </tbody>
       </table>
 
       <div class="campo" style="margin-top:14px">
         <label>Interventi specialistici / strutture socio-sanitarie del territorio</label>
-        <textarea placeholder="es. Logopedista – dott.ssa Bianchi – sedute settimanali; Psicologo scolastico…"></textarea>
+        <textarea data-campo="s3_interventi_specialistici" placeholder="es. Logopedista – dott.ssa Bianchi – sedute settimanali; Psicologo scolastico…"></textarea>
       </div>
     </div>
   </div>
@@ -1951,11 +1951,11 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </div>
           <div class="ceb">
             <label>Strategie metodologiche</label>
-            <textarea placeholder="Strategie adottate…"></textarea>
+            <textarea data-campo="s4i_campo1_strategie" placeholder="Strategie adottate…"></textarea>
           </div>
           <div class="ceb">
             <label>Strumenti comp. / misure disp.</label>
-            <textarea placeholder="Strumenti e misure…"></textarea>
+            <textarea data-campo="s4i_campo1_strumenti" placeholder="Strumenti e misure…"></textarea>
           </div>
         </div>
       </div>
@@ -1982,11 +1982,11 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </div>
           <div class="ceb">
             <label>Strategie metodologiche</label>
-            <textarea placeholder="Strategie adottate…"></textarea>
+            <textarea data-campo="s4i_campo2_strategie" placeholder="Strategie adottate…"></textarea>
           </div>
           <div class="ceb">
             <label>Strumenti comp. / misure disp.</label>
-            <textarea placeholder="Strumenti e misure…"></textarea>
+            <textarea data-campo="s4i_campo2_strumenti" placeholder="Strumenti e misure…"></textarea>
           </div>
         </div>
       </div>
@@ -2013,11 +2013,11 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </div>
           <div class="ceb">
             <label>Strategie metodologiche</label>
-            <textarea placeholder="Strategie adottate…"></textarea>
+            <textarea data-campo="s4i_campo3_strategie" placeholder="Strategie adottate…"></textarea>
           </div>
           <div class="ceb">
             <label>Strumenti comp. / misure disp.</label>
-            <textarea placeholder="Strumenti e misure…"></textarea>
+            <textarea data-campo="s4i_campo3_strumenti" placeholder="Strumenti e misure…"></textarea>
           </div>
         </div>
       </div>
@@ -2044,11 +2044,11 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </div>
           <div class="ceb">
             <label>Strategie metodologiche</label>
-            <textarea placeholder="Strategie adottate…"></textarea>
+            <textarea data-campo="s4i_campo4_strategie" placeholder="Strategie adottate…"></textarea>
           </div>
           <div class="ceb">
             <label>Strumenti comp. / misure disp.</label>
-            <textarea placeholder="Strumenti e misure…"></textarea>
+            <textarea data-campo="s4i_campo4_strumenti" placeholder="Strumenti e misure…"></textarea>
           </div>
         </div>
       </div>
@@ -2075,18 +2075,18 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </div>
           <div class="ceb">
             <label>Strategie metodologiche</label>
-            <textarea placeholder="Strategie adottate…"></textarea>
+            <textarea data-campo="s4i_campo5_strategie" placeholder="Strategie adottate…"></textarea>
           </div>
           <div class="ceb">
             <label>Strumenti comp. / misure disp.</label>
-            <textarea placeholder="Strumenti e misure…"></textarea>
+            <textarea data-campo="s4i_campo5_strumenti" placeholder="Strumenti e misure…"></textarea>
           </div>
         </div>
       </div>
 
       <div class="campo" style="margin-top:10px">
         <label>Eventuali note</label>
-        <textarea placeholder="Note aggiuntive…"></textarea>
+        <textarea data-campo="s4i_note_aggiuntive" placeholder="Note aggiuntive…"></textarea>
       </div>
     </div>
   </div>
@@ -2115,7 +2115,7 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </div>
           <div class="abilita-body">
             <label>Obiettivi da raggiungere</label>
-            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+            <textarea data-campo="s4_italiano_obiettivi" placeholder="Descrizione analitica degli obiettivi…"></textarea>
           </div>
         </div>
 
@@ -2132,7 +2132,7 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </div>
           <div class="abilita-body">
             <label>Obiettivi da raggiungere</label>
-            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+            <textarea data-campo="s4_storia_obiettivi" placeholder="Descrizione analitica degli obiettivi…"></textarea>
           </div>
         </div>
 
@@ -2147,7 +2147,7 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </div>
           <div class="abilita-body">
             <label>Obiettivi da raggiungere</label>
-            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+            <textarea data-campo="s4_matematica_obiettivi" placeholder="Descrizione analitica degli obiettivi…"></textarea>
           </div>
         </div>
 
@@ -2163,7 +2163,7 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </div>
           <div class="abilita-body">
             <label>Obiettivi da raggiungere</label>
-            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+            <textarea data-campo="s4_scienze_obiettivi" placeholder="Descrizione analitica degli obiettivi…"></textarea>
           </div>
         </div>
 
@@ -2180,7 +2180,7 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </div>
           <div class="abilita-body">
             <label>Obiettivi da raggiungere</label>
-            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+            <textarea data-campo="s4_inglese_obiettivi" placeholder="Descrizione analitica degli obiettivi…"></textarea>
           </div>
         </div>
 
@@ -2195,7 +2195,7 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </div>
           <div class="abilita-body">
             <label>Obiettivi da raggiungere</label>
-            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+            <textarea data-campo="s4_tecnologia_obiettivi" placeholder="Descrizione analitica degli obiettivi…"></textarea>
           </div>
         </div>
 
@@ -2212,7 +2212,7 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </div>
           <div class="abilita-body">
             <label>Obiettivi da raggiungere</label>
-            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+            <textarea data-campo="s4_arte_obiettivi" placeholder="Descrizione analitica degli obiettivi…"></textarea>
           </div>
         </div>
 
@@ -2229,7 +2229,7 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </div>
           <div class="abilita-body">
             <label>Obiettivi da raggiungere</label>
-            <textarea placeholder="Descrizione analitica degli obiettivi…"></textarea>
+            <textarea data-campo="s4_musica_obiettivi" placeholder="Descrizione analitica degli obiettivi…"></textarea>
           </div>
         </div>
 
@@ -2282,19 +2282,19 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
       <div class="famiglia-lista">
         <div class="fam-item">
           <div class="fam-q">Come ti senti a scuola?</div>
-          <div class="fam-a"><textarea placeholder="Risposta dell'alunno/a…"></textarea></div>
+          <div class="fam-a"><textarea data-campo="s6_fam_risposta1" placeholder="Risposta dell'alunno/a…"></textarea></div>
         </div>
         <div class="fam-item">
           <div class="fam-q">Quale materia/attività ti piace di più? Perché?</div>
-          <div class="fam-a"><textarea placeholder="Risposta dell'alunno/a…"></textarea></div>
+          <div class="fam-a"><textarea data-campo="s6_fam_risposta2" placeholder="Risposta dell'alunno/a…"></textarea></div>
         </div>
         <div class="fam-item">
           <div class="fam-q">Cosa ti risulta più difficile?</div>
-          <div class="fam-a"><textarea placeholder="Risposta dell'alunno/a…"></textarea></div>
+          <div class="fam-a"><textarea data-campo="s6_fam_risposta3" placeholder="Risposta dell'alunno/a…"></textarea></div>
         </div>
         <div class="fam-item">
           <div class="fam-q">Quali strumenti o aiuti ti sembrano più utili?</div>
-          <div class="fam-a"><textarea placeholder="Risposta dell'alunno/a…"></textarea></div>
+          <div class="fam-a"><textarea data-campo="s6_fam_risposta4" placeholder="Risposta dell'alunno/a…"></textarea></div>
         </div>
       </div>
     </div>
@@ -2303,7 +2303,7 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
   <!-- NOTE FINALI -->
   <div class="note-finale">
     <label>📝 Eventuali note e annotazioni aggiuntive</label>
-    <textarea placeholder="Note integrative, aggiornamenti, osservazioni successive…"></textarea>
+    <textarea data-campo="s7_note_aggiuntive" placeholder="Note integrative, aggiornamenti, osservazioni successive…"></textarea>
   </div>
 
   <!-- FIRME -->
@@ -2324,14 +2324,14 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
         <!-- Dirigente: solo testo, firma digitale via protocollo -->
         <div class="firma-box">
           <label>Dirigente Scolastico</label>
-          <input type="text" value="Tecla Fogliata" placeholder="Nome e cognome">
+          <input data-campo="firma_dirigente" type="text" value="Tecla Fogliata" placeholder="Nome e cognome">
           <div class="firma-nota">📎 Firmato digitalmente ai sensi del CAD – protocollo informatico</div>
         </div>
 
         <!-- Coordinatore: nome + firma grafica -->
         <div class="firma-box firma-box-pad">
           <label>Coordinatore di classe</label>
-          <input type="text" placeholder="Nome e cognome">
+          <input data-campo="firma_coordinatore" type="text" placeholder="Nome e cognome">
           <div class="signature-preview" id="prev-sig-coordinatore" onclick="apriFirma('sig-coordinatore')">
             <img id="img-sig-coordinatore" style="display:none">
             <span class="signature-preview-ph">✍️ Tocca per firmare</span>
@@ -2344,7 +2344,7 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
         <!-- Genitore: nome + firma grafica -->
         <div class="firma-box firma-box-pad">
           <label>Genitore/Tutore</label>
-          <input type="text" placeholder="Nome e cognome">
+          <input data-campo="firma_genitore" type="text" placeholder="Nome e cognome">
           <div class="signature-preview" id="prev-sig-genitore" onclick="apriFirma('sig-genitore')">
             <img id="img-sig-genitore" style="display:none">
             <span class="signature-preview-ph">✍️ Tocca per firmare</span>
@@ -2655,11 +2655,12 @@ function renderMaterie(g) {
 function materiaCard(nome) {
   const uid = 'mat' + (materiaCounter++);
   const area = MATERIA_AREA[nome] || 'tutte';
+  const s = slug(nome);
   return `
   <div class="materia-card" data-area="${area}">
     <div class="materia-header">
       <div class="materia-nome">${nome}</div>
-      <div class="materia-firma">Firma docente: <input type="text" placeholder="…………………………"></div>
+      <div class="materia-firma">Firma docente: <input data-campo="mat_firma_${s}" type="text" placeholder="…………………………"></div>
     </div>
     <div class="materia-body-v2">
 
@@ -2669,7 +2670,7 @@ function materiaCard(nome) {
 
       <div class="materia-campo-full">
         <label>Strategie metodologiche specifiche</label>
-        <textarea placeholder="es. Anticipazione dell'argomento prima della lezione; verifica orale programmata; consegna delle istruzioni una alla volta…"></textarea>
+        <textarea data-campo="mat_strategie_${s}" placeholder="es. Anticipazione dell'argomento prima della lezione; verifica orale programmata; consegna delle istruzioni una alla volta…"></textarea>
       </div>
     </div>
   </div>`;
@@ -2699,8 +2700,8 @@ function blocStrumenti(uid, area, nomeMateria) {
 function rigaStrumentoHTML() {
   return `
   <div class="riga-dinamica">
-    <input type="text" class="riga-nome" placeholder="Strumento compensativo (es. sintesi vocale per la lettura)">
-    <input type="text" class="riga-quando" placeholder="Quando viene usato (es. in tutte le verifiche scritte)">
+    <input  type="text" class="riga-nome" placeholder="Strumento compensativo (es. sintesi vocale per la lettura)">
+    <input  type="text" class="riga-quando" placeholder="Quando viene usato (es. in tutte le verifiche scritte)">
     <button type="button" class="riga-rimuovi" onclick="rimuoviRiga(this)" title="Rimuovi">✕</button>
   </div>`;
 }
@@ -2719,8 +2720,8 @@ function blocMisureDispensative(uid) {
 function rigaMisuraHTML() {
   return `
   <div class="riga-dinamica">
-    <input type="text" class="riga-nome" placeholder="Misura/adattamento (es. dispensa dalla lettura ad alta voce)">
-    <input type="text" class="riga-quando" placeholder="Quando si applica (es. durante le interrogazioni)">
+    <input  type="text" class="riga-nome" placeholder="Misura/adattamento (es. dispensa dalla lettura ad alta voce)">
+    <input  type="text" class="riga-quando" placeholder="Quando si applica (es. durante le interrogazioni)">
     <button type="button" class="riga-rimuovi" onclick="rimuoviRiga(this)" title="Rimuovi">✕</button>
   </div>`;
 }
@@ -2767,7 +2768,7 @@ function blocCriteriValutativi(uid) {
     <div class="criteri-grid">
       ${CRITERI_VALUTATIVI.map((c, i) => `
         <label class="criterio-check">
-          <input type="checkbox" id="criterio-${uid}-${i}">
+          <input type="checkbox" id="criterio-${uid}-${i}" data-campo="mat_criterio_${uid}_${i}">
           <span>${c}</span>
         </label>`).join('')}
     </div>
@@ -2819,31 +2820,31 @@ function blocMisureOggettive(uid) {
 
       <div class="misura-box">
         <label class="misura-check">
-          <input type="checkbox" id="tempo-${uid}" onchange="toggleSub('tempo-sub-${uid}', this.checked)">
+          <input type="checkbox" id="tempo-${uid}" data-campo="mat_cb_tempo_${uid}" onchange="toggleSub('tempo-sub-${uid}', this.checked)">
           <span>Tempo aggiuntivo nelle verifiche <span class="label-hint">(max 30%)</span></span>
         </label>
         <div class="misura-sub" id="tempo-sub-${uid}" style="display:none">
           <div class="percent-row">
-            <input type="range" min="0" max="50" step="5" value="30" class="percent-slider"
+            <input type="range" min="0" max="50" step="5" value="30" class="percent-slider" data-campo="mat_slider_tempo_${uid}"
               data-tipo="tempo" data-uid="${uid}"
               oninput="aggiornaPercentuale(this)">
             <span class="percent-value">30%</span>
           </div>
           <div class="motivazione-box" id="tempo-motiv-${uid}" style="display:none">
             <label class="motivazione-label">⚠️ Motivazione obbligatoria — tempo aggiuntivo superiore al 30%</label>
-            <textarea class="motivazione-testo" placeholder="Spiega perché è necessario superare la soglia massima del 30%…"></textarea>
+            <textarea data-campo="mat_tempo_motiv_${uid}" class="motivazione-testo" placeholder="Spiega perché è necessario superare la soglia massima del 30%…"></textarea>
           </div>
         </div>
       </div>
 
       <div class="misura-box">
         <label class="misura-check">
-          <input type="checkbox" id="riduzione-${uid}" onchange="toggleSub('riduzione-sub-${uid}', this.checked)">
+          <input type="checkbox" id="riduzione-${uid}" data-campo="mat_cb_rid_${uid}" onchange="toggleSub('riduzione-sub-${uid}', this.checked)">
           <span>Riduzione quantitativa della prova <span class="label-hint">(canonica 20–30%)</span></span>
         </label>
         <div class="misura-sub" id="riduzione-sub-${uid}" style="display:none">
           <div class="percent-row">
-            <input type="range" min="0" max="50" step="5" value="25" class="percent-slider"
+            <input type="range" min="0" max="50" step="5" value="25" class="percent-slider" data-campo="mat_slider_rid_${uid}"
               data-tipo="riduzione" data-uid="${uid}"
               oninput="aggiornaPercentuale(this)">
             <span class="percent-value">25%</span>
@@ -2851,34 +2852,34 @@ function blocMisureOggettive(uid) {
           <div class="percent-hint">Specificare il criterio di riduzione (es. numero esercizi, item, domande) nel campo strumenti/misure sopra.</div>
           <div class="motivazione-box" id="riduzione-motiv-${uid}" style="display:none">
             <label class="motivazione-label">⚠️ Motivazione obbligatoria — fuori dal range canonico 20–30%</label>
-            <textarea class="motivazione-testo" placeholder="Spiega perché la riduzione necessaria è inferiore al 20% o superiore al 30%…"></textarea>
+            <textarea data-campo="mat_rid_motiv_${uid}" class="motivazione-testo" placeholder="Spiega perché la riduzione necessaria è inferiore al 20% o superiore al 30%…"></textarea>
           </div>
         </div>
       </div>
 
       <div class="misura-box">
         <label class="misura-check">
-          <input type="checkbox" id="domandechiuse-${uid}" checked onchange="toggleSub('domandechiuse-sub-${uid}', this.checked)">
+          <input type="checkbox" id="domandechiuse-${uid}" data-campo="mat_cb_chiuse_${uid}" checked onchange="toggleSub('domandechiuse-sub-${uid}', this.checked)">
           <span>Presenza di domande chiuse nella verifica</span>
         </label>
         <div class="misura-sub" id="domandechiuse-sub-${uid}" style="display:block">
-          <textarea class="perche-testo" placeholder="Perché: spiega il motivo della scelta (es. riduce il carico di scrittura, facilita il riconoscimento della risposta corretta)…"></textarea>
+          <textarea data-campo="mat_domchiuse_${uid}" class="perche-testo" placeholder="Perché: spiega il motivo della scelta (es. riduce il carico di scrittura, facilita il riconoscimento della risposta corretta)…"></textarea>
         </div>
       </div>
 
       <div class="misura-box">
         <label class="misura-check">
-          <input type="checkbox" id="domandeaperte-${uid}" onchange="toggleSub('domandeaperte-sub-${uid}', this.checked)">
+          <input type="checkbox" id="domandeaperte-${uid}" data-campo="mat_cb_aperte_${uid}" onchange="toggleSub('domandeaperte-sub-${uid}', this.checked)">
           <span>Presenza di domande aperte</span>
         </label>
         <div class="misura-sub" id="domandeaperte-sub-${uid}" style="display:none">
-          <textarea class="perche-testo" placeholder="Perché: spiega il motivo della scelta in base al PDP (valutare caso per caso, non come unica modalità)…"></textarea>
+          <textarea data-campo="mat_domaperte_${uid}" class="perche-testo" placeholder="Perché: spiega il motivo della scelta in base al PDP (valutare caso per caso, non come unica modalità)…"></textarea>
         </div>
       </div>
 
       <div class="misura-box">
         <label class="misura-check">
-          <input type="checkbox" id="oral-${uid}">
+          <input type="checkbox" id="oral-${uid}" data-campo="mat_cb_oral_${uid}">
           <span>Possibilità di interrogazione programmata</span>
         </label>
       </div>
@@ -2926,7 +2927,7 @@ function ircCard() {
           <option value="alt">Attività Alternativa alla Religione</option>
         </select>
       </div>
-      <div class="materia-firma">Firma docente: <input type="text" placeholder="…………………………"></div>
+      <div class="materia-firma">Firma docente: <input data-campo="mat_firma_irc" type="text" placeholder="…………………………"></div>
     </div>
     <div class="materia-body-v2">
       ${blocStrumenti(uid, 'tutte', 'IRC / Attività Alternativa')}
@@ -2934,7 +2935,7 @@ function ircCard() {
       ${blocMisureOggettive(uid)}
       <div class="materia-campo-full">
         <label>Strategie metodologiche specifiche</label>
-        <textarea placeholder="es. Lavoro cooperativo, supporto visivo, materiali semplificati…"></textarea>
+        <textarea data-campo="mat_strategie_irc" placeholder="es. Lavoro cooperativo, supporto visivo, materiali semplificati…"></textarea>
       </div>
     </div>
   </div>`;
@@ -3051,7 +3052,7 @@ function renderFamiglia() {
     ${gruppo.domande.map((q, i) => `
     <div class="fam-item">
       <div class="fam-q"><span class="fam-num">${i+1}.</span> ${q}</div>
-      <div class="fam-a"><textarea placeholder="Risposta della famiglia…"></textarea></div>
+      <div class="fam-a"><textarea data-campo="s6_famiglia_risposta1" placeholder="Risposta della famiglia…"></textarea></div>
     </div>`).join('')}
   `).join('');
 
@@ -3060,13 +3061,13 @@ function renderFamiglia() {
     ${gruppo.domande.map((q, i) => `
     <div class="fam-item">
       <div class="fam-q"><span class="fam-num">${i+1}.</span> ${q}</div>
-      <div class="fam-a"><textarea placeholder="Risposta della famiglia…"></textarea></div>
+      <div class="fam-a"><textarea data-campo="s6_famiglia_risposta2" placeholder="Risposta della famiglia…"></textarea></div>
     </div>`).join('')}
   `).join('');
 }
 
 // ─── TOGGLE SEZIONI ───
-window.toggle = function toggle(id) {
+function toggle(id) {
   const body = document.getElementById('body-' + id);
   const tog = document.getElementById('tog-' + id);
   if (!body) return;
@@ -3084,8 +3085,6 @@ function setPAP(btn, cls) {
   });
   btn.classList.add(cls);
 }
-
-
 
 
 // ── Esponi funzioni PDP su window per onclick inline ──
