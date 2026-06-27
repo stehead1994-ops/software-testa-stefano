@@ -1413,22 +1413,37 @@ window.verificaPW = async () => {
 };
 
 // ─── EDITOR PDP (form reale integrato) ───
-window.apriEditor = (id) => {
+window.apriEditor = async (id) => {
   pdpCorrenteId = id;
   if (unsubPDP) unsubPDP();
-  // Reinizializza sempre il form per ogni PDP
   _formIniettato = false;
   _iniettaFormPDP();
   mostraSchermata('editor');
-  // Prima lettura: carica dati e poi collega autosave
-  getDoc(doc(db, 'pdp', id)).then((snap) => {
+
+  try {
+    const snap = await getDoc(doc(db, 'pdp', id));
     if (!snap.exists()) return;
     pdpCorrenteDoc = snap.data();
+    const dati = pdpCorrenteDoc.dati || {};
+    const grado = pdpCorrenteDoc.grado || dati['_grado'] || 'primaria';
+
+    // 1. Imposta grado prima — genera le card materie nel DOM
+    if (typeof setGrado === 'function') setGrado(grado);
+
+    // 2. Aspetta un tick per assicurarsi che il DOM sia aggiornato
+    await new Promise(r => setTimeout(r, 100));
+
+    // 3. Aggiorna header e ripristina tutti i dati
     _aggiornaHeaderEditor(pdpCorrenteDoc);
-    _ripristinaDatiFirebase(pdpCorrenteDoc.dati || {}, pdpCorrenteDoc.grado || 'primaria');
-    // Collega autosave DOPO aver ripristinato i dati
+    _ripristinaDatiFirebase(dati, grado);
+
+    // 4. Collega autosave solo dopo il ripristino
     _collegaAutosave();
-  });
+  } catch(e) {
+    console.error('Errore caricamento PDP:', e);
+    mostraToast('Errore nel caricamento del PDP', 'rosso');
+  }
+
   // Listener realtime per aggiornamenti da altri utenti
   unsubPDP = onSnapshot(doc(db, 'pdp', id), (snap) => {
     if (!snap.exists()) return;
@@ -1476,8 +1491,6 @@ function _aggiornaHeaderEditor(pdp) {
 }
 
 function _ripristinaDatiFirebase(dati, grado) {
-  // Imposta grado
-  if (typeof setGrado === 'function') setGrado(grado);
   // Ripristina tutti i campi con data-campo
   Object.entries(dati).forEach(([campo, val]) => {
     const el = document.querySelector(`[data-campo="${campo}"]`);
@@ -1590,8 +1603,12 @@ async function salvaOra() {
     const lbl = document.getElementById('autosave-label');
     if (dot) { dot.classList.remove('saving'); }
     if (lbl) lbl.textContent = 'Salvato ✓';
+    console.log('✅ Salvato su Firestore, pdpCorrenteId:', pdpCorrenteId);
   } catch(e) {
-    document.getElementById('autosave-label').textContent = '⚠️ Errore';
+    console.error('❌ Errore salvataggio:', e.code, e.message);
+    const lbl = document.getElementById('autosave-label');
+    if (lbl) lbl.textContent = '⚠️ Errore: ' + (e.code || e.message);
+    mostraToast('❌ Salvataggio fallito: ' + (e.code || e.message), 'rosso');
   }
 }
 
@@ -3057,25 +3074,30 @@ function setPAP(btn, cls) {
 
 
 // ── Esponi funzioni PDP su window per onclick inline ──
-window.toggle              = toggle;
-window.setGrado            = setGrado;
-window.setGradoSelect      = setGradoSelect;
-window.setPAP              = setPAP;
-window.toggleSuggerimenti  = toggleSuggerimenti;
-window.toggleGuida         = toggleGuida;
-window.aggiungiRiga        = aggiungiRiga;
-window.rimuoviRiga         = rimuoviRiga;
-window.apriFirma           = apriFirma;
-window.chiudiFirma         = chiudiFirma;
-window.clearSignature      = clearSignature;
-window.cancellaFirmaModal  = cancellaFirmaModal;
-window.aggiornaPercentuale = aggiornaPercentuale;
-window.mostraTipoDSA       = mostraTipoDSA;
+window.toggle                = toggle;
+window.setGrado              = setGrado;
+window.setGradoSelect        = setGradoSelect;
+window.setPAP                = setPAP;
+window.toggleSuggerimenti    = toggleSuggerimenti;
+window.toggleGuida           = toggleGuida;
+window.aggiungiRiga          = aggiungiRiga;
+window.rimuoviRiga           = rimuoviRiga;
+window.apriFirma             = apriFirma;
+window.chiudiFirma           = chiudiFirma;
+window.clearSignature        = clearSignature;
+window.cancellaFirmaModal    = cancellaFirmaModal;
+window.aggiornaPercentuale   = aggiornaPercentuale;
+window.mostraTipoDSA         = mostraTipoDSA;
 window.mostraAvvisoConsiglio = mostraAvvisoConsiglio;
-window.toggleSub           = toggleSub;
-window.resetForm           = resetForm;
-window.salvaBozza          = salvaBozza;
-window.esportaPDF          = esportaPDF;
+window.toggleSub             = toggleSub;
+window.aggiornaVisibilitaDSA = aggiornaVisibilitaDSA;
+// Stub per funzioni del PDP standalone non usate nel gestionale
+window.resetForm    = () => {};
+window.salvaBozza   = () => mostraToast('Usa il salvataggio automatico', '');
+window.apriDropzone = () => {};
+window.chiudiDropzone = () => {};
+window.handleDrop   = () => {};
+window.handleFileInput = () => {};
 
 </script>
 
