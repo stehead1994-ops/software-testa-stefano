@@ -1491,27 +1491,38 @@ function _aggiornaHeaderEditor(pdp) {
 }
 
 function _ripristinaDatiFirebase(dati, grado) {
-  // Ripristina tutti i campi con data-campo
-  Object.entries(dati).forEach(([campo, val]) => {
-    const el = document.querySelector(`[data-campo="${campo}"]`);
-    if (!el) return;
-    if (el.type === 'checkbox') { el.checked = !!val; }
-    else if (el.type === 'radio') { el.checked = (el.value === val); }
-    else { el.value = val; }
-    // Triggera change per aggiornare UI dipendenti (toggleSub, mostraTipoDSA ecc.)
-    el.dispatchEvent(new Event('change', {bubbles: true}));
+  const area = document.getElementById('area-editing');
+  if (!area) return;
+
+  // Ripristina tutti i campi per id o data-campo (escludi radio — gestiti sotto)
+  area.querySelectorAll('input:not([type="radio"]), select, textarea').forEach((el, i) => {
+    if (el.disabled || el.type === 'button' || el.type === 'submit') return;
+    const key = el.dataset.campo || el.id || ('_idx_' + i);
+    if (!key || !(key in dati)) return;
+    if (el.type === 'checkbox') el.checked = !!dati[key];
+    else el.value = dati[key] || '';
   });
+
+  // Ripristina radio buttons
+  area.querySelectorAll('input[type="radio"]').forEach(el => {
+    const radioKey = 'radio_' + el.name;
+    if (radioKey in dati && dati[radioKey] === el.value) {
+      el.checked = true;
+      el.dispatchEvent(new Event('change', {bubbles: true}));
+    }
+  });
+
   // Ripristina righe dinamiche
   if (dati._righe) {
     try {
-      const righe = JSON.parse(dati._righe);
-      righe.forEach(({containerId, items}) => {
+      JSON.parse(dati._righe).forEach(({containerId, items}) => {
         const container = document.getElementById(containerId);
-        if (!container) return;
+        if (!container || !items?.length) return;
         container.innerHTML = '';
         items.forEach(item => {
           const div = document.createElement('div');
-          div.innerHTML = (containerId.startsWith('strumenti') ? rigaStrumentoHTML() : rigaMisuraHTML()).trim();
+          const tmpl = containerId.startsWith('strumenti') ? rigaStrumentoHTML() : rigaMisuraHTML();
+          div.innerHTML = tmpl.trim();
           const row = div.firstElementChild;
           const inputs = row.querySelectorAll('input[type="text"]');
           if (inputs[0]) inputs[0].value = item[0] || '';
@@ -1519,13 +1530,14 @@ function _ripristinaDatiFirebase(dati, grado) {
           container.appendChild(row);
         });
       });
-    } catch(e) {}
+    } catch(e) { console.warn('Errore ripristino righe:', e); }
   }
-  // Ripristina PAP buttons (infanzia)
+
+  // Ripristina PAP buttons
   if (dati._pap) {
     try {
       JSON.parse(dati._pap).forEach(({i, cls}) => {
-        const btns = document.querySelectorAll('.pap-btn');
+        const btns = area.querySelectorAll('.pap-btn');
         if (btns[i] && cls) { btns[i].classList.remove('sel-p','sel-a','sel-pp'); btns[i].classList.add(cls); }
       });
     } catch(e) {}
@@ -1553,26 +1565,29 @@ function scheduleAutosave() {
 async function salvaOra() {
   if (!pdpCorrenteId) return;
   const nuoviDati = {};
+  const area = document.getElementById('area-editing');
+  if (!area) return;
 
-  // Campi con data-campo (text, textarea, select, date, range)
-  document.querySelectorAll('#area-editing [data-campo]').forEach(el => {
-    if (el.type === 'checkbox') nuoviDati[el.dataset.campo] = el.checked;
-    else if (el.type === 'radio') { if (el.checked) nuoviDati[el.dataset.campo] = el.value; }
-    else nuoviDati[el.dataset.campo] = el.value;
-  });
+  // Raccogli TUTTI i campi nell'area editing
+  area.querySelectorAll('input, select, textarea').forEach((el, i) => {
+    // Salta campi disabilitati, hidden, e bottoni
+    if (el.disabled || el.type === 'button' || el.type === 'submit') return;
 
-  // Radio e checkbox con name (tipo_pdp, dsa_tipo ecc.)
-  document.querySelectorAll('#area-editing input[name]').forEach(el => {
-    if (el.type === 'radio' && el.checked) nuoviDati['radio_' + el.name] = el.value;
-    if (el.type === 'checkbox') nuoviDati['cb_' + el.name + '_' + el.value] = el.checked;
+    // Chiave: usa data-campo se presente, altrimenti id, altrimenti indice
+    const key = el.dataset.campo || el.id || ('_idx_' + i);
+    if (!key) return;
+
+    if (el.type === 'checkbox') nuoviDati[key] = el.checked;
+    else if (el.type === 'radio') { if (el.checked) nuoviDati['radio_' + (el.name || key)] = el.value; }
+    else nuoviDati[key] = el.value;
   });
 
   // Grado corrente
   nuoviDati['_grado'] = (typeof gradoCorrente !== 'undefined') ? gradoCorrente : 'primaria';
 
-  // Righe dinamiche (strumenti e misure)
+  // Righe dinamiche
   const righeData = [];
-  document.querySelectorAll('#area-editing .righe-dinamiche').forEach(container => {
+  area.querySelectorAll('.righe-dinamiche').forEach(container => {
     if (!container.id) return;
     const items = [];
     container.querySelectorAll('.riga-dinamica').forEach(riga => {
@@ -1583,8 +1598,8 @@ async function salvaOra() {
   });
   if (righeData.length) nuoviDati['_righe'] = JSON.stringify(righeData);
 
-  // PAP buttons (infanzia)
-  const papBtns = document.querySelectorAll('#area-editing .pap-btn');
+  // PAP buttons
+  const papBtns = area.querySelectorAll('.pap-btn');
   if (papBtns.length) {
     const papData = [];
     papBtns.forEach((b, i) => {
@@ -1601,9 +1616,9 @@ async function salvaOra() {
     });
     const dot = document.getElementById('autosave-dot');
     const lbl = document.getElementById('autosave-label');
-    if (dot) { dot.classList.remove('saving'); }
+    if (dot) dot.classList.remove('saving');
     if (lbl) lbl.textContent = 'Salvato ✓';
-    console.log('✅ Salvato su Firestore, pdpCorrenteId:', pdpCorrenteId);
+    console.log('✅ Salvato su Firestore, campi:', Object.keys(nuoviDati).length);
   } catch(e) {
     console.error('❌ Errore salvataggio:', e.code, e.message);
     const lbl = document.getElementById('autosave-label');
