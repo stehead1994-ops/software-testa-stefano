@@ -1502,6 +1502,20 @@ function _ripristinaDatiFirebase(dati, grado) {
     if (key in dati) el.checked = !!dati[key];
   });
 
+  // Aggiorna visivamente gli slider (percent-value span)
+  area.querySelectorAll('input[type="range"]').forEach(el => {
+    const key = el.dataset.campo;
+    if (key && key in dati) {
+      el.value = dati[key];
+      const span = el.nextElementSibling;
+      if (span && span.classList.contains('percent-value')) {
+        span.textContent = dati[key] + '%';
+      }
+      // Triggera aggiornaPercentuale per mostrare/nascondere motivazione
+      if (typeof aggiornaPercentuale === 'function') aggiornaPercentuale(el);
+    }
+  });
+
   // Ripristina radio buttons
   area.querySelectorAll('input[type="radio"]').forEach(el => {
     const radioKey = 'radio_' + el.name;
@@ -3104,6 +3118,8 @@ function esc(s) { return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;
 // ── Esponi funzioni PDP su window per onclick inline ──
 window.toggle                = toggle;
 window.slug                  = slug;
+window.rigaStrumentoHTML     = rigaStrumentoHTML;
+window.rigaMisuraHTML        = rigaMisuraHTML;
 window.setGrado              = setGrado;
 window.setGradoSelect        = setGradoSelect;
 window.setPAP                = setPAP;
