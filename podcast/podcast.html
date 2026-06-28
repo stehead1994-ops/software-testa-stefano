@@ -206,7 +206,8 @@ const episodes = [
     description: "L'educatore scolastico: finanziato dal Comune, gestito da una cooperativa, pagato undici euro l'ora. Conosce certi alunni meglio di chiunque altro — ma non viene invitato al GLO. Tre storie su come il sistema tratta la figura più invisibile della scuola inclusiva.",
     spotifyEmbedSrc: null,
     spotifyLink: "#",
-    articleLink: null
+    articleLink: null,
+    hidden: true
   },
   {
     number: 3,
@@ -217,6 +218,10 @@ const episodes = [
     description: "Tre tipi di barriere — fisiche, organizzative, culturali — che nel 2026 escludono ancora i bambini con disabilità prima ancora che entrino in classe. Il bambino che può solo tenere il punteggio perché 'rallenta la squadra'. Quello che in un lavoro di gruppo sta seduto accanto senza un compito. E i bambini che si alzano da soli per uscire dall'aula perché hanno già imparato che disturbare.",
     spotifyEmbedSrc: "https://open.spotify.com/embed/episode/53eZLsArG5YODhYNhfOzAm?utm_source=generator",
     spotifyLink: "https://open.spotify.com/episode/53eZLsArG5YODhYNhfOzAm",
+    articleLink: null
+  },
+  {
+    number: 2,
     type: "originale",
     title: "Il sostegno non si merita — e chi lo dà non sa chi è",
     date: "2026-06-24",
@@ -248,7 +253,7 @@ function renderEpisodes(filter = "tutti"){
   const grid = document.getElementById('episodes-grid');
   const emptyState = document.getElementById('empty-state');
   const countEl = document.getElementById('episode-count');
-  const filtered = episodes.filter(ep => filter === "tutti" || ep.type === filter);
+  const filtered = episodes.filter(ep => !ep.hidden && (filter === "tutti" || ep.type === filter));
   countEl.textContent = `${filtered.length} episodio${filtered.length === 1 ? '' : 'i'}`;
   if(filtered.length === 0){ grid.style.display='none'; emptyState.style.display='block'; return; }
   emptyState.style.display='none'; grid.style.display='grid';
