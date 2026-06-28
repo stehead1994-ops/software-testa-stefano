@@ -1443,17 +1443,6 @@ window.apriEditor = async (id) => {
     console.error('Errore caricamento PDP:', e);
     mostraToast('Errore nel caricamento del PDP', 'rosso');
   }
-
-  // Listener realtime solo per master/admin (docenti con password usano getDoc)
-  if (ruoloCorrente === 'master' || ruoloCorrente === 'admin') {
-    unsubPDP = onSnapshot(doc(db, 'pdp', id), (snap) => {
-      if (!snap.exists()) return;
-      pdpCorrenteDoc = snap.data();
-      _aggiornaHeaderEditor(pdpCorrenteDoc);
-    }, (err) => {
-      console.warn('onSnapshot non disponibile:', err.code);
-    });
-  }
 };
 
 let _formIniettato = false;
