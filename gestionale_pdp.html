@@ -1444,12 +1444,16 @@ window.apriEditor = async (id) => {
     mostraToast('Errore nel caricamento del PDP', 'rosso');
   }
 
-  // Listener realtime per aggiornamenti da altri utenti
-  unsubPDP = onSnapshot(doc(db, 'pdp', id), (snap) => {
-    if (!snap.exists()) return;
-    pdpCorrenteDoc = snap.data();
-    _aggiornaHeaderEditor(pdpCorrenteDoc);
-  });
+  // Listener realtime solo per master/admin (docenti con password usano getDoc)
+  if (ruoloCorrente === 'master' || ruoloCorrente === 'admin') {
+    unsubPDP = onSnapshot(doc(db, 'pdp', id), (snap) => {
+      if (!snap.exists()) return;
+      pdpCorrenteDoc = snap.data();
+      _aggiornaHeaderEditor(pdpCorrenteDoc);
+    }, (err) => {
+      console.warn('onSnapshot non disponibile:', err.code);
+    });
+  }
 };
 
 let _formIniettato = false;
@@ -1501,6 +1505,12 @@ function _ripristinaDatiFirebase(dati, grado) {
     if (!key || !(key in dati)) return;
     if (el.type === 'checkbox') el.checked = !!dati[key];
     else el.value = dati[key] || '';
+  });
+
+  // Ripristina checkbox con name (dsa_tipo, comorbidita, ecc.)
+  area.querySelectorAll('input[type="checkbox"][name]').forEach(el => {
+    const key = 'cb_' + el.name + '_' + el.value;
+    if (key in dati) el.checked = !!dati[key];
   });
 
   // Ripristina radio buttons
@@ -1570,16 +1580,27 @@ async function salvaOra() {
 
   // Raccogli TUTTI i campi nell'area editing
   area.querySelectorAll('input, select, textarea').forEach((el, i) => {
-    // Salta campi disabilitati, hidden, e bottoni
     if (el.disabled || el.type === 'button' || el.type === 'submit') return;
 
-    // Chiave: usa data-campo se presente, altrimenti id, altrimenti indice
+    if (el.type === 'checkbox') {
+      // Checkbox con name: salva come cb_name_value
+      if (el.name) {
+        nuoviDati['cb_' + el.name + '_' + el.value] = el.checked;
+      } else {
+        const key = el.dataset.campo || el.id || ('_cb_' + i);
+        if (key) nuoviDati[key] = el.checked;
+      }
+      return;
+    }
+    if (el.type === 'radio') {
+      if (el.checked) nuoviDati['radio_' + (el.name || ('_r_' + i))] = el.value;
+      return;
+    }
+
+    // Campi testo, select, textarea, range
     const key = el.dataset.campo || el.id || ('_idx_' + i);
     if (!key) return;
-
-    if (el.type === 'checkbox') nuoviDati[key] = el.checked;
-    else if (el.type === 'radio') { if (el.checked) nuoviDati['radio_' + (el.name || key)] = el.value; }
-    else nuoviDati[key] = el.value;
+    nuoviDati[key] = el.value;
   });
 
   // Grado corrente
