@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Valutazione Personalizzata – IC Castelcovati</title>
+<title>Valutazione Analitica degli Obiettivi del PEI – IC Castelcovati</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap');
   :root {
@@ -97,6 +97,16 @@
   .firma-label{margin-bottom:10px;line-height:1.5;}
   .firma-spazio{height:70px;border-bottom:1.5px solid var(--border);margin:0 6px;}
   .firme-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;align-items:end;margin-top:20px;}
+  .firma-nota-ds{font-size:0.72rem;color:var(--ink-light);font-style:italic;margin-top:8px;text-align:center;}
+  .sig-wrap{position:relative;margin-top:10px;border:1.5px solid var(--border);border-radius:6px;background:#fdfcf8;overflow:hidden;height:90px;}
+  .sig-canvas{width:100%;height:100%;display:block;cursor:crosshair;touch-action:none;}
+  .sig-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.82rem;color:var(--ink-light);font-style:italic;pointer-events:none;gap:6px;}
+  .sig-actions{margin-top:6px;text-align:center;}
+  .sig-btn{background:transparent;border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:0.72rem;color:var(--ink-light);cursor:pointer;}
+  .sig-btn:hover{border-color:var(--gold);color:var(--ink);}
+  .nota-esplicativa{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;background:var(--gold-pale);border-radius:8px;padding:18px 22px;font-size:0.82rem;line-height:1.75;color:var(--ink);border:1px solid rgba(200,168,75,0.3);}
+  .nota-esplicativa p{margin-bottom:8px;}
+  .nota-esplicativa p:last-child{margin-bottom:0;}
   .copyright-box{margin-top:20px;padding-top:12px;border-top:1px solid var(--border);text-align:center;font-size:0.72rem;color:var(--ink-light);}
 
   /* ── LINGUA SELECTOR ── */
@@ -118,7 +128,7 @@
 </div>
 
 <header>
-  <h1>Valutazione Personalizzata <span>· D.I. 153/2023</span></h1>
+  <h1>Valutazione Analitica degli Obiettivi del PEI <span>· D.I. 153/2023</span></h1>
   <button class="btn-pdf" onclick="avviaPDF()">📄 Genera PDF</button>
 </header>
 
@@ -255,21 +265,48 @@
     <div class="timbro-cerchio-grande"></div>
   </div>
   <div class="firme-grid">
+
+    <!-- COORDINATORE: canvas firma -->
     <div class="firma-box">
       <div class="firma-label">Il Coordinatore della Classe <span id="firmaClasseCoord">___ ___</span><br>
         <span id="nomeCoordinatoreLabel" style="font-weight:600;font-style:normal;font-size:0.9em;color:var(--ink)"></span>
       </div>
-      <div class="firma-spazio"></div>
+      <div class="sig-wrap">
+        <canvas class="sig-canvas" id="sig-coordinatore"></canvas>
+        <div class="sig-placeholder" id="sig-coordinatore-ph">✍️ Firma qui</div>
+      </div>
+      <div class="sig-actions">
+        <button type="button" class="sig-btn" onclick="clearSig('sig-coordinatore')">🗑 Cancella</button>
+      </div>
     </div>
+
+    <!-- DIRIGENTE: solo campo testo -->
     <div class="firma-box">
       <div class="firma-label"><strong>Il Dirigente Scolastico<br><span style="font-size:0.88em">dell'Istituto Comprensivo di Castelcovati</span></strong></div>
-      <div class="firma-spazio"></div>
+      <input type="text" id="nomeDS" placeholder="Nome e Cognome" style="width:100%;border:none;border-bottom:1.5px solid var(--border);background:transparent;outline:none;font-family:'Playfair Display',serif;font-size:0.88rem;text-align:center;padding:6px 4px;margin-top:8px;color:var(--ink)">
+      <div class="firma-nota-ds">📎 Firmato digitalmente — protocollo informatico</div>
     </div>
+
+    <!-- FS INCLUSIONE: canvas firma -->
     <div class="firma-box">
       <div class="firma-label">Funzione Strumentale Inclusione<br><span style="font-weight:400;font-style:italic;font-size:0.88em">dell'Istituto Comprensivo di Castelcovati</span></div>
-      <div class="firma-spazio"></div>
+      <div class="sig-wrap">
+        <canvas class="sig-canvas" id="sig-fs"></canvas>
+        <div class="sig-placeholder" id="sig-fs-ph">✍️ Firma qui</div>
+      </div>
+      <div class="sig-actions">
+        <button type="button" class="sig-btn" onclick="clearSig('sig-fs')">🗑 Cancella</button>
+      </div>
     </div>
+
   </div>
+
+  <!-- NOTA ESPLICATIVA -->
+  <div class="nota-esplicativa">
+    <p><strong>📋 Nota per la famiglia</strong></p>
+    <p>Questo documento <strong>non sostituisce la pagella ufficiale</strong> presente sul registro elettronico, che rimane l'unico documento con valore legale di valutazione scolastica. Costituisce invece un'<strong>estensione analitica obbligatoria</strong>, prevista dal <strong>D.I. 153/2023</strong>, per gli alunni il cui Piano Educativo Individualizzato prevede una programmazione personalizzata (Modello B). Poiché il registro elettronico non consente l'inserimento dei singoli obiettivi del PEI, questo documento fornisce alla famiglia la <strong>rendicontazione dettagliata dei traguardi raggiunti</strong> in ciascuna disciplina, rendendo comprensibile il percorso educativo reale dell'alunno.</p>
+  </div>
+
   <div class="copyright-box">© 2026 Stefano Testa – Creato per l'IC Castelcovati. Tutti i diritti riservati.</div>
 </main>
 
@@ -583,7 +620,7 @@ async function traduciTutti(dati, lingua) {
     'OSSERVAZIONI GENERALI':            T.osservazioni_label,
     'VALUTAZIONE GLOBALE DEL PERCORSO': T.valutazione_globale_label,
     'VALUTAZIONE DEL COMPORTAMENTO':    T.valutazione_comportamento_label,
-    'VALUTAZIONE PERSONALIZZATA':       T.titolo_doc_label,
+    'VALUTAZIONE ANALITICA OBIETTIVI PEI':  T.titolo_doc_label,
     'IL GRUPPO DOCENTI DELLA CLASSE':   T.gruppo_docenti_label,
     'ANNO SCOLASTICO':                  T.anno_scolastico_label,
   };
@@ -768,20 +805,23 @@ async function avviaPDF() {
   .desc-trad.rtl{direction:rtl;text-align:right;}
   .lingua-tag{display:inline-block;background:#e8f0ff;color:#1d6a8e;border-radius:10px;padding:1px 8px;font-size:8pt;font-weight:700;margin-bottom:10px;letter-spacing:0.06em;}
   .gruppo-docenti-riga{margin-top:28px;border-top:1px solid #ccc;padding-top:14px;text-align:center;font-family:'Playfair Display',serif;font-size:10.5pt;color:#111;}
-  .firme-grid{display:grid;grid-template-columns:1fr 100px 1fr 1fr;gap:14px;align-items:end;margin-top:20px;}
+  .firme-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:end;margin-top:20px;}
   .firma-col{font-family:'Playfair Display',serif;font-size:9.5pt;color:#444;font-style:italic;text-align:center;}
-  .firma-col .label{margin-bottom:8px;line-height:1.6;}
+  .firma-col .label{margin-bottom:6px;line-height:1.6;}
   .firma-col .label strong{color:#111;font-style:normal;display:block;}
   .firma-col .label .sottotitolo{font-size:8pt;font-weight:400;font-style:italic;display:block;}
-  .firma-col .linea{height:55px;border-bottom:1px solid #aaa;margin:0 4px;}
-  .timbro-col{text-align:center;font-family:'Playfair Display',serif;font-size:8.5pt;color:#666;font-style:italic;}
-  .timbro-col .timbro-cerchio{width:90px;height:90px;border:1px solid #aaa;border-radius:50%;margin:6px auto 0;}
-  .copyright{margin-top:16px;text-align:center;font-size:8pt;color:#aaa;}
+  .firma-col .linea{height:50px;border-bottom:1px solid #aaa;margin:0 4px;}
+  .timbro-col{font-family:'Playfair Display',serif;font-size:9.5pt;color:#444;font-style:italic;text-align:center;}
+  .timbro-col .linea{height:50px;border-bottom:1px solid #aaa;margin:0 4px;}
+  .timbro-col .sottotitolo{font-size:8pt;font-weight:400;font-style:italic;display:block;}
+  .nota-pdf{margin-top:18px;border-top:1px solid #e0d5c0;padding-top:12px;font-size:7.5pt;line-height:1.7;color:#555;font-style:italic;}
+  .nota-pdf strong{font-style:normal;color:#333;}
+  .copyright{margin-top:12px;text-align:center;font-size:7pt;color:#aaa;}
   @page{margin:0;size:A4;}
   @media print{body{padding:1.5cm 2cm;}}
 </style></head><body>
 <div class="intestazione"><img src="data:image/jpeg;base64,${logoB64}" alt="IC Castelcovati"></div>
-<div class="titolo-doc">VALUTAZIONE PERSONALIZZATA – D.I. 153/2023${lingaInfo?` / ${(labelMap&&labelMap['VALUTAZIONE PERSONALIZZATA'])||''}`:''}</div>
+<div class="titolo-doc">VALUTAZIONE ANALITICA DEGLI OBIETTIVI DEL PEI – D.I. 153/2023${lingaInfo?` / ${(labelMap&&labelMap['VALUTAZIONE ANALITICA OBIETTIVI PEI'])||''}`:''}</div>
 <div class="dati-alunno">
   <div class="nome">${dati.nome}</div>
   <div class="meta">Classe ${dati.classe} ${dati.sez} &nbsp;·&nbsp; ${labelMap?labelMap['ANNO SCOLASTICO']||'Anno scolastico':'Anno scolastico'} ${dati.anno} &nbsp;·&nbsp; ${dati.periodo}${dati.plesso ? `<br><span style="font-size:9.5pt;color:#555">${dati.plesso}</span>` : ''}</div>
@@ -792,20 +832,23 @@ ${corpo}
 <div class="firme-grid">
   <div class="firma-col">
     <div class="label">Il Coordinatore della Classe <strong>${dati.classe} ${dati.sez}</strong>${dati.coordinatore ? `<strong>${dati.coordinatore}</strong>` : ''}</div>
+    ${getSigDataURL('sig-coordinatore') ? `<img src="${getSigDataURL('sig-coordinatore')}" style="width:100%;height:60px;object-fit:contain;display:block;margin-bottom:-1px">` : ''}
     <div class="linea"></div>
   </div>
   <div class="timbro-col">
-    Timbro della Scuola
-    <div class="timbro-cerchio"></div>
-  </div>
-  <div class="firma-col">
-    <div class="label"><strong>Il Dirigente Scolastico<span class="sottotitolo">dell'Istituto Comprensivo di Castelcovati</span></strong></div>
+    <strong>Il Dirigente Scolastico<span class="sottotitolo">dell'Istituto Comprensivo di Castelcovati</span></strong>
+    <div style="font-family:'Playfair Display',serif;font-size:10pt;font-style:normal;color:#111;margin:8px 0 2px;text-align:center">${document.getElementById('nomeDS').value||''}</div>
     <div class="linea"></div>
+    <div style="font-size:7pt;color:#888;font-style:italic;margin-top:4px;text-align:center">📎 Firmato digitalmente — protocollo informatico</div>
   </div>
   <div class="firma-col">
     <div class="label">Funzione Strumentale Inclusione<span class="sottotitolo">dell'Istituto Comprensivo di Castelcovati</span></div>
+    ${getSigDataURL('sig-fs') ? `<img src="${getSigDataURL('sig-fs')}" style="width:100%;height:60px;object-fit:contain;display:block;margin-bottom:-1px">` : ''}
     <div class="linea"></div>
   </div>
+</div>
+<div class="nota-pdf">
+  <strong>📋 Nota per la famiglia</strong> — Questo documento <strong>non sostituisce la pagella ufficiale</strong> presente sul registro elettronico, che rimane l'unico documento con valore legale di valutazione scolastica. Costituisce un'<strong>estensione analitica obbligatoria</strong> prevista dal <strong>D.I. 153/2023</strong> per gli alunni con PEI a programmazione personalizzata (Modello B). Poiché il registro elettronico non consente l'inserimento dei singoli obiettivi del PEI, questo documento fornisce alla famiglia la <strong>rendicontazione dettagliata dei traguardi raggiunti</strong> in ciascuna disciplina, rendendo comprensibile il reale percorso educativo dell'alunno.
 </div>
 <div class="copyright">© 2026 Stefano Testa – Creato per l'IC Castelcovati. Tutti i diritti riservati.</div>
 </body></html>`;
@@ -817,8 +860,72 @@ ${corpo}
   setTimeout(()=>{win.print();},800);
 }
 
+// ── FIRMA GRAFICA (mouse, touch, penna/tavoletta) ─────────────────────────────
+const sigPads = {};
+
+function initSig(id) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const ratio = window.devicePixelRatio || 1;
+  canvas.width  = canvas.offsetWidth  * ratio;
+  canvas.height = canvas.offsetHeight * ratio;
+  ctx.scale(ratio, ratio);
+  ctx.lineWidth   = 1.8;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+  ctx.strokeStyle = '#1a1612';
+  let drawing = false, hasDrawn = false;
+
+  function pos(e) {
+    const r = canvas.getBoundingClientRect();
+    const ev = e.touches ? e.touches[0] : e;
+    return { x: (ev.clientX - r.left), y: (ev.clientY - r.top) };
+  }
+  function start(e) {
+    e.preventDefault(); drawing = true;
+    const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y);
+    if (!hasDrawn) {
+      hasDrawn = true;
+      const ph = document.getElementById(id+'-ph');
+      if (ph) ph.style.display = 'none';
+    }
+  }
+  function move(e) {
+    if (!drawing) return; e.preventDefault();
+    const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke();
+  }
+  function stop() { drawing = false; }
+
+  canvas.addEventListener('mousedown',  start);
+  canvas.addEventListener('mousemove',  move);
+  canvas.addEventListener('mouseup',    stop);
+  canvas.addEventListener('mouseleave', stop);
+  canvas.addEventListener('touchstart', start, { passive:false });
+  canvas.addEventListener('touchmove',  move,  { passive:false });
+  canvas.addEventListener('touchend',   stop);
+  sigPads[id] = { canvas, ctx, _drawn: ()=>hasDrawn, _clear: ()=>{ hasDrawn=false; } };
+}
+
+function clearSig(id) {
+  const p = sigPads[id]; if (!p) return;
+  p.ctx.clearRect(0, 0, p.canvas.width, p.canvas.height);
+  p._clear();
+  const ph = document.getElementById(id+'-ph');
+  if (ph) ph.style.display = 'flex';
+}
+
+function getSigDataURL(id) {
+  const p = sigPads[id];
+  return (p && p._drawn()) ? p.canvas.toDataURL('image/png') : null;
+}
+
 // ── INIT ──────────────────────────────────────────────────────────────────────
 buildDisciplineHTML();
 buildLinguaGrid();
+// Init firma pads after DOM paint
+window.addEventListener('load', () => {
+  ['sig-coordinatore','sig-fs'].forEach(id => initSig(id));
+});
 </script>
 </body></html>
