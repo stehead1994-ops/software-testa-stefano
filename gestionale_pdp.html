@@ -1324,7 +1324,7 @@ function caricaPDP(ambito = null) {
     lista.innerHTML = docs.map(d => {
       const p = d.data();
       const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : 'stato-bozza';
-      const statoLabel = p.stato === 'protocollato' ? '✅ Protocollato' : p.stato === 'in-corso' ? '✏️ In corso' : '📝 Bozza';
+      const statoLabel = p.stato === 'protocollato' ? '📌 Versione definitiva' : p.stato === 'in-corso' ? '✏️ In corso' : '📝 Bozza';
       const dataProtocollazione = p.protocollato_data_str ? `<div style="font-size:0.72rem;color:var(--verde);margin-top:3px">📅 ${p.protocollato_data_str}</div>` : '';
       return `
       <div class="pdp-card">
@@ -1376,7 +1376,7 @@ async function renderArchivio() {
         `<div class="pdp-lista">
           ${gruppo.docs.map(p => {
             const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : 'stato-bozza';
-            const statoLabel = p.stato === 'protocollato' ? '✅ Protocollato' : p.stato === 'in-corso' ? '✏️ In corso' : '📝 Bozza';
+            const statoLabel = p.stato === 'protocollato' ? '📌 Versione definitiva' : p.stato === 'in-corso' ? '✏️ In corso' : '📝 Bozza';
             const plesso = p.dati?.s1_plesso ? `· ${p.dati.s1_plesso}` : '';
             const isPDF = p.stato === 'protocollato';
             return `
@@ -1700,14 +1700,14 @@ function _aggiornaHeaderEditor(pdp) {
   const isProtocollato = pdp.stato === 'protocollato';
   const btnP = document.getElementById('btn-protocolla');
   if (btnP) btnP.style.display = isProtocollato ? 'none' : '';
-  if (isProtocollato && !document.getElementById('banner-protocollato')) {
+  if (isProtocollato && !document.getElementById('banner-definitivo')) {
     _mostraBannerProtocollato(
       pdp.protocollato_da || '—',
       pdp.protocollato_data_str || '—'
     );
     // Blocca campi
     document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = true);
-    document.querySelectorAll('#area-editing button:not(.guida-btn):not(#banner-protocollato button)').forEach(el => el.disabled = true);
+    document.querySelectorAll('#area-editing button:not(.guida-btn):not(#banner-definitivo button)').forEach(el => el.disabled = true);
   }
 }
 
@@ -1902,20 +1902,20 @@ async function _protocollaNow() {
     protocollato_da: chi,
     protocollato_data_str: dataStr
   });
-  mostraToast('✅ PDP chiuso e confermato!', 'verde');
+  mostraToast('✅ PDP — Versione definitiva salvata!', 'verde');
   const btnP = document.getElementById('btn-protocolla');
   if (btnP) btnP.style.display = 'none';
   _mostraBannerProtocollato(chi, dataStr);
   // Blocca tutti i campi DOPO aver salvato e protocollato
   document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = true);
-  document.querySelectorAll('#area-editing button:not(.guida-btn):not(#banner-protocollato button)').forEach(el => el.disabled = true);
+  document.querySelectorAll('#area-editing button:not(.guida-btn):not(#banner-definitivo button)').forEach(el => el.disabled = true);
 }
 
 function _mostraBannerProtocollato(chi, data) {
   const area = document.getElementById('area-editing');
-  if (!area || document.getElementById('banner-protocollato')) return;
+  if (!area || document.getElementById('banner-definitivo')) return;
   const banner = document.createElement('div');
-  banner.id = 'banner-protocollato';
+  banner.id = 'banner-definitivo';
   banner.style.cssText = `
     position: sticky; top: 0; z-index: 100;
     background: var(--verde); color: white;
@@ -1924,7 +1924,7 @@ function _mostraBannerProtocollato(chi, data) {
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   `;
   banner.innerHTML = `
-    <span>✅ PDP protocollato il ${data} da ${chi} — documento in sola lettura</span>
+    <span>✅ Versione definitiva del ${data} da ${chi} — documento in sola lettura</span>
     <button onclick="esportaPDF()" style="background:white;color:var(--verde);border:none;border-radius:6px;padding:6px 14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.82rem;">🖨️ Scarica PDF</button>
   `;
   area.prepend(banner);
