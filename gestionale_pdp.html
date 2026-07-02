@@ -928,12 +928,16 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
     </div>
     <div class="master-tabs">
       <button class="tab-btn active" onclick="showTab('pdp')">📄 PDP</button>
+      <button class="tab-btn" onclick="showTab('archivio')" id="tab-archivio-btn" style="display:none">🗂️ Archivio per ordine</button>
       <button class="tab-btn" onclick="showTab('utenti')" id="tab-utenti-btn">👥 Utenti</button>
     </div>
     <div id="tab-pdp">
       <div class="pdp-lista" id="lista-pdp">
         <div class="lista-vuota"><div class="lista-vuota-icon">📂</div><h3>Nessun PDP ancora</h3><p>Clicca "+ Nuovo PDP" per iniziare</p></div>
       </div>
+    </div>
+    <div id="tab-archivio" style="display:none">
+      <div id="archivio-contenuto"></div>
     </div>
     <div id="tab-utenti" style="display:none">
       <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
@@ -971,7 +975,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
       </div>
       <div class="editor-azioni">
         <button class="btn-header" onclick="esportaPDF()">🖨️ PDF</button>
-        <button class="btn-header" id="btn-protocolla" onclick="protocolla()" style="background:rgba(46,125,94,0.4)">✅ Protocolla e invia</button>
+        <button class="btn-header" id="btn-protocolla" onclick="protocolla()" style="background:rgba(46,125,94,0.4)">✅ Chiudi e conferma PDP</button>
         <button class="btn-header" onclick="tornaHome()">← Esci</button>
       </div>
     </div>
@@ -1168,11 +1172,13 @@ onAuthStateChanged(auth, async (user) => {
     ruoloCorrente === 'master' ? '👑 Master' : '🔑 Referente';
 
   // Visibilità per ruolo
-  const tabUtenti = document.getElementById('tab-utenti-btn');
-  const btnNuovo  = document.getElementById('btn-nuovo-pdp');
+  const tabUtenti   = document.getElementById('tab-utenti-btn');
+  const tabArchivio = document.getElementById('tab-archivio-btn');
+  const btnNuovo    = document.getElementById('btn-nuovo-pdp');
 
-  // Tab utenti: visibile solo a master
-  if (tabUtenti) tabUtenti.style.display = ruoloCorrente === 'master' ? '' : 'none';
+  // Tab utenti e archivio: solo master
+  if (tabUtenti)   tabUtenti.style.display   = ruoloCorrente === 'master' ? '' : 'none';
+  if (tabArchivio) tabArchivio.style.display = ruoloCorrente === 'master' ? '' : 'none';
   // Crea PDP: master e referente
   if (btnNuovo)  btnNuovo.style.display  = ['master','admin'].includes(ruoloCorrente) ? '' : 'none';
 
@@ -1180,7 +1186,7 @@ onAuthStateChanged(auth, async (user) => {
     `Benvenuto, ${user.displayName?.split(' ')[0] || ''} 👋`;
 
   mostraSchermata('master');
-  caricaPDP();
+  caricaPDP(profilo.ambito || null);
   if (ruoloCorrente === 'master') caricaUtenti();
 });
 
@@ -1207,20 +1213,38 @@ window.tornaHome = () => {
 window.showTab = (tab) => {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   event.target.classList.add('active');
-  document.getElementById('tab-pdp').style.display    = tab === 'pdp'     ? 'block' : 'none';
-  document.getElementById('tab-utenti').style.display = tab === 'utenti'  ? 'block' : 'none';
+  document.getElementById('tab-pdp').style.display      = tab === 'pdp'      ? 'block' : 'none';
+  document.getElementById('tab-utenti').style.display   = tab === 'utenti'   ? 'block' : 'none';
+  document.getElementById('tab-archivio').style.display = tab === 'archivio' ? 'block' : 'none';
+  if (tab === 'archivio') renderArchivio();
 };
 
 // ─── CARICA LISTA PDP ───
-function caricaPDP() {
+function caricaPDP(ambito = null) {
   const q = query(collection(db, 'pdp'), orderBy('creatoIl', 'desc'));
   onSnapshot(q, (snap) => {
     const lista = document.getElementById('lista-pdp');
-    if (snap.empty) {
+    let docs = snap.docs;
+
+    // Filtro per ambito: i referenti vedono solo i PDP del loro ordine+plesso
+    if (ambito && ruoloCorrente === 'admin') {
+      const [ordine, plesso] = ambito.split('_');
+      docs = docs.filter(d => {
+        const p = d.data();
+        const gradoOk = p.grado === ordine ||
+          (ordine === 'primaria' && p.grado === 'primaria') ||
+          (ordine === 'secondaria' && p.grado === 'secondaria') ||
+          (ordine === 'infanzia' && p.grado === 'infanzia');
+        const plessoOk = !plesso || (p.dati?.s1_plesso || '').toLowerCase().includes(plesso);
+        return gradoOk && plessoOk;
+      });
+    }
+
+    if (docs.length === 0) {
       lista.innerHTML = `<div class="lista-vuota"><div class="lista-vuota-icon">📂</div><h3>Nessun PDP ancora</h3><p>Clicca "+ Nuovo PDP" per iniziare</p></div>`;
       return;
     }
-    lista.innerHTML = snap.docs.map(d => {
+    lista.innerHTML = docs.map(d => {
       const p = d.data();
       const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : 'stato-bozza';
       const statoLabel = p.stato === 'protocollato' ? '✅ Protocollato' : p.stato === 'in-corso' ? '✏️ In corso' : '📝 Bozza';
@@ -1243,7 +1267,61 @@ function caricaPDP() {
   });
 }
 
-// ─── CARICA UTENTI (solo master) ───
+// ─── ARCHIVIO PER ORDINE DI SCUOLA (solo master) ───
+async function renderArchivio() {
+  const contenuto = document.getElementById('archivio-contenuto');
+  contenuto.innerHTML = '<div style="text-align:center;padding:40px;color:var(--testo-soft)">Caricamento…</div>';
+  const snap = await getDocs(query(collection(db, 'pdp'), orderBy('creatoIl', 'desc')));
+
+  const gruppi = {
+    infanzia:   { label: '🌱 Scuola dell\'Infanzia', docs: [] },
+    primaria:   { label: '📚 Scuola Primaria',       docs: [] },
+    secondaria: { label: '🎓 Scuola Secondaria I grado', docs: [] },
+  };
+
+  snap.docs.forEach(d => {
+    const p = d.data();
+    const g = p.grado || 'primaria';
+    if (gruppi[g]) gruppi[g].docs.push({id: d.id, ...p});
+  });
+
+  contenuto.innerHTML = Object.entries(gruppi).map(([key, gruppo]) => `
+    <div style="margin-bottom:28px">
+      <h2 style="font-family:'Lora',serif;font-size:1.1rem;color:var(--blu);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--grigio-bordo)">${gruppo.label} <span style="font-size:0.8rem;font-weight:400;color:var(--testo-soft)">(${gruppo.docs.length} PDP)</span></h2>
+      ${gruppo.docs.length === 0 ? '<div class="lista-vuota" style="padding:20px"><p>Nessun PDP per questo ordine</p></div>' :
+        `<div class="pdp-lista">
+          ${gruppo.docs.map(p => {
+            const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : 'stato-bozza';
+            const statoLabel = p.stato === 'protocollato' ? '✅ Protocollato' : p.stato === 'in-corso' ? '✏️ In corso' : '📝 Bozza';
+            const plesso = p.dati?.s1_plesso ? `· ${p.dati.s1_plesso}` : '';
+            return `
+            <div class="pdp-card">
+              <div class="pdp-card-info">
+                <div class="pdp-card-nome">${p.alunno || '—'}</div>
+                <div class="pdp-card-meta">Classe ${p.classe || '—'} ${plesso} · ${p.anno || ''}</div>
+                ${p.protocollato_data_str ? `<div style="font-size:0.72rem;color:var(--verde);margin-top:3px">📅 ${p.protocollato_data_str}</div>` : ''}
+              </div>
+              <span class="pdp-card-stato ${statoClass}">${statoLabel}</span>
+              <div class="pdp-card-azioni">
+                <button class="btn-sm btn-sm-blu" onclick="apriEditor('${p.id}')">Apri / PDF</button>
+                <button class="btn-sm btn-sm-rosso" onclick="eliminaPDP('${p.id}','${p.alunno}')">Elimina</button>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>`}
+    </div>`).join('');
+}
+
+
+// ─── AMBITI PER REFERENTI (ordine + plesso) ───
+const AMBITI = {
+  'infanzia_comezzano':   '🌱 Infanzia — Comezzano Cizzago',
+  'primaria_comezzano':   '📚 Primaria — Comezzano Cizzago',
+  'secondaria_comezzano': '🎓 Secondaria — Comezzano Cizzago',
+  'primaria_castelcovati':   '📚 Primaria — Castelcovati',
+  'secondaria_castelcovati': '🎓 Secondaria — Castelcovati',
+};
+
 function caricaUtenti() {
   const q = query(collection(db, 'utenti'), orderBy('creatoIl', 'desc'));
   onSnapshot(q, (snap) => {
@@ -1263,21 +1341,25 @@ function caricaUtenti() {
         docente: '✏️ Docente', attesa: '⏳ In attesa'
       }[u.ruolo] || '⏳ In attesa';
       const iniziali = (u.nome || u.email || '?').split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+      const ambitoLabel = u.ambito && AMBITI[u.ambito] ? `<div style="font-size:0.72rem;color:var(--blu);margin-top:2px">${AMBITI[u.ambito]}</div>` : '';
 
       // Azioni disponibili per il master su questo utente
       let azioni = '';
 
       if (u.ruolo === 'attesa') {
         azioni += `<button class="btn-sm btn-sm-verde" onclick="cambiaRuolo('${d.id}','docente')">Approva come Docente</button>`;
-        azioni += `<button class="btn-sm btn-sm-blu" onclick="cambiaRuolo('${d.id}','admin')">Approva come Referente</button>`;
+        azioni += `<button class="btn-sm btn-sm-blu" onclick="apriSceltaAmbito('${d.id}')">Approva come Referente</button>`;
         azioni += `<button class="btn-sm btn-sm-rosso" onclick="eliminaUtente('${d.id}','${u.nome||u.email}')">🗑</button>`;
       } else if (!isSelf) {
         // Selettore ruolo
-        azioni += `<select class="ruolo-select" onchange="cambiaRuolo('${d.id}',this.value)" style="font-size:0.78rem;padding:4px 8px;border:1.5px solid var(--grigio-bordo);border-radius:6px;font-family:'DM Sans',sans-serif">
+        azioni += `<select class="ruolo-select" onchange="this.value==='admin' ? apriSceltaAmbito('${d.id}') : cambiaRuolo('${d.id}',this.value)">
           <option value="docente" ${u.ruolo==='docente'?'selected':''}>✏️ Docente</option>
           <option value="admin" ${u.ruolo==='admin'?'selected':''}>🔑 Referente</option>
-          ${nMaster < 3 || u.ruolo==='master' ? `<option value="master" ${u.ruolo==='master'?'selected':''}>👑 Master</option>` : ''}
+          ${nMaster < 4 || u.ruolo==='master' ? `<option value="master" ${u.ruolo==='master'?'selected':''}>👑 Master</option>` : ''}
         </select>`;
+        if (u.ruolo === 'admin') {
+          azioni += `<button class="btn-sm btn-sm-blu" onclick="apriSceltaAmbito('${d.id}')" title="Cambia ambito">📍</button>`;
+        }
         azioni += `<button class="btn-sm btn-sm-rosso" onclick="eliminaUtente('${d.id}','${u.nome||u.email}')">🗑</button>`;
       } else {
         azioni += `<span style="font-size:0.75rem;color:var(--testo-soft)">Account personale</span>`;
@@ -1289,6 +1371,7 @@ function caricaUtenti() {
         <div class="utente-info">
           <div class="utente-nome">${u.nome || '—'}</div>
           <div class="utente-email">${u.email || '—'}</div>
+          ${ambitoLabel}
         </div>
         <span class="utente-ruolo ${ruoloClass}">${ruoloLabel}</span>
         <div class="utente-azioni">${azioni}</div>
@@ -1297,11 +1380,41 @@ function caricaUtenti() {
   });
 }
 
+// ─── SCELTA AMBITO REFERENTE ───
+let _ambitoTargetUid = null;
+window.apriSceltaAmbito = (uid) => {
+  _ambitoTargetUid = uid;
+  const opzioni = Object.entries(AMBITI).map(([val, label]) =>
+    `<option value="${val}">${label}</option>`).join('');
+  const html = `
+    <div class="modale-overlay open" id="modale-ambito-temp" style="z-index:600">
+      <div class="modale-box">
+        <div class="modale-title">📍 Assegna ambito al referente</div>
+        <div class="modale-campo">
+          <label>Ordine e plesso di competenza</label>
+          <select id="ambito-select">${opzioni}</select>
+        </div>
+        <div class="modale-azioni">
+          <button class="btn-secondary" onclick="document.getElementById('modale-ambito-temp').remove()">Annulla</button>
+          <button class="btn-primary" onclick="confermaAmbito()">Conferma</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+};
+
+window.confermaAmbito = async () => {
+  const ambito = document.getElementById('ambito-select').value;
+  await updateDoc(doc(db, 'utenti', _ambitoTargetUid), { ruolo: 'admin', ambito });
+  document.getElementById('modale-ambito-temp')?.remove();
+  mostraToast('✅ Referente assegnato all\'ambito', 'verde');
+};
+
 window.cambiaRuolo = async (uid, nuovoRuolo) => {
   if (nuovoRuolo === 'master') {
     const snap = await getDocs(collection(db, 'utenti'));
     const nMaster = snap.docs.filter(d => d.data().ruolo === 'master').length;
-    if (nMaster >= 3) { mostraToast('⚠️ Massimo 3 Master consentiti', 'rosso'); return; }
+    if (nMaster >= 4) { mostraToast('⚠️ Massimo 4 Master consentiti', 'rosso'); return; }
   }
   await updateDoc(doc(db, 'utenti', uid), { ruolo: nuovoRuolo });
   mostraToast('✅ Ruolo aggiornato', 'verde');
@@ -1479,7 +1592,7 @@ function _aggiornaHeaderEditor(pdp) {
     );
     // Blocca campi
     document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = true);
-    document.querySelectorAll('#area-editing button:not(.guida-btn)').forEach(el => el.disabled = true);
+    document.querySelectorAll('#area-editing button:not(.guida-btn):not(#banner-protocollato button)').forEach(el => el.disabled = true);
   }
 }
 
@@ -1652,28 +1765,35 @@ async function salvaOra() {
 }
 
 // ─── PROTOCOLLA ───
-window.protocolla = () => {
-  if (!confirm('Confermi la protocollazione di questo PDP?\n\nIl documento verrà marcato come completato e passerà in sola lettura. Potrai scaricarlo in PDF dalla dashboard.')) return;
-  _protocollaNow();
+window.protocolla = async () => {
+  if (!confirm('Confermi la chiusura di questo PDP?\n\nIl documento verrà marcato come completato e passerà in sola lettura. Potrai scaricarlo in PDF dalla dashboard.')) return;
+  try {
+    // Salva prima tutti i dati correnti, poi protocolla
+    await salvaOra();
+    await _protocollaNow();
+  } catch(e) {
+    console.error('Errore protocollazione:', e);
+    mostraToast('❌ Errore: ' + (e.code || e.message), 'rosso');
+  }
 };
 
 async function _protocollaNow() {
   const now = new Date();
   const chi = utenteCorrente?.displayName || utenteCorrente?.email || 'Utente';
+  const dataStr = now.toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
   await updateDoc(doc(db, 'pdp', pdpCorrenteId), {
     stato: 'protocollato',
     protocollato: serverTimestamp(),
     protocollato_da: chi,
-    protocollato_data_str: now.toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' })
+    protocollato_data_str: dataStr
   });
-  mostraToast('✅ PDP protocollato!', 'verde');
-  // Aggiorna header e banner
+  mostraToast('✅ PDP chiuso e confermato!', 'verde');
   const btnP = document.getElementById('btn-protocolla');
   if (btnP) btnP.style.display = 'none';
-  _mostraBannerProtocollato(chi, now.toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' }));
-  // Blocca tutti i campi
+  _mostraBannerProtocollato(chi, dataStr);
+  // Blocca tutti i campi DOPO aver salvato e protocollato
   document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = true);
-  document.querySelectorAll('#area-editing button:not(.guida-btn)').forEach(el => el.disabled = true);
+  document.querySelectorAll('#area-editing button:not(.guida-btn):not(#banner-protocollato button)').forEach(el => el.disabled = true);
 }
 
 function _mostraBannerProtocollato(chi, data) {
