@@ -571,6 +571,37 @@ async function saveBook(){
   const title=document.getElementById('f-title').value.trim();
   const isbn=document.getElementById('f-isbn').value.trim();
   if(!title){toast('Inserisci almeno il titolo','err');return;}
+
+  // Check duplicate by ISBN first
+  let existing=isbn?books.find(b=>b.isbn===isbn):null;
+
+  // If no ISBN match, check by title+author+publisher
+  if(!existing){
+    const author=document.getElementById('f-author').value.trim().toLowerCase();
+    const publisher=document.getElementById('f-publisher').value.trim().toLowerCase();
+    existing=books.find(b=>
+      b.title.toLowerCase()===title.toLowerCase()&&
+      (!author||(b.author||'').toLowerCase()===author)&&
+      (!publisher||(b.publisher||'').toLowerCase()===publisher)
+    );
+  }
+
+  if(existing){
+    const addCopies=parseInt(document.getElementById('f-copies').value)||1;
+    const newCopies=(existing.copies||1)+addCopies;
+    const ok=confirm('"'+existing.title+'" è già nel catalogo con '+(existing.copies||1)+' cop.\n\nAggiungere '+addCopies+' cop. per un totale di '+newCopies+'?');
+    if(!ok)return;
+    showLoad('Aggiornamento copie...');
+    try{
+      await db.update('books',existing.id,{copies:newCopies});
+      books=books.map(b=>b.id===existing.id?{...b,copies:newCopies}:b);
+      hideLoad();clearBookForm();renderCatalog();refreshDash();
+      toast('Copie aggiornate: ora '+newCopies+' in totale');
+    }catch(e){hideLoad();toast('Errore: '+e.message,'err');}
+    return;
+  }
+
+  // New book
   showLoad('Salvataggio...');
   try{
     const res=await db.insert('books',{isbn,title,author:document.getElementById('f-author').value.trim(),publisher:document.getElementById('f-publisher').value.trim(),year:document.getElementById('f-year').value.trim(),note:document.getElementById('f-note').value.trim(),copies:parseInt(document.getElementById('f-copies').value)||1});
