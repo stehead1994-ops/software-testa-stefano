@@ -7,232 +7,384 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   :root {
-    --blu:#003087;--blu2:#00205c;--verde:#1D9E75;--verde2:#085041;
-    --oro:#c8a84b;--bianco:#ffffff;--grigio:#f4f6f9;--testo:#1a1a2e;
-    --sub:#5a6a85;--sidebar-w:260px;
-  }
-  html{scroll-behavior:smooth;}
-  body{font-family:'DM Sans',sans-serif;background:var(--grigio);color:var(--testo);min-height:100vh;}
-  header{background:linear-gradient(135deg,#003087 0%,#0044c8 60%,#1a5fd4 100%);color:var(--bianco);position:relative;overflow:hidden;}
-  header::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 110% 120%,rgba(29,158,117,.25) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at -10% -10%,rgba(200,168,75,.15) 0%,transparent 60%);pointer-events:none;}
-  header::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;}
-  .hero-inner{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:3rem 2rem 2.5rem;}
-  .breadcrumb{font-size:13px;margin-bottom:1.2rem;}
-  .breadcrumb a{color:rgba(255,255,255,.75);text-decoration:none;}
-  .breadcrumb a:hover{color:#fff;}
-  .breadcrumb span{color:rgba(255,255,255,.4);margin:0 6px;}
-  .breadcrumb strong{color:var(--oro);}
-  .hero-tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--oro);border:1px solid rgba(200,168,75,.4);border-radius:20px;padding:4px 14px;margin-bottom:1rem;}
-  .hero-title{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:700;line-height:1.15;margin-bottom:.7rem;}
-  .hero-title span{color:var(--oro);}
-  .hero-sub{font-size:15px;font-weight:300;color:rgba(255,255,255,.75);max-width:600px;line-height:1.7;}
-  .wave{display:block;width:100%;height:50px;background:var(--grigio);clip-path:ellipse(55% 100% at 50% 100%);margin-top:-2px;}
-  .layout{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 5rem;display:grid;grid-template-columns:var(--sidebar-w) 1fr;gap:2rem;align-items:start;}
-  .sidebar{position:sticky;top:1.5rem;display:flex;flex-direction:column;gap:1.25rem;}
-  .sidebar-block{background:var(--bianco);border-radius:14px;border:1px solid #e2e8f0;overflow:hidden;}
-  .sidebar-block-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);padding:.9rem 1.2rem .6rem;border-bottom:1px solid #f0f4f8;}
-  .search-wrap{padding:.9rem 1.2rem;position:relative;}
-  .search-wrap input{width:100%;padding:9px 14px 9px 36px;border-radius:10px;border:1.5px solid #dce8ff;font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--testo);background:var(--grigio);outline:none;transition:border-color .15s;}
-  .search-wrap input:focus{border-color:var(--blu);}
-  .search-icon{position:absolute;left:24px;top:50%;transform:translateY(-50%);color:var(--sub);pointer-events:none;}
-  .cat-list{list-style:none;padding:.5rem 0;}
-  .cat-list li{display:flex;align-items:center;justify-content:space-between;padding:.55rem 1.2rem;cursor:pointer;font-size:13.5px;color:var(--sub);transition:background .12s,color .12s;border-left:3px solid transparent;}
-  .cat-list li:hover{background:#f0f4ff;color:var(--blu2);}
-  .cat-list li.active{background:#eef2ff;color:var(--blu);font-weight:600;border-left-color:var(--blu);}
-  .cat-count{font-size:11px;background:#e8efff;color:var(--blu);border-radius:20px;padding:2px 8px;font-weight:600;}
-  .cat-list li.active .cat-count{background:var(--blu);color:#fff;}
-  .recent-list{list-style:none;padding:.5rem 0;}
-  .recent-list li{padding:.6rem 1.2rem;border-bottom:1px solid #f4f6f9;}
-  .recent-list li:last-child{border-bottom:none;}
-  .recent-list a{font-size:13px;color:var(--testo);text-decoration:none;line-height:1.4;display:block;transition:color .12s;}
-  .recent-list a:hover{color:var(--blu);}
-  .recent-date{font-size:11px;color:var(--sub);margin-top:3px;}
-  .content{min-width:0;}
-  .content-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.5rem;}
-  .section-label{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--blu2);}
-  .results-count{font-size:13px;color:var(--sub);}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.1rem;}
-  .card{background:var(--bianco);border-radius:14px;overflow:hidden;border:1px solid #e2e8f0;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column;text-decoration:none;color:inherit;animation:fadeUp .4s both;}
-  .card:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(0,48,135,.1);}
-  .card-accent{height:3px;background:linear-gradient(90deg,var(--blu),var(--verde));}
-  .card-body{padding:1.2rem 1.3rem;flex:1;display:flex;flex-direction:column;}
-  .card-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#e8f0fe,#d0e8ff);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:.9rem;flex-shrink:0;}
-  .card-meta{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--verde2);margin-bottom:.35rem;}
-  .card-date{color:var(--sub);font-weight:500;letter-spacing:normal;text-transform:none;}
-  .card-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--blu2);margin-bottom:.45rem;line-height:1.3;}
-  .card-desc{font-size:13px;color:var(--sub);line-height:1.6;flex:1;margin-bottom:1rem;}
-  .card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:.3rem;}
-  .tag{font-size:10.5px;padding:2px 9px;border-radius:20px;background:#f0f4ff;color:var(--blu);font-weight:500;border:1px solid #dce8ff;}
-  .card-readmore{margin-top:.9rem;font-size:12.5px;font-weight:600;color:var(--blu);display:flex;align-items:center;gap:5px;}
-  .card-readmore svg{transition:transform .15s;}
-  .card:hover .card-readmore svg{transform:translateX(3px);}
-  .card-coming{opacity:.5;pointer-events:none;}
-  .badge-soon{position:absolute;top:12px;right:12px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--oro);color:#fff;border-radius:20px;padding:3px 9px;}
-  .no-results{grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--sub);font-size:15px;}
-  .no-results strong{color:var(--blu2);display:block;font-size:18px;margin-bottom:.5rem;}
-  footer{background:var(--blu2);color:rgba(255,255,255,.55);text-align:center;padding:2rem 1rem;font-size:12px;line-height:1.8;}
-  footer strong{color:rgba(255,255,255,.85);}
-  footer a{color:rgba(255,255,255,.75);text-decoration:none;}
-  footer a:hover{color:#fff;}
-  @media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{position:static;display:grid;grid-template-columns:1fr 1fr;gap:1rem;}.sidebar-block:first-child{grid-column:1/-1;}}
-  @media(max-width:480px){.sidebar{grid-template-columns:1fr;}.grid{grid-template-columns:1fr;}}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
-
-  /* ── NAVBAR ── */
-  .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    background: rgba(0, 32, 92, 0.97);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255,255,255,.08);
-    height: 52px;
-    display: flex;
-    align-items: center;
+    --blu:    #003087;
+    --blu2:   #00205c;
+    --verde:  #1D9E75;
+    --verde2: #085041;
+    --oro:    #c8a84b;
+    --bianco: #ffffff;
+    --grigio: #f4f6f9;
+    --testo:  #1a1a2e;
+    --sub:    #5a6a85;
   }
 
-  .navbar-inner {
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--grigio);
+    color: var(--testo);
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  header {
+    background: linear-gradient(135deg, var(--blu2) 0%, var(--blu) 60%, #004ab3 100%);
+    color: var(--bianco);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 110% 120%, rgba(29,158,117,.25) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at -10% -10%, rgba(200,168,75,.15) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  header::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1.5rem;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+    padding: 3.5rem 2rem 3rem;
   }
 
-  .navbar-brand {
-    font-family: 'Playfair Display', serif;
-    font-size: 15px;
-    font-weight: 700;
-    color: #fff;
+  .breadcrumb {
+    font-size: 13px;
+    margin-bottom: 1.4rem;
+  }
+  .breadcrumb a {
+    color: rgba(255,255,255,.75);
     text-decoration: none;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    transition: color .15s;
+  }
+  .breadcrumb a:hover { color: #fff; }
+  .breadcrumb span { color: rgba(255,255,255,.4); margin: 0 6px; }
+  .breadcrumb strong { color: var(--oro); }
+
+  .hero-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--oro);
+    border: 1px solid rgba(200,168,75,.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    margin-bottom: 1.4rem;
+    backdrop-filter: blur(4px);
   }
 
-  .navbar-brand span { color: var(--oro); }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4.2vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: .9rem;
+    letter-spacing: -.5px;
+  }
 
-  .navbar-links {
+  .hero-title span {
+    color: var(--oro);
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    font-weight: 300;
+    color: rgba(255,255,255,.75);
+    max-width: 700px;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 30px;
+    padding: 8px 18px;
+    font-size: 13px;
+    color: rgba(255,255,255,.85);
+    backdrop-filter: blur(8px);
+  }
+
+  .hero-badge-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--verde);
+    box-shadow: 0 0 0 3px rgba(29,158,117,.3);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(29,158,117,.3); }
+    50%       { box-shadow: 0 0 0 7px rgba(29,158,117,.08); }
+  }
+
+  /* ── DIVISORE ── */
+  .wave {
+    display: block;
+    width: 100%;
+    height: 60px;
+    background: var(--grigio);
+    clip-path: ellipse(55% 100% at 50% 100%);
+    margin-top: -2px;
+  }
+
+  /* ── CONTENUTO ── */
+  main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
+  }
+
+  .section-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: var(--blu2);
+    margin: 2.5rem 0 1.4rem;
     display: flex;
     align-items: center;
-    gap: .25rem;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(8,80,65,.2), transparent);
+  }
+
+  /* ── FILTRI CATEGORIA ── */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 1.5rem 0 2rem;
+  }
+
+  .filter-pill {
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 20px;
+    background: var(--bianco);
+    color: var(--blu2);
+    border: 1px solid #dce8ff;
+    cursor: pointer;
+    transition: background .15s, color .15s, transform .1s;
+    user-select: none;
+  }
+
+  .filter-pill:hover { transform: translateY(-1px); }
+
+  .filter-pill.active {
+    background: linear-gradient(135deg, var(--blu), #0044c8);
+    color: #fff;
+    border-color: transparent;
+  }
+
+  /* ── GRID ARTICOLI ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
+  /* ── CARD ARTICOLO ── */
+  .card {
+    background: var(--bianco);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    transition: transform .2s, box-shadow .2s;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,48,135,.12);
+  }
+
+  .card-accent {
+    height: 4px;
+    background: linear-gradient(90deg, var(--blu), var(--verde));
+  }
+
+  .card-body {
+    padding: 1.4rem 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #e8f0fe, #d0e8ff);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 1rem;
     flex-shrink: 0;
   }
 
-  .navbar-link {
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(255,255,255,.75);
-    text-decoration: none;
-    padding: 6px 14px;
-    border-radius: 8px;
-    transition: background .15s, color .15s;
-    white-space: nowrap;
-  }
-
-  .navbar-link:hover {
-    background: rgba(255,255,255,.1);
-    color: #fff;
-  }
-
-  .navbar-link.active {
-    background: rgba(200,168,75,.15);
-    color: var(--oro);
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
     font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--verde2);
+    margin-bottom: .4rem;
   }
 
-  .navbar-link-blog {
-    background: var(--oro);
-    color: var(--blu2) !important;
-    font-weight: 700 !important;
-    padding: 6px 16px;
-  }
-
-  .navbar-link-blog:hover {
-    background: #d4b05a !important;
-    color: var(--blu2) !important;
-  }
-
-  body { padding-top: 52px; }
-
-  @media (max-width: 480px) {
-    .navbar-brand { font-size: 13px; }
-    .navbar-link { font-size: 12px; padding: 5px 10px; }
-  }
-
-
-  .navbar-link-bib {
-    background: #7c3aed;
-    color: #fff !important;
-    font-weight: 700 !important;
-    padding: 6px 14px;
-    border-radius: 8px;
-  }
-  .navbar-link-bib:hover { background: #6d28d9 !important; color: #fff !important; }
-
-
-  /* ── NAVBAR UNIFORME ── */
-  .navbar-link {
-    font-size: 13px;
+  .card-date {
+    color: var(--sub);
     font-weight: 500;
-    color: rgba(255,255,255,.75);
-    text-decoration: none;
-    padding: 6px 14px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,.15);
-    transition: background .15s, color .15s;
-    white-space: nowrap;
+    letter-spacing: normal;
+    text-transform: none;
   }
-  .navbar-link:hover { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.3); }
-  .navbar-link.active { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.25); }
-  .navbar-link-ai { background: #0044c8 !important; color: #fff !important; font-weight: 700 !important; border-color: transparent !important; }
-  .navbar-link-ai:hover { background: #d4b05a !important; border-color: transparent !important; }
-  .navbar-link-inc { background: #1D9E75 !important; color: #fff !important; font-weight: 700 !important; border-color: transparent !important; }
-  .navbar-link-inc:hover { background: #17856a !important; border-color: transparent !important; }
-  .navbar-link-bib { background: #7c3aed !important; color: #fff !important; font-weight: 700 !important; border-color: transparent !important; }
-  .navbar-link-bib:hover { background: #6d28d9 !important; border-color: transparent !important; }
 
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--blu2);
+    margin-bottom: .5rem;
+    line-height: 1.3;
+  }
 
-  .hero-inner { text-align: center !important; }
-  .hero-sub { margin-left: auto !important; margin-right: auto !important; }
-  .breadcrumb { text-align: left !important; }
+  .card-desc {
+    font-size: 13.5px;
+    color: var(--sub);
+    line-height: 1.65;
+    flex: 1;
+    margin-bottom: 1.2rem;
+  }
 
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: .3rem;
+  }
+
+  .tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #f0f4ff;
+    color: var(--blu);
+    font-weight: 500;
+    border: 1px solid #dce8ff;
+  }
+
+  .card-readmore {
+    margin-top: 1rem;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blu);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .card-readmore svg {
+    transition: transform .15s;
+  }
+  .card:hover .card-readmore svg {
+    transform: translateX(3px);
+  }
+
+  /* ── CARD PROSSIMAMENTE ── */
+  .card-coming {
+    opacity: .55;
+    pointer-events: none;
+  }
+
+  .badge-soon {
+    position: absolute;
+    top: 14px; right: 14px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: var(--oro);
+    color: #fff;
+    border-radius: 20px;
+    padding: 3px 10px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--blu2);
+    color: rgba(255,255,255,.55);
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  footer strong { color: rgba(255,255,255,.85); }
+  footer a { color: rgba(255,255,255,.75); text-decoration: none; }
+  footer a:hover { color: #fff; }
+
+  /* ── RESPONSIVE ── */
   @media (max-width: 600px) {
-    .navbar-brand { font-size: 13px; }
-    .navbar-link { font-size: 11px; padding: 5px 8px; }
-  }
-  @media (max-width: 420px) {
-    .navbar-brand { max-width: 100px; }
-    .navbar-links { gap: .1rem; }
-    .navbar-link { font-size: 10px; padding: 5px 6px; }
+    .hero-inner { padding: 2.5rem 1.25rem 2rem; }
+    .grid { grid-template-columns: 1fr; }
   }
 
+  /* ── ANIMAZIONI ENTRATA ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    animation: fadeUp .55s forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:nth-child(1) { animation-delay: .05s; }
+  .card:nth-child(2) { animation-delay: .15s; }
+  .card:nth-child(3) { animation-delay: .25s; }
+  .card:nth-child(4) { animation-delay: .35s; }
 </style>
 </head>
 <body>
-<nav class="navbar">
-  <div class="navbar-inner">
-    <a href="../index.html" class="navbar-brand">L'Archivio del <span>Maestro Stefano Testa</span></a>
-    <div class="navbar-links">
-      <a href="../index.html" class="navbar-link">🏠 Archivio</a>
-      <a href="index.html" class="navbar-link navbar-link-ai active">🤖 Blog AI</a>
-      <a href="../inclusione/news/index.html" class="navbar-link navbar-link-inc">♿ Inclusione</a>
-      <a href="../biblioteca/index.html" class="navbar-link navbar-link-bib">📚 Biblioteca</a>
-    
-      <a href="../podcast.html" class="navbar-link navbar-link-pod">🎙️ Podcast</a>
-    </div>
-  </div>
-</nav>
 
 <header>
-  <div class="hero-inner" style="text-align:center;">
+  <div class="hero-inner">
     <div class="breadcrumb">
       <a href="../index.html">L'Archivio del Maestro Stefano Testa</a>
       <span>/</span>
@@ -240,145 +392,138 @@
     </div>
     <div class="hero-tag">Approfondimenti</div>
     <h1 class="hero-title">Blog &amp; <span>Aggiornamenti AI</span> per la Scuola</h1>
-    <p class="hero-sub" style="margin:0 auto;">Riflessioni, novità e approfondimenti su intelligenza artificiale, strumenti digitali e inclusione scolastica.</p>
+    <p class="hero-sub">
+      Riflessioni, novità e approfondimenti su intelligenza artificiale, strumenti digitali
+      e inclusione scolastica. Dagli aggiornamenti sugli strumenti dell'Archivio alle
+      novità più rilevanti dal mondo dell'AI applicata alla didattica.
+    </p>
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Aggiornato regolarmente con nuovi articoli e spunti
+    </div>
   </div>
   <div class="wave"></div>
 </header>
 
-<div class="layout">
-  <aside class="sidebar">
-    <div class="sidebar-block">
-      <div class="sidebar-block-title">Cerca</div>
-      <div class="search-wrap">
-        <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="search-input" placeholder="Cerca articoli..." />
-      </div>
-    </div>
-    <div class="sidebar-block">
-      <div class="sidebar-block-title">Categorie</div>
-      <ul class="cat-list" id="cat-list">
-        <li class="active" data-cat="tutti">Tutti gli articoli <span class="cat-count" id="count-tutti">0</span></li>
-        <li data-cat="ai">🤖 Intelligenza Artificiale <span class="cat-count" id="count-ai">0</span></li>
-        <li data-cat="strumenti">🛠 Strumenti &amp; Archivio <span class="cat-count" id="count-strumenti">0</span></li>
-        <li data-cat="inclusione">♿ Inclusione &amp; BES <span class="cat-count" id="count-inclusione">0</span></li>
-        <li data-cat="normativa">📋 Normativa &amp; Scuola <span class="cat-count" id="count-normativa">0</span></li>
-      </ul>
-    </div>
-    <div class="sidebar-block">
-      <div class="sidebar-block-title">Articoli recenti</div>
-      <ul class="recent-list" id="recent-list"></ul>
-    </div>
-  </aside>
+<main>
 
-  <main class="content">
-    <div class="content-header">
-      <div class="section-label" id="section-label">Tutti gli articoli</div>
-      <div class="results-count" id="results-count"></div>
-    </div>
-    <div class="grid" id="grid-articoli">
+  <div class="section-label">Tutti gli articoli</div>
 
-      
-      <a href="ai-act-scuola.html" class="card" data-cats="normativa ai" data-title="AI Act e scuola: cosa cambia davvero per docenti e dirigenti" data-date="2026-06-15">
-        <div class="card-accent"></div>
-        <div class="card-body">
-          <div class="card-icon">⚖️</div>
-          <div class="card-meta">Normativa &amp; Scuola <span class="card-date">· 15 Giugno 2026</span></div>
-          <div class="card-title">AI Act e scuola: cosa cambia davvero per docenti e dirigenti</div>
-          <p class="card-desc">Dal 2 febbraio 2025 è operativo l'obbligo di alfabetizzazione AI per tutto il personale scolastico. Non è fantascienza normativa: riguarda noi, adesso.</p>
-          <div class="card-tags">
-            <span class="tag">AI Act</span>
-            <span class="tag">Normativa</span>
-            <span class="tag">Formazione docenti</span>
-          </div>
-          <div class="card-readmore">Leggi l'articolo <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+  <div class="filters">
+    <span class="filter-pill active" data-filter="tutti">Tutti</span>
+    <span class="filter-pill" data-filter="ai">Intelligenza Artificiale</span>
+    <span class="filter-pill" data-filter="strumenti">Strumenti &amp; Archivio</span>
+    <span class="filter-pill" data-filter="inclusione">Inclusione &amp; BES</span>
+    <span class="filter-pill" data-filter="normativa">Normativa &amp; Scuola</span>
+  </div>
+
+  <div class="grid" id="grid-articoli">
+
+    <!-- ── ARTICOLO ESEMPIO ── -->
+    <a href="articolo-esempio.html" class="card fade-up" data-cats="ai strumenti">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <div class="card-icon">🤖</div>
+        <div class="card-meta">
+          Intelligenza Artificiale
+          <span class="card-date">· 13 Giugno 2026</span>
         </div>
-      </a>
-
-      <a href="articolo-esempio.html" class="card" data-cats="ai strumenti" data-title="Benvenuti nel Blog dell'Archivio" data-date="2026-06-13">
-        <div class="card-accent"></div>
-        <div class="card-body">
-          <div class="card-icon">🤖</div>
-          <div class="card-meta">Intelligenza Artificiale <span class="card-date">· 13 Giugno 2026</span></div>
-          <div class="card-title">Benvenuti nel Blog dell'Archivio</div>
-          <p class="card-desc">Apriamo questa nuova sezione dedicata agli aggiornamenti su intelligenza artificiale applicata alla scuola, novità sugli strumenti dell'Archivio e riflessioni su didattica e inclusione.</p>
-          <div class="card-tags"><span class="tag">AI &amp; Educazione</span><span class="tag">Novità Archivio</span></div>
-          <div class="card-readmore">Leggi l'articolo <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        <div class="card-title">Benvenuti nel Blog dell'Archivio</div>
+        <p class="card-desc">
+          Apriamo questa nuova sezione dedicata agli aggiornamenti su intelligenza
+          artificiale applicata alla scuola, novità sugli strumenti dell'Archivio
+          e riflessioni su didattica e inclusione.
+        </p>
+        <div class="card-tags">
+          <span class="tag">AI &amp; Educazione</span>
+          <span class="tag">Novità Archivio</span>
         </div>
-      </a>
-
-      <div class="card card-coming" style="position:relative;" data-cats="" data-title="" data-date="">
-        <span class="badge-soon">Prossimamente</span>
-        <div class="card-accent"></div>
-        <div class="card-body">
-          <div class="card-icon">📰</div>
-          <div class="card-meta">In preparazione</div>
-          <div class="card-title">Prossimi aggiornamenti</div>
-          <p class="card-desc">Nuovi articoli saranno pubblicati regolarmente ogni settimana.</p>
-          <div class="card-tags"><span class="tag">In arrivo</span></div>
+        <div class="card-readmore">
+          Leggi l'articolo
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </div>
       </div>
+    </a>
 
+    <!-- ── ARTICOLO: GOOGLE ISTE 2026 ── -->
+    <a href="google-ai-education-iste-2026.html" class="card fade-up" data-cats="ai">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <div class="card-icon">🎓</div>
+        <div class="card-meta">
+          Intelligenza Artificiale
+          <span class="card-date">· 29 Giugno 2026</span>
+        </div>
+        <div class="card-title">Google e l'AI per l'educazione: cosa cambia con ISTE 2026</div>
+        <p class="card-desc">
+          Gemini in Classroom, NotebookLM guidato dai docenti, study notebooks e un server MCP
+          per l'EdTech. Un'analisi pratica — con uno sguardo all'inclusione — per chi insegna.
+        </p>
+        <div class="card-tags">
+          <span class="tag">Google for Education</span>
+          <span class="tag">Gemini</span>
+          <span class="tag">NotebookLM</span>
+          <span class="tag">ISTE 2026</span>
+        </div>
+        <div class="card-readmore">
+          Leggi l'articolo
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- ── CARD PROSSIMAMENTE (placeholder per i prossimi articoli) ── -->
+    <div class="card card-coming fade-up">
+      <span class="badge-soon">Prossimamente</span>
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <div class="card-icon">📰</div>
+        <div class="card-meta">
+          In preparazione
+        </div>
+        <div class="card-title">Prossimi aggiornamenti</div>
+        <p class="card-desc">
+          Nuovi articoli sugli strumenti AI per l'educazione e sugli aggiornamenti
+          dell'Archivio saranno pubblicati qui regolarmente.
+        </p>
+        <div class="card-tags">
+          <span class="tag">In arrivo</span>
+        </div>
+      </div>
     </div>
-  </main>
-</div>
+
+  </div>
+
+</main>
 
 <footer>
   <strong>L'Archivio del Maestro Stefano Testa</strong> &mdash; Blog &amp; Aggiornamenti<br>
+  Istituto Comprensivo di Castelcovati &mdash; Via Martiri di Piazza Loggia 12, 25030 Castelcovati (BS)<br>
   <a href="../index.html">&larr; Torna all'Archivio</a> &mdash; &copy; <span id="anno"></span> Stefano Testa &mdash; Tutti i diritti riservati
 </footer>
 
 <script>
   document.getElementById("anno").textContent = new Date().getFullYear();
-  const allCards = Array.from(document.querySelectorAll("#grid-articoli .card:not(.card-coming)"));
-  function updateCounts(visibleCards) {
-    const cats = ["ai","strumenti","inclusione","normativa"];
-    document.getElementById("count-tutti").textContent = visibleCards.length;
-    cats.forEach(cat => {
-      const el = document.getElementById("count-"+cat);
-      if(el) el.textContent = visibleCards.filter(c=>(c.dataset.cats||"").includes(cat)).length;
+
+  // ── FILTRO CATEGORIE ──
+  const pills = document.querySelectorAll(".filter-pill");
+  const cards = document.querySelectorAll("#grid-articoli .card[data-cats]");
+
+  pills.forEach(pill => {
+    pill.addEventListener("click", () => {
+      pills.forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+      const filter = pill.dataset.filter;
+
+      cards.forEach(card => {
+        if (filter === "tutti" || card.dataset.cats.includes(filter)) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
     });
-  }
-  function updateRecent(cards) {
-    const recent = [...cards].filter(c=>c.dataset.date).sort((a,b)=>new Date(b.dataset.date)-new Date(a.dataset.date)).slice(0,5);
-    const list = document.getElementById("recent-list");
-    list.innerHTML = recent.map(c=>`<li><a href="${c.getAttribute("href")}">${c.dataset.title||""}</a><div class="recent-date">${formatDate(c.dataset.date)}</div></li>`).join("")||"<li style='padding:.8rem 1.2rem;color:var(--sub);font-size:13px;'>Nessun articolo recente</li>";
-  }
-  function formatDate(s){if(!s)return"";return new Date(s).toLocaleDateString("it-IT",{day:"numeric",month:"long",year:"numeric"});}
-  let activeCat="tutti",searchQuery="";
-  function applyFilters(){
-    const coming=document.querySelector(".card-coming");
-    let visible=[];
-    allCards.forEach(card=>{
-      const cats=card.dataset.cats||"";
-      const title=(card.dataset.title||"").toLowerCase();
-      const desc=(card.querySelector(".card-desc")?.textContent||"").toLowerCase();
-      const matchCat=activeCat==="tutti"||cats.includes(activeCat);
-      const matchSearch=!searchQuery||title.includes(searchQuery)||desc.includes(searchQuery);
-      if(matchCat&&matchSearch){card.style.display="";visible.push(card);}
-      else card.style.display="none";
-    });
-    if(coming) coming.style.display=(activeCat==="tutti"&&!searchQuery)?"":"none";
-    let noRes=document.getElementById("no-results");
-    if(visible.length===0){
-      if(!noRes){noRes=document.createElement("div");noRes.id="no-results";noRes.className="no-results";noRes.innerHTML="<strong>Nessun risultato</strong>Prova con un'altra parola chiave o categoria.";document.getElementById("grid-articoli").appendChild(noRes);}
-    }else if(noRes) noRes.remove();
-    const labels={tutti:"Tutti gli articoli",ai:"Intelligenza Artificiale",strumenti:"Strumenti & Archivio",inclusione:"Inclusione & BES",normativa:"Normativa & Scuola"};
-    document.getElementById("section-label").textContent=labels[activeCat]||"Articoli";
-    document.getElementById("results-count").textContent=visible.length===1?"1 articolo":`${visible.length} articoli`;
-    updateCounts(visible);
-  }
-  document.getElementById("cat-list").addEventListener("click",e=>{
-    const li=e.target.closest("li[data-cat]");if(!li)return;
-    document.querySelectorAll(".cat-list li").forEach(el=>el.classList.remove("active"));
-    li.classList.add("active");activeCat=li.dataset.cat;searchQuery="";
-    document.getElementById("search-input").value="";applyFilters();
   });
-  document.getElementById("search-input").addEventListener("input",e=>{
-    searchQuery=e.target.value.toLowerCase().trim();
-    if(searchQuery){activeCat="tutti";document.querySelectorAll(".cat-list li").forEach(el=>el.classList.remove("active"));document.querySelector(".cat-list li[data-cat='tutti']").classList.add("active");}
-    applyFilters();
-  });
-  updateRecent(allCards);applyFilters();
 </script>
 </body>
 </html>
