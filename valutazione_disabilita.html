@@ -387,12 +387,12 @@ const CLASSI = {
 };
 
 const VALUTAZIONI = {
-  ottimo:         { label:'Ottimo',         descrittore:"L'alunno raggiunge l'obiettivo in modo costante e con un'autonomia di risposta consolidata (reagisce intenzionalmente allo stimolo). Mantiene l'attenzione prolungata per l'intera durata dell'attività e riesce a riproporre la medesima risposta anche in contesti extra-scolastici o non abituali. Il comportamento è di piena disponibilità e la partecipazione attiva si manifesta attraverso segnali chiari di benessere e intenzionalità comunicativa." },
-  distinto:       { label:'Distinto',       descrittore:"L'obiettivo è raggiunto con regolarità. L'alunno mostra una buona tenuta nelle tempistiche dell'attività, manifestando una partecipazione attiva e consapevole. In situazioni note, anche fuori dal contesto scolastico, la risposta è coerente e il comportamento durante lo svolgimento è collaborativo, richiedendo solo minimi interventi di ri-orientamento allo stimolo." },
-  buono:          { label:'Buono',          descrittore:"L'obiettivo è sostanzialmente raggiunto. L'autonomia di lavoro è legata alla presenza di mediatori noti, con i quali l'alunno mantiene l'attenzione per tempi soddisfacenti. In contesti fuori dalla scuola, la risposta è presente ma meno immediata. Il comportamento è positivo, anche se la partecipazione può subire lievi fluttuazioni dovute a fattori ambientali o fisici." },
-  discreto:       { label:'Discreto',       descrittore:"L'obiettivo è raggiunto in modo parziale. La partecipazione attiva è discontinua e strettamente legata a una sollecitazione costante. Le tempistiche di attenzione sono limitate e la risposta fatica a emergere in situazioni non note o esterne. Durante lo svolgimento, il comportamento può presentare momenti di passività che richiedono una forte mediazione per il recupero dell'interazione." },
-  sufficiente:    { label:'Sufficiente',    descrittore:"L'obiettivo è raggiunto nei suoi aspetti minimi. L'autonomia è assente: l'alunno agisce solo sotto guida fisica o verbale continua. Le tempistiche di lavoro sono molto brevi e l'attenzione è labile. La risposta è riscontrabile solo in situazioni note e protette; il comportamento mostra una partecipazione minima o prevalentemente recettiva/passiva." },
-  non_sufficiente:{ label:'Non Sufficiente',descrittore:"L'obiettivo non è stato raggiunto. Nonostante la strutturazione di tempi e contesti facilitanti, l'alunno non manifesta una partecipazione rilevabile o una risposta intenzionale. Il comportamento durante l'attività denota assenza di sintonizzazione con lo stimolo o disagio, rendendo necessaria una revisione delle strategie nel PEI." }
+  ottimo:         { label:'Ottimo',         voto:'10', descrittore:"L'alunno raggiunge l'obiettivo in modo costante e con un'autonomia di risposta consolidata (reagisce intenzionalmente allo stimolo). Mantiene l'attenzione prolungata per l'intera durata dell'attività e riesce a riproporre la medesima risposta anche in contesti extra-scolastici o non abituali. Il comportamento è di piena disponibilità e la partecipazione attiva si manifesta attraverso segnali chiari di benessere e intenzionalità comunicativa." },
+  distinto:       { label:'Distinto',       voto:'9',  descrittore:"L'obiettivo è raggiunto con regolarità. L'alunno mostra una buona tenuta nelle tempistiche dell'attività, manifestando una partecipazione attiva e consapevole. In situazioni note, anche fuori dal contesto scolastico, la risposta è coerente e il comportamento durante lo svolgimento è collaborativo, richiedendo solo minimi interventi di ri-orientamento allo stimolo." },
+  buono:          { label:'Buono',          voto:'8',  descrittore:"L'obiettivo è sostanzialmente raggiunto. L'autonomia di lavoro è legata alla presenza di mediatori noti, con i quali l'alunno mantiene l'attenzione per tempi soddisfacenti. In contesti fuori dalla scuola, la risposta è presente ma meno immediata. Il comportamento è positivo, anche se la partecipazione può subire lievi fluttuazioni dovute a fattori ambientali o fisici." },
+  discreto:       { label:'Discreto',       voto:'7',  descrittore:"L'obiettivo è raggiunto in modo parziale. La partecipazione attiva è discontinua e strettamente legata a una sollecitazione costante. Le tempistiche di attenzione sono limitate e la risposta fatica a emergere in situazioni non note o esterne. Durante lo svolgimento, il comportamento può presentare momenti di passività che richiedono una forte mediazione per il recupero dell'interazione." },
+  sufficiente:    { label:'Sufficiente',    voto:'6',  descrittore:"L'obiettivo è raggiunto nei suoi aspetti minimi. L'autonomia è assente: l'alunno agisce solo sotto guida fisica o verbale continua. Le tempistiche di lavoro sono molto brevi e l'attenzione è labile. La risposta è riscontrabile solo in situazioni note e protette; il comportamento mostra una partecipazione minima o prevalentemente recettiva/passiva." },
+  non_sufficiente:{ label:'Non Sufficiente',voto:'5',  descrittore:"L'obiettivo non è stato raggiunto. Nonostante la strutturazione di tempi e contesti facilitanti, l'alunno non manifesta una partecipazione rilevabile o una risposta intenzionale. Il comportamento durante l'attività denota assenza di sintonizzazione con lo stimolo o disagio, rendendo necessaria una revisione delle strategie nel PEI." }
 };
 
 const OSSERVAZIONI_DESC = {
@@ -425,14 +425,14 @@ function toggleOsservazioni(){ossOpen=!ossOpen;document.getElementById('body-oss
 function onOssVotoChange(k){
   const area=document.getElementById('oss-desc-area'),ta=document.getElementById('oss-desc-textarea'),badge=document.getElementById('oss-badge');
   if(!k){area.style.display='none';return;}
-  area.style.display='block';badge.className=`voto-badge badge-${k}`;badge.textContent=VALUTAZIONI[k].label;
+  area.style.display='block';badge.className=`voto-badge badge-${k}`;badge.textContent=isSecondaria()?`${VALUTAZIONI[k].voto} — ${VALUTAZIONI[k].label}`:VALUTAZIONI[k].label;
   if(!ta.dataset.customized||ta.dataset.currentVoto!==k){ta.value=OSSERVAZIONI_DESC[k];ta.dataset.customized='';ta.dataset.currentVoto=k;}
 }
 function toggleComportamento(){compOpen=!compOpen;document.getElementById('body-comportamento').classList.toggle('collapsed',!compOpen);document.getElementById('toggle-comportamento').classList.toggle('open',compOpen);}
 function onCompVotoChange(k){
   const area=document.getElementById('comp-desc-area'),ta=document.getElementById('comp-desc-textarea'),badge=document.getElementById('comp-badge');
   if(!k){area.style.display='none';return;}
-  area.style.display='block';badge.className=`voto-badge badge-${k}`;badge.textContent=VALUTAZIONI[k].label;
+  area.style.display='block';badge.className=`voto-badge badge-${k}`;badge.textContent=isSecondaria()?`${VALUTAZIONI[k].voto} — ${VALUTAZIONI[k].label}`:VALUTAZIONI[k].label;
   if(!ta.dataset.customized||ta.dataset.currentVoto!==k){ta.value=COMPORTAMENTO_DESC[k];ta.dataset.customized='';ta.dataset.currentVoto=k;}
 }
 
@@ -445,15 +445,61 @@ function setRelMode(id,mode){
 }
 
 // ── DISCIPLINE ────────────────────────────────────────────────────────────────
+// helper: true se ordine secondaria
+function isSecondaria() { const o=document.getElementById('ordine'); return o && o.value === 'secondaria'; }
+
 function buildVotoOptions(sel){
-  return '<option value="">— Livello —</option>'+Object.entries(VALUTAZIONI).map(([k,v])=>`<option value="${k}"${sel===k?' selected':''}>${v.label}</option>`).join('');
+  const sec=isSecondaria();
+  return '<option value="">— Livello —</option>'+Object.entries(VALUTAZIONI).map(([k,v])=>`<option value="${k}"${sel===k?' selected':''}>${sec?v.voto:v.label}</option>`).join('');
 }
+
+// ricalcola TUTTI i badge e le tendine quando cambia ordine
+function aggiornaAllBadges() {
+  // Rigenera le opzioni di tutte le tendine voto mantenendo la selezione
+  document.querySelectorAll('.voto-select').forEach(sel => {
+    const cur = sel.value;
+    sel.innerHTML = buildVotoOptions(cur);
+    sel.value = cur;
+  });
+  // Tendine osservazioni e comportamento
+  ['oss-voto','comp-voto'].forEach(id => {
+    const sel = document.getElementById(id);
+    if(sel){ const cur=sel.value; sel.innerHTML=buildVotoOptions(cur); sel.value=cur; }
+  });
+  // badge discipline (obiettivi)
+  document.querySelectorAll('.descrittore-area').forEach(area => {
+    if(area.style.display === 'none') return;
+    const badge = area.querySelector('.voto-badge');
+    if(!badge) return;
+    const k = (badge.className.match(/badge-(\w+)$/) || [])[1];
+    if(k && VALUTAZIONI[k]) badge.textContent = isSecondaria() ? `${VALUTAZIONI[k].voto} — ${VALUTAZIONI[k].label}` : VALUTAZIONI[k].label;
+  });
+  // badge osservazioni
+  const ossBadge = document.getElementById('oss-badge');
+  if(ossBadge) {
+    const k = (ossBadge.className.match(/badge-(\w+)$/) || [])[1];
+    if(k && VALUTAZIONI[k]) ossBadge.textContent = isSecondaria() ? `${VALUTAZIONI[k].voto} — ${VALUTAZIONI[k].label}` : VALUTAZIONI[k].label;
+  }
+  // badge comportamento
+  const compBadge = document.getElementById('comp-badge');
+  if(compBadge) {
+    const k = (compBadge.className.match(/badge-(\w+)$/) || [])[1];
+    if(k && VALUTAZIONI[k]) compBadge.textContent = isSecondaria() ? `${VALUTAZIONI[k].voto} — ${VALUTAZIONI[k].label}` : VALUTAZIONI[k].label;
+  }
+}
+
+// testo badge in app (numero+giudizio per secondaria, solo giudizio per primaria)
+function badgeLabel(k) {
+  const v = VALUTAZIONI[k];
+  return isSecondaria() ? `${v.voto}\n${v.label}` : v.label;
+}
+
 function renderDescrittore(objId,k){
   const area=document.getElementById('desc-area-'+objId);if(!area)return;
   if(!k){area.style.display='none';return;}
   area.style.display='block';
   area.querySelector('.voto-badge').className=`voto-badge badge-${k}`;
-  area.querySelector('.voto-badge').textContent=VALUTAZIONI[k].label;
+  area.querySelector('.voto-badge').textContent=isSecondaria() ? `${VALUTAZIONI[k].voto} — ${VALUTAZIONI[k].label}` : VALUTAZIONI[k].label;
   const ta=area.querySelector('textarea');
   if(!ta.dataset.customized||ta.dataset.currentVoto!==k){ta.value=VALUTAZIONI[k].descrittore;ta.dataset.customized='';ta.dataset.currentVoto=k;}
 }
@@ -518,6 +564,7 @@ function aggiornaCascata() {
   }
   buildDisciplineHTML();
   aggiornaFirma();
+  aggiornaAllBadges();
 }
 
 function aggiornaClassi() {
@@ -570,7 +617,7 @@ function raccogliDati() {
     const k=document.getElementById(votoId).value;
     if(!k)return null;
     const ta=document.getElementById(taId);
-    return{titoloIt, label:VALUTAZIONI[k].label.toUpperCase(), testo:ta.value||''};
+    return{titoloIt, label:VALUTAZIONI[k].label.toUpperCase(), voto:VALUTAZIONI[k].voto, testo:ta.value||''};
   }
 
   const sezioni=[];
@@ -580,9 +627,10 @@ function raccogliDati() {
     const nomeDisciplina=d.relToggle?(state[d.id].relMode==='rel'?'RELIGIONE CATTOLICA':'ATTIVITÀ ALTERNATIVA'):d.nome.toUpperCase();
     const righe=obs.map(o=>{
       const label=o.voto?VALUTAZIONI[o.voto].label.toUpperCase():'—';
+      const voto=o.voto?VALUTAZIONI[o.voto].voto:'';
       const area=document.getElementById('desc-area-'+o.id);
       const ta=area?area.querySelector('textarea'):null;
-      return{obiettivo:o.testo||'(obiettivo non inserito)',label,testo:ta?ta.value:''};
+      return{obiettivo:o.testo||'(obiettivo non inserito)',label,voto,testo:ta?ta.value:''};
     });
     sezioni.push({nome:nomeDisciplina,righe});
   });
@@ -590,7 +638,7 @@ function raccogliDati() {
   const oss=getSpeciale('oss-voto','oss-desc-textarea','OSSERVAZIONI GENERALI');
   const comp=getSpeciale('comp-voto','comp-desc-textarea','COMPORTAMENTO');
 
-  return{nome,classe,sez,anno,periodo,coordinatore,plesso,sezioni,oss,comp};
+  return{nome,classe,sez,anno,periodo,coordinatore,plesso,sezioni,oss,comp,secondaria:ordine==='secondaria'};
 }
 
 // ── DATABASE TRADUZIONI PRE-COTTE ────────────────────────────────────────────
@@ -742,6 +790,14 @@ async function avviaPDF() {
     return `<div class="obiettivo-testo">${r.obiettivo}${tradObj}</div>`;
   }
 
+  // pill: per secondaria mostra numero sopra e giudizio sotto
+  function pillHtml(label, voto) {
+    if(dati.secondaria && voto) {
+      return `<span class="voto-pill voto-pill-sec"><span class="pill-num">${voto}</span><span class="pill-label">${tradLabel(label)}</span></span>`;
+    }
+    return `<span class="voto-pill">${tradLabel(label)}</span>`;
+  }
+
   let corpo = '';
   dati.sezioni.forEach(s=>{
     corpo+=`<div class="sezione"><div class="disciplina-titolo">${s.nome}</div>`;
@@ -749,7 +805,7 @@ async function avviaPDF() {
       corpo+=`<div class="obiettivo-block">
         <div class="obiettivo-riga">
           ${bloccoObiettivo(r, isRtl)}
-          <span class="voto-pill">${tradLabel(r.label)}</span>
+          ${pillHtml(r.label, r.voto)}
         </div>
         ${r.testo?`<div class="descrittore-testo">${bloccoTesto(r.testo,'testo',r,isRtl)}</div>`:''}
       </div>`;
@@ -760,14 +816,14 @@ async function avviaPDF() {
   if(dati.oss){
     corpo+=`<div class="sezione"><div class="disciplina-titolo">${tradLabel('OSSERVAZIONI GENERALI')}</div>
       <div class="obiettivo-block">
-        <div class="obiettivo-riga"><div class="obiettivo-testo">${tradLabel('VALUTAZIONE GLOBALE DEL PERCORSO')}</div><span class="voto-pill">${tradLabel(dati.oss.label)}</span></div>
+        <div class="obiettivo-riga"><div class="obiettivo-testo">${tradLabel('VALUTAZIONE GLOBALE DEL PERCORSO')}</div>${pillHtml(dati.oss.label, dati.oss.voto)}</div>
         ${dati.oss.testo?`<div class="descrittore-testo">${bloccoTesto(dati.oss.testo,'testo',dati.oss,isRtl)}</div>`:''}
       </div></div>`;
   }
   if(dati.comp){
     corpo+=`<div class="sezione"><div class="disciplina-titolo">${tradLabel('COMPORTAMENTO')}</div>
       <div class="obiettivo-block">
-        <div class="obiettivo-riga"><div class="obiettivo-testo">${tradLabel('VALUTAZIONE DEL COMPORTAMENTO')}</div><span class="voto-pill">${tradLabel(dati.comp.label)}</span></div>
+        <div class="obiettivo-riga"><div class="obiettivo-testo">${tradLabel('VALUTAZIONE DEL COMPORTAMENTO')}</div>${pillHtml(dati.comp.label, dati.comp.voto)}</div>
         ${dati.comp.testo?`<div class="descrittore-testo">${bloccoTesto(dati.comp.testo,'testo',dati.comp,isRtl)}</div>`:''}
       </div></div>`;
   }
@@ -798,7 +854,10 @@ async function avviaPDF() {
   .obiettivo-testo{font-weight:600;font-size:10.5pt;flex:1;}
   .obj-trad{display:block;font-weight:400;font-size:9.5pt;color:#555;margin-top:2px;font-style:italic;}
   .obj-trad.rtl{direction:rtl;text-align:right;}
-  .voto-pill{font-weight:700;font-size:9pt;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;color:#1a1612;border:1.5px solid #c8963e;padding:2px 10px;border-radius:12px;flex-shrink:0;}
+  .voto-pill{font-weight:700;font-size:9pt;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;color:#1a1612;border:1.5px solid #c8963e;padding:2px 10px;border-radius:12px;flex-shrink:0;text-align:center;}
+  .voto-pill-sec{display:inline-flex;flex-direction:column;align-items:center;padding:3px 12px;gap:1px;}
+  .pill-num{font-size:13pt;font-weight:800;line-height:1.1;letter-spacing:0;}
+  .pill-label{font-size:7pt;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;opacity:0.85;}
   .descrittore-testo{font-size:9.5pt;color:#222;line-height:1.65;font-variant:small-caps;letter-spacing:0.03em;}
   .desc-it{display:block;}
   .desc-trad{display:block;color:#1d6a8e;font-style:italic;font-variant:normal;margin-top:3px;padding-top:3px;border-top:1px dashed #c5b8e0;font-size:9pt;}
