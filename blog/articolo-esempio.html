@@ -258,9 +258,45 @@
     .hero-inner { padding: 2.5rem 1.25rem 2rem; }
     .article-body { padding: 1.8rem 1.4rem; }
   }
+
+  .navbar { position:fixed; top:0; left:0; right:0; z-index:1000; background:rgba(0,32,92,.97); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,.08); height:52px; display:flex; align-items:center; }
+  .navbar-inner { max-width:1200px; margin:0 auto; padding:0 1.5rem; width:100%; display:flex; align-items:center; justify-content:space-between; }
+  .navbar-brand { font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:#fff; text-decoration:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; min-width:0; }
+  .navbar-brand span { color:#c8a84b; }
+  .navbar-links { display:flex; align-items:center; gap:.25rem; flex-shrink:0; }
+  .navbar-link { font-size:13px; font-weight:500; color:rgba(255,255,255,.75); text-decoration:none; padding:6px 14px; border-radius:8px; transition:background .15s,color .15s; white-space:nowrap; }
+  .navbar-link:hover { background:rgba(255,255,255,.1); color:#fff; }
+  
+  
+  
+  
+  @media(max-width:600px) { .navbar-brand { font-size:12px; } .navbar-link { font-size:11px; padding:5px 8px; } }
+  body { padding-top: 52px; }
+  
+  
+  
+  
+  
+  .navbar-link-ai  { background:rgba(0,68,200,.85);  color:#fff !important; font-weight:600 !important; border-radius:8px; }
+  .navbar-link-inc { background:rgba(29,158,117,.85); color:#fff !important; font-weight:600 !important; border-radius:8px; }
+  .navbar-link-bib { background:rgba(124,58,237,.85);  color:#fff !important; font-weight:600 !important; border-radius:8px; }
+  .navbar-link-pod { background:rgba(200,168,75,.85);  color:#00205c !important; font-weight:600 !important; border-radius:8px; }
+  .navbar-link-podcast { background:rgba(200,168,75,.85); color:#00205c !important; font-weight:600 !important; border-radius:8px; }
 </style>
 </head>
 <body>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="navbar-brand">L'Archivio del <span>Maestro Stefano Testa</span></a>
+    <div class="navbar-links">
+      <a href="../index.html" class="navbar-link">🏠 Archivio</a>
+      <a href="../blog/index.html" class="navbar-link navbar-link-ai">🤖 Blog AI</a>
+      <a href="../inclusione/news/index.html" class="navbar-link navbar-link-inc">♿ Inclusione</a>
+      <a href="../biblioteca/index.html" class="navbar-link navbar-link-bib">📚 Biblioteca</a>
+      <a href="../podcast.html" class="navbar-link navbar-link-pod">🎙️ Podcast</a>
+    </div>
+  </div>
+</nav>
 
 <header>
   <div class="hero-inner">
