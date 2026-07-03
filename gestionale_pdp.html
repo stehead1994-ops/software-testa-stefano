@@ -933,6 +933,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
     <div class="master-tabs">
       <button class="tab-btn active" onclick="showTab('pdp')">📄 PDP</button>
       <button class="tab-btn" onclick="showTab('archivio')" id="tab-archivio-btn" style="display:none">🗂️ Archivio per ordine</button>
+      <button class="tab-btn" onclick="showTab('logs')" id="tab-logs-btn" style="display:none">📋 Log accessi</button>
       <button class="tab-btn" onclick="showTab('utenti')" id="tab-utenti-btn">👥 Utenti</button>
     </div>
     <div id="tab-pdp">
@@ -942,6 +943,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
     </div>
     <div id="tab-archivio" style="display:none">
       <div id="archivio-contenuto"></div>
+    </div>
+    <div id="tab-logs" style="display:none">
+      <div id="logs-contenuto"></div>
     </div>
     <div id="tab-utenti" style="display:none">
       <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
@@ -1205,6 +1209,8 @@ onAuthStateChanged(auth, async (user) => {
   // Tab utenti e archivio: solo master
   if (tabUtenti)   tabUtenti.style.display   = ruoloCorrente === 'master' ? '' : 'none';
   if (tabArchivio) tabArchivio.style.display = ruoloCorrente === 'master' ? '' : 'none';
+  const tabLogs = document.getElementById('tab-logs-btn');
+  if (tabLogs) tabLogs.style.display = ruoloCorrente === 'master' ? '' : 'none';
   // Crea PDP: master e referente
   if (btnNuovo)  btnNuovo.style.display  = ['master','admin'].includes(ruoloCorrente) ? '' : 'none';
 
@@ -1225,6 +1231,27 @@ window.mostraLogin = () => mostraSchermata('login');
 // ─── PRESENZA LIVE ───
 let _presenzaRef = null;
 let _presenzaInterval = null;
+
+// ─── SISTEMA DI LOG ACCESSI (GDPR) ───
+// I log sono NON modificabili e NON cancellabili dagli utenti
+// (le regole Firestore garantiscono solo insert, mai update/delete)
+async function scriviLog(azione, pdpId, dettagli = {}) {
+  if (!utenteCorrente) return;
+  try {
+    await addDoc(collection(db, 'logs'), {
+      ts: serverTimestamp(),
+      utente_uid: utenteCorrente.uid,
+      utente_email: utenteCorrente.email,
+      utente_nome: utenteCorrente.displayName || utenteCorrente.email,
+      ruolo: ruoloCorrente || 'sconosciuto',
+      azione,
+      pdp_id: pdpId || null,
+      ...dettagli
+    });
+  } catch(e) {
+    console.warn('Log non scritto:', e.code);
+  }
+}
 
 async function registraPresenza(pdpId) {
   if (!utenteCorrente) return;
@@ -1293,7 +1320,9 @@ window.showTab = (tab) => {
   document.getElementById('tab-pdp').style.display      = tab === 'pdp'      ? 'block' : 'none';
   document.getElementById('tab-utenti').style.display   = tab === 'utenti'   ? 'block' : 'none';
   document.getElementById('tab-archivio').style.display = tab === 'archivio' ? 'block' : 'none';
+  document.getElementById('tab-logs').style.display     = tab === 'logs'     ? 'block' : 'none';
   if (tab === 'archivio') renderArchivio();
+  if (tab === 'logs') renderLogs();
 };
 
 // ─── CARICA LISTA PDP ───
@@ -1396,6 +1425,59 @@ async function renderArchivio() {
           }).join('')}
         </div>`}
     </div>`).join('');
+}
+
+// ─── RENDER LOG ACCESSI (solo master) ───
+async function renderLogs() {
+  const contenuto = document.getElementById('logs-contenuto');
+  contenuto.innerHTML = '<div style="text-align:center;padding:40px;color:var(--testo-soft)">Caricamento log…</div>';
+  try {
+    const snap = await getDocs(query(collection(db, 'logs'), orderBy('ts', 'desc')));
+    if (snap.empty) {
+      contenuto.innerHTML = '<div class="lista-vuota"><div class="lista-vuota-icon">📋</div><h3>Nessun log ancora</h3></div>';
+      return;
+    }
+    const AZIONE_LABEL = {
+      'apertura_pdp': '👁️ Apertura PDP',
+      'modifica_pdp': '✏️ Modifica PDP',
+      'versione_definitiva': '📌 Versione definitiva',
+      'download_pdf': '⬇️ Download PDF',
+    };
+    contenuto.innerHTML = `
+      <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:0.82rem;color:var(--testo-soft)">${snap.size} eventi registrati — i log non sono modificabili né eliminabili</div>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:0.82rem;background:white;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.07)">
+          <thead>
+            <tr style="background:var(--blu);color:white">
+              <th style="padding:10px 14px;text-align:left;font-weight:600">Data e ora</th>
+              <th style="padding:10px 14px;text-align:left;font-weight:600">Utente</th>
+              <th style="padding:10px 14px;text-align:left;font-weight:600">Ruolo</th>
+              <th style="padding:10px 14px;text-align:left;font-weight:600">Azione</th>
+              <th style="padding:10px 14px;text-align:left;font-weight:600">Alunno/a</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${snap.docs.map((d, i) => {
+              const l = d.data();
+              const ts = l.ts?.toDate?.();
+              const dataStr = ts ? ts.toLocaleString('it-IT', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+              const bg = i % 2 === 0 ? '#ffffff' : '#f8fafc';
+              return `<tr style="background:${bg};border-bottom:1px solid #e2e8f0">
+                <td style="padding:9px 14px;color:var(--testo-soft)">${dataStr}</td>
+                <td style="padding:9px 14px;font-weight:500">${l.utente_nome || l.utente_email || '—'}</td>
+                <td style="padding:9px 14px;color:var(--testo-soft)">${l.ruolo || '—'}</td>
+                <td style="padding:9px 14px">${AZIONE_LABEL[l.azione] || l.azione || '—'}</td>
+                <td style="padding:9px 14px">${l.alunno || '—'}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  } catch(e) {
+    contenuto.innerHTML = `<div class="lista-vuota"><p>Errore caricamento log: ${e.message}</p></div>`;
+  }
 }
 
 // ─── DOWNLOAD PDF DIRETTO DALL'ARCHIVIO ───
@@ -1667,6 +1749,7 @@ window.apriEditor = async (id) => {
     // 4. Collega autosave solo dopo il ripristino
     _collegaAutosave();
     registraPresenza(id);
+    scriviLog('apertura_pdp', id, { alunno: pdpCorrenteDoc?.alunno || '?' });
   } catch(e) {
     console.error('Errore caricamento PDP:', e);
     mostraToast('Errore nel caricamento del PDP', 'rosso');
@@ -1870,6 +1953,7 @@ async function salvaOra() {
     const lbl = document.getElementById('autosave-label');
     if (dot) dot.classList.remove('saving');
     if (lbl) lbl.textContent = 'Salvato ✓';
+    scriviLog('modifica_pdp', pdpCorrenteId, { alunno: pdpCorrenteDoc?.alunno || '?' });
     console.log('✅ Salvato su Firestore, campi:', Object.keys(nuoviDati).length);
   } catch(e) {
     console.error('❌ Errore salvataggio:', e.code, e.message);
@@ -1903,6 +1987,7 @@ async function _protocollaNow() {
     protocollato_data_str: dataStr
   });
   mostraToast('✅ PDP — Versione definitiva salvata!', 'verde');
+  scriviLog('versione_definitiva', pdpCorrenteId, { alunno: pdpCorrenteDoc?.alunno || '?', chi });
   const btnP = document.getElementById('btn-protocolla');
   if (btnP) btnP.style.display = 'none';
   _mostraBannerProtocollato(chi, dataStr);
@@ -2156,6 +2241,7 @@ window.esportaPDF = async () => {
   const nomeFile = `PDP_${(pdpCorrenteDoc.alunno || 'alunno').replace(/\s+/g,'_')}_${dati.s1_anno || new Date().getFullYear()}.pdf`;
   doc.save(nomeFile);
   mostraToast('✅ PDF generato: ' + nomeFile, 'verde');
+  scriviLog('download_pdf', pdpCorrenteId, { alunno: pdpCorrenteDoc?.alunno || '?', file: nomeFile });
 };
 
 // ─── TOAST ───
