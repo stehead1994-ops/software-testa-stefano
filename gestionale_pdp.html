@@ -880,47 +880,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
     @page { margin: 1.5cm; size: A4; }
   }
 
-
-  .navbar { position:fixed; top:0; left:0; right:0; z-index:1000; background:rgba(0,32,92,.97); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,.08); height:52px; display:flex; align-items:center; }
-  .navbar-inner { max-width:1200px; margin:0 auto; padding:0 1.5rem; width:100%; display:flex; align-items:center; justify-content:space-between; }
-  .navbar-brand { font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:#fff; text-decoration:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; min-width:0; }
-  .navbar-brand span { color:#c8a84b; }
-  .navbar-links { display:flex; align-items:center; gap:.25rem; flex-shrink:0; }
-  .navbar-link { font-size:13px; font-weight:500; color:rgba(255,255,255,.75); text-decoration:none; padding:6px 14px; border-radius:8px; transition:background .15s,color .15s; white-space:nowrap; }
-  .navbar-link:hover { background:rgba(255,255,255,.1); color:#fff; }
-  
-  
-  
-  
-  @media(max-width:600px) { .navbar-brand { font-size:12px; } .navbar-link { font-size:11px; padding:5px 8px; } }
-  body { padding-top: 52px; }
-  
-  
-  
-  
-  
-  .navbar-link-ai  { background:rgba(0,68,200,.85);  color:#fff !important; font-weight:600 !important; border-radius:8px; }
-  .navbar-link-inc { background:rgba(29,158,117,.85); color:#fff !important; font-weight:600 !important; border-radius:8px; }
-  .navbar-link-bib { background:rgba(124,58,237,.85);  color:#fff !important; font-weight:600 !important; border-radius:8px; }
-  .navbar-link-pod { background:rgba(200,168,75,.85);  color:#00205c !important; font-weight:600 !important; border-radius:8px; }
-  .navbar-link-podcast { background:rgba(200,168,75,.85); color:#00205c !important; font-weight:600 !important; border-radius:8px; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
-<nav class="navbar">
-  <div class="navbar-inner">
-    <a href="index.html" class="navbar-brand">L'Archivio del <span>Maestro Stefano Testa</span></a>
-    <div class="navbar-links">
-      <a href="index.html" class="navbar-link">🏠 Archivio</a>
-      <a href="blog/index.html" class="navbar-link navbar-link-ai">🤖 Blog AI</a>
-      <a href="inclusione/news/index.html" class="navbar-link navbar-link-inc">♿ Inclusione</a>
-      <a href="biblioteca/index.html" class="navbar-link navbar-link-bib">📚 Biblioteca</a>
-      <a href="podcast.html" class="navbar-link navbar-link-pod">🎙️ Podcast</a>
-    </div>
-  </div>
-</nav>
 
 <!-- ═══════════════════════════════════════════════
      SCHERMATE
@@ -1416,7 +1380,25 @@ function caricaPDP(ambito = null) {
 async function renderArchivio() {
   const contenuto = document.getElementById('archivio-contenuto');
   contenuto.innerHTML = '<div style="text-align:center;padding:40px;color:var(--testo-soft)">Caricamento…</div>';
-  const snap = await getDocs(query(collection(db, 'pdp'), orderBy('creatoIl', 'desc')));
+  
+  let snap;
+  try {
+    snap = await getDocs(query(collection(db, 'pdp'), orderBy('creatoIl', 'desc')));
+  } catch(e) {
+    contenuto.innerHTML = `<div class="lista-vuota">
+      <div class="lista-vuota-icon">⚠️</div>
+      <h3>Errore caricamento archivio</h3>
+      <p style="color:var(--rosso)">${e.code || e.message}</p>
+      <p style="font-size:0.78rem;margin-top:8px">Verifica le regole Firestore — la collezione /pdp deve essere leggibile per il ruolo master.</p>
+    </div>`;
+    console.error('renderArchivio error:', e);
+    return;
+  }
+
+  if (snap.empty) {
+    contenuto.innerHTML = '<div class="lista-vuota"><div class="lista-vuota-icon">📂</div><h3>Nessun PDP presente</h3><p>Crea il primo PDP dal tab "📄 PDP"</p></div>';
+    return;
+  }
 
   const gruppi = {
     infanzia:   { label: '🌱 Scuola dell\'Infanzia', docs: [] },
@@ -1454,7 +1436,7 @@ async function renderArchivio() {
               <span class="pdp-card-stato ${statoClass}">${statoLabel}</span>
               <div class="pdp-card-azioni">
                 <button class="btn-sm btn-sm-blu" onclick="apriEditor('${p.id}')">Apri</button>
-                ${isPDF ? `<button class="btn-sm btn-sm-verde" onclick="scaricaPDFDiretto('${p.id}')">⬇️ PDF</button>` : ''}
+                <button class="btn-sm btn-sm-verde" onclick="scaricaPDFDiretto('${p.id}')">⬇️ PDF</button>
                 <button class="btn-sm btn-sm-rosso" onclick="eliminaPDP('${p.id}','${p.alunno}')">Elimina</button>
               </div>
             </div>`;
