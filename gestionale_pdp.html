@@ -1104,12 +1104,14 @@ let pdpCorrenteId  = null;
 let pdpCorrenteDoc = null;
 let unsubPDP       = null;
 let autosaveTimer  = null;
+let _accessoNegato = false; // blocca redirect login dopo signout per accesso negato
 
 // ─── DOMINI CONSENTITI ───
 const DOMINI_CONSENTITI = ['primaria.iccastelcovati.edu.it', 'iccastelcovati.edu.it'];
 
 // ─── AUTH ───
 window.loginGoogle = async () => {
+  _accessoNegato = false;
   try {
     const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider);
@@ -1119,12 +1121,16 @@ window.loginGoogle = async () => {
 };
 
 window.logout = async () => {
+  _accessoNegato = false;
   if (unsubPDP) { unsubPDP(); unsubPDP = null; }
   await signOut(auth);
 };
 
 onAuthStateChanged(auth, async (user) => {
-  if (!user) { mostraSchermata('login'); return; }
+  if (!user) {
+    if (!_accessoNegato) mostraSchermata('login');
+    return;
+  }
   utenteCorrente = user;
 
   // Controlla dominio
@@ -1134,9 +1140,11 @@ onAuthStateChanged(auth, async (user) => {
 
   // Se non è nel dominio giusto, mostra attesa con messaggio diverso
   if (!dominio || !dominioOk) {
+    _accessoNegato = true;
     await signOut(auth);
+    document.getElementById('attesa-icon').textContent = '🚫';
+    document.getElementById('attesa-title').textContent = 'Account non istituzionale';
     document.getElementById('attesa-msg').innerHTML = `
-      <strong>Account non istituzionale</strong><br><br>
       L'account <em>${email}</em> non appartiene al dominio scolastico autorizzato.<br><br>
       Accedi con il tuo account <strong>@primaria.iccastelcovati.edu.it</strong>
     `;
@@ -1169,11 +1177,13 @@ onAuthStateChanged(auth, async (user) => {
     } else {
       // Nessun profilo pre-creato dal master → accesso negato
       // NON creiamo nessun documento in Firestore
+      _accessoNegato = true;
       await signOut(auth);
+      document.getElementById('attesa-icon').textContent = '⏳';
+      document.getElementById('attesa-title').textContent = 'Accesso non ancora attivo';
       document.getElementById('attesa-msg').innerHTML = `
-        <strong>Accesso non autorizzato</strong><br><br>
         L'account <em>${email}</em> non è ancora stato accreditato nel sistema.<br><br>
-        Contatta il coordinatore per l'inclusione o l'amministratore del gestionale per richiedere l'accesso.
+        Contatta il <strong>coordinatore per l'inclusione</strong> per richiedere l'accesso.
       `;
       mostraSchermata('attesa');
       return;
