@@ -910,7 +910,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
     <div class="attesa-icon" id="attesa-icon">🔒</div>
     <div class="attesa-title" id="attesa-title">Accesso non autorizzato</div>
     <div class="attesa-msg" id="attesa-msg">Il tuo account non è ancora stato accreditato nel sistema. Contatta il coordinatore per l'inclusione.</div>
-    <button class="btn-logout-attesa" onclick="logout()">← Torna al login</button>
+    <button class="btn-logout-attesa" onclick="_accessoNegato=false; mostraSchermata('login')">← Torna al login</button>
   </div>
 </div>
 
@@ -1155,7 +1155,22 @@ onAuthStateChanged(auth, async (user) => {
   // Controlla/crea profilo utente in Firestore
   // Prima cerca per UID (profilo già consolidato)
   const uRef = doc(db, 'utenti', user.uid);
-  const uSnap = await getDoc(uRef);
+  let uSnap;
+  try {
+    uSnap = await getDoc(uRef);
+  } catch(e) {
+    // Permission denied — utente non nel database = non pre-creato
+    _accessoNegato = true;
+    await signOut(auth);
+    document.getElementById('attesa-icon').textContent = '⏳';
+    document.getElementById('attesa-title').textContent = 'Accesso non ancora attivo';
+    document.getElementById('attesa-msg').innerHTML = `
+      L'account <em>${email}</em> non è ancora stato accreditato nel sistema.<br><br>
+      Contatta il <strong>coordinatore per l'inclusione</strong> per richiedere l'accesso.
+    `;
+    mostraSchermata('attesa');
+    return;
+  }
 
   if (!uSnap.exists()) {
     // Cerca se il master ha pre-creato il profilo tramite email
