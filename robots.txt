@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://stehead1994-ops.github.io/software-testa-stefano/sitemap.xml
