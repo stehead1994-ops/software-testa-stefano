@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Competenze emotive degli insegnanti e fragilità evolutive: la ricerca non basta, serve un cambio di sistema — L'Archivio del Maestro Stefano Testa</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blu:#003087;--blu2:#00205c;--verde:#1D9E75;--verde2:#085041;
+    --oro:#c8a84b;--bianco:#ffffff;--grigio:#f4f6f9;--testo:#1a1a2e;--sub:#5a6a85;
+    --inc:#1D9E75;--inc2:#085041;--bib:#7c3aed;--bib2:#4c1d95;
+  }
+  html { scroll-behavior:smooth; }
+  body { font-family:'DM Sans',sans-serif; background:var(--grigio); color:var(--testo); min-height:100vh; padding-top:52px; }
+
+  /* ── NAVBAR ── */
+  .navbar { position:fixed; top:0; left:0; right:0; z-index:1000; background:rgba(0,32,92,.97); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,.08); height:52px; display:flex; align-items:center; }
+  .navbar-inner { max-width:1200px; margin:0 auto; padding:0 1.5rem; width:100%; display:flex; align-items:center; justify-content:space-between; }
+  .navbar-brand { font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:#fff; text-decoration:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; min-width:0; }
+  .navbar-brand span { color:var(--oro); }
+  .navbar-links { display:flex; align-items:center; gap:.25rem; flex-shrink:0; }
+  .navbar-link { font-size:13px; font-weight:500; color:rgba(255,255,255,.75); text-decoration:none; padding:6px 14px; border-radius:8px; transition:background .15s,color .15s; white-space:nowrap; border:1px solid rgba(255,255,255,.15); }
+  .navbar-link:hover { background:rgba(255,255,255,.1); color:#fff; }
+  .navbar-link-ai  { background:rgba(0,68,200,.85);  color:#fff !important; font-weight:600 !important; border-radius:8px; }
+  .navbar-link-inc { background:rgba(29,158,117,.85); color:#fff !important; font-weight:600 !important; border-radius:8px; }
+  .navbar-link-bib { background:rgba(124,58,237,.85);  color:#fff !important; font-weight:600 !important; border-radius:8px; }
+  .navbar-link-pod { background:rgba(200,168,75,.85);  color:#00205c !important; font-weight:600 !important; border-radius:8px; }
+  @media(max-width:700px) { .navbar-brand { font-size:12px; } .navbar-link { font-size:11px; padding:5px 8px; } }
+
+  /* ── HERO viola (biblioteca) ── */
+  header { background:linear-gradient(135deg,var(--bib2) 0%,var(--bib) 60%,#9333ea 100%); color:#fff; position:relative; overflow:hidden; }
+  header::before { content:""; position:absolute; inset:0; background:radial-gradient(ellipse 80% 60% at 110% 120%,rgba(29,158,117,.2) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at -10% -10%,rgba(200,168,75,.15) 0%,transparent 60%); pointer-events:none; }
+  header::after { content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px); background-size:48px 48px; pointer-events:none; }
+  .hero-inner { position:relative; z-index:1; max-width:800px; margin:0 auto; padding:3.5rem 2rem 3rem; text-align:center; }
+  .breadcrumb { font-size:13px; margin-bottom:1.4rem; text-align:left; }
+  .breadcrumb a { color:rgba(255,255,255,.75); text-decoration:none; }
+  .breadcrumb a:hover { color:#fff; }
+  .breadcrumb span { color:rgba(255,255,255,.4); margin:0 6px; }
+  .breadcrumb strong { color:rgba(255,255,255,.9); }
+  .article-meta { display:flex; align-items:center; justify-content:center; gap:10px; font-size:11px; font-weight:600; letter-spacing:1.8px; text-transform:uppercase; color:rgba(255,255,255,.9); margin-bottom:1.2rem; flex-wrap:wrap; }
+  .article-meta .dot { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.4); }
+  .article-meta .date { color:rgba(255,255,255,.65); letter-spacing:normal; text-transform:none; font-weight:500; }
+  .hero-title { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,4.2vw,2.8rem); font-weight:700; line-height:1.2; margin-bottom:1rem; letter-spacing:-.5px; }
+  .hero-sub { font-size:16px; font-weight:300; color:rgba(255,255,255,.8); line-height:1.7; margin:0 auto; max-width:650px; }
+  .wave { display:block; width:100%; height:60px; background:var(--grigio); clip-path:ellipse(55% 100% at 50% 100%); margin-top:-2px; }
+
+  /* ── CONTENUTO ── */
+  main { max-width:760px; margin:0 auto; padding:2rem 1.5rem 5rem; }
+  .article-body { background:var(--bianco); border-radius:16px; border:1px solid #e2e8f0; padding:2.5rem; }
+  .article-body h2 { font-family:'Playfair Display',serif; font-size:21px; color:var(--bib2); margin:2rem 0 .8rem; line-height:1.3; }
+  .article-body h2:first-child { margin-top:0; }
+  .article-body p { font-size:15px; line-height:1.85; color:var(--testo); margin-bottom:1rem; }
+  .article-body ul, .article-body ol { margin:0 0 1rem 1.4rem; font-size:15px; line-height:1.8; color:var(--testo); }
+  .article-body li { margin-bottom:.5rem; }
+  .article-body strong { color:var(--bib2); }
+  .article-body a { color:var(--bib); }
+
+  .callout { border-radius:10px; padding:1.1rem 1.3rem; font-size:14px; line-height:1.7; margin:1.5rem 0; }
+  .callout-verde { background:#e1f5ee; border-left:3px solid var(--verde); color:var(--inc2); }
+  .callout-blu { background:#eef2ff; border-left:3px solid var(--blu); color:var(--blu2); }
+  .callout-oro { background:#fdf6e3; border-left:3px solid var(--oro); color:#7a5c00; }
+  .callout-viola { background:#f5f3ff; border-left:3px solid var(--bib); color:#4c1d95; }
+  .callout-rosso { background:#fef2f2; border-left:3px solid #dc2626; color:#7f1d1d; }
+
+  /* box parere personale */
+  .parere { background:linear-gradient(135deg,#f5f3ff,#ede9fe); border:1px solid #c4b5fd; border-radius:12px; padding:1.4rem 1.5rem; margin:1.8rem 0; position:relative; }
+  .parere-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--bib); margin-bottom:.6rem; display:flex; align-items:center; gap:6px; }
+  .parere p { font-size:14.5px; line-height:1.8; color:#3b0764; margin-bottom:.7rem; }
+  .parere p:last-child { margin-bottom:0; }
+
+  .stat-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1rem; margin:1.5rem 0; }
+  .stat-box { background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; padding:1rem 1.1rem; text-align:center; }
+  .stat-num { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--bib); line-height:1; margin-bottom:.3rem; }
+  .stat-label { font-size:12px; color:var(--sub); line-height:1.4; }
+
+  .article-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:2rem; padding-top:1.5rem; border-top:1px solid #e2e8f0; }
+  .tag { font-size:11px; padding:3px 10px; border-radius:20px; background:#ede9fe; color:var(--bib2); font-weight:500; border:1px solid #ddd6fe; }
+
+  .fonte-box { background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; padding:1rem 1.2rem; font-size:13px; color:var(--sub); margin:1.5rem 0; }
+  .fonte-box strong { color:var(--bib2); }
+
+  .article-nav { display:flex; justify-content:space-between; align-items:center; margin-top:2rem; gap:1rem; }
+  .nav-link { font-size:13px; font-weight:600; color:var(--bib); text-decoration:none; display:flex; align-items:center; gap:6px; padding:10px 18px; border-radius:10px; background:var(--bianco); border:1px solid #ddd6fe; transition:opacity .15s,transform .1s; }
+  .nav-link:hover { opacity:.85; transform:translateY(-1px); }
+
+  footer { background:var(--bib2); color:rgba(255,255,255,.55); text-align:center; padding:2rem 1rem; font-size:12px; line-height:1.8; }
+  footer strong { color:rgba(255,255,255,.85); }
+  footer a { color:rgba(255,255,255,.75); text-decoration:none; }
+  footer a:hover { color:#fff; }
+
+  @media(max-width:600px) { .hero-inner { padding:2.5rem 1.25rem 2rem; } .article-body { padding:1.8rem 1.4rem; } .stat-row { grid-template-columns:1fr 1fr; } }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../../index.html" class="navbar-brand">L'Archivio del <span>Maestro Stefano Testa</span></a>
+    <div class="navbar-links">
+      <a href="../../index.html" class="navbar-link">🏠 Archivio</a>
+      <a href="../../blog/index.html" class="navbar-link navbar-link-ai">🤖 Blog AI</a>
+      <a href="../../inclusione/news/index.html" class="navbar-link navbar-link-inc">♿ Inclusione</a>
+      <a href="../index.html" class="navbar-link navbar-link-bib">📚 Biblioteca</a>
+      <a href="../../podcast.html" class="navbar-link navbar-link-pod">🎙️ Podcast</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="hero-inner">
+    <div class="breadcrumb">
+      <a href="../../index.html">L'Archivio</a>
+      <span>/</span>
+      <a href="../index.html">Biblioteca Scientifica</a>
+      <span>/</span>
+      <strong>Articolo</strong>
+    </div>
+    <div class="article-meta">
+      Pedagogia speciale &amp; Benessere docente
+      <span class="dot"></span>
+      <span class="date">30 Giugno 2026</span>
+    </div>
+    <h1 class="hero-title">Competenze emotive e fragilità evolutive: la ricerca non basta, serve un cambio di sistema</h1>
+    <p class="hero-sub">
+      Uno studio empirico su 470 insegnanti mostra livelli medi di competenza emotiva adeguati — ma una quota significativa vive sotto stress elevato. Il problema non è solo la competenza individuale: è il sistema in cui quella competenza deve operare.
+    </p>
+  </div>
+  <div class="wave"></div>
+</header>
+
+<main>
+  <div class="article-body">
+
+    <h2>Lo studio: cosa hanno misurato e cosa hanno trovato</h2>
+
+    <p>
+      Lembo, Morsanuto e Peluso Cassese (2026) hanno condotto uno studio empirico su <strong>470 insegnanti italiani</strong> di ogni ordine e grado, con l'obiettivo di misurare le competenze emotive in relazione alle fragilità evolutive degli alunni — DSA, BES, disabilità, difficoltà relazionali e comportamentali. Lo strumento utilizzato è il <strong>TEIQue</strong> (Trait Emotional Intelligence Questionnaire), validato e ampiamente usato in letteratura.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-num">470</div>
+        <div class="stat-label">insegnanti coinvolti nello studio</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">4</div>
+        <div class="stat-label">dimensioni misurate (benessere, autocontrollo, emotività, socievolezza)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">≈30%</div>
+        <div class="stat-label">del campione con stress percepito elevato nonostante competenza adeguata</div>
+      </div>
+    </div>
+
+    <p>
+      Il risultato principale: il campione mostra <strong>livelli medi di intelligenza emotiva nella norma</strong> o leggermente superiori. I docenti di scuola dell'infanzia e primaria tendono a punteggi più alti nelle dimensioni relazionali; quelli di scuola secondaria mostrano maggiore variabilità. Ma il dato più interessante — e più scomodo — è un altro: <strong>la competenza emotiva da sola non protegge dal burnout</strong>. Una quota significativa di insegnanti con punteggi adeguati nelle scale emotive mostra contestualmente livelli di stress percepito elevati.
+    </p>
+
+    <div class="callout callout-viola">
+      📌 <strong>Il dato chiave:</strong> essere emotivamente competenti non basta se il contesto in cui si lavora è strutturalmente disfunzionale. La competenza individuale può attutire il colpo, ma non può compensare indefinitamente carenze sistemiche.
+    </div>
+
+    <h2>La specializzazione: necessaria, ma non sufficiente — e spesso assente</h2>
+
+    <p>
+      Lo studio individua nella <strong>formazione specifica</strong> una delle variabili più correlate a livelli di competenza emotiva più stabili e resilienti. Non la formazione generica, non i corsi "sull'inclusione" fatti per adempiere a un obbligo: la formazione calata nella realtà concreta dell'istituto, costruita a partire dai bisogni reali di chi ci lavora dentro.
+    </p>
+
+    <div class="parere">
+      <div class="parere-label">✍️ Parere personale</div>
+      <p>
+        Da coordinatore inclusione, questa parte mi tocca direttamente. La competenza emotiva si costruisce con la specializzazione — ma anche con qualcosa che nei profili professionali non compare mai: la <strong>vocazione</strong>, intesa come disponibilità a stare nella relazione anche quando è difficile, e la <strong>forza di volontà</strong> di non smettere di progettare quando i risultati tardano.
+      </p>
+      <p>
+        Ma soprattutto — e questo lo vivo ogni anno — serve la <strong>progettazione a breve, medio e lungo termine</strong>. Non si costruisce inclusione con interventi spot. Si costruisce con continuità, con obiettivi condivisi, con la capacità di leggere dove sei adesso e dove vuoi essere tra un anno.
+      </p>
+      <p>
+        E la formazione: quante volte viene fatta formazione sul sostegno <em>dopo</em> la specializzazione, se non per obbligo o emergenza? I corsi trovati su Futura o su piattaforme con accreditamenti molto discutibili non possono sostituire una formazione seria, costruita sull'ascolto di chi lavora dentro la scuola. La formazione che serve è quella che parte da una domanda reale, non da un catalogo.
+      </p>
+    </div>
+
+    <h2>Il benessere docente: un tema che non può restare secondario</h2>
+
+    <p>
+      Lo studio di Lembo e colleghi mette in evidenza come il benessere percepito del docente sia una variabile mediante tra competenza emotiva e qualità dell'inclusione. In altri termini: un insegnante esausto — anche se tecnicamente competente — non riesce a mettere in campo quelle competenze con la stessa efficacia.
+    </p>
+
+    <p>
+      È una conclusione che sembra ovvia, eppure il sistema scolastico italiano fatica ancora a trattarla come tale. Il benessere del personale docente, ATA ed educativo dovrebbe stare al centro dell'organizzazione scolastica quanto quello degli studenti — non come accessorio, ma come condizione abilitante.
+    </p>
+
+    <div class="parere">
+      <div class="parere-label">✍️ Parere personale</div>
+      <p>
+        Le condizioni fisiche degli ambienti scolastici contano. Scuole fatiscenti, aule torridi d'estate, spazi spogli e inospitali riducono la lucidità, aumentano il nervosismo, abbassano la soglia di pazienza — di tutti, docenti e alunni. Quando si perde la lucidità, anche l'obiettività nella valutazione e nella relazione ne risente. Non è un discorso retorico: è fisiologia.
+      </p>
+      <p>
+        Nel nostro istituto abbiamo ipotizzato un'<strong>aula defaticante/relazionale</strong>, uno spazio dove l'incontro e il confronto tra pari siano alla base. Il confronto con l'altro plesso primario dello stesso istituto è già evidente: dove gli ambienti sono più accoglienti, i livelli di accoglienza e inclusione reale — non sulla carta — sono più alti.
+      </p>
+      <p>
+        Ambienti accoglienti non sono un lusso: sono un incentivo all'inclusione. E la scuola non è un parcheggio. È l'agenzia educativa per eccellenza, insieme alla famiglia. È il luogo del cambiamento e del miglioramento sociale, il salvagente per molti bambini e ragazzi. Va riportata sul piedistallo che merita — e questo significa investire prima di tutto sulle condizioni in cui lavora chi ci lavora dentro.
+      </p>
+    </div>
+
+    <h2>Quando i numeri non raccontano la realtà</h2>
+
+    <p>
+      Lo studio tocca un nervo scoperto quando analizza la correlazione tra stress percepito e autovalutazione delle competenze. Emerge una tendenza — non sistematica, ma presente — a sopravvalutare le proprie competenze emotive nei contesti ad alto stress, come meccanismo di difesa.
+    </p>
+
+    <p>
+      È un fenomeno che chi lavora nell'inclusione riconosce in un contesto più ampio: docenti che certificano obiettivi raggiunti sulla carta in contraddizione con le competenze reali acquisite dagli alunni. Non sempre per malafede — a volte è la pressione del sistema a spingere verso una valutazione che "quadri", indipendentemente dalla realtà.
+    </p>
+
+    <div class="parere">
+      <div class="parere-label">✍️ Parere personale</div>
+      <p>
+        Chi fa il lavoro "per la pagnotta" — e non lo dico con giudizio, ma con preoccupazione — tende a certificare obiettivi altissimi sulla carta che cozzano con le reali competenze acquisite. Come se le competenze da acquisire fossero solo disciplinari.
+      </p>
+      <p>
+        Prima viene la <strong>socialità</strong>. Prima viene l'<strong>educazione</strong>. Prima vengono i <strong>rapporti tra pari e non tra pari</strong>. La disciplina è una conseguenza, non il punto di partenza. Se non si sta bene, se non c'è relazione, se non c'è gruppo, tutto il resto è utopia.
+      </p>
+      <p>
+        Per fortuna ci sono le competenze in uscita da certificare — e questo è un passo nella direzione giusta, perché obbliga a ragionare su cosa l'alunno sa fare davvero, non solo su cosa ha "svolto".
+      </p>
+    </div>
+
+    <h2>La dimensione relazionale come infrastruttura</h2>
+
+    <p>
+      Una delle sezioni più interessanti dello studio riguarda il ruolo delle relazioni tra colleghi come fattore protettivo rispetto al burnout. Gli insegnanti che riferiscono relazioni professionali più solide mostrano livelli di stress percepito più bassi, a parità di carico di lavoro. Non è una sorpresa — ma è un dato che chiede di essere tradotto in politiche concrete.
+    </p>
+
+    <div class="parere">
+      <div class="parere-label">✍️ Parere personale</div>
+      <p>
+        Il momento mensa, ad esempio, è altamente condivisivo — e spesso sottovalutato. Le relazioni tra chi si ferma a mangiare con i bambini sono diverse da chi non si ferma. Se mensa e gioco libero sono strutturati con coerenza, anche il rapporto tra colleghi cambia: c'è più unione, più condivisione, più senso di appartenenza al gruppo.
+      </p>
+      <p>
+        Mi chiedo: perché non esiste il <strong>buono pasto per il personale docente</strong>, così da implementare le relazioni tra colleghi anche nei momenti informali? Perché non si organizzano sessioni di <strong>team building annuali</strong> — non a carico dei docenti, ovviamente — per costruire coesione? Perché non c'è un servizio di <strong>psicologia attiva per i docenti</strong>, per prevenire il burnout prima che si arrivi a situazioni limite?
+      </p>
+      <p>
+        Non sono lussi. Sono investimenti sulla qualità del sistema educativo — che si misura anche, e soprattutto, nella qualità di chi lo abita ogni giorno.
+      </p>
+    </div>
+
+    <h2>Cosa dice la ricerca e cosa possiamo fare</h2>
+
+    <p>
+      Lembo, Morsanuto e Peluso Cassese concludono con alcune proposte operative: percorsi di formazione sistematici e contestualizzati, supervisione professionale, spazi istituzionali di confronto tra docenti, e una revisione dei carichi di lavoro nei contesti ad alta complessità.
+    </p>
+
+    <p>
+      A livello di istituto, alcune cose possono essere avviate senza aspettare il sistema:
+    </p>
+
+    <ul>
+      <li><strong>Progettare spazi di confronto tra docenti</strong> che non siano solo riunioni formali: gruppi di lavoro su casi, co-progettazione di interventi, supervisione tra pari.</li>
+      <li><strong>Costruire ambienti fisici accoglienti</strong> — anche con risorse limitate: un angolo relax in sala insegnanti, un'aula flessibile, spazi pensati per la decompressione.</li>
+      <li><strong>Richiedere formazione costruita sul bisogno reale</strong> dell'istituto, non adattare il bisogno al catalogo disponibile.</li>
+      <li><strong>Riconoscere il lavoro emotivo</strong> come parte integrante della professione docente — non come surplus invisibile.</li>
+      <li><strong>Documentare le buone pratiche</strong> di benessere organizzativo per renderle replicabili e visibili all'esterno.</li>
+    </ul>
+
+    <div class="callout callout-verde">
+      💡 <strong>Spunto pratico:</strong> un questionario anonimo sul benessere percepito dal personale docente e ATA, somministrato a inizio e fine anno, può diventare uno strumento di monitoraggio semplice ma potente — e restituisce al collegio un dato reale su cui progettare.
+    </div>
+
+    <div class="callout callout-blu">
+      📌 <strong>Nota normativa:</strong> il D.Lgs. 81/2008 (Testo Unico sulla sicurezza) include lo <strong>stress lavoro-correlato</strong> tra i rischi da valutare nel DVR. Molte scuole lo fanno in modo formale senza tradurlo in azioni concrete. La ricerca di Lembo e colleghi offre una base scientifica solida per motivare interventi specifici nella valutazione del rischio psicosociale nelle istituzioni scolastiche.
+    </div>
+
+    <div class="fonte-box">
+      <strong>Fonte:</strong><br>
+      Lembo M.S., Morsanuto S., Peluso Cassese F. (2026). Fragilità evolutive e contesti educativi: uno studio empirico sulle competenze emotive degli insegnanti. <em>Italian Journal of Special Education for Inclusion</em>, SIPeS – Pensa MultiMedia.<br>
+      <a href="https://ojs.pensamultimedia.it/index.php/sipes/article/view/8677" target="_blank" rel="noopener">Leggi lo studio originale →</a>
+    </div>
+
+    <div class="article-tags">
+      <span class="tag">SIPeS</span>
+      <span class="tag">Competenze emotive</span>
+      <span class="tag">Benessere docente</span>
+      <span class="tag">Burnout</span>
+      <span class="tag">Fragilità evolutive</span>
+      <span class="tag">Formazione insegnanti</span>
+      <span class="tag">Inclusione</span>
+      <span class="tag">DSA &amp; BES</span>
+      <span class="tag">Pedagogia speciale</span>
+    </div>
+  </div>
+
+  <div class="article-nav">
+    <a href="../index.html" class="nav-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Tutti gli studi
+    </a>
+    <a href="../../index.html" class="nav-link">
+      Torna all'Archivio
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+</main>
+
+<footer>
+  <strong>L'Archivio del Maestro Stefano Testa</strong> &mdash; Biblioteca Scientifica<br>
+  <a href="../index.html">&larr; Torna alla Biblioteca</a> &mdash; &copy; <span id="anno"></span> Stefano Testa
+</footer>
+
+<script>document.getElementById("anno").textContent = new Date().getFullYear();</script>
+</body>
+</html>
