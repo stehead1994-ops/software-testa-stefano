@@ -1975,6 +1975,7 @@ function setGrado(g) {
 
   aggiornaVisibilitaDSA();
   renderMaterie(g);
+  renderFamiglia();
 }
 
 function setGradoSelect(v) { setGrado(v); }
@@ -2013,7 +2014,7 @@ function renderFamiglia() {
     ${gruppo.domande.map((q, i) => `
     <div class="fam-item">
       <div class="fam-q"><span class="fam-num">${i+1}.</span> ${q}</div>
-      <div class="fam-a"><textarea data-campo="s6_famiglia_risposta1" placeholder="Risposta della famiglia…"></textarea></div>
+      <div class="fam-a"><textarea data-campo="s6_s1_${gruppo.gruppo.replace(/\s+/g,'_').toLowerCase()}_${i}" placeholder="Risposta della famiglia…"></textarea></div>
     </div>`).join('')}
   `).join('');
 
@@ -2022,7 +2023,7 @@ function renderFamiglia() {
     ${gruppo.domande.map((q, i) => `
     <div class="fam-item">
       <div class="fam-q"><span class="fam-num">${i+1}.</span> ${q}</div>
-      <div class="fam-a"><textarea data-campo="s6_famiglia_risposta2" placeholder="Risposta della famiglia…"></textarea></div>
+      <div class="fam-a"><textarea data-campo="s6_s2_${gruppo.gruppo.replace(/\s+/g,'_').toLowerCase()}_${i}" placeholder="Risposta della famiglia…"></textarea></div>
     </div>`).join('')}
   `).join('');
 }

@@ -910,7 +910,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
     <div class="attesa-icon" id="attesa-icon">🔒</div>
     <div class="attesa-title" id="attesa-title">Accesso non autorizzato</div>
     <div class="attesa-msg" id="attesa-msg">Il tuo account non è ancora stato accreditato nel sistema. Contatta il coordinatore per l'inclusione.</div>
-    <button class="btn-logout-attesa" onclick="_accessoNegato=false; mostraSchermata('login')">← Torna al login</button>
+    <button class="btn-logout-attesa" onclick="logout().then(()=>mostraSchermata('login'))">← Torna al login</button>
   </div>
 </div>
 
@@ -1126,6 +1126,15 @@ window.logout = async () => {
   await signOut(auth);
 };
 
+
+// ─── HELPER ACCESSO NEGATO ───
+function mostraAccessoNegato(icona, titolo, messaggio) {
+  document.getElementById('attesa-icon').textContent = icona;
+  document.getElementById('attesa-title').textContent = titolo;
+  document.getElementById('attesa-msg').innerHTML = messaggio;
+  mostraSchermata('attesa');
+}
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     if (!_accessoNegato) mostraSchermata('login');
@@ -1140,15 +1149,9 @@ onAuthStateChanged(auth, async (user) => {
 
   // Se non è nel dominio giusto, mostra attesa con messaggio diverso
   if (!dominio || !dominioOk) {
-    _accessoNegato = true;
-    await signOut(auth);
-    document.getElementById('attesa-icon').textContent = '🚫';
-    document.getElementById('attesa-title').textContent = 'Account non istituzionale';
-    document.getElementById('attesa-msg').innerHTML = `
-      L'account <em>${email}</em> non appartiene al dominio scolastico autorizzato.<br><br>
-      Accedi con il tuo account <strong>@primaria.iccastelcovati.edu.it</strong>
-    `;
-    mostraSchermata('attesa');
+    mostraAccessoNegato('🚫', 'Account non istituzionale',
+      `L'account <em>${email}</em> non appartiene al dominio scolastico autorizzato.<br><br>
+       Accedi con il tuo account <strong>@primaria.iccastelcovati.edu.it</strong>`);
     return;
   }
 
@@ -1160,15 +1163,9 @@ onAuthStateChanged(auth, async (user) => {
     uSnap = await getDoc(uRef);
   } catch(e) {
     // Permission denied — utente non nel database = non pre-creato
-    _accessoNegato = true;
-    await signOut(auth);
-    document.getElementById('attesa-icon').textContent = '⏳';
-    document.getElementById('attesa-title').textContent = 'Accesso non ancora attivo';
-    document.getElementById('attesa-msg').innerHTML = `
-      L'account <em>${email}</em> non è ancora stato accreditato nel sistema.<br><br>
-      Contatta il <strong>coordinatore per l'inclusione</strong> per richiedere l'accesso.
-    `;
-    mostraSchermata('attesa');
+    mostraAccessoNegato('⏳', 'Accesso non ancora attivo',
+      `L'account <em>${email}</em> non è ancora stato accreditato nel sistema.<br><br>
+       Contatta il <strong>coordinatore per l'inclusione</strong> per richiedere l'accesso.`);
     return;
   }
 
@@ -1191,16 +1188,9 @@ onAuthStateChanged(auth, async (user) => {
       await deleteDoc(preRef);
     } else {
       // Nessun profilo pre-creato dal master → accesso negato
-      // NON creiamo nessun documento in Firestore
-      _accessoNegato = true;
-      await signOut(auth);
-      document.getElementById('attesa-icon').textContent = '⏳';
-      document.getElementById('attesa-title').textContent = 'Accesso non ancora attivo';
-      document.getElementById('attesa-msg').innerHTML = `
-        L'account <em>${email}</em> non è ancora stato accreditato nel sistema.<br><br>
-        Contatta il <strong>coordinatore per l'inclusione</strong> per richiedere l'accesso.
-      `;
-      mostraSchermata('attesa');
+      mostraAccessoNegato('⏳', 'Accesso non ancora attivo',
+        `L'account <em>${email}</em> non è ancora stato accreditato nel sistema.<br><br>
+         Contatta il <strong>coordinatore per l'inclusione</strong> per richiedere l'accesso.`);
       return;
     }
   }
@@ -3626,6 +3616,7 @@ function setGrado(g) {
 
   aggiornaVisibilitaDSA();
   renderMaterie(g);
+  renderFamiglia();
 }
 
 function setGradoSelect(v) { setGrado(v); }
@@ -3664,7 +3655,7 @@ function renderFamiglia() {
     ${gruppo.domande.map((q, i) => `
     <div class="fam-item">
       <div class="fam-q"><span class="fam-num">${i+1}.</span> ${q}</div>
-      <div class="fam-a"><textarea data-campo="s6_famiglia_risposta1" placeholder="Risposta della famiglia…"></textarea></div>
+      <div class="fam-a"><textarea data-campo="s6_s1_${gruppo.gruppo.replace(/\s+/g,'_').toLowerCase()}_${i}" placeholder="Risposta della famiglia…"></textarea></div>
     </div>`).join('')}
   `).join('');
 
@@ -3673,7 +3664,7 @@ function renderFamiglia() {
     ${gruppo.domande.map((q, i) => `
     <div class="fam-item">
       <div class="fam-q"><span class="fam-num">${i+1}.</span> ${q}</div>
-      <div class="fam-a"><textarea data-campo="s6_famiglia_risposta2" placeholder="Risposta della famiglia…"></textarea></div>
+      <div class="fam-a"><textarea data-campo="s6_s2_${gruppo.gruppo.replace(/\s+/g,'_').toLowerCase()}_${i}" placeholder="Risposta della famiglia…"></textarea></div>
     </div>`).join('')}
   `).join('');
 }
