@@ -1768,6 +1768,7 @@ window.apriEditor = async (id) => {
     pdpCorrenteDoc = snap.data();
     const dati = pdpCorrenteDoc.dati || {};
     const grado = pdpCorrenteDoc.grado || dati['_grado'] || 'primaria';
+    const isProtocollato = pdpCorrenteDoc.stato === 'protocollato';
 
     // 1. Imposta grado prima — genera le card materie nel DOM
     if (typeof setGrado === 'function') setGrado(grado);
@@ -1779,8 +1780,12 @@ window.apriEditor = async (id) => {
     _aggiornaHeaderEditor(pdpCorrenteDoc);
     _ripristinaDatiFirebase(dati, grado);
 
-    // 4. Collega autosave solo dopo il ripristino
-    _collegaAutosave();
+    // 4. Collega autosave SOLO se il PDP non è protocollato
+    // Se è protocollato i campi sono già bloccati da _aggiornaHeaderEditor
+    if (!isProtocollato) {
+      _collegaAutosave();
+    }
+
     registraPresenza(id);
     scriviLog('apertura_pdp', id, { alunno: pdpCorrenteDoc?.alunno || '?' });
   } catch(e) {
@@ -1816,14 +1821,35 @@ function _aggiornaHeaderEditor(pdp) {
   const isProtocollato = pdp.stato === 'protocollato';
   const btnP = document.getElementById('btn-protocolla');
   if (btnP) btnP.style.display = isProtocollato ? 'none' : '';
-  if (isProtocollato && !document.getElementById('banner-definitivo')) {
-    _mostraBannerProtocollato(
-      pdp.protocollato_da || '—',
-      pdp.protocollato_data_str || '—'
-    );
-    // Blocca campi
-    document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = true);
-    document.querySelectorAll('#area-editing button:not(.guida-btn):not(#banner-definitivo button)').forEach(el => el.disabled = true);
+
+  if (isProtocollato) {
+    // Docenti con password vedono solo il PDF senza possibilità di download
+    if (ruoloCorrente === 'docente') {
+      const area = document.getElementById('area-editing');
+      area.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;gap:16px">
+          <div style="font-size:3rem">📌</div>
+          <div style="font-size:1.1rem;font-weight:700;color:var(--blu)">PDP — Versione definitiva</div>
+          <div style="font-size:0.85rem;color:var(--testo-soft)">
+            Chiuso il ${pdp.protocollato_data_str || '—'} da ${pdp.protocollato_da || '—'}<br>
+            Il documento è in sola lettura. Il PDF ufficiale è conservato dalla segreteria.
+          </div>
+          <div style="margin-top:8px;padding:14px 20px;background:var(--azzurro-light);border-radius:10px;font-size:0.82rem;color:var(--blu);max-width:400px">
+            ℹ️ Per visualizzare il documento contatta il coordinatore di classe o la segreteria.
+          </div>
+        </div>`;
+      return;
+    }
+
+    // Master/admin vedono il form in sola lettura con banner
+    if (!document.getElementById('banner-definitivo')) {
+      _mostraBannerProtocollato(
+        pdp.protocollato_da || '—',
+        pdp.protocollato_data_str || '—'
+      );
+      document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = true);
+      document.querySelectorAll('#area-editing button:not(.guida-btn):not(#banner-definitivo button)').forEach(el => el.disabled = true);
+    }
   }
 }
 
