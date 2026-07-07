@@ -2943,17 +2943,11 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           </div>
         </div>
 
-        <!-- Genitore: nome + firma grafica -->
-        <div class="firma-box firma-box-pad">
+        <!-- Genitore: firma raccolta tramite software Allegato Firme PDP -->
+        <div class="firma-box">
           <label>Genitore/Tutore</label>
           <input data-campo="firma_genitore" type="text" placeholder="Nome e cognome">
-          <div class="signature-preview" id="prev-sig-genitore" onclick="apriFirma('sig-genitore')">
-            <img id="img-sig-genitore" style="display:none">
-            <span class="signature-preview-ph">✍️ Tocca per firmare</span>
-          </div>
-          <div class="signature-actions">
-            <button type="button" class="sig-btn" onclick="clearSignature('sig-genitore')">🗑️ Cancella firma</button>
-          </div>
+          <div class="firma-nota">📎 La firma del genitore viene raccolta tramite il software <strong>Allegato Firme PDP</strong></div>
         </div>
 
       </div>
@@ -3077,7 +3071,9 @@ function apriFirma(id) {
 function getModalPos(e) {
   const canvas = document.getElementById('firma-modal-canvas');
   const r = canvas.getBoundingClientRect();
-  const ev = e.touches ? e.touches[0] : e;
+  // PointerEvent e MouseEvent hanno clientX direttamente
+  // TouchEvent ha touches[0]
+  const ev = (e.touches && e.touches.length > 0) ? e.touches[0] : e;
   return { x: ev.clientX - r.left, y: ev.clientY - r.top };
 }
 
@@ -3151,13 +3147,25 @@ function clearSignature(id) {
 function initModalCanvasEvents() {
   const canvas = document.getElementById('firma-modal-canvas');
   if (!canvas || canvas._eventsBound) return;
+
+  // Pointer events — funzionano su mouse, touch e trackpad Mac/iPad
+  canvas.addEventListener('pointerdown', modalStart, { passive: false });
+  canvas.addEventListener('pointermove', modalMove, { passive: false });
+  canvas.addEventListener('pointerup', modalEnd);
+  canvas.addEventListener('pointerleave', modalEnd);
+  canvas.addEventListener('pointercancel', modalEnd);
+
+  // Fallback mouse per browser che non supportano pointer events
   canvas.addEventListener('mousedown', modalStart);
   canvas.addEventListener('mousemove', modalMove);
   canvas.addEventListener('mouseup', modalEnd);
   canvas.addEventListener('mouseleave', modalEnd);
+
+  // Touch fallback
   canvas.addEventListener('touchstart', modalStart, { passive: false });
   canvas.addEventListener('touchmove', modalMove, { passive: false });
   canvas.addEventListener('touchend', modalEnd);
+
   canvas._eventsBound = true;
 }
 
