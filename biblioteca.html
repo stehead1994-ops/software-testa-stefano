@@ -344,7 +344,7 @@ const CRED = {user:'BiblioPrimariaCastel', pass:'Castelcovati26!'};
 
 const db = {
   async get(table) {
-    const r = await fetch(SUPA_URL+'/rest/v1/'+table+'?select=*&order=id.asc&limit=10000', {headers:{apikey:SUPA_KEY, Authorization:'Bearer '+SUPA_KEY, 'Range-Unit':'items', 'Range':'0-9999'}});
+    const r = await fetch(SUPA_URL+'/rest/v1/'+table+'?select=*&order=id.asc&limit=10000', {headers:{apikey:SUPA_KEY, Authorization:'Bearer '+SUPA_KEY, 'Content-Type':'application/json'}});
     if(!r.ok) throw new Error('HTTP '+r.status);
     return r.json();
   },
