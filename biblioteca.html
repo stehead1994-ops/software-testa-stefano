@@ -607,7 +607,31 @@ async function saveBook(){
     const res=await db.insert('books',{isbn,title,author:document.getElementById('f-author').value.trim(),publisher:document.getElementById('f-publisher').value.trim(),year:document.getElementById('f-year').value.trim(),note:document.getElementById('f-note').value.trim(),copies:parseInt(document.getElementById('f-copies').value)||1});
     if(res&&res[0])books.push(res[0]);
     hideLoad();clearBookForm();populateLabelSelect();refreshDash();toast('Libro aggiunto!');
-  }catch(e){hideLoad();toast('Errore salvataggio: '+e.message,'err');}
+  }catch(e){
+    hideLoad();
+    if(e.message&&e.message.includes('409')){
+      // ISBN already exists - find and update copies
+      const dup=books.find(b=>b.isbn===isbn);
+      if(dup){
+        const addCopies=parseInt(document.getElementById('f-copies').value)||1;
+        const newCopies=(dup.copies||1)+addCopies;
+        const ok=confirm('"'+title+'" (ISBN: '+isbn+') è già nel catalogo.\n\nAggiungere '+addCopies+' cop. per un totale di '+newCopies+'?');
+        if(ok){
+          showLoad('Aggiornamento copie...');
+          try{
+            await db.update('books',dup.id,{copies:newCopies});
+            books=books.map(b=>b.id===dup.id?{...b,copies:newCopies}:b);
+            hideLoad();clearBookForm();renderCatalog();refreshDash();
+            toast('Copie aggiornate: ora '+newCopies+' in totale');
+          }catch(e2){hideLoad();toast('Errore aggiornamento: '+e2.message,'err');}
+        } else { hideLoad(); }
+      } else {
+        toast('ISBN già presente — ricarica la pagina e riprova','err');
+      }
+    } else {
+      toast('Errore salvataggio: '+e.message,'err');
+    }
+  }
 }
 
 function clearBookForm(){['f-title','f-author','f-publisher','f-year','f-isbn','f-note','isbn-input'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-copies').value='1';}
