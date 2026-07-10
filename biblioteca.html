@@ -569,39 +569,65 @@ document.addEventListener('click',e=>{if(!e.target.closest('#btn-cerca-titolo')&
 
 async function saveBook(){
   const title=document.getElementById('f-title').value.trim();
-  const isbn=document.getElementById('f-isbn').value.trim();
+  const rawIsbn=document.getElementById('f-isbn').value.trim();
+  // Pulisce ISBN da trattini/spazi finali
+  const isbn=rawIsbn.replace(/[-\s]+$/,'').replace(/\s/g,'').trim();
   if(!title){toast('Inserisci almeno il titolo','err');return;}
 
-  // Check duplicate by ISBN first
-  let existing=isbn?books.find(b=>b.isbn===isbn):null;
+  // Ricarica sempre i libri freschi prima di controllare duplicati
+  showLoad('Verifica duplicati...');
+  try{ books = await db.get('books'); }catch(e2){}
+  hideLoad();
 
-  // If no ISBN match, check by title+author+publisher
+  // Cerca duplicato per ISBN (confrontando ISBN puliti)
+  const cleanIsbn = s => (s||'').replace(/[-\s]+$/,'').replace(/\s/g,'').trim();
+  let existing = isbn ? books.find(b => cleanIsbn(b.isbn) === isbn) : null;
+
+  // Se non trovato per ISBN, cerca per titolo
   if(!existing){
-    const author=document.getElementById('f-author').value.trim().toLowerCase();
-    const publisher=document.getElementById('f-publisher').value.trim().toLowerCase();
-    existing=books.find(b=>
-      b.title.toLowerCase()===title.toLowerCase()&&
-      (!author||(b.author||'').toLowerCase()===author)&&
-      (!publisher||(b.publisher||'').toLowerCase()===publisher)
-    );
+    existing = books.find(b => b.title.toLowerCase()===title.toLowerCase());
   }
 
   if(existing){
     const addCopies=parseInt(document.getElementById('f-copies').value)||1;
     const newCopies=(existing.copies||1)+addCopies;
-    const ok=confirm('"'+existing.title+'" è già nel catalogo con '+(existing.copies||1)+' cop.\n\nAggiungere '+addCopies+' cop. per un totale di '+newCopies+'?');
-    if(!ok)return;
-    showLoad('Aggiornamento copie...');
-    try{
-      await db.update('books',existing.id,{copies:newCopies});
-      books=books.map(b=>b.id===existing.id?{...b,copies:newCopies}:b);
-      hideLoad();clearBookForm();renderCatalog();refreshDash();
-      toast('Copie aggiornate: ora '+newCopies+' in totale');
-    }catch(e){hideLoad();toast('Errore: '+e.message,'err');}
+    const sameAuthor=!document.getElementById('f-author').value.trim()||(existing.author||'').toLowerCase()===document.getElementById('f-author').value.trim().toLowerCase();
+    const samePublisher=!document.getElementById('f-publisher').value.trim()||(existing.publisher||'').toLowerCase()===document.getElementById('f-publisher').value.trim().toLowerCase();
+
+    if(sameAuthor && samePublisher){
+      // Tutto coincide — aggiunge copie direttamente
+      showLoad('Aggiornamento copie...');
+      try{
+        await db.update('books',existing.id,{copies:newCopies});
+        books=books.map(b=>b.id===existing.id?{...b,copies:newCopies}:b);
+        hideLoad();clearBookForm();renderCatalog();refreshDash();
+        toast('"'+existing.title+'" già presente — copie aggiornate a '+newCopies);
+      }catch(e){hideLoad();toast('Errore: '+e.message,'err');}
+    } else {
+      // Dati diversi — chiede conferma
+      const msg='"'+existing.title+'" è già nel catalogo ma con dati diversi:\n\n'+
+        'Autore nel catalogo: '+(existing.author||'—')+'\n'+
+        'Autore inserito: '+(document.getElementById('f-author').value.trim()||'—')+'\n'+
+        'Editore nel catalogo: '+(existing.publisher||'—')+'\n'+
+        'Editore inserito: '+(document.getElementById('f-publisher').value.trim()||'—')+'\n\n'+
+        'Vuoi aggiungere '+addCopies+' cop. al libro già presente (totale: '+newCopies+')?';
+      const ok=confirm(msg);
+      if(ok){
+        showLoad('Aggiornamento copie...');
+        try{
+          await db.update('books',existing.id,{copies:newCopies});
+          books=books.map(b=>b.id===existing.id?{...b,copies:newCopies}:b);
+          hideLoad();clearBookForm();renderCatalog();refreshDash();
+          toast('Copie aggiornate a '+newCopies);
+        }catch(e){hideLoad();toast('Errore: '+e.message,'err');}
+      } else {
+        toast('Operazione annullata');
+      }
+    }
     return;
   }
 
-  // New book
+  // Libro nuovo
   showLoad('Salvataggio...');
   try{
     const res=await db.insert('books',{isbn,title,author:document.getElementById('f-author').value.trim(),publisher:document.getElementById('f-publisher').value.trim(),year:document.getElementById('f-year').value.trim(),note:document.getElementById('f-note').value.trim(),copies:parseInt(document.getElementById('f-copies').value)||1});
@@ -609,31 +635,7 @@ async function saveBook(){
     hideLoad();clearBookForm();populateLabelSelect();refreshDash();toast('Libro aggiunto!');
   }catch(e){
     hideLoad();
-    if(e.message&&e.message.includes('409')){
-      // ISBN already exists - reload books and find it
-      showLoad('Caricamento dati aggiornati...');
-      try{ books = await db.get('books'); }catch(e2){}
-      hideLoad();
-      const dup=books.find(b=>b.isbn===isbn);
-      if(dup){
-        const addCopies=parseInt(document.getElementById('f-copies').value)||1;
-        const newCopies=(dup.copies||1)+addCopies;
-        const ok=confirm('"'+title+'" (ISBN: '+isbn+') è già nel catalogo con '+(dup.copies||1)+' cop.\n\nAggiungere '+addCopies+' cop. per un totale di '+newCopies+'?');
-        if(ok){
-          showLoad('Aggiornamento copie...');
-          try{
-            await db.update('books',dup.id,{copies:newCopies});
-            books=books.map(b=>b.id===dup.id?{...b,copies:newCopies}:b);
-            hideLoad();clearBookForm();renderCatalog();refreshDash();
-            toast('Copie aggiornate: ora '+newCopies+' in totale');
-          }catch(e2){hideLoad();toast('Errore aggiornamento: '+e2.message,'err');}
-        } else { hideLoad(); }
-      } else {
-        toast('ISBN già presente nel database — ricarica la pagina','err');
-      }
-    } else {
-      toast('Errore salvataggio: '+e.message,'err');
-    }
+    toast('Errore salvataggio: '+e.message,'err');
   }
 }
 
