@@ -602,40 +602,26 @@ async function saveBook(){
 
   if(existing){
     const addCopies=parseInt(document.getElementById('f-copies').value)||1;
-    const newCopies=(existing.copies||1)+addCopies;
-    const sameAuthor=!document.getElementById('f-author').value.trim()||(existing.author||'').toLowerCase()===document.getElementById('f-author').value.trim().toLowerCase();
-    const samePublisher=!document.getElementById('f-publisher').value.trim()||(existing.publisher||'').toLowerCase()===document.getElementById('f-publisher').value.trim().toLowerCase();
+    const currentCopies=existing.copies||1;
+    const newCopies=currentCopies+addCopies;
 
-    if(sameAuthor && samePublisher){
-      // Tutto coincide — aggiunge copie direttamente
-      showLoad('Aggiornamento copie...');
-      try{
-        await db.update('books',existing.id,{copies:newCopies});
-        books=books.map(b=>b.id===existing.id?{...b,copies:newCopies}:b);
-        hideLoad();clearBookForm();renderCatalog();refreshDash();
-        toast('"'+existing.title+'" già presente — copie aggiornate a '+newCopies);
-      }catch(e){hideLoad();toast('Errore: '+e.message,'err');}
-    } else {
-      // Dati diversi — chiede conferma
-      const msg='"'+existing.title+'" è già nel catalogo ma con dati diversi:\n\n'+
-        'Autore nel catalogo: '+(existing.author||'—')+'\n'+
-        'Autore inserito: '+(document.getElementById('f-author').value.trim()||'—')+'\n'+
-        'Editore nel catalogo: '+(existing.publisher||'—')+'\n'+
-        'Editore inserito: '+(document.getElementById('f-publisher').value.trim()||'—')+'\n\n'+
-        'Vuoi aggiungere '+addCopies+' cop. al libro già presente (totale: '+newCopies+')?';
-      const ok=confirm(msg);
-      if(ok){
-        showLoad('Aggiornamento copie...');
-        try{
-          await db.update('books',existing.id,{copies:newCopies});
-          books=books.map(b=>b.id===existing.id?{...b,copies:newCopies}:b);
-          hideLoad();clearBookForm();renderCatalog();refreshDash();
-          toast('Copie aggiornate a '+newCopies);
-        }catch(e){hideLoad();toast('Errore: '+e.message,'err');}
-      } else {
-        toast('Operazione annullata');
-      }
+    // Mostra sempre avviso con le copie esistenti e chiede conferma
+    const msg='⚠️ "'+existing.title+'" è già nel catalogo!\n\n'+
+      'Copie già presenti: '+currentCopies+'\n\n'+
+      'Vuoi aggiungere '+addCopies+' cop. in più per un totale di '+newCopies+'?\n\n'+
+      '(Premi Annulla se è un errore)';
+    const ok=confirm(msg);
+    if(!ok){
+      toast('Operazione annullata — libro già presente con '+currentCopies+' cop.');
+      return;
     }
+    showLoad('Aggiornamento copie...');
+    try{
+      await db.update('books',existing.id,{copies:newCopies});
+      books=books.map(b=>b.id===existing.id?{...b,copies:newCopies}:b);
+      hideLoad();clearBookForm();renderCatalog();refreshDash();
+      toast('"'+existing.title+'" — copie aggiornate a '+newCopies);
+    }catch(e){hideLoad();toast('Errore: '+e.message,'err');}
     return;
   }
 
