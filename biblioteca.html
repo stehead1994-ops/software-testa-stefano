@@ -344,9 +344,21 @@ const CRED = {user:'BiblioPrimariaCastel', pass:'Castelcovati26!'};
 
 const db = {
   async get(table) {
-    const r = await fetch(SUPA_URL+'/rest/v1/'+table+'?select=*&order=id.asc&limit=10000', {headers:{apikey:SUPA_KEY, Authorization:'Bearer '+SUPA_KEY, 'Content-Type':'application/json'}});
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    return r.json();
+    let all = [];
+    let from = 0;
+    const pageSize = 1000;
+    while(true) {
+      const r = await fetch(SUPA_URL+'/rest/v1/'+table+'?select=*&order=id.asc', {
+        headers:{apikey:SUPA_KEY, Authorization:'Bearer '+SUPA_KEY, 'Content-Type':'application/json', 'Range-Unit':'items', 'Range':from+'-'+(from+pageSize-1)}
+      });
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const data = await r.json();
+      if(!data || !data.length) break;
+      all = all.concat(data);
+      if(data.length < pageSize) break;
+      from += pageSize;
+    }
+    return all;
   },
   async insert(table, data) {
     const r = await fetch(SUPA_URL+'/rest/v1/'+table, {method:'POST', headers:{apikey:SUPA_KEY, Authorization:'Bearer '+SUPA_KEY, 'Content-Type':'application/json', Prefer:'return=representation'}, body:JSON.stringify(data)});
