@@ -610,12 +610,15 @@ async function saveBook(){
   }catch(e){
     hideLoad();
     if(e.message&&e.message.includes('409')){
-      // ISBN already exists - find and update copies
+      // ISBN already exists - reload books and find it
+      showLoad('Caricamento dati aggiornati...');
+      try{ books = await db.get('books'); }catch(e2){}
+      hideLoad();
       const dup=books.find(b=>b.isbn===isbn);
       if(dup){
         const addCopies=parseInt(document.getElementById('f-copies').value)||1;
         const newCopies=(dup.copies||1)+addCopies;
-        const ok=confirm('"'+title+'" (ISBN: '+isbn+') è già nel catalogo.\n\nAggiungere '+addCopies+' cop. per un totale di '+newCopies+'?');
+        const ok=confirm('"'+title+'" (ISBN: '+isbn+') è già nel catalogo con '+(dup.copies||1)+' cop.\n\nAggiungere '+addCopies+' cop. per un totale di '+newCopies+'?');
         if(ok){
           showLoad('Aggiornamento copie...');
           try{
@@ -626,7 +629,7 @@ async function saveBook(){
           }catch(e2){hideLoad();toast('Errore aggiornamento: '+e2.message,'err');}
         } else { hideLoad(); }
       } else {
-        toast('ISBN già presente — ricarica la pagina e riprova','err');
+        toast('ISBN già presente nel database — ricarica la pagina','err');
       }
     } else {
       toast('Errore salvataggio: '+e.message,'err');
