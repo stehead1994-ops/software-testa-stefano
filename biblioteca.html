@@ -591,13 +591,17 @@ async function saveBook(){
   try{ books = await db.get('books'); }catch(e2){}
   hideLoad();
 
-  // Cerca duplicato per ISBN (confrontando ISBN puliti)
+  // Cerca duplicato per ISBN prima
   const cleanIsbn = s => (s||'').replace(/[-\s]+$/,'').replace(/\s/g,'').trim();
   let existing = isbn ? books.find(b => cleanIsbn(b.isbn) === isbn) : null;
 
-  // Se non trovato per ISBN, cerca per titolo
+  // Se non trovato per ISBN, cerca per titolo+autore insieme
   if(!existing){
-    existing = books.find(b => b.title.toLowerCase()===title.toLowerCase());
+    const author=document.getElementById('f-author').value.trim().toLowerCase();
+    existing = books.find(b =>
+      b.title.toLowerCase()===title.toLowerCase() &&
+      author && (b.author||'').toLowerCase()===author
+    );
   }
 
   if(existing){
