@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leggere una diagnosi: guida operativa | IC Castelcovati</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blu:#003087;
+    --blu-chiaro:#e8edf7;
+    --verde:#1D9E75;
+    --oro:#c8a84b;
+    --testo:#1f2430;
+    --testo-soft:#5a6270;
+    --carta:#fdfcf9;
+    --riga:#dfe3ea;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--carta); color:var(--testo);
+    font-family:'DM Sans', sans-serif; line-height:1.6;
+  }
+  h1,h2,h3,.eyebrow-font{font-family:'Playfair Display', serif;}
+  .wrap{max-width:880px; margin:0 auto; padding:0 24px 80px;}
+
+  /* HEADER */
+  header.top{
+    background:linear-gradient(135deg, var(--blu) 0%, #001d5c 100%);
+    color:#fff; padding:56px 24px 64px; position:relative; overflow:hidden;
+  }
+  header.top::after{
+    content:""; position:absolute; right:-60px; top:-60px; width:260px; height:260px;
+    border-radius:50%; background:radial-gradient(circle, rgba(200,168,75,0.25) 0%, transparent 70%);
+  }
+  .top-inner{max-width:880px; margin:0 auto; position:relative;}
+  .badge{
+    display:inline-block; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.3);
+    color:#f1e9d2; font-size:12.5px; letter-spacing:.08em; text-transform:uppercase;
+    padding:6px 14px; border-radius:100px; margin-bottom:22px;
+  }
+  header.top h1{font-size:2.5rem; margin:0 0 14px; font-weight:700; max-width:680px;}
+  header.top p.sub{font-size:1.08rem; color:#dbe3f4; max-width:620px; margin:0;}
+
+  /* NAV LIVELLI */
+  .toolbar{
+    position:sticky; top:0; z-index:20; background:var(--carta);
+    border-bottom:1px solid var(--riga); padding:14px 24px;
+  }
+  .toolbar-inner{max-width:880px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;}
+  .toolbar-label{font-size:.85rem; color:var(--testo-soft);}
+  .switch-group{display:flex; background:#eef0f4; border-radius:100px; padding:4px; gap:2px;}
+  .switch-group button{
+    border:none; background:transparent; padding:8px 16px; border-radius:100px;
+    font-family:'DM Sans'; font-size:.88rem; font-weight:700; color:var(--testo-soft); cursor:pointer;
+    transition:all .2s;
+  }
+  .switch-group button.active{background:var(--blu); color:#fff;}
+
+  /* SEZIONI */
+  section{padding:44px 0; border-bottom:1px solid var(--riga);}
+  section:last-of-type{border-bottom:none;}
+  .num{
+    font-family:'Playfair Display'; font-style:italic; color:var(--oro);
+    font-size:.95rem; margin-bottom:6px; display:block;
+  }
+  h2{font-size:1.65rem; margin:0 0 18px; color:var(--blu);}
+  h3{font-size:1.15rem; color:var(--blu); margin:26px 0 10px;}
+  p{margin:0 0 14px; color:var(--testo);}
+  ul, ol{padding-left:22px; margin:0 0 14px;}
+  li{margin-bottom:8px;}
+  strong{color:var(--blu);}
+
+  .card{
+    background:#fff; border:1px solid var(--riga); border-radius:12px;
+    padding:20px 22px; margin:16px 0;
+  }
+  .card.verde{border-left:4px solid var(--verde);}
+  .card.blu{border-left:4px solid var(--blu);}
+  .card.oro{border-left:4px solid var(--oro);}
+
+  /* APPROFONDIMENTO (sostegno) */
+  .avanzato{
+    background:var(--blu-chiaro); border:1px dashed #b7c3e0; border-radius:12px;
+    padding:18px 20px; margin:16px 0; display:none;
+  }
+  body.mostra-avanzato .avanzato{display:block;}
+  .avanzato .tag{
+    font-size:.72rem; text-transform:uppercase; letter-spacing:.07em; font-weight:700;
+    color:var(--blu); display:block; margin-bottom:8px;
+  }
+
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-size:.93rem;}
+  th, td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--riga);}
+  th{background:#f4f5f8; color:var(--blu); font-weight:700;}
+  tr:last-child td{border-bottom:none;}
+
+  .gaussiana{width:100%; max-width:520px; display:block; margin:18px auto;}
+  .checklist{list-style:none; padding:0;}
+  .checklist li{
+    padding:12px 14px 12px 44px; position:relative; background:#fff;
+    border:1px solid var(--riga); border-radius:10px; margin-bottom:10px;
+  }
+  .checklist li::before{
+    content:""; position:absolute; left:14px; top:14px; width:18px; height:18px;
+    border:2px solid var(--verde); border-radius:5px;
+  }
+  .glossario dt{font-weight:700; color:var(--blu); margin-top:14px;}
+  .glossario dd{margin:2px 0 0; color:var(--testo-soft);}
+
+  /* LOOKUP CODICI */
+  .lookup-box{display:flex; gap:10px; flex-wrap:wrap; margin:18px 0 4px;}
+  .lookup-box input{
+    flex:1; min-width:220px; padding:12px 14px; border:1px solid var(--riga); border-radius:8px;
+    font-family:'DM Sans'; font-size:1rem; background:#fff;
+  }
+  .lookup-box input:focus{outline:2px solid var(--blu); outline-offset:1px;}
+  .lookup-box button{
+    background:var(--blu); color:#fff; border:none; padding:12px 22px; border-radius:8px;
+    font-family:'DM Sans'; font-weight:700; font-size:.95rem; cursor:pointer;
+  }
+  .lookup-box button:hover{background:#001d5c;}
+  .lookup-result{
+    background:#fff; border:1px solid var(--riga); border-left:4px solid var(--verde);
+    border-radius:12px; padding:18px 22px; margin-top:14px;
+  }
+  .lookup-result.not-found{border-left-color:var(--oro);}
+  .lookup-result h4{margin:0 0 6px; color:var(--blu); font-family:'Playfair Display'; font-size:1.15rem;}
+  .lookup-result .meta{font-size:.8rem; color:var(--testo-soft); text-transform:uppercase; letter-spacing:.05em; margin-bottom:10px;}
+  .lookup-result a{color:var(--blu); font-size:.9rem;}
+
+  /* STEP ACCORDION */
+  .step{border:1px solid var(--riga); border-radius:10px; margin-bottom:10px; overflow:hidden; background:#fff;}
+  .step-head{
+    width:100%; text-align:left; background:#f4f5f8; border:none; padding:14px 18px;
+    font-family:'DM Sans'; font-weight:700; font-size:.98rem; color:var(--blu); cursor:pointer;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .step-head::after{content:"+"; font-size:1.2rem; color:var(--oro);}
+  .step-head.open::after{content:"–";}
+  .step-body{display:none; padding:6px 22px 16px;}
+  .step-body.open{display:block;}
+
+  /* APPENDICE: PROFILO DI SINTESI */
+  #appendice{padding-top:44px;}
+  .app-intro-badge{
+    display:inline-block; background:var(--blu-chiaro); color:var(--blu); font-size:.78rem;
+    font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:5px 12px;
+    border-radius:100px; margin-bottom:12px;
+  }
+  .app-sub{color:var(--testo-soft); margin-bottom:10px;}
+  .app-block{padding:22px 0; border-top:1px dashed var(--riga);}
+  .app-block:first-of-type{border-top:none;}
+  .app-label{font-family:'Playfair Display'; font-style:italic; color:var(--oro); font-size:.85rem; display:block; margin-bottom:4px;}
+  .app-block h3{margin-top:0;}
+  label.app-field-label{display:block; font-weight:700; font-size:.85rem; color:var(--blu); margin-bottom:6px;}
+  #appendice input[type=text], #appendice input[type=number], #appendice select{
+    width:100%; padding:10px 12px; border:1px solid var(--riga); border-radius:8px;
+    font-family:'DM Sans'; font-size:.93rem; background:#fff; margin-bottom:14px;
+  }
+  #appendice input:focus, #appendice select:focus{outline:2px solid var(--blu); outline-offset:1px;}
+  .riga-test{display:grid; grid-template-columns:1fr 1.3fr 0.9fr 0.9fr auto; gap:10px; align-items:end; margin-bottom:10px;}
+  .riga-test label{margin-bottom:4px;}
+  .riga-test input, .riga-test select{margin-bottom:0;}
+  .rm-btn{background:none; border:1px solid var(--riga); border-radius:8px; color:#b5433a; cursor:pointer; padding:10px 12px; height:41px;}
+  .add-btn{background:none; border:1px dashed var(--blu); color:var(--blu); border-radius:8px; padding:9px 16px; cursor:pointer; font-weight:700; font-size:.88rem; margin-top:4px;}
+  .icf-grid{display:grid; grid-template-columns:1fr 140px; gap:10px 16px; align-items:center;}
+  .icf-grid .dominio-label{font-size:.93rem; padding:4px 0;}
+  .main-btn{
+    background:var(--verde); color:#fff; border:none; padding:14px 26px; border-radius:8px;
+    font-family:'DM Sans'; font-weight:700; font-size:1rem; cursor:pointer; margin-top:10px;
+  }
+  .main-btn:hover{background:#167a5b;}
+  .clear-btn{background:none; border:none; color:var(--testo-soft); font-size:.85rem; text-decoration:underline; cursor:pointer; margin-left:14px;}
+  #output{margin-top:26px;}
+  .out-block{background:#fff; border:1px solid var(--riga); border-left:4px solid var(--blu); border-radius:12px; padding:18px 22px; margin-bottom:14px;}
+  .out-block.verde{border-left-color:var(--verde);}
+  .out-block.oro{border-left-color:var(--oro);}
+  .out-block.rosso{border-left-color:#b5433a;}
+  .out-block h4{margin:0 0 8px; color:var(--blu); font-family:'Playfair Display'; font-size:1.05rem;}
+  .out-block ul{margin:6px 0 0; padding-left:20px;}
+  .pill{display:inline-block; font-size:.75rem; font-weight:700; padding:3px 10px; border-radius:100px; margin-left:8px;}
+  .pill.norma{background:#e3f4ec; color:#167a5b;}
+  .pill.lieve{background:#fdf2df; color:#8a6c1f;}
+  .pill.attenzione{background:#fbe6d8; color:#a1541c;}
+  .pill.clinica{background:#fbe0de; color:#b5433a;}
+  .pill.severa{background:#f6cfcb; color:#8c2a20;}
+  .empty-note{color:var(--testo-soft); font-size:.9rem; font-style:italic;}
+  .disclaimer{font-size:.82rem; color:var(--testo-soft); border-top:1px solid var(--riga); padding-top:14px; margin-top:20px;}
+  @media print{
+    header.top, .toolbar, .add-btn, .clear-btn, .main-btn{display:none;}
+  }
+  @media (max-width:640px){
+    .riga-test{grid-template-columns:1fr 1fr;}
+    .riga-test .rm-btn{grid-column:span 2;}
+  }
+
+  footer{padding:36px 24px; text-align:center; color:var(--testo-soft); font-size:.85rem;}
+  footer a{color:var(--blu);}
+
+  @media (max-width:600px){
+    header.top h1{font-size:1.9rem;}
+    .toolbar-inner{flex-direction:column; align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <span class="badge">Istituto Comprensivo "Martin Luther King" · Castelcovati</span>
+    <h1>Leggere una diagnosi senza perdersi</h1>
+    <p class="sub">Guida operativa per orientarsi in certificazioni, ICD, ICF e batterie di test — non un manuale normativo, ma uno strumento pratico da tenere aperto mentre si legge un fascicolo.</p>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <span class="toolbar-label">Livello di lettura</span>
+    <div class="switch-group" id="switchLivello">
+      <button id="btnBase" class="active">Essenziale</button>
+      <button id="btnAvanzato">+ Livello avanzato</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<section id="intro">
+  <span class="num">Prima di iniziare</span>
+  <h2>A cosa serve questa guida</h2>
+  <p>Quando arriva un fascicolo — diagnosi, certificazione, verbale ICF, relazione di un centro — la prima difficoltà non è normativa, è <strong>di lettura</strong>: sigle, codici, punteggi che non dicono nulla se non si sa dove guardare. Questa guida non sostituisce lo specialista e non insegna a fare diagnosi: insegna a <strong>orientarsi nel documento</strong> che avete in mano, per capire cosa significa in termini di potenzialità e difficoltà reali dell'alunno, e collegarlo a PDP e PEI.</p>
+  <p>Il pulsante in alto aggiunge, dove utile, un riquadro con un livello di lettura più tecnico, utile a chi vuole entrare più nel dettaglio dei codici e dei criteri diagnostici. Chi si affaccia per la prima volta può restare sul livello essenziale: è già sufficiente per capire il senso del documento.</p>
+</section>
+
+<section id="anatomia">
+  <span class="num">01</span>
+  <h2>L'anatomia di un fascicolo</h2>
+  <p>Ogni certificazione, per quanto diversa da centro a centro, ha quasi sempre le stesse parti. Sapere dove sono evita di leggere tutto e capire poco.</p>
+  <div class="card blu">
+    <ul>
+      <li><strong>Dati e anamnesi</strong> — chi è, da quando è seguito, motivo dell'invio.</li>
+      <li><strong>Strumenti utilizzati</strong> — quali test/scale sono stati somministrati (è la parte più tecnica, vedi sezione 03).</li>
+      <li><strong>Quadro diagnostico</strong> — la diagnosi vera e propria, spesso con un codice (ICD-9 o ICD-10, sezione 02).</li>
+      <li><strong>Profilo di funzionamento</strong> — a volte descritto secondo i domini ICF (sezione 04): cosa l'alunno riesce a fare e dove incontra ostacoli.</li>
+      <li><strong>Indicazioni per la scuola</strong> — suggerimenti operativi, spesso la parte più utile e più corta.</li>
+    </ul>
+  </div>
+  <p>Regola pratica: <strong>si legge dalla fine verso l'inizio</strong>. Le indicazioni per la scuola dicono cosa serve fare; il quadro diagnostico e il profilo di funzionamento dicono perché.</p>
+</section>
+
+<section id="icd">
+  <span class="num">02</span>
+  <h2>ICD-9 e ICD-10: cosa sono i codici</h2>
+  <p>L'ICD è la classificazione internazionale delle malattie, usata dai clinici per etichettare in modo standard una diagnosi. In Italia convivono ancora fascicoli con <strong>ICD-9-CM</strong> (più vecchio, codici numerici tipo <em>315.00</em>) e con <strong>ICD-10</strong> (più recente, codici alfanumerici tipo <em>F81.0</em>). Non serve saperli a memoria: serve sapere come sono fatti per riconoscerli e cercarli.</p>
+  <table>
+    <tr><th>Sistema</th><th>Forma del codice</th><th>Esempio</th><th>Cosa indica l'esempio</th></tr>
+    <tr><td>ICD-9-CM</td><td>numerico, con punto</td><td>315.00</td><td>Disturbo specifico della lettura</td></tr>
+    <tr><td>ICD-10</td><td>lettera + numeri</td><td>F81.0</td><td>Disturbo specifico della lettura</td></tr>
+    <tr><td>ICD-10</td><td>lettera + numeri</td><td>F84.0</td><td>Autismo infantile</td></tr>
+    <tr><td>ICD-10</td><td>lettera + numeri</td><td>F70–F79</td><td>Range disabilità intellettiva (lieve → gravissima)</td></tr>
+  </table>
+  <p>La lettera iniziale dell'ICD-10 dice già la macro-area: <strong>F</strong> = disturbi psichici/comportamentali (qui rientrano DSA, autismo, disabilità intellettiva), <strong>G</strong> = malattie del sistema nervoso, <strong>Q</strong> = malformazioni congenite. Non serve altro per orientarsi al primo sguardo.</p>
+  <div class="avanzato">
+    <span class="tag">Approfondimento avanzato</span>
+    <p>I codici F80–F89 (Disturbi evolutivi specifici) sono quelli più frequenti nei fascicoli DSA: F80 linguaggio, F81 apprendimento scolastico (F81.0 lettura, F81.1 espressione scritta, F81.2 calcolo, F81.3 forme miste), F82 coordinazione motoria, F84 spettro autistico. Il range F70–F79 per la disabilità intellettiva si legge insieme al livello (lieve, moderato, grave, gravissimo) che determina il comma di riferimento della L.104/92 (comma 1 vs comma 3), decisivo per il numero di ore di sostegno.</p>
+  </div>
+</section>
+
+<section id="icf">
+  <span class="num">03</span>
+  <h2>Il modello ICF: non "cosa manca" ma "come funziona nei contesti"</h2>
+  <p>L'ICF (e per l'età evolutiva l'<strong>ICF-CY</strong>) non è una lista di malattie: è una fotografia del <strong>funzionamento</strong> della persona nel suo contesto di vita. La stessa diagnosi può tradursi in profili di funzionamento molto diversi da un alunno all'altro: è per questo che l'ICF è più utile della sola etichetta diagnostica per costruire il PEI.</p>
+  <div class="card verde">
+    <p style="margin-bottom:6px"><strong>I quattro domini ICF</strong></p>
+    <ul>
+      <li><strong>Funzioni corporee</strong> — es. attenzione, memoria, funzioni emotive, linguaggio.</li>
+      <li><strong>Strutture corporee</strong> — le parti anatomiche coinvolte (poco usato in ambito scolastico).</li>
+      <li><strong>Attività e partecipazione</strong> — cosa l'alunno fa concretamente: comunicare, apprendere, relazionarsi, muoversi. È il dominio più utile per la scuola.</li>
+      <li><strong>Fattori ambientali</strong> — cosa nel contesto (aula, famiglia, materiali, relazioni) facilita o ostacola. Ricorda: nell'ICF anche il contesto è "causa" della difficoltà, non solo l'alunno.</li>
+    </ul>
+  </div>
+  <p>Ogni voce ICF è accompagnata da un <strong>qualificatore</strong>, un numero da 0 a 4 che dice quanto quella funzione è compromessa:</p>
+  <table>
+    <tr><th>Qualificatore</th><th>Significato pratico</th></tr>
+    <tr><td>0</td><td>Nessuna difficoltà</td></tr>
+    <tr><td>1</td><td>Difficoltà lieve (presente, ma poco significativa)</td></tr>
+    <tr><td>2</td><td>Difficoltà media</td></tr>
+    <tr><td>3</td><td>Difficoltà grave</td></tr>
+    <tr><td>4</td><td>Difficoltà completa</td></tr>
+  </table>
+  <p>Esempio di lettura: se in "Attività e partecipazione" la voce sull'attenzione riporta un qualificatore 3, e i fattori ambientali su "supporto della famiglia" hanno un qualificatore basso (0-1, quindi facilitante), il messaggio pratico è: la difficoltà è seria, ma la famiglia è una risorsa da coinvolgere attivamente nel percorso.</p>
+  <div class="avanzato">
+    <span class="tag">Approfondimento avanzato</span>
+    <p>Il qualificatore dei fattori ambientali si legge al contrario rispetto agli altri: un numero alto preceduto da segno positivo (es. +3) indica un forte facilitatore, un numero alto senza segno o con segno negativo indica una forte barriera. Nel verbale ICF-CY collegato al PEI, incrociate sempre "Attività e partecipazione" con "Fattori ambientali" della stessa area: è lì che si scrivono gli obiettivi realistici, perché dicono non solo quanto è difficile un compito ma cosa nel contesto scuola può essere modificato per renderlo accessibile.</p>
+  </div>
+</section>
+
+<section id="test">
+  <span class="num">04</span>
+  <h2>Le batterie di test: leggere i numeri senza spaventarsi</h2>
+  <p>Nelle relazioni cliniche trovate spesso tabelle di punteggi legate a test standardizzati. Non serve conoscere ogni test: serve sapere leggere <strong>tre unità di misura</strong> che tornano quasi sempre.</p>
+  <table>
+    <tr><th>Unità</th><th>Cosa significa in pratica</th></tr>
+    <tr><td>Percentile</td><td>Posizione rispetto a 100 coetanei. Percentile 25 = il bambino fa meglio di 25 su 100 bambini della sua età. Sotto il 5° percentile è generalmente soglia di attenzione clinica.</td></tr>
+    <tr><td>Deviazione standard (DS)</td><td>Distanza dalla media del gruppo di riferimento. -1 DS è una lieve difficoltà, -2 DS è la soglia tipica per parlare di disturbo specifico, -3 DS indica una difficoltà severa.</td></tr>
+    <tr><td>Quoziente/punteggio standard (es. QI)</td><td>Media fissata convenzionalmente a 100. Il range 85-115 è considerato nella norma; sotto 70 si entra nell'area della disabilità intellettiva.</td></tr>
+  </table>
+  <p>Immaginate una curva a campana (distribuzione normale): il centro è la media, le code sono le difficoltà o i talenti estremi. Più un punteggio è verso la coda sinistra, più la difficoltà in quell'area è marcata.</p>
+
+  <h3>Percentile e DS a confronto: la stessa soglia, due linguaggi diversi</h3>
+  <p>Un errore frequente è pensare che percentile e DS siano scale slegate. In realtà si può passare dall'uno all'altro, ed è utile avere in mente qualche corrispondenza per non farsi ingannare da un numero isolato:</p>
+  <table>
+    <tr><th>Deviazione standard</th><th>Percentile corrispondente (circa)</th><th>Lettura pratica</th></tr>
+    <tr><td>0 (in media)</td><td>50°</td><td>Nella norma, prestazione tipica per l'età</td></tr>
+    <tr><td>-1 DS</td><td>16°</td><td>Lieve fragilità, da monitorare</td></tr>
+    <tr><td>-1,5 DS</td><td>7°</td><td>Zona di attenzione, spesso soglia per screening/BES</td></tr>
+    <tr><td>-2 DS</td><td>2-5°</td><td>Soglia clinica tipica per un disturbo specifico</td></tr>
+    <tr><td>-3 DS</td><td>&lt;1°</td><td>Difficoltà severa</td></tr>
+  </table>
+
+  <h3>Le famiglie di test più frequenti, per area</h3>
+  <div class="card oro">
+    <p><strong>Livello cognitivo generale</strong></p>
+    <ul>
+      <li><strong>WISC-IV / WISC-V</strong> (6-16 anni) e <strong>WPPSI-III</strong> (età prescolare) — QI totale + indici separati (comprensione verbale, ragionamento visuo-percettivo, memoria di lavoro, velocità di elaborazione). Uno scarto marcato tra indici è spesso più informativo del QI totale da solo: es. memoria di lavoro molto bassa con resto nella norma orienta verso un profilo attentivo, non intellettivo.</li>
+      <li><strong>Leiter-3, Raven</strong> — usati quando serve un dato "non verbale" (es. sospetto disturbo del linguaggio, alunni stranieri da poco in Italia): riducono il peso della componente linguistica sul punteggio.</li>
+    </ul>
+    <p><strong>Lettura e scrittura</strong></p>
+    <ul>
+      <li><strong>Prove MT (Cornoldi)</strong> — velocità e correttezza di lettura ad alta voce, comprensione del testo: tre misure separate, un alunno può essere lento ma corretto, o veloce ma con errori.</li>
+      <li><strong>DDE-2 (Batteria per la Diagnosi della Dislessia e Disortografia Evolutiva)</strong> — lettura di parole/non-parole, utile a distinguere una difficoltà fonologica da una lessicale.</li>
+      <li><strong>Batteria per la scrittura (dettato di parole/non-parole, brano)</strong> — errori fonologici, non fonologici, fonetici: la tipologia di errore conta più del numero totale.</li>
+    </ul>
+    <p><strong>Calcolo</strong></p>
+    <ul>
+      <li><strong>AC-MT</strong> — calcolo a mente e scritto, cognizione numerica: spesso indipendente dalle difficoltà di lettura, quindi non date per scontato che un alunno dislessico sia anche discalculico.</li>
+    </ul>
+    <p><strong>Linguaggio</strong></p>
+    <ul>
+      <li><strong>TVL, Peabody (PPVT)</strong> — comprensione e produzione lessicale/morfosintattica: fondamentali quando il sospetto è un disturbo del linguaggio più che dell'apprendimento.</li>
+    </ul>
+    <p><strong>Attenzione e funzioni esecutive</strong></p>
+    <ul>
+      <li><strong>Questionari SDAG, Conners, BRIEF-2</strong> — compilati da genitori/insegnanti, non solo dal clinico: se ve li chiedono, fa parte del percorso diagnostico, non è un "controllo" sul vostro operato.</li>
+      <li><strong>CPT (Continuous Performance Test)</strong> — misura al computer di attenzione sostenuta e impulsività, usata per ADHD.</li>
+    </ul>
+    <p><strong>Spettro autistico</strong></p>
+    <ul>
+      <li><strong>ADOS-2</strong> (osservazione diretta) e <strong>ADI-R</strong> (intervista ai genitori) — sono i due strumenti "gold standard": se compaiono nel fascicolo, la diagnosi è stata posta con strumenti validati internazionalmente, non solo su base osservativa clinica.</li>
+    </ul>
+  </div>
+  <div class="avanzato">
+    <span class="tag">Approfondimento avanzato</span>
+    <p>Nella tabella finale di una relazione DSA, cercate sempre tre valori per ogni prova: rapidità (tempo o sillabe/secondo), correttezza (numero di errori) e comprensione (se presente, spesso su un test a parte). La diagnosi di dislessia richiede tipicamente compromissione di rapidità e/o correttezza sotto la soglia di 2 DS o 5° percentile, in almeno una delle due misure, con QI nella norma: è la "discrepanza" tra livello cognitivo e prestazione specifica il cuore del criterio diagnostico DSA, non il fatto che il bambino "faccia fatica".</p>
+    <p>Attenzione anche alla <strong>data di somministrazione</strong>: un WISC ha una validità di riferimento di circa 2-3 anni per la scuola, un test di lettura andrebbe idealmente rinnovato ad ogni passaggio di ciclo. Se i punteggi in fascicolo sono più vecchi, trattateli come indicativi ma verificate sempre con l'osservazione in classe più recente.</p>
+  </div>
+</section>
+
+<section id="lookup">
+  <span class="num">05</span>
+  <h2>Cerca un codice: cosa significa nel fascicolo che hai in mano</h2>
+  <p>Digita il codice così come compare nella diagnosi (es. <em>F81.0</em>, <em>315.00</em>, <em>F84.0</em>): trovi una spiegazione pratica, l'area ICF da controllare per prima e un link per approfondire sulla classificazione ufficiale.</p>
+  <div class="lookup-box">
+    <input type="text" id="codeInput" placeholder="Es. F81.0 oppure 315.00" autocomplete="off">
+    <button id="codeSearchBtn">Cerca</button>
+  </div>
+  <div id="codeResult"></div>
+  <p style="font-size:.85rem; color:var(--testo-soft); margin-top:10px;">Il database qui sotto copre i codici più frequenti nei fascicoli scolastici, non è esaustivo: per un codice non presente, usa i link diretti alle classificazioni ufficiali.</p>
+  <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:6px;">
+    <a href="https://icd.who.int/browse10/2019/en" target="_blank" rel="noopener">→ Browser ufficiale ICD-10 (OMS)</a>
+    <a href="https://www.epicentro.iss.it/asma/classificazione-icd9" target="_blank" rel="noopener">→ ICD-9-CM (Istituto Superiore di Sanità)</a>
+  </div>
+  <div class="card blu" style="margin-top:20px;">
+    <p style="margin-bottom:8px;"><strong>Hai più elementi insieme (codice, punteggi, ICF)?</strong></p>
+    <p style="margin-bottom:12px;">Il <strong>Profilo di sintesi</strong>, in appendice a questa guida, ti permette di inserire quello che hai a disposizione — anche un solo dato — e ottenere una lettura d'insieme, con eventuali discrepanze tra livello cognitivo e prestazioni specifiche.</p>
+    <a href="#appendice" style="display:inline-block; background:var(--blu); color:#fff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700;">Vai al Profilo di sintesi ↓</a>
+  </div>
+</section>
+
+<section id="domini">
+  <span class="num">06</span>
+  <h2>I domini funzionali (tipo INPS/GLO): la mappa per il PEI</h2>
+  <p>Nei verbali di accertamento (INPS, commissioni ASL) e nei GLO, il funzionamento dell'alunno viene spesso descritto per <strong>aree/domini</strong>, più vicine alla vita quotidiana rispetto ai soli codici diagnostici. Sono la base più diretta per scrivere obiettivi di PEI reali.</p>
+  <table>
+    <tr><th>Dominio</th><th>Cosa osservare in classe</th></tr>
+    <tr><td>Autonomia personale e sociale</td><td>Gestione del materiale, cura di sé, orientamento spazio-temporale, autonomia negli spostamenti.</td></tr>
+    <tr><td>Comunicazione e linguaggio</td><td>Comprensione di consegne, espressione verbale/non verbale, uso di strumenti alternativi (CAA).</td></tr>
+    <tr><td>Cognitivo</td><td>Attenzione, memoria, ragionamento, velocità di elaborazione.</td></tr>
+    <tr><td>Motorio-prassico</td><td>Motricità globale e fine, coordinazione, uso di strumenti (penna, forbici, tastiera).</td></tr>
+    <tr><td>Affettivo-relazionale</td><td>Relazione con pari e adulti, regolazione emotiva, motivazione.</td></tr>
+    <tr><td>Apprendimento</td><td>Lettura, scrittura, calcolo, metodo di studio.</td></tr>
+  </table>
+  <p>Il collegamento pratico: <strong>ogni dominio con una difficoltà segnalata dovrebbe trovare un corrispettivo nel PEI</strong> — non necessariamente come obiettivo separato, ma come area monitorata. Se un dominio non compare nella diagnosi ma voi lo osservate in classe, è comunque legittimo (anzi doveroso) inserirlo: la diagnosi fotografa un momento, l'osservazione scolastica è continua.</p>
+</section>
+
+<section id="percorso">
+  <span class="num">07</span>
+  <h2>Il percorso pratico: cosa fare, passo per passo</h2>
+  <p>Ogni fase del percorso "Cosa fare quando arriva un fascicolo" è scomposta qui in azioni concrete. Clicca su ciascun passo per aprire i sotto-passi.</p>
+
+  <div class="step">
+    <button class="step-head" data-step="s1">1 · Leggete prima le indicazioni per la scuola</button>
+    <div class="step-body" id="s1">
+      <ul>
+        <li>Individuate chi ha scritto la relazione (centro pubblico, privato, ospedaliero) e la data.</li>
+        <li>Controllate se è indicata una scadenza di rinnovo/aggiornamento della diagnosi.</li>
+        <li>Segnate gli strumenti citati per nome preciso (es. "sintesi vocale", non genericamente "strumenti compensativi").</li>
+        <li>Se qualcosa non è chiaro, annotatelo per il team: non interpretate da soli un'indicazione ambigua.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <button class="step-head" data-step="s2">2 · Individuate il codice diagnostico</button>
+    <div class="step-body" id="s2">
+      <ul>
+        <li>Copiate il codice esatto (es. F81.0) e cercatelo nella sezione 05 di questa guida.</li>
+        <li>Verificate se è ICD-9 o ICD-10 (forma del codice, sezione 02).</li>
+        <li>Individuate la macro-area (lettera iniziale per ICD-10) per capire subito il campo: apprendimento, linguaggio, autismo, disabilità intellettiva…</li>
+        <li>Se ci sono più codici, distinguete diagnosi principale da comorbilità: la principale orienta l'obiettivo prioritario del PEI/PDP.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <button class="step-head" data-step="s3">3 · Cercate il profilo di funzionamento</button>
+    <div class="step-body" id="s3">
+      <ul>
+        <li>Cercate nel documento una sezione ICF o una descrizione discorsiva del "come funziona" l'alunno.</li>
+        <li>Segnate almeno un punto di forza esplicito: se non c'è, chiedetelo voi stessi durante il confronto con la famiglia/team.</li>
+        <li>Individuate i fattori ambientali citati (facilitatori e barriere): sono spesso la parte più actionable per la scuola.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <button class="step-head" data-step="s4">4 · Guardate i punteggi dei test</button>
+    <div class="step-body" id="s4">
+      <ul>
+        <li>Individuate percentile o DS per ogni prova (sezione 04) e collocatele sulla tabella di corrispondenza.</li>
+        <li>Segnate la data del test: se ha più di 2-3 anni, trattatelo come indicativo, non definitivo.</li>
+        <li>Non sommate mentalmente i punteggi per farvi "un'idea complessiva": aree diverse (lettura, calcolo, attenzione) vanno lette separatamente.</li>
+        <li>Non condividete i punteggi numerici con la classe o con altri genitori: restano dati sanitari sensibili.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <button class="step-head" data-step="s5">5 · Incrociate con i domini funzionali</button>
+    <div class="step-body" id="s5">
+      <ul>
+        <li>Per ogni dominio della tabella in sezione 06, segnate: "coinvolto secondo diagnosi" / "osservato in classe" / "entrambi".</li>
+        <li>Le aree "osservate in classe" ma non citate in diagnosi sono comunque legittime da inserire nel PEI.</li>
+        <li>Individuate 1-2 domini prioritari su cui costruire i primi obiettivi, invece di provare a coprirli tutti subito.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <button class="step-head" data-step="s6">6 · Confrontatevi col team e la famiglia</button>
+    <div class="step-body" id="s6">
+      <ul>
+        <li>Preparate 2-3 domande concrete per la famiglia prima dell'incontro (es. "a casa come gestite i compiti scritti?").</li>
+        <li>Condividete con il team le vostre osservazioni di classe prima ancora di leggere insieme la diagnosi: evita che la diagnosi "anticipi" il giudizio sull'alunno.</li>
+        <li>Verbalizzate sempre chi ha detto cosa (famiglia, specialista, scuola): utile in caso di futuri aggiornamenti del PEI/PDP.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <button class="step-head" data-step="s7">7 · Traducete tutto in scelte didattiche concrete</button>
+    <div class="step-body" id="s7">
+      <ul>
+        <li>Per ogni difficoltà individuata, scrivete una risposta didattica osservabile (es. "tempo aggiuntivo 30%" non "supporto nei compiti").</li>
+        <li>Evitate di trascrivere nel PDP/PEI il linguaggio clinico della diagnosi: traducetelo in azioni scolastiche.</li>
+        <li>Fissate una data di verifica intermedia (non solo a fine anno) per capire se le misure scelte funzionano davvero.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="errori">
+  <span class="num">08</span>
+  <h2>Errori comuni da evitare</h2>
+  <table>
+    <tr><th>Errore</th><th>Perché è un problema</th><th>Cosa fare invece</th></tr>
+    <tr><td>Confondere codice diagnostico e gravità</td><td>Due alunni con lo stesso F81.0 possono avere bisogni molto diversi</td><td>Guardate sempre il profilo di funzionamento, non solo il codice</td></tr>
+    <tr><td>Fermarsi al QI totale</td><td>Nasconde scarti tra indici che sono spesso l'informazione più utile</td><td>Controllate sempre gli indici parziali del test cognitivo</td></tr>
+    <tr><td>Trattare l'ICF come lista di deficit</td><td>Ignora i fattori ambientali positivi, che sono risorse reali</td><td>Cercate sempre almeno un facilitatore da valorizzare</td></tr>
+    <tr><td>Copiare la diagnosi nel PDP/PEI</td><td>Il linguaggio clinico non è operativo per la didattica quotidiana</td><td>Traducete ogni indicazione in un'azione scolastica osservabile</td></tr>
+    <tr><td>Aspettarsi che la diagnosi "spieghi tutto"</td><td>È una fotografia di un momento, non una descrizione esaustiva e definitiva</td><td>Integrate sempre con l'osservazione continua in classe</td></tr>
+    <tr><td>Condividere punteggi o codici con chi non ne ha titolo</td><td>Sono dati sanitari sensibili, tutelati dalla privacy</td><td>Parlatene solo nelle sedi previste (team, GLO, famiglia)</td></tr>
+    <tr><td>Usare punteggi vecchi come se fossero attuali</td><td>Un test di 3-4 anni fa può non rappresentare più l'alunno di oggi</td><td>Segnate sempre la data del test e verificate con l'osservazione recente</td></tr>
+  </table>
+</section>
+
+<section id="glossario">
+  <span class="num">09</span>
+  <h2>Glossario rapido</h2>
+  <dl class="glossario">
+    <dt>ICD-9-CM / ICD-10</dt>
+    <dd>Classificazioni internazionali delle diagnosi, usate dai clinici per codificare in modo standard.</dd>
+    <dt>ICF / ICF-CY</dt>
+    <dd>Classificazione internazionale del funzionamento; CY = versione per l'età evolutiva (Children and Youth).</dd>
+    <dt>Qualificatore</dt>
+    <dd>Numero da 0 a 4 (o segno + per i fattori ambientali) che indica l'entità di una difficoltà o di un facilitatore.</dd>
+    <dt>Percentile</dt>
+    <dd>Posizione di un punteggio rispetto a un campione di 100 coetanei.</dd>
+    <dt>Deviazione standard (DS)</dt>
+    <dd>Distanza statistica dalla media del gruppo di riferimento; -2 DS è la soglia tipica di attenzione clinica.</dd>
+    <dt>Discrepanza</dt>
+    <dd>Scarto significativo tra livello cognitivo generale e prestazione in un'abilità specifica: criterio chiave nei DSA.</dd>
+    <dt>Dominio funzionale</dt>
+    <dd>Area di vita (autonomia, comunicazione, apprendimento...) usata per descrivere il funzionamento in modo pratico.</dd>
+  </dl>
+</section>
+
+</div>
+
+<div class="wrap" id="appendice">
+  <span class="app-intro-badge">Appendice</span>
+  <h2 style="margin-top:0;">Profilo di sintesi</h2>
+  <p class="app-sub">Inserisci quello che hai a disposizione dal fascicolo — anche un solo campo. Nessun dato è obbligatorio: lo strumento costruisce la lettura con quello che c'è.</p>
+
+  <div class="app-block">
+    <span class="app-label">A</span>
+    <h3>Codice diagnostico</h3>
+    <p class="hint" style="color:var(--testo-soft); font-size:.9rem;">Se il fascicolo riporta un codice ICD-9 o ICD-10, inseriscilo qui (es. F81.0, 315.00).</p>
+    <label class="app-field-label" for="pdsCodiceInput">Codice</label>
+    <input type="text" id="pdsCodiceInput" placeholder="Es. F81.0">
+  </div>
+
+  <div class="app-block">
+    <span class="app-label">B</span>
+    <h3>Punteggi dei test</h3>
+    <p class="hint" style="color:var(--testo-soft); font-size:.9rem;">Aggiungi una riga per ogni prova. Puoi indicare il test specifico (WISC, ADOS-2, Prove MT...) e il valore come percentile, DS o cut-off qualitativo.</p>
+    <div id="righeTest"></div>
+    <button class="add-btn" id="addRigaTest" type="button">+ Aggiungi una prova</button>
+  </div>
+
+  <div class="app-block">
+    <span class="app-label">C</span>
+    <h3>Domini osservati (ICF / funzionali)</h3>
+    <p class="hint" style="color:var(--testo-soft); font-size:.9rem;">Indica il qualificatore (0-4) per i domini che conosci, lascia "Non valutato" gli altri.</p>
+    <div class="icf-grid" id="icfGrid"></div>
+  </div>
+
+  <div style="margin:22px 0 8px;">
+    <button class="main-btn" id="generaBtn" type="button">Genera profilo di sintesi</button>
+    <button class="clear-btn" id="clearBtn" type="button">Svuota tutto</button>
+  </div>
+
+  <div id="output"></div>
+</div>
+
+<div class="wrap">
+
+<footer>
+  Linee guida operative — IC "Martin Luther King", Castelcovati · a cura di Stefano Testa<br>
+  Documento pratico, non sostitutivo delle indicazioni normative e cliniche ufficiali.
+</footer>
+
+</div>
+
+<script>
+  const btnBase = document.getElementById('btnBase');
+  const btnAv = document.getElementById('btnAvanzato');
+  btnBase.addEventListener('click', () => {
+    document.body.classList.remove('mostra-avanzato');
+    btnBase.classList.add('active');
+    btnAv.classList.remove('active');
+  });
+  btnAv.addEventListener('click', () => {
+    document.body.classList.add('mostra-avanzato');
+    btnAv.classList.add('active');
+    btnBase.classList.remove('active');
+  });
+
+  // ACCORDION STEP
+  document.querySelectorAll('.step-head').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const body = document.getElementById(btn.dataset.step);
+      const isOpen = body.classList.toggle('open');
+      btn.classList.toggle('open', isOpen);
+    });
+  });
+
+  // DATABASE CODICI (non esaustivo: copre i casi più frequenti nei fascicoli scolastici)
+  const codiciDB = {
+    "F70": {sistema:"ICD-10", etichetta:"Disabilità intellettiva lieve", pratico:"QI indicativamente 50-69. In genere autonomia di base raggiungibile, apprendimenti scolastici possibili con tempi e materiali adattati.", icf:"Attività e partecipazione: apprendimento, autonomia personale."},
+    "F71": {sistema:"ICD-10", etichetta:"Disabilità intellettiva moderata", pratico:"QI indicativamente 35-49. Autonomia parziale, richiede supporto continuativo negli apprendimenti e nelle attività quotidiane.", icf:"Attività e partecipazione: autonomia, comunicazione."},
+    "F72": {sistema:"ICD-10", etichetta:"Disabilità intellettiva grave", pratico:"QI indicativamente 20-34. Necessario supporto costante, obiettivi PEI centrati su autonomia e comunicazione più che su apprendimenti curricolari.", icf:"Attività e partecipazione: autonomia personale, comunicazione di base."},
+    "F73": {sistema:"ICD-10", etichetta:"Disabilità intellettiva gravissima", pratico:"QI sotto 20. Supporto totale in ogni attività, PEI fortemente centrato su bisogni di base e comunicazione.", icf:"Funzioni corporee e attività di base."},
+    "F80.0": {sistema:"ICD-10", etichetta:"Disturbo specifico dell'articolazione eloquio", pratico:"Difficoltà nella pronuncia dei suoni, comprensione e linguaggio generalmente adeguati.", icf:"Funzioni corporee: linguaggio; Attività: comunicazione."},
+    "F80.1": {sistema:"ICD-10", etichetta:"Disturbo del linguaggio espressivo", pratico:"Difficoltà a esprimersi verbalmente, comprensione nella norma o quasi.", icf:"Attività e partecipazione: comunicazione, apprendimento del linguaggio scritto."},
+    "F80.2": {sistema:"ICD-10", etichetta:"Disturbo della comprensione del linguaggio", pratico:"Difficoltà a capire ciò che viene detto, spesso sottostimata perché il bambino compensa osservando il contesto.", icf:"Attività e partecipazione: comprensione di consegne verbali."},
+    "F81.0": {sistema:"ICD-10", etichetta:"Disturbo specifico della lettura (dislessia)", pratico:"Difficoltà di rapidità e/o correttezza di lettura, con QI nella norma. Verificate se comprensione del testo è coinvolta o preservata.", icf:"Attività e partecipazione: apprendimento della lettura.", areaAttesa:"lettura"},
+    "F81.1": {sistema:"ICD-10", etichetta:"Disturbo specifico della compitazione (disortografia)", pratico:"Errori ortografici frequenti e persistenti rispetto all'età e all'istruzione ricevuta.", icf:"Attività e partecipazione: apprendimento della scrittura.", areaAttesa:"scrittura"},
+    "F81.2": {sistema:"ICD-10", etichetta:"Disturbo specifico del calcolo (discalculia)", pratico:"Difficoltà nel calcolo e/o nella cognizione numerica, spesso indipendente dalle difficoltà di lettura/scrittura.", icf:"Attività e partecipazione: apprendimento del calcolo.", areaAttesa:"calcolo"},
+    "F81.3": {sistema:"ICD-10", etichetta:"Disturbo misto delle abilità scolastiche", pratico:"Compresenza di più difficoltà specifiche (lettura, scrittura, calcolo) in comorbilità.", icf:"Attività e partecipazione: apprendimento in più aree."},
+    "F82": {sistema:"ICD-10", etichetta:"Disturbo evolutivo della coordinazione motoria", pratico:"Goffaggine motoria, difficoltà con scrittura a mano, attività sportive, autonomia in alcuni gesti quotidiani.", icf:"Funzioni e strutture corporee motorie; Attività: scrittura, motricità fine."},
+    "F84.0": {sistema:"ICD-10", etichetta:"Autismo infantile", pratico:"Compromissione della comunicazione sociale e presenza di interessi/comportamenti ristretti e ripetitivi, esordio nella prima infanzia.", icf:"Attività e partecipazione: comunicazione, interazione sociale; Fattori ambientali cruciali."},
+    "F84.1": {sistema:"ICD-10", etichetta:"Autismo atipico", pratico:"Quadro simile all'autismo infantile ma con esordio più tardivo o quadro sintomatologico parziale.", icf:"Attività e partecipazione: comunicazione, interazione sociale."},
+    "F84.5": {sistema:"ICD-10", etichetta:"Sindrome di Asperger", pratico:"Comunicazione sociale atipica senza compromissione significativa del linguaggio o del livello cognitivo.", icf:"Attività e partecipazione: interazione sociale, flessibilità."},
+    "F90.0": {sistema:"ICD-10", etichetta:"Disturbo dell'attività e dell'attenzione (ADHD)", pratico:"Disattenzione e/o iperattività-impulsività significative rispetto all'età, presenti in più contesti (non solo a scuola).", icf:"Funzioni mentali dell'attenzione; Attività: apprendimento, relazioni.", areaAttesa:"attenzione"},
+    "F93": {sistema:"ICD-10", etichetta:"Disturbi emozionali con esordio nell'infanzia", pratico:"Ansia, fobie o altre difficoltà emotive specifiche dell'età evolutiva.", icf:"Funzioni emotive; Attività e partecipazione: relazioni, partecipazione scolastica."},
+    "G40": {sistema:"ICD-10", etichetta:"Epilessia", pratico:"Da verificare sempre tipo di crisi, farmaci e protocollo da seguire a scuola in caso di crisi.", icf:"Funzioni corporee neurologiche; da coordinare con piano sanitario individuale."},
+    "Q90": {sistema:"ICD-10", etichetta:"Sindrome di Down", pratico:"Quadro cromosomico associato in genere a disabilità intellettiva di grado variabile: verificate sempre il funzionamento individuale, molto eterogeneo.", icf:"Più domini, da valutare caso per caso."},
+    "317": {sistema:"ICD-9-CM", etichetta:"Disabilità intellettiva lieve", pratico:"Equivalente ICD-9 di F70. QI indicativamente 50-69.", icf:"Attività e partecipazione: apprendimento, autonomia personale."},
+    "318.0": {sistema:"ICD-9-CM", etichetta:"Disabilità intellettiva moderata", pratico:"Equivalente ICD-9 di F71.", icf:"Attività e partecipazione: autonomia, comunicazione."},
+    "318.1": {sistema:"ICD-9-CM", etichetta:"Disabilità intellettiva grave", pratico:"Equivalente ICD-9 di F72.", icf:"Attività e partecipazione: autonomia personale, comunicazione di base."},
+    "318.2": {sistema:"ICD-9-CM", etichetta:"Disabilità intellettiva gravissima", pratico:"Equivalente ICD-9 di F73.", icf:"Funzioni corporee e attività di base."},
+    "315.00": {sistema:"ICD-9-CM", etichetta:"Disturbo specifico della lettura", pratico:"Equivalente ICD-9 di F81.0 (dislessia).", icf:"Attività e partecipazione: apprendimento della lettura.", areaAttesa:"lettura"},
+    "315.01": {sistema:"ICD-9-CM", etichetta:"Disturbo dell'espressione scritta", pratico:"Equivalente ICD-9 vicino a F81.1 (disortografia).", icf:"Attività e partecipazione: apprendimento della scrittura.", areaAttesa:"scrittura"},
+    "315.1": {sistema:"ICD-9-CM", etichetta:"Disturbo del calcolo", pratico:"Equivalente ICD-9 di F81.2 (discalculia).", icf:"Attività e partecipazione: apprendimento del calcolo.", areaAttesa:"calcolo"},
+    "315.31": {sistema:"ICD-9-CM", etichetta:"Disturbo del linguaggio espressivo", pratico:"Equivalente ICD-9 vicino a F80.1.", icf:"Attività e partecipazione: comunicazione."},
+    "315.39": {sistema:"ICD-9-CM", etichetta:"Altri disturbi dello sviluppo del linguaggio", pratico:"Categoria residuale per disturbi del linguaggio non altrimenti specificati.", icf:"Attività e partecipazione: comunicazione."},
+    "315.4": {sistema:"ICD-9-CM", etichetta:"Disturbo della coordinazione", pratico:"Equivalente ICD-9 di F82.", icf:"Funzioni e strutture corporee motorie; Attività: scrittura, motricità fine."},
+    "299.00": {sistema:"ICD-9-CM", etichetta:"Disturbo autistico", pratico:"Equivalente ICD-9 di F84.0.", icf:"Attività e partecipazione: comunicazione, interazione sociale."},
+    "314.00": {sistema:"ICD-9-CM", etichetta:"Disturbo dell'attenzione, tipo disattento", pratico:"Vicino a F90 senza componente iperattiva prevalente.", icf:"Funzioni mentali dell'attenzione; Attività: apprendimento.", areaAttesa:"attenzione"},
+    "314.01": {sistema:"ICD-9-CM", etichetta:"Disturbo dell'attenzione con iperattività", pratico:"Equivalente ICD-9 di F90.0 (ADHD).", icf:"Funzioni mentali dell'attenzione; Attività: apprendimento, relazioni.", areaAttesa:"attenzione"}
+  };
+
+  document.getElementById('codeSearchBtn').addEventListener('click', cercaCodice);
+  document.getElementById('codeInput').addEventListener('keydown', e => { if(e.key === 'Enter') cercaCodice(); });
+
+  function cercaCodice(){
+    const raw = document.getElementById('codeInput').value.trim().toUpperCase().replace(/\s+/g,'');
+    const box = document.getElementById('codeResult');
+    if(!raw){ box.innerHTML = ''; return; }
+    const voce = codiciDB[raw];
+    if(voce){
+      box.innerHTML = `
+        <div class="lookup-result">
+          <div class="meta">${voce.sistema} · ${raw}</div>
+          <h4>${voce.etichetta}</h4>
+          <p>${voce.pratico}</p>
+          <p><strong>Da controllare in ICF:</strong> ${voce.icf}</p>
+        </div>`;
+    } else {
+      box.innerHTML = `
+        <div class="lookup-result not-found">
+          <div class="meta">Non in archivio</div>
+          <p>Il codice <strong>${raw}</strong> non è nel database di questa guida. Consulta i link ufficiali qui sotto per la definizione completa.</p>
+        </div>`;
+    }
+  }
+
+  // ===================== APPENDICE: PROFILO DI SINTESI =====================
+  const areeTest = ["Cognitivo generale","Lettura","Scrittura","Calcolo","Linguaggio","Attenzione","Spettro autistico"];
+  const testPerArea = {
+    "Cognitivo generale": ["WISC-III","WISC-IV","WISC-V","WPPSI-III","Leiter-3","Raven (CPM/SPM)"],
+    "Lettura": ["Prove MT","DDE-2","Batteria per la Dislessia"],
+    "Scrittura": ["DDE-2 (dettato)","Batteria scrittura Sartori-Job-Tressoldi"],
+    "Calcolo": ["AC-MT","BDE (Batteria Discalculia Evolutiva)"],
+    "Linguaggio": ["TVL","PPVT (Peabody)","TCGB"],
+    "Attenzione": ["Conners","SDAG","BRIEF-2","CPT"],
+    "Spettro autistico": ["ADOS-2","ADI-R","Vineland-II"]
+  };
+  const testQualitativi = ["ADOS-2","ADI-R"];
+  const dominiICF = ["Autonomia personale e sociale","Comunicazione e linguaggio","Cognitivo","Motorio-prassico","Affettivo-relazionale","Apprendimento"];
+
+  function datalistIdPerArea(area){ return 'dl_' + area.replace(/[^a-zA-Z0-9]/g,''); }
+
+  Object.keys(testPerArea).forEach(area => {
+    const dl = document.createElement('datalist');
+    dl.id = datalistIdPerArea(area);
+    dl.innerHTML = testPerArea[area].map(t => `<option value="${t}">`).join('');
+    document.body.appendChild(dl);
+  });
+
+  let rigaCount = 0;
+  function aggiungiRigaTest(){
+    rigaCount++;
+    const id = 'riga'+rigaCount;
+    const div = document.createElement('div');
+    div.className = 'riga-test';
+    div.id = id;
+    div.innerHTML = `
+      <div>
+        <label>Area</label>
+        <select class="area-select">${areeTest.map(a=>`<option value="${a}">${a}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label>Test / batteria</label>
+        <input type="text" class="test-input" list="${datalistIdPerArea(areeTest[0])}" placeholder="Es. WISC-IV">
+      </div>
+      <div>
+        <label>Tipo</label>
+        <select class="tipo-select">
+          <option value="percentile">Percentile</option>
+          <option value="ds">DS</option>
+          <option value="qualitativo">Cut-off / qualitativo</option>
+        </select>
+      </div>
+      <div>
+        <label>Valore</label>
+        <input type="text" class="valore-input" placeholder="es. 5">
+      </div>
+      <button class="rm-btn" type="button" onclick="document.getElementById('${id}').remove()">✕</button>
+    `;
+    const areaSelect = div.querySelector('.area-select');
+    const testInput = div.querySelector('.test-input');
+    const tipoSelect = div.querySelector('.tipo-select');
+    areaSelect.addEventListener('change', () => {
+      testInput.setAttribute('list', datalistIdPerArea(areaSelect.value));
+      testInput.value = '';
+      if(areaSelect.value === 'Spettro autistico'){ tipoSelect.value = 'qualitativo'; }
+    });
+    testInput.addEventListener('change', () => {
+      if(testQualitativi.includes(testInput.value)){ tipoSelect.value = 'qualitativo'; }
+    });
+    document.getElementById('righeTest').appendChild(div);
+  }
+  document.getElementById('addRigaTest').addEventListener('click', aggiungiRigaTest);
+  aggiungiRigaTest();
+
+  const icfGrid = document.getElementById('icfGrid');
+  dominiICF.forEach(d => {
+    const label = document.createElement('div');
+    label.className = 'dominio-label';
+    label.textContent = d;
+    const sel = document.createElement('select');
+    sel.className = 'icf-select';
+    sel.dataset.dominio = d;
+    sel.innerHTML = `
+      <option value="">Non valutato</option>
+      <option value="0">0 · Nessuna difficoltà</option>
+      <option value="1">1 · Lieve</option>
+      <option value="2">2 · Media</option>
+      <option value="3">3 · Grave</option>
+      <option value="4">4 · Completa</option>
+    `;
+    icfGrid.appendChild(label);
+    icfGrid.appendChild(sel);
+  });
+
+  function classificaDS(ds){
+    if(ds >= -1) return {liv:'norma', label:'Nella norma'};
+    if(ds >= -1.5) return {liv:'lieve', label:'Lieve fragilità'};
+    if(ds >= -2) return {liv:'attenzione', label:'Zona di attenzione'};
+    if(ds >= -3) return {liv:'clinica', label:'Soglia clinica'};
+    return {liv:'severa', label:'Difficoltà severa'};
+  }
+  function percentileADS(p){
+    if(p > 16) return 0;
+    if(p > 7) return -1.2;
+    if(p > 5) return -1.7;
+    if(p > 1) return -2.3;
+    return -3.2;
+  }
+  function classificaPunteggio(tipo, valore){
+    const ds = tipo === 'ds' ? valore : percentileADS(valore);
+    return classificaDS(ds);
+  }
+
+  document.getElementById('generaBtn').addEventListener('click', generaProfilo);
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    document.getElementById('pdsCodiceInput').value = '';
+    document.getElementById('righeTest').innerHTML = '';
+    rigaCount = 0;
+    aggiungiRigaTest();
+    document.querySelectorAll('.icf-select').forEach(s => s.value = '');
+    document.getElementById('output').innerHTML = '';
+  });
+
+  function generaProfilo(){
+    const out = document.getElementById('output');
+    let html = '';
+    let areeSottoSoglia = [];
+    let cognitivoNorma = false;
+
+    const codiceRaw = document.getElementById('pdsCodiceInput').value.trim().toUpperCase().replace(/\s+/g,'');
+    let voceCodice = null;
+    if(codiceRaw){
+      voceCodice = codiciDB[codiceRaw];
+      if(voceCodice){
+        html += `<div class="out-block verde">
+          <h4>Codice diagnostico — ${codiceRaw} (${voceCodice.sistema})</h4>
+          <p><strong>${voceCodice.etichetta}</strong></p>
+          <p>Dominio ICF da controllare per primo: ${voceCodice.icf}</p>
+        </div>`;
+      } else {
+        html += `<div class="out-block oro">
+          <h4>Codice diagnostico — ${codiceRaw}</h4>
+          <p class="empty-note">Codice non presente nel database di questo strumento. Verifica sul browser ufficiale ICD collegato nella sezione 05.</p>
+        </div>`;
+      }
+    }
+
+    const righe = document.querySelectorAll('.riga-test');
+    let risultatiTest = [];
+    righe.forEach(r => {
+      const area = r.querySelector('.area-select').value;
+      const testNome = r.querySelector('.test-input').value.trim();
+      const tipo = r.querySelector('.tipo-select').value;
+      const valRaw = r.querySelector('.valore-input').value.trim();
+      if(valRaw === '') return;
+      if(tipo === 'qualitativo'){
+        risultatiTest.push({area, testNome, tipo, valore: valRaw, qualitativo:true});
+        return;
+      }
+      const valore = parseFloat(valRaw);
+      if(isNaN(valore)) return;
+      const cls = classificaPunteggio(tipo, valore);
+      risultatiTest.push({area, testNome, tipo, valore, cls});
+      if(area === 'Cognitivo generale' && cls.liv === 'norma') cognitivoNorma = true;
+      if(area !== 'Cognitivo generale' && (cls.liv === 'clinica' || cls.liv === 'severa')) areeSottoSoglia.push(area);
+    });
+
+    if(risultatiTest.length){
+      html += `<div class="out-block">
+        <h4>Punteggi inseriti</h4>
+        <ul>
+          ${risultatiTest.map(r => {
+            const nomeMostrato = r.testNome ? `${r.area} — <em>${r.testNome}</em>` : r.area;
+            if(r.qualitativo){
+              return `<li>${nomeMostrato}: ${r.valore} <span class="pill lieve">Cut-off / qualitativo</span></li>`;
+            }
+            const valLabel = r.tipo === 'ds' ? r.valore + ' DS' : r.valore + '° percentile';
+            return `<li>${nomeMostrato} — ${valLabel} <span class="pill ${r.cls.liv}">${r.cls.label}</span></li>`;
+          }).join('')}
+        </ul>
+        ${risultatiTest.some(r=>r.qualitativo) ? '<p class="empty-note">I punteggi di strumenti come ADOS-2/ADI-R sono soglie cliniche di cut-off, non percentili: vanno letti nel referto originale insieme al giudizio clinico complessivo.</p>' : ''}
+      </div>`;
+
+      if(cognitivoNorma && areeSottoSoglia.length){
+        html += `<div class="out-block rosso">
+          <h4>Possibile discrepanza</h4>
+          <p>Livello cognitivo generale nella norma, ma ${areeSottoSoglia.join(', ')} risulta in soglia clinica o severa: è il pattern tipico di un disturbo specifico dell'apprendimento, da verificare col profilo diagnostico completo.</p>
+        </div>`;
+      }
+
+      if(voceCodice && voceCodice.areaAttesa){
+        const areaLabelMap = {lettura:'Lettura', scrittura:'Scrittura', calcolo:'Calcolo', attenzione:'Attenzione'};
+        const areaAttesaLabel = areaLabelMap[voceCodice.areaAttesa];
+        const trovata = risultatiTest.find(r => r.area === areaAttesaLabel);
+        if(!trovata){
+          html += `<div class="out-block oro">
+            <h4>Nota di coerenza</h4>
+            <p>Il codice inserito è tipicamente associato all'area "${areaAttesaLabel}", ma non hai inserito un punteggio per quell'area. Se disponibile in fascicolo, aggiungilo per una lettura più completa.</p>
+          </div>`;
+        } else if(trovata.cls && (trovata.cls.liv === 'norma' || trovata.cls.liv === 'lieve')){
+          html += `<div class="out-block oro">
+            <h4>Nota di coerenza</h4>
+            <p>Il codice inserito è associato all'area "${areaAttesaLabel}", ma il punteggio in quell'area risulta ${trovata.cls.label.toLowerCase()}: può succedere (compensazione, test recente/vecchio), ma vale la pena rileggere la relazione completa su questo punto.</p>
+          </div>`;
+        }
+      }
+    }
+
+    const icfSelects = document.querySelectorAll('.icf-select');
+    let prioritari = [], puntiForza = [];
+    icfSelects.forEach(s => {
+      if(s.value === '') return;
+      const v = parseInt(s.value);
+      if(v >= 2) prioritari.push(s.dataset.dominio);
+      else puntiForza.push(s.dataset.dominio);
+    });
+    if(prioritari.length || puntiForza.length){
+      html += `<div class="out-block">
+        <h4>Domini funzionali</h4>
+        ${prioritari.length ? `<p><strong>Aree di attenzione prioritaria:</strong></p><ul>${prioritari.map(d=>`<li>${d}</li>`).join('')}</ul>` : ''}
+        ${puntiForza.length ? `<p><strong>Punti di forza / aree senza difficoltà significative:</strong></p><ul>${puntiForza.map(d=>`<li>${d}</li>`).join('')}</ul>` : ''}
+      </div>`;
+    }
+
+    if(!codiceRaw && !risultatiTest.length && !prioritari.length && !puntiForza.length){
+      html = `<div class="out-block oro"><p class="empty-note">Non hai inserito nessun dato: compila almeno un campo (codice, un punteggio o un dominio ICF) per generare una sintesi.</p></div>`;
+    } else {
+      html += `<div class="disclaimer">Questa sintesi è un supporto alla lettura, non una valutazione clinica: va sempre incrociata con la relazione completa, il team e la famiglia prima di scrivere PDP o PEI.</div>`;
+    }
+
+    out.innerHTML = html;
+    out.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+</script>
+
+</body>
+</html>
