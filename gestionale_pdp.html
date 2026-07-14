@@ -1173,9 +1173,15 @@ onAuthStateChanged(auth, async (user) => {
     // Cerca se il master ha pre-creato il profilo tramite email
     const emailDocId = user.email.replace(/\./g, '_').replace('@', '__at__');
     const preRef = doc(db, 'utenti', emailDocId);
-    const preSnap = await getDoc(preRef);
+    let preSnap = null;
+    try {
+      preSnap = await getDoc(preRef);
+    } catch(e) {
+      // Permission denied sulla lettura del profilo pre-creato
+      preSnap = null;
+    }
 
-    if (preSnap.exists() && (preSnap.data().ruolo === 'docente' || preSnap.data().ruolo === 'admin' || preSnap.data().ruolo === 'master')) {
+    if (preSnap && preSnap.exists() && ['docente','admin','master'].includes(preSnap.data().ruolo)) {
       // Profilo pre-creato trovato: consolida con UID reale e aggiorna foto/nome Google
       await setDoc(uRef, {
         ...preSnap.data(),
@@ -1185,7 +1191,7 @@ onAuthStateChanged(auth, async (user) => {
         primoAccessoIl: serverTimestamp()
       });
       // Rimuovi il profilo temporaneo con emailDocId
-      await deleteDoc(preRef);
+      try { await deleteDoc(preRef); } catch(e) {}
     } else {
       // Nessun profilo pre-creato dal master → accesso negato
       mostraAccessoNegato('⏳', 'Accesso non ancora attivo',
