@@ -98,6 +98,8 @@
   .link-spotify:hover { background:#178a64; }
   .link-articolo { background:var(--grigio); color:var(--blu); border:1px solid #e2e8f0; }
   .link-articolo:hover { border-color:var(--blu); }
+  .link-amazon { background:#00A8E1; color:#fff; }
+  .link-amazon:hover { background:#0089b8; }
 
   .empty-state { text-align:center; padding:3.2rem 1.2rem; color:#999; border:1px dashed #e2e8f0; border-radius:16px; background:var(--bianco); }
 
@@ -219,6 +221,7 @@ const episodes = [
     description: "La normativa dice non più di 20 alunni in una classe con disabilità, e 1,96 mq per alunno come spazio minimo. Nella realtà, in molte scuole, quei numeri restano sulla carta. Nel mio Istituto abbiamo dovuto prendere il metro e documentare, aula per aula, che lo spazio semplicemente non c'era. Parlo anche di un altro nodo mai risolto: perché le ore di sostegno e di assistenza educativa decise nel GLO, quasi sistematicamente, non vengono mai assegnate per intero.",
     spotifyEmbedSrc: "https://open.spotify.com/embed/episode/3AdambOMIGX7g0Mh3T416P?utm_source=generator",
     spotifyLink: "https://open.spotify.com/episode/3AdambOMIGX7g0Mh3T416P",
+    amazonLink: "https://music.amazon.it/podcasts/2f26c07e-eccd-40bd-b121-2aff45429546/episodes/267e1521-efa1-4bfb-a103-039b698fb242/il-podcast-del-maestro-stefano-30-alunni-in-unaula-da-20-poi-ci-chiedono-linclusione",
     articleLink: null
   },
   {
@@ -230,6 +233,7 @@ const episodes = [
     description: "Uno studio SIPeS su 470 insegnanti italiani mostra che la competenza emotiva non protegge dal burnout. Lo so per esperienza diretta: mi è capitato due volte, la prima da studente universitario alla prima supplenza, la seconda durante il dottorato — con esperienza e competenza nel mezzo, ma lo stesso risultato. Parlo del mio percorso, della formazione obbligatoria mercificata, e di un'inclusione che fatica a funzionare quando manca il welfare per chi ci lavora.",
     spotifyEmbedSrc: "https://open.spotify.com/embed/episode/6Ix0VBgaUCoTyybjhILAXl?utm_source=generator",
     spotifyLink: "https://open.spotify.com/episode/6Ix0VBgaUCoTyybjhILAXl",
+    amazonLink: "https://music.amazon.it/podcasts/2f26c07e-eccd-40bd-b121-2aff45429546/episodes/43e3b49d-d86f-49f8-8d6e-63f188fc933c/il-podcast-del-maestro-stefano-il-burnout-non-guarda-il-curriculum-lho-imparato-due-volte",
     articleLink: null
   },
   {
@@ -241,6 +245,7 @@ const episodes = [
     description: "L'educatore scolastico: finanziato dal Comune, gestito da una cooperativa, pagato undici euro l'ora. Conosce certi alunni meglio di chiunque altro — ma non viene invitato al GLO. Tre storie su come il sistema tratta la figura più invisibile della scuola inclusiva.",
     spotifyEmbedSrc: "https://open.spotify.com/embed/episode/0TT9Csskhrmayn5Ick6rGC?utm_source=generator",
     spotifyLink: "https://open.spotify.com/episode/0TT9Csskhrmayn5Ick6rGC",
+    amazonLink: "https://music.amazon.it/podcasts/2f26c07e-eccd-40bd-b121-2aff45429546/episodes/13b5b331-20db-4a9d-9611-116f8b184a2b/il-podcast-del-maestro-stefano-lultimo-della-classe-ma-non--un-alunno",
     articleLink: null
   },
   {
@@ -252,6 +257,7 @@ const episodes = [
     description: "Tre tipi di barriere — fisiche, organizzative, culturali — che nel 2026 escludono ancora i bambini con disabilità prima ancora che entrino in classe. Il bambino che può solo tenere il punteggio perché 'rallenta la squadra'. Quello che in un lavoro di gruppo sta seduto accanto senza un compito. E i bambini che si alzano da soli per uscire dall'aula perché hanno già imparato che disturbare.",
     spotifyEmbedSrc: "https://open.spotify.com/embed/episode/53eZLsArG5YODhYNhfOzAm?utm_source=generator",
     spotifyLink: "https://open.spotify.com/episode/53eZLsArG5YODhYNhfOzAm",
+    amazonLink: "https://music.amazon.it/podcasts/2f26c07e-eccd-40bd-b121-2aff45429546/episodes/99d4bef2-0a95-45e5-a6d5-85008d540abf/il-podcast-del-maestro-stefano-tieni-il-punteggio-e-stai-zitto",
     articleLink: null
   },
   {
@@ -263,6 +269,7 @@ const episodes = [
     description: "180.000 docenti di sostegno, 316.000 alunni con disabilità certificata. Sulla carta i numeri ci sono. Nella realtà, oltre l'80% dei ricorsi al TAR viene accolto. GLO da venti minuti, famiglie che chiamano un avvocato per ottenere un diritto, e la guerra tra TFA e INDIRE che alla fine la pagano sempre i ragazzi.",
     spotifyEmbedSrc: "https://open.spotify.com/embed/episode/61TbnHZby1Ora9nfeWwRas?utm_source=generator",
     spotifyLink: "https://open.spotify.com/episode/61TbnHZby1Ora9nfeWwRas",
+    amazonLink: "https://music.amazon.it/podcasts/2f26c07e-eccd-40bd-b121-2aff45429546/episodes/c1bdd3d1-53e7-4012-a4e2-714e8e78661b/il-podcast-del-maestro-stefano-il-sostegno-non-si-merita--e-chi-lo-d-non-sa-chi-",
     articleLink: null
   },
   {
@@ -274,6 +281,7 @@ const episodes = [
     description: "Il 60% degli alunni con disabilità cambia insegnante di sostegno ogni anno. Cosa dice davvero il DM 32/2025 sul conflitto tra diritto al ruolo e continuità dei supplenti, e perché il filtro pedagogico del GLO rischia di restare solo sulla carta.",
     spotifyEmbedSrc: "https://open.spotify.com/embed/episode/676iv35OKQlO2kGlzqzUIO?utm_source=generator",
     spotifyLink: "https://open.spotify.com/episode/676iv35OKQlO2kGlzqzUIO",
+    amazonLink: "https://music.amazon.it/podcasts/2f26c07e-eccd-40bd-b121-2aff45429546/episodes/c23560fe-d55c-4dd4-b95b-2d05ae50b8c9/il-podcast-del-maestro-stefano-continuit-s-ma-per-chi",
     articleLink: "../inclusione/news/continuita-ruolo-sostegno.html"
   },
 ];
@@ -313,6 +321,7 @@ function renderEpisodes(filter = "tutti"){
         </div>
         <div class="ep-links">
           <a href="${ep.spotifyLink !== '#' ? ep.spotifyLink : '#'}" class="link-spotify" ${ep.spotifyLink !== '#' ? 'target="_blank" rel="noopener"' : ''}>▶ Ascolta su Spotify</a>
+          ${ep.amazonLink ? `<a href="${ep.amazonLink}" class="link-amazon" target="_blank" rel="noopener">🎧 Ascolta su Amazon Music</a>` : ''}
           ${ep.articleLink ? `<a href="${ep.articleLink}" class="link-articolo">📄 Leggi l'articolo</a>` : ''}
         </div>
       </div>
