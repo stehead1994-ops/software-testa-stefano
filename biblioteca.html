@@ -94,6 +94,16 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-h
 .ac-drop{display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #cdd4dc;border-radius:8px;z-index:50;max-height:200px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.1)}
 .ac-item{padding:10px 14px;cursor:pointer;border-bottom:.5px solid #f0f0f0;font-size:13px}
 .ac-item:hover{background:#f5f8fc}
+.grade-1{background:#fffde7!important;border-left:4px solid #f5c518!important}
+.grade-2{background:#ffebee!important;border-left:4px solid #e53935!important}
+.grade-3{background:#fff8e1!important;border-left:4px solid #fb8c00!important}
+.grade-4{background:#e8f5e9!important;border-left:4px solid #43a047!important}
+.grade-5{background:#e3f2fd!important;border-left:4px solid #1e88e5!important}
+.gb-1{background:#f5c518;color:#333;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:600;display:inline-block}
+.gb-2{background:#e53935;color:white;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:600;display:inline-block}
+.gb-3{background:#fb8c00;color:white;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:600;display:inline-block}
+.gb-4{background:#43a047;color:white;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:600;display:inline-block}
+.gb-5{background:#1e88e5;color:white;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:600;display:inline-block}
 </style>
 </head>
 <body>
@@ -183,6 +193,12 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-h
           </div>
           <div class="row2">
             <div class="fg"><label>Note</label><input type="text" id="f-note" placeholder="Es. collana, genere..."></div>
+            <div class="fg"><label>Classe di riferimento</label>
+              <select id="f-grade"><option value="">— nessuna —</option><option value="1">1° — Giallo</option><option value="2">2° — Rosso</option><option value="3">3° — Arancio</option><option value="4">4° — Verde</option><option value="5">5° — Blu</option></select>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="fg"></div>
             <div class="fg"><label>Numero copie</label>
               <input type="number" id="f-copies" value="1" min="1" max="999" placeholder="Es. 3">
             </div>
@@ -385,6 +401,11 @@ function toast(msg,type){const t=document.getElementById('toast');t.textContent=
 function confirm2(title,body,cb){document.getElementById('mc-title').textContent=title;document.getElementById('mc-body').textContent=body;document.getElementById('mc-ok').onclick=()=>{closeModal('modal-confirm');cb();};document.getElementById('modal-confirm').classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function avCol(id){return['av0','av1','av2','av3','av4'][Math.abs(id||0)%5];}
+function gradeLabel(g){return{1:'1° Cl.',2:'2° Cl.',3:'3° Cl.',4:'4° Cl.',5:'5° Cl.'}[parseInt(g)]||'';}
+function gradeColor(g){return{1:'gb-1',2:'gb-2',3:'gb-3',4:'gb-4',5:'gb-5'}[parseInt(g)]||'';}
+function gradeCls(g){return{1:'grade-1',2:'grade-2',3:'grade-3',4:'grade-4',5:'grade-5'}[parseInt(g)]||'';}
+const GRADE_BG={1:'#fffde7',2:'#ffebee',3:'#fff8e1',4:'#e8f5e9',5:'#e3f2fd'};
+const GRADE_BORDER={1:'#f5c518',2:'#e53935',3:'#fb8c00',4:'#43a047',5:'#1e88e5'};
 function initials(n){return (n||'').trim().split(/\s+/).map(w=>w[0]||'').join('').toUpperCase().slice(0,2);}
 function activeLoans(){return loans.filter(l=>!l.returned);}
 function userActiveLoans(uid){return loans.filter(l=>l.user_id==uid&&!l.returned);}
@@ -467,9 +488,9 @@ function renderCatalog(){
     const loaned=bookActiveLoans(b.isbn).length>0;
     const loan=loaned?activeLoans().find(l=>l.isbn===b.isbn):null;
     const luser=loan?users.find(u=>u.id==loan.user_id):null;
-    const avail=bookAvailableCopies(b.isbn);const total=(b.copies)||1;const out=total-avail;
+    const avail=bookAvailableCopies(b.isbn);const total=(b.copies)||1;const out=total-avail;const gradeBadge=b.grade?'<span class="'+gradeColor(b.grade)+'" style="margin-left:6px">'+gradeLabel(b.grade)+'</span>':'';
     const copiesInfo='<span class="badge b-ok" style="margin-right:4px">📚 '+total+' tot.</span><span class="badge b-ok" style="margin-right:4px">✅ '+avail+' disp.</span>'+(out>0?'<span class="badge b-warn">📤 '+out+' in prestito</span>':'');
-    return'<div class="item-card"><div style="font-size:24px;flex-shrink:0">📖</div><div class="item-info"><div class="item-name">'+esc(b.title)+'</div><div class="item-meta">'+esc(b.author||'—')+' · '+esc(b.publisher||'')+(b.year?' ('+b.year+')':'')+'</div><div class="item-meta" style="font-family:monospace;font-size:11px">'+esc(b.isbn)+'</div><div style="margin-top:4px">'+copiesInfo+'</div></div><div class="item-actions" style="flex-direction:column;gap:4px"><button class="btn btn-secondary btn-sm" onclick="editCopies('+b.id+','+total+')">✏️ Copie</button><button class="btn btn-danger btn-sm" onclick="deleteBook('+b.id+',\''+esc(b.isbn)+'\')">🗑️</button></div></div>';
+    return'<div class="item-card '+(b.grade?gradeCls(b.grade):'')+'"><div style="font-size:24px;flex-shrink:0">📖</div><div class="item-info"><div class="item-name">'+esc(b.title)+gradeBadge+'</div><div class="item-meta">'+esc(b.author||'—')+' · '+esc(b.publisher||'')+(b.year?' ('+b.year+')':'')+'</div><div class="item-meta" style="font-family:monospace;font-size:11px">'+esc(b.isbn)+'</div><div style="margin-top:4px">'+copiesInfo+'</div></div><div class="item-actions" style="flex-direction:column;gap:4px"><button class="btn btn-secondary btn-sm" onclick="editCopies('+b.id+','+total+')">✏️ Copie</button><button class="btn btn-secondary btn-sm" onclick="editGrade('+b.id+')">🎨</button><button class="btn btn-danger btn-sm" onclick="deleteBook('+b.id+',\''+esc(b.isbn)+'\')">🗑️</button></div></div>';
   }).join('');
 }
 
@@ -632,7 +653,7 @@ async function saveBook(){
   // Libro nuovo
   showLoad('Salvataggio...');
   try{
-    const res=await db.insert('books',{isbn,title,author:document.getElementById('f-author').value.trim(),publisher:document.getElementById('f-publisher').value.trim(),year:document.getElementById('f-year').value.trim(),note:document.getElementById('f-note').value.trim(),copies:parseInt(document.getElementById('f-copies').value)||1});
+    const res=await db.insert('books',{isbn,title,author:document.getElementById('f-author').value.trim(),publisher:document.getElementById('f-publisher').value.trim(),year:document.getElementById('f-year').value.trim(),note:document.getElementById('f-note').value.trim(),copies:parseInt(document.getElementById('f-copies').value)||1,grade:document.getElementById('f-grade').value||null});
     if(res&&res[0])books.push(res[0]);
     hideLoad();clearBookForm();populateLabelSelect();refreshDash();toast('Libro aggiunto!');
   }catch(e){
@@ -641,7 +662,7 @@ async function saveBook(){
   }
 }
 
-function clearBookForm(){['f-title','f-author','f-publisher','f-year','f-isbn','f-note','isbn-input'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-copies').value='1';}
+function clearBookForm(){['f-title','f-author','f-publisher','f-year','f-isbn','f-note','isbn-input'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-copies').value='1';document.getElementById('f-grade').value='';}
 
 function populateLabelSelect(){
   const sel=document.getElementById('label-select');const cur=sel.value;
@@ -660,7 +681,10 @@ function renderLabel(){
   const area=document.getElementById('label-preview');const btns=document.getElementById('label-btns');
   if(!isbn){area.innerHTML='';btns.style.display='none';return;}
   const b=books.find(x=>x.isbn===isbn);if(!b)return;
-  area.innerHTML='<div style="border:1px solid #cdd4dc;border-radius:8px;padding:16px;background:white;text-align:center;max-width:280px;margin:12px auto"><div style="font-size:9px;color:#555;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">📚 Biblioteca Primaria di Castelcovati</div><div style="font-size:13px;font-weight:700;margin-bottom:2px">'+esc(b.title.slice(0,30))+'</div>'+(b.author?'<div style="font-size:11px;color:#666;margin-bottom:10px">'+esc(b.author.slice(0,32))+'</div>':'')+'<svg width="200" height="42" viewBox="0 0 200 42">'+barcode(b.isbn)+'</svg><div style="font-family:monospace;font-size:10px;color:#444;margin-top:4px">'+esc(b.isbn)+'</div></div>';
+  const lbg=b.grade?GRADE_BG[parseInt(b.grade)]:'white';
+  const lborder=b.grade?GRADE_BORDER[parseInt(b.grade)]:'#cdd4dc';
+  const lgrade=b.grade?'<div style="font-weight:700;color:'+lborder+';font-size:11px;margin-bottom:6px">'+{1:'1° CLASSE',2:'2° CLASSE',3:'3° CLASSE',4:'4° CLASSE',5:'5° CLASSE'}[parseInt(b.grade)]+'</div>':'';
+  area.innerHTML='<div style="border:2px solid '+lborder+';border-radius:8px;padding:16px;background:'+lbg+';text-align:center;max-width:280px;margin:12px auto">'+lgrade+'<div style="border:1px solid #cdd4dc;border-radius:8px;padding:16px;background:white;text-align:center;max-width:280px;margin:12px auto"><div style="font-size:9px;color:#555;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">📚 Biblioteca Primaria di Castelcovati</div><div style="font-size:13px;font-weight:700;margin-bottom:2px">'+esc(b.title.slice(0,30))+'</div>'+(b.author?'<div style="font-size:11px;color:#666;margin-bottom:10px">'+esc(b.author.slice(0,32))+'</div>':'')+'<svg width="200" height="42" viewBox="0 0 200 42">'+barcode(b.isbn)+'</svg><div style="font-family:monospace;font-size:10px;color:#444;margin-top:4px">'+esc(b.isbn)+'</div></div>';
   btns.style.display='flex';
 }
 
@@ -838,6 +862,21 @@ function editCopies(id, current){
     hideLoad();renderCatalog();refreshDash();
     if(n<current)toast('Copie ridotte a '+n+' (rimossa '+(current-n)+' cop.)');
     else toast('Copie aggiornate a '+n);
+  }).catch(e=>{hideLoad();toast('Errore: '+e.message,'err');});
+}
+
+function editGrade(id){
+  const b=books.find(x=>x.id===id);if(!b)return;
+  const labels={1:'1° (Giallo)',2:'2° (Rosso)',3:'3° (Arancio)',4:'4° (Verde)',5:'5° (Blu)'};
+  const cur=b.grade||'';
+  const val=prompt('Classe di "'+b.title+'"\nAttuale: '+(cur?labels[parseInt(cur)]:'Nessuna')+'\n\nInserisci 1-5 o lascia vuoto:',cur);
+  if(val===null)return;
+  const newGrade=val.trim()===''?null:val.trim();
+  if(newGrade&&!['1','2','3','4','5'].includes(newGrade)){toast('Inserisci un numero da 1 a 5','err');return;}
+  showLoad('Aggiornamento...');
+  db.update('books',id,{grade:newGrade}).then(()=>{
+    books=books.map(x=>x.id===id?{...x,grade:newGrade}:x);
+    hideLoad();renderCatalog();toast('Classe aggiornata!');
   }).catch(e=>{hideLoad();toast('Errore: '+e.message,'err');});
 }
 
