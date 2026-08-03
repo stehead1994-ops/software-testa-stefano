@@ -98,6 +98,16 @@ function caricaStrumenti() {
       var main = document.getElementById('main-content');
       main.innerHTML = '';
 
+      // Aggiungi prima la sezione strumenti riservati (statici)
+      var sezioneRiservata = document.createElement('div');
+      sezioneRiservata.innerHTML = '<div class="section-label">Strumenti riservati alla scuola</div>' +
+        '<div class="grid">' +
+        '<div class="card"><div class="card-body"><div class="card-icon">🗂️</div><div class="card-cat">Inclusione &amp; Organizzazione</div><div class="card-title">Gestionale Verbali di Plesso</div><p class="card-desc">Applicazione web per la compilazione e l\'archiviazione dei verbali degli incontri mensili di plesso. Accesso riservato con account Google istituzionale.</p><div class="card-tags"><span class="tag">Web app</span><span class="tag">Accesso riservato</span></div></div><div class="card-footer"><a class="btn-sc btn-sc-primary" href="https://verbali-plesso-inclusione.web.app" target="_blank" rel="noopener">↗ Apri</a></div></div>' +
+        '<div class="card"><div class="card-body"><div class="card-icon">📂</div><div class="card-cat">Piani Didattici &amp; BES</div><div class="card-title">Gestionale PDP</div><p class="card-desc">Sistema collaborativo per la redazione dei PDP DSA/BES. Login con account Google istituzionale, salvataggio automatico in tempo reale.</p><div class="card-tags"><span class="tag">Firebase</span><span class="tag">Accesso riservato</span></div></div><div class="card-footer"><a class="btn-sc btn-sc-primary" href="gestionale_pdp.html" target="_blank">↗ Apri</a></div></div>' +
+        '<div class="card"><div class="card-body"><div class="card-icon">📚</div><div class="card-cat">Gestione scolastica</div><div class="card-title">Biblioteca Primaria</div><p class="card-desc">Gestionale digitale per la biblioteca della scuola primaria. Catalogo libri, gestione prestiti, ricerca per autore o titolo. Accesso con credenziali.</p><div class="card-tags"><span class="tag">HTML standalone</span><span class="tag">Accesso riservato</span></div></div><div class="card-footer"><a class="btn-sc btn-sc-primary" href="biblioteca.html" target="_blank">↗ Apri</a></div></div>' +
+        '</div>';
+      main.appendChild(sezioneRiservata);
+
       SEZIONI_INCLUSE.forEach(function(sectionId) {
         var label = doc.querySelector('.section-label[data-section="' + sectionId + '"]');
         if (!label) return;
