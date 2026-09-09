@@ -4,17 +4,6 @@
 <meta name="google-site-verification" content="zLx6404JqlL7W_5S6XAlcRW7z7f4uR8uk6-11wkU7_k" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Strumenti digitali gratuiti per la scuola: verbale GLO, griglia ICF-CY, PDP DSA/BES, valutazione PEI, biblioteca scolastica e molto altro. Risorse per docenti di sostegno e inclusione scolastica.">
-<meta name="keywords" content="inclusione scolastica, sostegno didattico, PEI, GLO, DSA, BES, PDP, software scuola, docente sostegno, ICF-CY, strumenti didattici gratuiti">
-<meta name="author" content="Stefano Testa">
-<meta property="og:title" content="L'Archivio del Maestro Stefano Testa">
-<meta property="og:description" content="Strumenti digitali gratuiti per la scuola: verbale GLO, griglia ICF-CY, PDP DSA/BES, valutazione PEI e molto altro. Per docenti di sostegno e inclusione.">
-<meta property="og:url" content="https://stehead1994-ops.github.io/software-testa-stefano/">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="it_IT">
-<link rel="canonical" href="https://stehead1994-ops.github.io/software-testa-stefano/" />
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>L'Archivio del Maestro Stefano Testa</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -722,6 +711,9 @@
   .navbar-link-ai:hover { background: #0033a0 !important; border-color: transparent !important; }
   .navbar-link-inc { background: #1D9E75 !important; color: #fff !important; font-weight: 700 !important; border-color: transparent !important; }
   .navbar-link-inc:hover { background: #17856a !important; border-color: transparent !important; }
+  .navbar-link-pod { background: #c8a84b !important; color: #2b2206 !important; font-weight: 700 !important; border-color: transparent !important; }
+  .navbar-link-pod:hover { background: #b8960a !important; border-color: transparent !important; }
+
   .navbar-link-bib { background: #7c3aed !important; color: #fff !important; font-weight: 700 !important; border-color: transparent !important; }
   .navbar-link-bib:hover { background: #6d28d9 !important; border-color: transparent !important; }
 
@@ -751,8 +743,7 @@
       <a href="blog/index.html" class="navbar-link navbar-link-ai">🤖 Blog AI</a>
       <a href="inclusione/news/index.html" class="navbar-link navbar-link-inc">♿ Inclusione</a>
       <a href="biblioteca/index.html" class="navbar-link navbar-link-bib">📚 Biblioteca</a>
-    
-      <a href="podcast.html" class="navbar-link navbar-link-pod">🎙️ Podcast</a>
+      <a href="podcast/podcast.html" class="navbar-link navbar-link-pod">🎙️ Podcast</a>
     </div>
   </div>
 </nav>
@@ -791,6 +782,7 @@
         <li data-section="guide">📚 Guide &amp; Vademecum <span class="cat-nav-count" id="cnc-guide">0</span></li>
         <li data-section="disabilita">♿ Disabilità &amp; Sostegno <span class="cat-nav-count" id="cnc-disabilita">0</span></li>
         <li data-section="valutazione">📊 Valutazione &amp; DSA-BES <span class="cat-nav-count" id="cnc-valutazione">0</span></li>
+        <li data-section="gestione">🏫 Gestione scolastica <span class="cat-nav-count" id="cnc-gestione">0</span></li>
         <li data-section="app">🎮 App e Giochi Didattici <span class="cat-nav-count" id="cnc-app">0</span></li>
       </ul>
     </div>
@@ -856,31 +848,6 @@
       </div>
     </div>
 
-    <!-- ── LETTURA DIAGNOSI ── -->
-    <div class="card fade-up">
-      <div class="card-accent"></div>
-      <div class="card-body">
-        <div class="card-icon">🔍</div>
-        <div class="card-cat">Guide &amp; Vademecum</div>
-        <div class="card-title">Leggere una diagnosi senza perdersi</div>
-        <p class="card-desc">Guida operativa per docenti sulla lettura delle diagnosi DSA e BES. Spiega come interpretare i termini clinici, i punteggi standardizzati e le indicazioni operative, traducendo il linguaggio specialistico in indicazioni pratiche per la classe.</p>
-        <div class="card-tags">
-          <span class="tag">Guida operativa</span>
-          <span class="tag">DSA / BES</span>
-          <span class="tag">Diagnosi</span>
-          <span class="tag">Per docenti</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <a class="btn-dl btn-dl-primary" href="linee_guida_lettura_diagnosi.html" download>
-          ⬇ Scarica
-        </a>
-        <a class="btn-dl btn-dl-secondary" href="linee_guida_lettura_diagnosi.html" target="_blank" title="Apri nel browser">
-          ↗
-        </a>
-      </div>
-    </div>
-
   </div>
 
   <div class="section-label" data-section="disabilita">Disabilità &amp; Sostegno</div>
@@ -937,18 +904,18 @@
       </div>
     </div>
 
-    <!-- ── VALUTAZIONE ANALITICA PEI ── -->
+    <!-- ── VALUTAZIONE PERSONALIZZATA ── -->
     <div class="card fade-up">
       <div class="card-accent"></div>
       <div class="card-body">
         <div class="card-icon">📝</div>
         <div class="card-cat">Didattica &amp; Valutazione</div>
-        <div class="card-title">Valutazione Analitica degli Obiettivi del PEI</div>
-        <p class="card-desc">Strumento per la compilazione della valutazione analitica degli obiettivi del PEI ai sensi del D.I. 153/2023. Gestisce le discipline, i giudizi e la stampa del documento finale in formato PDF.</p>
+        <div class="card-title">Valutazione Personalizzata</div>
+        <p class="card-desc">Strumento per la compilazione della valutazione personalizzata degli alunni. Gestisce le discipline, i giudizi e la stampa del documento finale in formato PDF.</p>
         <div class="card-tags">
           <span class="tag">HTML standalone</span>
-          <span class="tag">Valutazione PEI</span>
-          <span class="tag">D.I. 153/2023</span>
+          <span class="tag">Valutazione</span>
+          <span class="tag">BES / DSA</span>
           <span class="tag">Stampa PDF</span>
         </div>
       </div>
@@ -968,6 +935,26 @@
   <div class="section-label" data-section="valutazione">Piani Didattici &amp; Inclusione</div>
 
   <div class="grid">
+
+    <!-- ── GESTIONALE PDP ── -->
+    <div class="card fade-up">
+      <div class="card-accent" style="background:linear-gradient(90deg,#1a3a5c,#2e7d5e)"></div>
+      <div class="card-body">
+        <div class="card-icon" style="background:linear-gradient(135deg,#d4ede4,#d6e8f7)">🗂️</div>
+        <div class="card-cat">Gestione &amp; Collaborazione</div>
+        <div class="card-title">Gestionale PDP</div>
+        <p class="card-desc">Sistema collaborativo per la redazione dei PDP DSA/BES. Login con account Google istituzionale, salvataggio automatico in tempo reale, accesso docenti con password per singolo PDP. Dashboard master con gestione utenti.</p>
+        <div class="card-tags">
+          <span class="tag">Firebase</span>
+          <span class="tag">Real-time</span>
+          <span class="tag">Multi-utente</span>
+          <span class="tag">Google Auth</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="btn-dl btn-dl-secondary" href="gestionale_pdp.html" target="_blank">↗ Apri</a>
+      </div>
+    </div>
 
     <!-- ── ALLEGATO FIRME PDP ── -->
     <div class="card fade-up">
@@ -994,26 +981,32 @@
       </div>
     </div>
 
-    <!-- ── MOTIVAZIONE NON STESURA PDP ── -->
+  </div>
+
+  <div class="section-label" data-section="gestione">Gestione scolastica</div>
+
+  <div class="grid">
+
+    <!-- ── BIBLIOTECA ── -->
     <div class="card fade-up">
       <div class="card-accent"></div>
       <div class="card-body">
-        <div class="card-icon">📋</div>
-        <div class="card-cat">Inclusione &amp; BES</div>
-        <div class="card-title">Motivazione Non Stesura PDP</div>
-        <p class="card-desc">Modulo digitale per la dichiarazione di non stesura del PDP per alunni con diagnosi BES, ad uso del Gruppo Docenti o del Consiglio di Classe. Motivazioni personalizzabili, firma digitale e stampa diretta.</p>
+        <div class="card-icon">📚</div>
+        <div class="card-cat">Gestione scolastica</div>
+        <div class="card-title">Biblioteca Primaria</div>
+        <p class="card-desc">Gestionale digitale per la biblioteca della scuola primaria di Castelcovati. Catalogo libri, gestione prestiti, ricerca per autore o titolo, storico e statistiche. Accesso con credenziali.</p>
         <div class="card-tags">
           <span class="tag">HTML standalone</span>
-          <span class="tag">PDP / DSA / BES</span>
-          <span class="tag">Non stesura</span>
-          <span class="tag">Stampa PDF</span>
+          <span class="tag">Biblioteca</span>
+          <span class="tag">Prestiti</span>
+          <span class="tag">Catalogo</span>
         </div>
       </div>
       <div class="card-footer">
-        <a class="btn-dl btn-dl-primary" href="motivazione_non_stesura_pdp.html" download>
+        <a class="btn-dl btn-dl-primary" href="biblioteca.html" download>
           ⬇ Scarica
         </a>
-        <a class="btn-dl btn-dl-secondary" href="motivazione_non_stesura_pdp.html" target="_blank" title="Apri nel browser">
+        <a class="btn-dl btn-dl-secondary" href="biblioteca.html" target="_blank" title="Apri nel browser">
           ↗
         </a>
       </div>
@@ -1024,6 +1017,31 @@
   <div class="section-label" data-section="app">App e Giochi Didattici</div>
 
   <div class="grid">
+
+    <!-- ── LIBRO DELLE FAVOLE MAGICHE ── -->
+    <div class="card fade-up">
+      <div class="card-accent" style="background:linear-gradient(90deg,#AEDFF7,#C9E4C5,#FFF3B0)"></div>
+      <div class="card-body">
+        <div class="card-icon" style="background:linear-gradient(135deg,#E8F6F0,#FFF8E0)">📖</div>
+        <div class="card-cat">App e Giochi Didattici</div>
+        <div class="card-title">Il Libro delle Favole Magiche</div>
+        <p class="card-desc">Libro interattivo di favole illustrate per la lettura in classe o a casa. Ambientazione fiabesca con nuvole, colori pastello e narrazioni pensate per i più piccoli.</p>
+        <div class="card-tags">
+          <span class="tag">HTML standalone</span>
+          <span class="tag">Lettura</span>
+          <span class="tag">Favole</span>
+          <span class="tag">Infanzia &amp; Primaria</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="btn-dl btn-dl-primary" href="favole_magiche.html" download>
+          ⬇ Scarica
+        </a>
+        <a class="btn-dl btn-dl-secondary" href="favole_magiche.html" target="_blank" title="Apri nel browser">
+          ↗
+        </a>
+      </div>
+    </div>
 
     <!-- ── TOMBOLA ── -->
     <div class="card fade-up">
