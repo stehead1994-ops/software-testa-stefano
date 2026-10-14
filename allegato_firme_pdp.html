@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Allegato Firme – PDP / DSA / BES</title>
+<title>Allegato Firme – PDP / PEI</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root{--blu:#1a3a5c;--blu-medio:#2c5f8a;--blu-chiaro:#e8f0f8;--verde:#2e7d57;--grigio:#4a4a4a;--grigio-chiaro:#f4f6f9;--bordo:#c8d4e0;--rosso:#c0392b;--bianco:#ffffff;--testo:#1e1e1e}
@@ -20,6 +20,7 @@ body{font-family:'DM Sans',sans-serif;background:#dce6f0;min-height:100vh;displa
 .radio-option input[type=radio]{display:none}
 .radio-option:hover{border-color:var(--blu-medio);color:var(--blu-medio)}
 .radio-option.attivo-pdp{background:var(--blu-medio);color:#fff;border-color:var(--blu-medio)}
+.radio-option.attivo-pei{background:#7c3aed;color:#fff;border-color:#7c3aed}
 .radio-option.attivo-dsa{background:#e0a830;color:#fff;border-color:#e0a830}
 .radio-option.attivo-bes{background:var(--verde);color:#fff;border-color:var(--verde)}
 #step2{display:none}
@@ -142,7 +143,8 @@ body{font-family:'DM Sans',sans-serif;background:#dce6f0;min-height:100vh;displa
 <div class="step-blocco">
   <div class="step-label">Tipo documento</div>
   <div class="radio-group">
-    <label class="radio-option" id="opt-pdp"><input type="radio" name="tipo-doc" id="radio-pdp"> PDP</label>
+    <label class="radio-option" id="opt-pdp"><input type="radio" name="tipo-doc" id="radio-pdp" value="PDP"> PDP</label>
+    <label class="radio-option" id="opt-pei"><input type="radio" name="tipo-doc" id="radio-pei" value="PEI"> PEI</label>
   </div>
 </div>
 <div class="step-blocco" id="step2">
@@ -176,7 +178,7 @@ body{font-family:'DM Sans',sans-serif;background:#dce6f0;min-height:100vh;displa
   <h3>Componenti presenti</h3>
   <table class="tabella-partecipanti">
     <thead><tr>
-      <th>#</th><th>Nome e Cognome</th><th>Ruolo / Titolo al PDP</th><th>Firma</th><th class="col-azioni"></th>
+      <th>#</th><th>Nome e Cognome</th><th>Ruolo / Titolo al <span class="doc-tipo">PDP/PEI</span></th><th>Firma</th><th class="col-azioni"></th>
     </tr></thead>
     <tbody id="corpo-tabella">
       <tr class="riga-vuota" id="riga-vuota"><td colspan="5">Nessun componente. Usa il form qui sotto.</td></tr>
@@ -211,12 +213,12 @@ body{font-family:'DM Sans',sans-serif;background:#dce6f0;min-height:100vh;displa
   <button class="genitore-toggle" id="btn-genitore" type="button">
     <span class="g-testo">
       <div class="g-label">Sezione opzionale</div>
-      Condivisione PDP da parte di un genitore &#8211; firma per entrambi
+      Condivisione <span class="doc-tipo">PDP/PEI</span> da parte di un genitore &#8211; firma per entrambi
     </span>
     <span class="g-icona" id="icona-genitore">+</span>
   </button>
   <div class="genitore-body" id="corpo-genitore">
-    <p>Io sottoscritto/a, genitore dell&#8217;alunno/a sopra indicato/a, concordo con quanto dichiarato nel PDP e approvo i suoi contenuti.
+    <p>Io sottoscritto/a, genitore dell&#8217;alunno/a sopra indicato/a, concordo con quanto dichiarato nel <span class="doc-tipo">PDP/PEI</span> e approvo i suoi contenuti.
     Il/La sottoscritto/a, consapevole delle conseguenze amministrative e penali per chi rilasci dichiarazioni non corrispondenti a verit&#224;,
     ai sensi del <strong>DPR 445/2000</strong>, dichiara di aver effettuato la scelta in osservanza delle disposizioni sulla responsabilit&#224;
     genitoriale di cui agli <strong>artt. 316, 337-ter e 337-quater del codice civile</strong>, che richiedono il consenso di entrambi i genitori.</p>
@@ -264,6 +266,15 @@ body{font-family:'DM Sans',sans-serif;background:#dce6f0;min-height:100vh;displa
     var d=document.createElement('div');
     d.textContent=s;
     return d.innerHTML;
+  }
+
+  function tipoDoc(){
+    var el=document.querySelector('input[name="tipo-doc"]:checked');
+    return el ? el.value : 'PDP/PEI';
+  }
+  function aggiornaTesti(){
+    var t=tipoDoc();
+    document.querySelectorAll('.doc-tipo').forEach(function(s){ s.textContent=t; });
   }
 
   function riNumera(){
@@ -335,10 +346,11 @@ body{font-family:'DM Sans',sans-serif;background:#dce6f0;min-height:100vh;displa
     });
     document.querySelectorAll('input[type=checkbox]').forEach(function(c){ c.checked=false; });
     document.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked=false; });
-    ['opt-pdp','opt-dsa','opt-bes'].forEach(function(id){
+    ['opt-pdp','opt-pei','opt-dsa','opt-bes'].forEach(function(id){
       document.getElementById(id).className='radio-option';
     });
     document.getElementById('step2').classList.remove('visibile');
+    aggiornaTesti();
     genAttivo=false;
     document.getElementById('btn-genitore').classList.remove('attivo');
     document.getElementById('corpo-genitore').classList.remove('visibile');
@@ -377,7 +389,8 @@ body{font-family:'DM Sans',sans-serif;background:#dce6f0;min-height:100vh;displa
 
     // titolo
     var t2el=document.querySelector('input[name="tipo-doc2"]:checked');
-    var tipoLabel=t2el ? ('PDP / '+t2el.value) : 'PDP';
+    var TD=tipoDoc();
+    var tipoLabel=(TD==='PDP' && t2el) ? ('PDP / '+t2el.value) : TD;
     doc.setFontSize(16); doc.setFont('helvetica','bold');
     doc.setTextColor(BLU[0],BLU[1],BLU[2]);
     doc.text('ALLEGATO FIRME',PW/2,y,{align:'center'}); y+=5;
@@ -422,7 +435,7 @@ body{font-family:'DM Sans',sans-serif;background:#dce6f0;min-height:100vh;displa
     var cX=[ML, ML+10, ML+74, ML+138];
     doc.text('#', cX[0]+5, y+4.8, {align:'center'});
     doc.text('NOME E COGNOME', cX[1]+2, y+4.8);
-    doc.text('RUOLO / TITOLO AL PDP', cX[2]+2, y+4.8);
+    doc.text('RUOLO / TITOLO AL '+TD, cX[2]+2, y+4.8);
     doc.text('FIRMA', cX[3]+22, y+4.8, {align:'center'});
     y+=7;
 
@@ -455,11 +468,11 @@ body{font-family:'DM Sans',sans-serif;background:#dce6f0;min-height:100vh;displa
       doc.line(ML,y,ML+CW,y); y+=5;
       doc.setFontSize(7.5); doc.setFont('helvetica','bold');
       doc.setTextColor(BLU[0],BLU[1],BLU[2]);
-      doc.text('SEZIONE OPZIONALE - CONDIVISIONE PDP DA PARTE DI UN GENITORE', ML, y);
+      doc.text('SEZIONE OPZIONALE - CONDIVISIONE '+TD+' DA PARTE DI UN GENITORE', ML, y);
       y+=5;
       doc.setFontSize(8.5); doc.setFont('helvetica','normal');
       doc.setTextColor(GR[0],GR[1],GR[2]);
-      var testo='Io sottoscritto/a, genitore dell alunno/a sopra indicato/a, concordo con quanto dichiarato nel PDP e approvo i suoi contenuti. '
+      var testo='Io sottoscritto/a, genitore dell alunno/a sopra indicato/a, concordo con quanto dichiarato nel '+TD+' e approvo i suoi contenuti. '
         +'Il/La sottoscritto/a, consapevole delle conseguenze amministrative e penali per chi rilasci dichiarazioni non corrispondenti a verita, '
         +'ai sensi del DPR 445/2000, dichiara di aver effettuato la scelta in osservanza delle disposizioni sulla responsabilita genitoriale '
         +'di cui agli artt. 316, 337-ter e 337-quater del codice civile, che richiedono il consenso di entrambi i genitori.';
@@ -492,7 +505,8 @@ body{font-family:'DM Sans',sans-serif;background:#dce6f0;min-height:100vh;displa
     // salva
     var nomeA=(document.getElementById('alunno').value.trim()||'alunno').replace(/[^a-zA-Z0-9_]/g,'_');
     var t2v=document.querySelector('input[name="tipo-doc2"]:checked');
-    doc.save('AllegatoFirme_'+(t2v?t2v.value:'PDP')+'_'+nomeA+'.pdf');
+    var suff=(TD==='PDP') ? ('PDP'+(t2v?'_'+t2v.value:'')) : TD.replace('/','_');
+    doc.save('AllegatoFirme_'+suff+'_'+nomeA+'.pdf');
   }
 
   document.addEventListener('DOMContentLoaded',function(){
@@ -500,11 +514,23 @@ body{font-family:'DM Sans',sans-serif;background:#dce6f0;min-height:100vh;displa
 
     document.getElementById('radio-pdp').addEventListener('change',function(){
       document.getElementById('opt-pdp').classList.add('attivo-pdp');
+      document.getElementById('opt-pei').className='radio-option';
+      aggiornaTesti();
       document.getElementById('step2').classList.add('visibile');
       document.getElementById('opt-dsa').className='radio-option';
       document.getElementById('opt-bes').className='radio-option';
       document.getElementById('radio-dsa').checked=false;
       document.getElementById('radio-bes').checked=false;
+    });
+    document.getElementById('radio-pei').addEventListener('change',function(){
+      document.getElementById('opt-pei').classList.add('attivo-pei');
+      document.getElementById('opt-pdp').className='radio-option';
+      document.getElementById('step2').classList.remove('visibile');
+      document.getElementById('opt-dsa').className='radio-option';
+      document.getElementById('opt-bes').className='radio-option';
+      document.getElementById('radio-dsa').checked=false;
+      document.getElementById('radio-bes').checked=false;
+      aggiornaTesti();
     });
     document.getElementById('radio-dsa').addEventListener('change',function(){
       document.getElementById('opt-dsa').classList.add('attivo-dsa');
