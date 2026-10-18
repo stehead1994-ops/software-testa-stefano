@@ -9,7 +9,7 @@
   // Elenco moduli: per aggiungerne uno basta una riga qui + la pagina .html
   var MODULES = [
     { group: "Fondamenti", items: [
-      { id: "tic-netiquette", n: "01", t: "TIC, Netiquette e Universal Design", f: "01-tic-netiquette.html" },
+      { id: "tic-netiquette", n: "01", t: "TIC, netiquette e Universal Design", f: "01-tic-netiquette.html" },
       { id: "udl",            n: "02", t: "Universal Design for Learning",     f: "02-udl.html" },
       { id: "samr",           n: "03", t: "Il modello SAMR",                   f: "03-samr.html" }
     ]},
@@ -25,7 +25,7 @@
       { id: "caa",            n: "10", t: "CAA con AraWord",                   f: "10-caa-araword.html" }
     ]},
     { group: "Coinvolgere e innovare", items: [
-      { id: "gamification",   n: "11", t: "Gamification e Game-Based Learning", f: "11-gamification.html" },
+      { id: "gamification",   n: "11", t: "Gamification e game-based learning", f: "11-gamification.html" },
       { id: "ia",             n: "12", t: "Intelligenza artificiale a scuola",  f: "12-ia.html" }
     ]},
     { group: "Risorse", items: [
@@ -55,10 +55,10 @@
       '<button class="btn" id="menuBtn" aria-label="Apri indice">☰</button>' +
       '<a class="brand" href="index.html">' +
         '<img class="adelia" src="' + LOGO + '" alt="Adelia" onerror="this.outerHTML=\'<span class=adelia-fallback>ST</span>\'">' +
-        '<span><span class="t1">' + COURSE + '</span><br><span class="t2">' + AUTHOR + ' · con Adelia</span></span>' +
+        '<span><span class="t1">' + COURSE + '</span><br><span class="t2">' + AUTHOR + '</span></span>' +
       '</a>' +
       '<span class="spacer"></span>' +
-      '<button class="btn" id="themeBtn" aria-label="Cambia tema">◐</button>' +
+      '<button class="btn" id="themeBtn" aria-label="Cambia tema chiaro o scuro">Tema</button>' +
       (page !== "home" ? '<button class="btn gold" id="presentBtn">▶ <span class="lbl">Presenta</span></button>' : '') +
     '</header>');
   document.body.insertBefore(top, document.body.firstChild);
@@ -67,13 +67,13 @@
   var main = document.querySelector("main");
   var layout = el('<div class="layout"></div>');
   var side = el('<nav class="sidebar" aria-label="Moduli del laboratorio"></nav>');
-  var html = '<a href="../index.html" style="font-size:13.5px;color:var(--muted)"><span class="n">←</span>Formazione · L\'Archivio</a>' +
-    '<a href="index.html"' + (page === "home" ? ' class="active"' : '') + '><span class="n">◆</span>Programma del laboratorio</a>';
+  var html = '<a href="../index.html"><span class="n"></span>Formazione</a>' +
+    '<a href="index.html"' + (page === "home" ? ' class="active"' : '') + '><span class="n"></span>Programma del laboratorio</a>';
   MODULES.forEach(function (g) {
     html += "<h4>" + g.group + "</h4>";
     g.items.forEach(function (m) {
       html += m.soon
-        ? '<a class="soon" aria-disabled="true"><span class="n">' + m.n + "</span>" + m.t + " · in arrivo</a>"
+        ? '<a class="soon" aria-disabled="true"><span class="n">' + m.n + "</span>" + m.t + " (in arrivo)</a>"
         : '<a href="' + m.f + '"' + (m.id === page ? ' class="active" aria-current="page"' : "") + '><span class="n">' + m.n + "</span>" + m.t + "</a>";
     });
   });
@@ -87,15 +87,15 @@
     var prev = flat[idx - 1], next = flat[idx + 1];
     var pager = el('<div class="pager"></div>');
     pager.innerHTML =
-      (prev ? '<a href="' + prev.f + '"><small>← Modulo precedente</small>' + prev.n + " · " + prev.t + "</a>" : '<a href="index.html"><small>← Torna al</small>Programma</a>') +
-      (next ? '<a class="next" href="' + next.f + '"><small>Modulo successivo →</small>' + next.n + " · " + next.t + "</a>" : '<a class="next" href="index.html"><small>Fine percorso →</small>Programma</a>');
+      (prev ? '<a href="' + prev.f + '"><small>Modulo precedente</small>' + prev.t + "</a>" : '<a href="index.html"><small>Torna al</small>programma</a>') +
+      (next ? '<a class="next" href="' + next.f + '"><small>Modulo successivo</small>' + next.t + "</a>" : '<a class="next" href="index.html"><small>Fine del percorso</small>programma</a>');
     main.appendChild(pager);
   }
 
   // Piè di pagina
   document.body.appendChild(el(
     '<footer class="site"><img src="' + LOGO + '" alt="" onerror="this.remove()">' +
-    '<span>' + COURSE + ' · ' + AUTHOR + ' · <a href="../index.html" style="color:#C8A84B">Formazione</a> · <a href="../../index.html" style="color:#C8A84B">L\'Archivio del Maestro Stefano Testa</a></span></footer>'));
+    '<span>' + COURSE + ', ' + AUTHOR + '. <a href="../index.html">Formazione</a>, <a href="../../index.html">L\'Archivio del Maestro Stefano Testa</a>.</span></footer>'));
 
   // Menu mobile e tema
   document.getElementById("menuBtn").onclick = function () { document.body.classList.toggle("nav-open"); };
@@ -112,18 +112,15 @@
   function buildCover() {
     var h = document.querySelector(".hero");
     var title = h ? h.querySelector("h1").innerHTML : document.title;
-    var sub = h && h.querySelector("p") ? h.querySelector("p").innerHTML : "";
-    var mod = idx >= 0 ? "Modulo " + flat[idx].n : "";
+    var lead = h ? h.querySelector(".lead") : null;
+    var mod = idx >= 0 ? "modulo " + parseInt(flat[idx].n, 10) : "";
     var c = el(
-      '<section class="slide cover" style="display:none;background:linear-gradient(135deg,#003087,#0a3f9e);color:#fff;border-top-color:#C8A84B">' +
-        '<div style="display:flex;align-items:center;gap:4vw;min-height:70vh;flex-wrap:wrap">' +
-          '<img src="' + LOGO + '" alt="Adelia" style="width:min(22vw,200px);background:#fff;border-radius:24px;padding:12px" onerror="this.remove()">' +
-          '<div style="flex:1;min-width:260px">' +
-            '<div style="color:#C8A84B;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.7em">' + COURSE + (mod ? " · " + mod : "") + "</div>" +
-            '<h2 style="color:#fff;font-size:clamp(36px,5vw,72px);margin:.2em 0">' + title + "</h2>" +
-            '<p style="opacity:.9">' + sub + "</p>" +
-            '<p style="margin-top:1.5em;font-weight:600">' + AUTHOR + "</p>" +
-          "</div></div></section>");
+      '<section class="slide cover row"><div class="cover-in">' +
+        '<p class="hand cover-mod">' + COURSE + (mod ? ", " + mod : "") + '</p>' +
+        '<h2 class="cover-title">' + title + '</h2>' +
+        (lead ? '<p class="cover-lead">' + lead.innerHTML + '</p>' : '') +
+        '<p class="cover-author"><img src="' + LOGO + '" alt="" onerror="this.remove()">' + AUTHOR.replace("prof. ", "prof. ") + '</p>' +
+      '</div></section>');
     main.insertBefore(c, main.querySelector(".slide"));
   }
   function show(i) {
