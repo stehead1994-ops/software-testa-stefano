@@ -29,7 +29,7 @@
       { id: "ia",             n: "12", t: "Intelligenza artificiale a scuola",  f: "12-ia.html" }
     ]},
     { group: "Risorse", items: [
-      { id: "curricolo",      n: "13", t: "Curricolo digitale: un esempio",    f: "13-curricolo-digitale.html" },
+      { id: "curricolo",      n: "13", t: "Progettare un curricolo digitale",    f: "13-curricolo-digitale.html" },
       { id: "bibliografia",   n: "14", t: "Bibliografia",                      f: "14-bibliografia.html" }
     ]}
   ];
