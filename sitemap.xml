@@ -157,4 +157,9 @@
     <changefreq>weekly</changefreq>
   </url>
 
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/formazione/caa/index.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
 </urlset>
