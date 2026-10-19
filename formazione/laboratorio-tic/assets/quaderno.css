@@ -284,3 +284,9 @@ body.present .pbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:3
   footer.site{display:none}
   a{color:inherit}
 }
+
+/* Disegni con didascalia */
+.drawn{margin:12px 0}
+.drawn figcaption{font:400 18px/1.25 var(--hand);color:var(--biro);margin-top:2px}
+@media (max-width:980px){.drawn[style*="float"]{float:none!important;margin:0 0 12px!important;width:220px!important}}
+.sketch .t-link{font-size:16px;fill:var(--muted);font-style:italic}

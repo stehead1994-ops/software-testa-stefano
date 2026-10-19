@@ -147,36 +147,52 @@
     });
   }
 
-  // Mappa mentale: rami liberi dal centro
+  // Mappa mentale in stile Buzan: rami colorati che si assottigliano, parole sui rami
   function radial(svg) {
     var p = pen(svg, 41), it = items(svg), n = it.length - 1;
     var cx = 300, cy = 190;
-    p.ellipse(cx, cy, 150, 70, { stroke: red, strokeWidth: 2.2 });
-    text(svg, cx, cy + 7, it[0].t, "t-center");
+    var cols = [biro, "#1f8a5b", red, "#c08a00", "#7a3fb0", "#0f7c8c"];
+    var ew = Math.max(160, it[0].t.length * 15 + 50), erx = ew / 2, ery = 39;
     for (var i = 0; i < n; i++) {
-      var a = (-150 + i * 300 / Math.max(n - 1, 1)) * Math.PI / 180;
-      if (n > 1) a = (i / n) * Math.PI * 2 - Math.PI / 2 + 0.3;
-      var x = cx + Math.cos(a) * 225, y = cy + Math.sin(a) * 150;
-      var mx = cx + Math.cos(a + 0.25) * 120, my = cy + Math.sin(a + 0.25) * 85;
-      p.path("M" + (cx + Math.cos(a) * 75) + " " + (cy + Math.sin(a) * 36) + " Q" + mx + " " + my + " " + (x - Math.cos(a) * 40) + " " + (y - Math.sin(a) * 14),
-        { stroke: biro, strokeWidth: 2 });
-      text(svg, x, y + 6, it[i + 1].t, "t-node");
+      var a = (i / n) * Math.PI * 2 - Math.PI / 2 + 0.35;
+      var c = cols[i % cols.length], dir = Math.cos(a) >= 0 ? 1 : -1;
+      var x0 = cx + Math.cos(a) * (erx - 4), y0 = cy + Math.sin(a) * (ery - 3);
+      var x1 = cx + Math.cos(a) * (erx + 70), y1 = cy + Math.sin(a) * 115;
+      var x2 = x1 + dir * 95, y2 = y1 + 4;
+      // tratto spesso vicino al centro, sottile verso l'esterno
+      p.path("M" + x0 + " " + y0 + " Q" + (x0 + x1) / 2 + " " + (y1 + (y0 - y1) * 0.15) + " " + x1 + " " + y1, { stroke: c, strokeWidth: 6, roughness: 0.9 });
+      p.path("M" + x1 + " " + y1 + " L" + x2 + " " + y2, { stroke: c, strokeWidth: 2.4, roughness: 0.8 });
+      var t = text(svg, (x1 + x2) / 2, y1 - 8, it[i + 1].t, "t-node");
+      t.setAttribute("style", "fill:" + c);
     }
+    p.ellipse(cx, cy, ew, 78, { stroke: red, strokeWidth: 2.4, fill: "rgba(255,228,92,.55)", fillStyle: "hachure", hachureGap: 5 });
+    text(svg, cx, cy + 8, it[0].t, "t-center");
   }
 
-  // Mappa concettuale: gerarchia con legami etichettati
+  // Mappa concettuale: gerarchia con legami etichettati su sfondo pulito
   function tree(svg) {
     var p = pen(svg, 51), it = items(svg);
     var top = it[0], kids = it.slice(1), n = kids.length;
-    p.path("M220 18 L380 20 L378 70 L222 68 Z", { stroke: red, strokeWidth: 2.2 });
-    text(svg, 300, 51, top.t, "t-node");
+    var paper = (css.getPropertyValue("--paper") || "#fdfdfb").trim();
+    var tw = Math.max(170, top.t.length * 14 + 40);
+    p.path("M" + (300 - tw / 2) + " 16 L" + (300 + tw / 2) + " 18 L" + (300 + tw / 2 - 2) + " 70 L" + (300 - tw / 2 + 2) + " 68 Z", { stroke: red, strokeWidth: 2.4, fill: "rgba(255,228,92,.5)", fillStyle: "hachure", hachureGap: 5 });
+    text(svg, 300, 50, top.t, "t-node");
     kids.forEach(function (k, i) {
       var x = 100 + i * (400 / Math.max(n - 1, 1)), y = 250;
-      p.line(300, 72, x, y - 30, { stroke: pencil, strokeWidth: 1.6 });
-      var lx = (300 + x) / 2, ly = (72 + y - 30) / 2;
-      if (k.s[0]) text(svg, lx + (x < 300 ? -8 : x > 300 ? 8 : 6), ly, k.s[0], "t-sub", x < 300 ? "end" : "start");
-      p.path("M" + (x - 75) + " " + (y - 28) + " L" + (x + 75) + " " + (y - 26) + " L" + (x + 74) + " " + (y + 22) + " L" + (x - 74) + " " + (y + 20) + " Z", { stroke: biro, strokeWidth: 2 });
-      text(svg, x, y + 4, k.t, "t-node");
+      p.line(300, 72, x, y - 28, { stroke: pencil, strokeWidth: 1.6 });
+      arrow(p, x, y - 28, Math.atan2(y - 28 - 72, x - 300) * 180 / Math.PI, pencil);
+    });
+    kids.forEach(function (k, i) {
+      var x = 100 + i * (400 / Math.max(n - 1, 1)), y = 250;
+      var t = Math.abs(x - 300) < 5 ? 0.42 : 0.55, lx = 300 + (x - 300) * t, ly = 72 + (y - 100) * t;
+      if (k.s[0]) {
+        var w = k.s[0].length * 7.6 + 14;
+        node("rect", { x: lx - w / 2, y: ly - 15, width: w, height: 22, rx: 4, fill: paper }, svg);
+        text(svg, lx, ly + 1, k.s[0], "t-link");
+      }
+      var bw = Math.max(130, k.t.length * 12 + 30);
+      p.path("M" + (x - bw / 2) + " " + (y - 26) + " L" + (x + bw / 2) + " " + (y - 24) + " L" + (x + bw / 2 - 1) + " " + (y + 22) + " L" + (x - bw / 2 + 1) + " " + (y + 20) + " Z", { stroke: biro, strokeWidth: 2 });
+      text(svg, x, y + 5, k.t, "t-node");
     });
   }
 
@@ -240,6 +256,112 @@
     });
   }
 
+
+  // Robot da pavimento a forma di ape, vista di tre quarti (come Bee-Bot)
+  function bot(svg) {
+    var p = pen(svg, 71);
+    var dark = "#1d1f24", yellow = "#f5cf1d", yellow2 = "#ffe36a", orange = "#f26b21";
+    var uid = "c" + Math.random().toString(36).slice(2, 8);
+    // ombra
+    p.ellipse(175, 222, 290, 26, { stroke: "none", fill: "rgba(0,0,0,.12)", fillStyle: "solid", roughness: 0.4 });
+    // corpo a cupola
+    var body = "M38 210 C 34 120, 100 50, 190 46 C 268 44, 318 110, 316 210 Z";
+    p.path(body, { stroke: dark, strokeWidth: 2.4, fill: yellow, fillStyle: "solid" });
+    // strisce nere tagliate sulla forma del corpo
+    var defs = node("defs", {}, svg), cp = node("clipPath", { id: uid }, defs);
+    node("path", { d: body }, cp);
+    var g = node("g", { "clip-path": "url(#" + uid + ")" }, svg);
+    var rc = window.rough ? window.rough.svg(svg) : null;
+    [["M58 240 C 56 140, 110 64, 210 26", 20], ["M112 240 C 112 150, 160 86, 270 50", 20]].forEach(function (s) {
+      var el = rc ? rc.path(s[0], { stroke: dark, strokeWidth: s[1], roughness: 0.8, seed: 9 }) : node("path", { d: s[0], stroke: dark, "stroke-width": s[1], fill: "none" });
+      g.appendChild(el);
+    });
+    // base
+    p.path("M40 206 L314 206 L312 216 L42 216 Z", { stroke: dark, strokeWidth: 1.8, fill: yellow2, fillStyle: "solid" });
+    // muso
+    p.ellipse(262, 150, 120, 112, { stroke: dark, strokeWidth: 2, fill: yellow2, fillStyle: "solid" });
+    // occhi con palpebre
+    [[236, 122], [290, 128]].forEach(function (e) {
+      p.ellipse(e[0], e[1], 44, 44, { stroke: dark, strokeWidth: 2, fill: yellow, fillStyle: "solid" });
+      p.ellipse(e[0] + 2, e[1] + 4, 30, 30, { stroke: dark, strokeWidth: 1.6, fill: "#ffffff", fillStyle: "solid" });
+      p.ellipse(e[0] + 6, e[1] + 6, 11, 13, { stroke: dark, fill: dark, fillStyle: "solid" });
+    });
+    // sorriso
+    p.path("M232 168 C 246 190, 282 192, 300 170", { stroke: dark, strokeWidth: 2.6, roughness: 0.7 });
+    // tasti sul dorso: frecce arancioni, GO verde, tasti blu
+    function chevron(cx, cy, ang) {
+      var a = ang * Math.PI / 180, pts = [[10, 0], [-6, -9], [-6, 9]].map(function (q) {
+        return [cx + q[0] * Math.cos(a) - q[1] * Math.sin(a), cy + q[0] * Math.sin(a) + q[1] * Math.cos(a)];
+      });
+      p.path("M" + pts.map(function (q) { return q[0].toFixed(1) + " " + q[1].toFixed(1); }).join(" L") + " Z", { stroke: dark, strokeWidth: 1.2, fill: orange, fillStyle: "solid", roughness: 0.5 });
+    }
+    var cx0 = 150, cy0 = 84, base = -28;
+    [0, 180, -90, 90].forEach(function (d) {
+      var a = (base + d) * Math.PI / 180;
+      chevron(cx0 + Math.cos(a) * 22, cy0 + Math.sin(a) * 15, base + d);
+    });
+    p.ellipse(cx0, cy0, 15, 12, { stroke: dark, strokeWidth: 1.2, fill: "#3cb04a", fillStyle: "solid" });
+    var ab = (base + 180) * Math.PI / 180;
+    p.ellipse(cx0 + Math.cos(ab) * 46 - 8, cy0 + Math.sin(ab) * 30 + 10, 13, 10, { stroke: dark, strokeWidth: 1.2, fill: "#2f6fd6", fillStyle: "solid" });
+    p.ellipse(cx0 + Math.cos(ab) * 46 + 10, cy0 + Math.sin(ab) * 30 - 8, 13, 10, { stroke: dark, strokeWidth: 1.2, fill: "#2f6fd6", fillStyle: "solid" });
+  }
+
+  // Kit di robotica a mattoncini (come LEGO Education SPIKE Essential)
+  function kit(svg) {
+    var p = pen(svg, 81);
+    var dark = "#1d1f24", teal = "#38c4d6", white = "#fbfbfb";
+    function box(x, y, w, h, d, fill) {
+      var dx = d * 0.6, dy = -d * 0.4;
+      p.path("M" + x + " " + y + " l" + w + " 0 l0 " + h + " l" + (-w) + " 0 Z", { stroke: dark, strokeWidth: 1.8, fill: fill, fillStyle: "solid" });
+      p.path("M" + x + " " + y + " l" + dx + " " + dy + " l" + w + " 0 l" + (-dx) + " " + (-dy) + " Z", { stroke: dark, strokeWidth: 1.6, fill: fill, fillStyle: "solid" });
+      p.path("M" + (x + w) + " " + y + " l" + dx + " " + dy + " l0 " + h + " l" + (-dx) + " " + (-dy) + " Z", { stroke: dark, strokeWidth: 1.6, fill: fill, fillStyle: "hachure", hachureGap: 3.5 });
+    }
+    function studs(x, y, w, d, nx, fill) {
+      var dx = d * 0.6, dy = -d * 0.4;
+      for (var r = 0; r < 2; r++) for (var c = 0; c < nx; c++) {
+        var sx = x + (c + 0.5) * (w / nx) + (r + 0.5) * dx / 2, sy = y + (r + 0.5) * dy / 2;
+        p.path("M" + (sx - 6) + " " + sy + " l0 -4 l12 0 l0 4", { stroke: dark, strokeWidth: 1.2, fill: fill, fillStyle: "solid", roughness: 0.4 });
+        p.ellipse(sx, sy - 4, 12, 5, { stroke: dark, strokeWidth: 1.2, fill: fill, fillStyle: "solid", roughness: 0.4 });
+      }
+    }
+    // mattoncino giallo 2x4 e piastra blu
+    box(18, 214, 92, 30, 30, "#f5c518"); studs(18, 214, 92, 30, 4, "#f5c518");
+    box(60, 160, 84, 12, 30, "#3d6fd6"); studs(60, 160, 84, 30, 4, "#3d6fd6");
+    // matrice di luci 3x3
+    box(150, 186, 48, 48, 10, white);
+    var lc = ["#f4a259", "#9fd8a1", "#c7a3e0", "#f28da0", "#e63946", "#7cc4f2", "#ffd166", "#8f9ce8", "#f7a1c4"];
+    for (var i = 0; i < 9; i++) {
+      var lx = 155 + (i % 3) * 14, ly = 191 + Math.floor(i / 3) * 14;
+      p.path("M" + lx + " " + ly + " l11 0 l0 11 l-11 0 Z", { stroke: dark, strokeWidth: 0.8, fill: lc[i], fillStyle: "solid", roughness: 0.3 });
+    }
+    // unità centrale (hub) bianca con tasto
+    box(214, 132, 96, 96, 34, white);
+    p.path("M248 196 l26 0 l0 20 l-26 0 Z", { stroke: dark, strokeWidth: 1.6, fill: "#e9edf3", fillStyle: "solid", roughness: 0.5 });
+    p.line(261, 220, 261, 228, { stroke: teal, strokeWidth: 3 });
+    text(svg, 236, 148, "A", "t-sub"); text(svg, 290, 148, "B", "t-sub");
+    // sensore di colore sopra il hub
+    box(262, 76, 44, 40, 18, white);
+    p.ellipse(284, 96, 26, 26, { stroke: dark, strokeWidth: 2, fill: "#2b2d33", fillStyle: "solid" });
+    p.ellipse(284, 96, 10, 10, { stroke: "#ffffff", strokeWidth: 1.6, fill: "#5b6474", fillStyle: "solid" });
+    // due motori con il disco turchese
+    [[350, 86], [350, 168]].forEach(function (m) {
+      box(m[0], m[1], 70, 62, 26, white);
+      p.ellipse(m[0] + 36, m[1] + 31, 50, 50, { stroke: dark, strokeWidth: 1.8, fill: teal, fillStyle: "solid" });
+      p.line(m[0] + 30, m[1] + 31, m[0] + 42, m[1] + 31, { stroke: dark, strokeWidth: 2.6 });
+      p.line(m[0] + 36, m[1] + 25, m[0] + 36, m[1] + 37, { stroke: dark, strokeWidth: 2.6 });
+      for (var k = 0; k < 6; k++) {
+        var a = k * Math.PI / 3;
+        p.ellipse(m[0] + 36 + Math.cos(a) * 16, m[1] + 31 + Math.sin(a) * 16, 6, 6, { stroke: dark, strokeWidth: 1, fill: "#1f8fa0", fillStyle: "solid", roughness: 0.3 });
+      }
+    });
+    // cavi
+    p.path("M310 158 C 330 150, 330 118, 350 118", { stroke: "#9aa3b2", strokeWidth: 3 });
+    p.path("M310 198 C 330 198, 330 200, 350 200", { stroke: "#9aa3b2", strokeWidth: 3 });
+    // etichette
+    text(svg, 70, 268, "mattoncini", "t-sub"); text(svg, 175, 268, "luci", "t-sub");
+    text(svg, 262, 268, "hub", "t-sub"); text(svg, 390, 268, "motori", "t-sub"); text(svg, 284, 58, "sensore di colore", "t-sub");
+  }
+
   function draw() {
     [].forEach.call(document.querySelectorAll("svg[data-sketch]"), function (svg) {
       while (svg.firstChild) svg.removeChild(svg.firstChild);
@@ -256,6 +378,8 @@
       if (k === "radial") radial(svg);
       if (k === "tree") tree(svg);
       if (k === "timeline") (nr ? timelineV : timeline)(svg);
+      if (k === "bot") bot(svg);
+      if (k === "kit") kit(svg);
     });
   }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw); else draw();
