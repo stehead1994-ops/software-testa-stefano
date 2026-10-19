@@ -337,6 +337,8 @@ figure.scene{margin:18px 0 6px;max-width:620px}
 figure.scene .sketch{max-height:330px}
 body.present figure.scene{margin:8px 0 0}
 body.present .slide{padding-top:4vh;padding-bottom:9vh}
+.slide h2 .segue{font:400 .55em var(--hand);color:var(--biro)}
+body.present .slide svg.sketch:not([data-sketch="scene"]){max-height:58vh}
 body.present .slide.on:not(.cover){align-content:safe center}
 figure.scene .sketch .t-sub{font-size:18px}
 figure.scene .sketch .t-node{font-size:23px}

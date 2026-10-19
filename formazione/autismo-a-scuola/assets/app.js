@@ -131,9 +131,16 @@
     s.style.zoom = ""; var base = parseFloat(getComputedStyle(s).zoom) || 1;
     s.style.zoom = "1"; s.style.minHeight = "0";
     var h = s.scrollHeight; s.style.minHeight = "";
-    var avail = window.innerHeight - 48, wl = 9;
+    var avail = window.innerHeight - 90, wl = 9;
     if (s.classList.contains("has-scene") && window.innerWidth >= 1300) wl = window.innerWidth / 1360;
-    s.style.zoom = String(Math.max(Math.min(1, base, wl), Math.min(base, wl, avail / h)));
+    var floor = Math.min(1, base, wl), z = Math.max(floor, Math.min(base, wl, avail / h));
+    s.style.minHeight = "0"; s.style.zoom = String(z);
+    for (var it = 0; it < 6; it++) {
+      var rh = s.getBoundingClientRect().height;
+      if (rh <= avail + 2 || z <= floor) break;
+      z = Math.max(floor, z * avail / rh - 0.01); s.style.zoom = String(z);
+    }
+    s.style.minHeight = "";
   }
   window.addEventListener("resize", function () { if (document.body.classList.contains("present")) fitSlide(slides[cur]); });
   function show(i) {
@@ -143,8 +150,85 @@
     pbar.querySelector(".cnt").textContent = (cur + 1) + " / " + slides.length;
     window.scrollTo(0, 0);
   }
+  // ---------- Slide troppo lunghe: divise in più schermate (solo in presentazione) ----------
+  function limitOf(s) { return window.innerHeight - 48 - window.innerHeight * 0.09; }
+  function measure(s) {
+    s.classList.add("on"); s.style.zoom = "1"; s.style.minHeight = "0"; s.style.alignContent = "start";
+  }
+  function unmeasure(s) { s.classList.remove("on"); s.style.zoom = ""; s.style.minHeight = ""; s.style.alignContent = ""; }
+  function bottomOf(el, s) { var r = el.getBoundingClientRect(), t = s.getBoundingClientRect(); return r.bottom - t.top; }
+  function splittable(el) {
+    if (el.matches("ul,ol") && el.children.length > 1) return el;
+    var t = el.matches("table") ? el : el.querySelector(":scope > table");
+    if (t && t.tBodies[0] && t.tBodies[0].rows.length > 1) return t;
+    return null;
+  }
+  function cutInside(el, s, lim) {
+    // divide una lista o una tabella: restituisce il pezzo da spostare, o null
+    var box = splittable(el); if (!box) return null;
+    var items = box.matches("table") ? Array.prototype.slice.call(box.tBodies[0].rows) : Array.prototype.slice.call(box.children);
+    var k = 0; while (k < items.length && bottomOf(items[k], s) <= lim) k++;
+    if (k <= 0 || k >= items.length) return null;
+    var uid = "sp" + Math.random().toString(36).slice(2, 8);
+    el.setAttribute("data-split-id", uid);
+    var clone = el.cloneNode(true); clone.removeAttribute("data-split-id"); var cbox = splittable(clone);
+    var citems = cbox.matches("table") ? Array.prototype.slice.call(cbox.tBodies[0].rows) : Array.prototype.slice.call(cbox.children);
+    citems.slice(0, k).forEach(function (n) { n.remove(); });
+    items.slice(k).forEach(function (n) { n.remove(); });
+    if (cbox.matches("ol")) cbox.setAttribute("start", String((parseInt(box.getAttribute("start") || "1", 10)) + k));
+    clone.setAttribute("data-cont-part", uid);
+    return clone;
+  }
+  function paginate(s) {
+    var made = [], guard = 0;
+    while (guard++ < 8) {
+      measure(s);
+      var lim = limitOf(s);
+      if (s.scrollHeight <= window.innerHeight - 48) { unmeasure(s); break; }
+      var kids = Array.prototype.slice.call(s.children).filter(function (c) { return !c.matches(".note,.margin,figure.scene,h2"); });
+      var i = 0; while (i < kids.length && bottomOf(kids[i], s) <= lim) i++;
+      if (i >= kids.length) { unmeasure(s); break; }
+      var cont = document.createElement("section");
+      cont.className = "slide row cont"; cont.setAttribute("data-cont-of", s.id || ""); cont.id = (s.id || "s") + "-segue";
+      var h = s.querySelector("h2"); if (h) { var h2 = h.cloneNode(true); h2.insertAdjacentHTML("beforeend", ' <small class="segue">(segue)</small>'); cont.appendChild(h2); }
+      var part = cutInside(kids[i], s, lim);
+      if (part) { cont.appendChild(part); i++; }
+      else if (i === 0) { unmeasure(s); break; }
+      kids.slice(i).forEach(function (c) { c.setAttribute("data-moved-from", s.id || ""); cont.appendChild(c); });
+      unmeasure(s);
+      s.parentNode.insertBefore(cont, s.nextSibling);
+      made.push(cont); s = cont;
+    }
+    return made;
+  }
+  function paginateAll() {
+    Array.prototype.slice.call(document.querySelectorAll("main .slide:not(.cover):not(.cont)")).forEach(paginate);
+  }
+  function unpaginate() {
+    Array.prototype.slice.call(document.querySelectorAll("main .slide.cont")).reverse().forEach(function (c) {
+      var orig = document.getElementById(c.getAttribute("data-cont-of")); if (!orig) return;
+      Array.prototype.slice.call(c.children).forEach(function (ch) {
+        if (ch.matches("h2")) return;
+        if (ch.getAttribute("data-cont-part")) {
+          var last = document.querySelector('[data-split-id="' + ch.getAttribute("data-cont-part") + '"]');
+          var src = splittable(ch), dst = last && splittable(last);
+          if (last) last.removeAttribute("data-split-id");
+          if (src && dst) {
+            var from = src.matches("table") ? src.tBodies[0] : src, to = dst.matches("table") ? dst.tBodies[0] : dst;
+            Array.prototype.slice.call(from.children).forEach(function (n) { to.appendChild(n); });
+          }
+          return;
+        }
+        ch.removeAttribute("data-moved-from"); orig.appendChild(ch);
+      });
+      c.remove();
+    });
+    // l'ordine delle figure: il disegno torna in fondo alla sezione
+    Array.prototype.slice.call(document.querySelectorAll("main .slide figure.scene")).forEach(function (f) { f.parentNode.appendChild(f); });
+  }
   function enter() {
     if (!document.querySelector(".slide.cover")) buildCover();
+    document.body.classList.add("present"); paginateAll();
     slides = Array.prototype.slice.call(document.querySelectorAll("main .slide"));
     if (!pbar) {
       pbar = el('<div class="pbar"><img src="' + LOGO + '" alt="" onerror="this.remove()"><span>' + AUTHOR + ' · ' + COURSE + '</span><span class="grow"></span>' +
@@ -161,6 +245,7 @@
     if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function () {});
   }
   function exit() {
+    unpaginate();
     document.body.classList.remove("present");
     var c = document.querySelector(".slide.cover"); if (c) c.style.display = "none";
     slides.forEach(function (s) { s.classList.remove("on"); });
