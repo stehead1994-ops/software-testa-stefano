@@ -8,14 +8,14 @@
    Campi:
      titolo       testo della scheda
      descrizione  una o due frasi
-     categoria    storie-caa | tabelle-caa | schede | corsi | docente
+     categoria    storie-caa | tabelle-caa | schede | docente
      discipline   una o più tra: italiano, matematica, scienze, storia,
                   geografia, inglese, arte, musica, ed-fisica, tecnologia,
                   ed-civica, autonomie, emozioni, trasversale
      ordine       facoltativo, es. "Infanzia", "Primaria", "Primaria · classe 1ª"
      formato      pdf | pagina | presentazione | video | doc | zip
      file         nome del file dentro materiali/file/   (oppure)
-     pagina       percorso di una pagina del sito, es. "corsi/caa-base/index.html"
+     pagina       percorso di una pagina del sito (di solito non serve: qui vanno i file)
      link         indirizzo esterno, es. un video YouTube
      anteprima    facoltativo: immagine dentro materiali/file/
      tag          parole chiave facoltative
@@ -34,24 +34,4 @@
        "data": "2026-10"
      }
    ───────────────────────────────────────────────────────────── */
-window.MATERIALI = /*INIZIO-ELENCO*/[
-  {
-    "titolo": "Autismo a scuola",
-    "descrizione": "Percorso breve in nove moduli per accogliere un alunno nello spettro autistico: miti, teoria della mente, spazi e tempi, comunicazione visiva, comportamenti problema, storie sociali, didattica differenziata e tecnologie.",
-    "categoria": "corsi",
-    "discipline": [
-      "trasversale"
-    ],
-    "ordine": "Tutti gli ordini",
-    "formato": "pagina",
-    "pagina": "percorsi/autismo-a-scuola/index.html",
-    "icona": "🧩",
-    "tag": [
-      "autismo",
-      "storie sociali",
-      "agende visive",
-      "CAA"
-    ],
-    "data": "2026-10"
-  }
-]/*FINE-ELENCO*/;
+window.MATERIALI = /*INIZIO-ELENCO*/[]/*FINE-ELENCO*/;

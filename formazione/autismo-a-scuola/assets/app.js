@@ -62,7 +62,7 @@
   var main = document.querySelector("main");
   var layout = el('<div class="layout"></div>');
   var side = el('<nav class="sidebar" aria-label="Moduli del percorso"></nav>');
-  var html = '<a href="../../index.html"><span class="n"></span>← Materiali</a>' +
+  var html = '<a href="../index.html"><span class="n"></span>← Formazione</a>' +
     '<a href="index.html"' + (page === "home" ? ' class="active"' : '') + '><span class="n"></span>Programma del percorso</a>';
   MODULES.forEach(function (g) {
     html += "<h4>" + g.group + "</h4>";
@@ -90,7 +90,7 @@
   // Piè di pagina
   document.body.appendChild(el(
     '<footer class="site"><img src="' + LOGO + '" alt="" onerror="this.remove()">' +
-    '<span>' + COURSE + ', ' + AUTHOR + '. <a href="../../index.html">Materiali</a>, <a href="../../../index.html">L\'Archivio del Maestro Stefano Testa</a>.</span></footer>'));
+    '<span>' + COURSE + ', ' + AUTHOR + '. <a href="../index.html">Formazione</a>, <a href="../../index.html">L\'Archivio del Maestro Stefano Testa</a>.</span></footer>'));
 
   // Menu mobile e tema
   document.getElementById("menuBtn").onclick = function () { document.body.classList.toggle("nav-open"); };

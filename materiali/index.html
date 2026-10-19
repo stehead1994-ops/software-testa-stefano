@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="description" content="Materiali per l'inclusione creati da Stefano Testa: storie in CAA, tabelle di comunicazione, schede, mini-corsi e strumenti per docenti, divisi per categoria e disciplina.">
+<meta name="description" content="Materiali per l'inclusione creati da Stefano Testa: storie in CAA, tabelle di comunicazione, schede e strumenti per docenti, da scaricare, divisi per categoria e disciplina.">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Materiali — L'Archivio del Maestro Stefano Testa</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -186,7 +186,7 @@
     </div>
     <div class="hero-tag">Per l'inclusione, pronti da usare</div>
     <h1 class="hero-title">Materiali</h1>
-    <p class="hero-sub">Storie in CAA, tabelle di comunicazione, schede e brevi percorsi che ho costruito in classe negli anni. Cerca per categoria o per disciplina, scarica e adatta ai tuoi alunni.</p>
+    <p class="hero-sub">Storie in CAA, tabelle di comunicazione, schede e strumenti che ho costruito in classe negli anni, pronti da scaricare. Cerca per categoria o per disciplina, scarica e adatta ai tuoi alunni.</p>
   </div>
   <div class="wave"></div>
 </header>
@@ -235,7 +235,6 @@
     {id:"storie-caa", nome:"Storie in CAA",            ico:"📖"},
     {id:"tabelle-caa",nome:"Tabelle e simboli CAA",    ico:"🗂️"},
     {id:"schede",     nome:"Schede e attività",        ico:"✏️"},
-    {id:"corsi",      nome:"Mini-corsi e percorsi",    ico:"🎓"},
     {id:"docente",    nome:"Strumenti per il docente", ico:"📋"}
   ];
   var DISCIPLINE = {
@@ -311,7 +310,7 @@
     var vis=dati.filter(function(m){return passa(m,false);});
     var g=document.getElementById("grid");
     if(!dati.length){
-      g.innerHTML='<div class="empty-state"><strong>Lo scaffale è pronto</strong>Qui arriveranno le storie in CAA, le tabelle di comunicazione, le schede e i brevi percorsi. Torna a trovarmi presto.</div>';
+      g.innerHTML='<div class="empty-state"><strong>Lo scaffale è pronto</strong>Qui arriveranno le storie in CAA, le tabelle di comunicazione, le schede e gli strumenti da scaricare. Torna a trovarmi presto.</div>';
     } else if(!vis.length){
       g.innerHTML='<div class="empty-state"><strong>Nessun materiale con questi filtri</strong>Prova un\'altra disciplina o un\'altra parola.<br><button type="button" id="azzera">Mostra tutti i materiali</button></div>';
     } else g.innerHTML=vis.map(scheda).join("");

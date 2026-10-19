@@ -17,7 +17,7 @@ JS = os.path.join(DIR, "materiali.js")
 FILES = os.path.join(DIR, "file")
 
 CATEGORIE = [("storie-caa", "Storie in CAA"), ("tabelle-caa", "Tabelle e simboli CAA"),
-             ("schede", "Schede e attività"), ("corsi", "Mini-corsi e percorsi"),
+             ("schede", "Schede e attività"),
              ("docente", "Strumenti per il docente")]
 DISCIPLINE = [("italiano", "Italiano"), ("matematica", "Matematica"), ("scienze", "Scienze"),
               ("storia", "Storia"), ("geografia", "Geografia"), ("inglese", "Inglese"),
