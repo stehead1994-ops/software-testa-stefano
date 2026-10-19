@@ -162,4 +162,10 @@
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
+
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/formazione/matematica-in-movimento/index.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
 </urlset>

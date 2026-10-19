@@ -163,7 +163,7 @@
     </div>
     <div class="hero-tag">Percorsi per docenti</div>
     <h1 class="hero-title">Formazione</h1>
-    <p class="hero-sub">I materiali dei corsi e dei laboratori che conduco: università, formazione docenti PNRR, CAA e inclusione. Organizzati per argomento, consultabili online e pronti da proiettare in aula.</p>
+    <p class="hero-sub">I materiali dei corsi e dei laboratori che conduco: università, formazione docenti PNRR, CAA e inclusione, didattica della matematica. Organizzati per argomento, consultabili online e pronti da proiettare in aula.</p>
   </div>
   <div class="wave"></div>
 </header>
@@ -184,6 +184,7 @@
         <li data-cat="universita">🎓 Università <span class="cat-count" id="count-universita">0</span></li>
         <li data-cat="pnrr">🤖 Formazione PNRR <span class="cat-count" id="count-pnrr">0</span></li>
         <li data-cat="caa">🗣 CAA &amp; Inclusione <span class="cat-count" id="count-caa">0</span></li>
+        <li data-cat="matematica">&#x1F522; Matematica <span class="cat-count" id="count-matematica">0</span></li>
       </ul>
     </div>
     <div class="sidebar-block">
@@ -245,14 +246,25 @@
           <div class="card-cta">Apri il percorso &rarr;</div>
         </div>
       </a>
+      <a href="matematica-in-movimento/index.html" class="card" data-cats="matematica" data-title="Matematica in movimento">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-icon">&#x1F522;</div>
+          <div class="card-meta">Formazione &middot; Didattica della matematica</div>
+          <div class="card-title">Matematica in movimento</div>
+          <p class="card-desc">Dal corpo al numero: l'approccio di Beppe Pea per infanzia e primaria. Spazio, tempo e logica come categorie primitive, dal gioco al simbolo, contare e numero, giochi di cortile, forza, relazioni e invarianti, progettazione e diario di bordo.</p>
+          <div class="card-tags"><span class="tag">12 moduli</span><span class="tag">Infanzia</span><span class="tag">Primaria</span><span class="tag">Giochi motori</span></div>
+          <div class="card-cta">Apri il percorso &rarr;</div>
+        </div>
+      </a>
     </div>
   </main>
 </div>
 
 <script>
   const allCards=[...document.querySelectorAll("#grid-articoli .card")];
-  const cats=["universita","pnrr","caa"];
-  const labels={tutti:"Tutti i percorsi",universita:"Università",pnrr:"Formazione PNRR",caa:"CAA & Inclusione"};
+  const cats=["universita","pnrr","caa","matematica"];
+  const labels={tutti:"Tutti i percorsi",universita:"Università",pnrr:"Formazione PNRR",caa:"CAA & Inclusione",matematica:"Matematica"};
   let activeCat="tutti",q="";
   function apply(){
     const vis=[];
