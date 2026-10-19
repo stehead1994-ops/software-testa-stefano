@@ -34,4 +34,24 @@
        "data": "2026-10"
      }
    ───────────────────────────────────────────────────────────── */
-window.MATERIALI = /*INIZIO-ELENCO*/[]/*FINE-ELENCO*/;
+window.MATERIALI = /*INIZIO-ELENCO*/[
+  {
+    "titolo": "Autismo a scuola",
+    "descrizione": "Percorso breve in nove moduli per accogliere un alunno nello spettro autistico: miti, teoria della mente, spazi e tempi, comunicazione visiva, comportamenti problema, storie sociali, didattica differenziata e tecnologie.",
+    "categoria": "corsi",
+    "discipline": [
+      "trasversale"
+    ],
+    "ordine": "Tutti gli ordini",
+    "formato": "pagina",
+    "pagina": "percorsi/autismo-a-scuola/index.html",
+    "icona": "🧩",
+    "tag": [
+      "autismo",
+      "storie sociali",
+      "agende visive",
+      "CAA"
+    ],
+    "data": "2026-10"
+  }
+]/*FINE-ELENCO*/;
