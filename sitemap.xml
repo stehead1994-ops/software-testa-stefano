@@ -149,4 +149,12 @@
     <changefreq>monthly</changefreq>
   </url>
 
+
+  <!-- Materiali -->
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/materiali/index.html</loc>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
 </urlset>
