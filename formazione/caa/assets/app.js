@@ -52,6 +52,7 @@
         '<span><span class="t1">' + COURSE + '</span><br><span class="t2">' + AUTHOR + '</span></span>' +
       '</a>' +
       '<span class="spacer"></span>' +
+      '<a class="btn back" href="../index.html" title="Torna all\'elenco dei corsi di Formazione">← <span class="l">Tutti i corsi</span><span class="s">Corsi</span></a>' +
       '<button class="btn" id="themeBtn" aria-label="Cambia tema chiaro o scuro">Tema</button>' +
       (page !== "home" ? '<button class="btn gold" id="presentBtn">▶ <span class="lbl">Presenta</span></button>' : '') +
     '</header>');
@@ -60,9 +61,9 @@
   // Layout con indice laterale
   var main = document.querySelector("main");
   var layout = el('<div class="layout"></div>');
-  var side = el('<nav class="sidebar" aria-label="Moduli del laboratorio"></nav>');
+  var side = el('<nav class="sidebar" aria-label="Moduli del percorso"></nav>');
   var html = '<a href="../index.html"><span class="n"></span>Formazione</a>' +
-    '<a href="index.html"' + (page === "home" ? ' class="active"' : '') + '><span class="n"></span>Programma del laboratorio</a>';
+    '<a href="index.html"' + (page === "home" ? ' class="active"' : '') + '><span class="n"></span>Programma del percorso</a>';
   MODULES.forEach(function (g) {
     html += "<h4>" + g.group + "</h4>";
     g.items.forEach(function (m) {
@@ -90,6 +91,13 @@
   document.body.appendChild(el(
     '<footer class="site"><img src="' + LOGO + '" alt="" onerror="this.remove()">' +
     '<span>' + COURSE + ', ' + AUTHOR + '. <a href="../index.html">Formazione</a>, <a href="../../index.html">L\'Archivio del Maestro Stefano Testa</a>.</span></footer>'));
+
+
+  // Crediti dei simboli ARASAAC
+  if (document.querySelector('img[src*="arasaac/"]')) {
+    var fs = document.querySelector("footer.site span");
+    if (fs) fs.insertAdjacentHTML("beforeend", '<span class="credits">Simboli pittografici: Sergio Palao. Provenienza: ARASAAC (<a href="https://arasaac.org">arasaac.org</a>). Licenza: CC (BY-NC-SA). Proprietà: Governo di Aragona (Spagna).</span>');
+  }
 
   // Menu mobile e tema
   document.getElementById("menuBtn").onclick = function () { document.body.classList.toggle("nav-open"); };

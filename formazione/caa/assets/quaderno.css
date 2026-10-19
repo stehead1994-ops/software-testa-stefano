@@ -316,3 +316,20 @@ body.present .pbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:3
 .strip .step .pic{display:block}
 .strip .step{display:flex;flex-direction:column;align-items:center}
 @media (max-width:980px){.cboard[style*="--cols:5"],.cboard[style*="--cols:6"]{grid-template-columns:repeat(3,minmax(0,1fr))}.cboard .cell b{font-size:15px;text-align:center}}
+
+/* --- simboli ARASAAC e pulsante corsi --- */
+.symrow{display:flex;flex-wrap:wrap;gap:10px;margin:2px 0 14px}
+.symrow .sym{display:flex;flex-direction:column;align-items:center;gap:3px;width:92px;padding:6px 4px 5px;background:#fff;border:2px solid var(--graphite);border-radius:6px}
+.symrow .sym img{width:66px;height:66px;object-fit:contain}
+.symrow .sym b{font:700 14px/1.15 var(--print);color:#232a36;text-align:center}
+.pic img{width:100%;height:100%;object-fit:contain;display:block}
+.strip .step .pic{width:64px;height:64px}
+.cboard .cell,.strip .step,.tokens .goal,.aw-cell{background:#fff}
+.cboard .cell b,.strip .step,.tokens .goal,.aw-word{color:#232a36}
+.aw-pic img{width:58px;height:58px;object-fit:contain;display:block}
+.topbar .back{text-decoration:none;font-weight:700;white-space:nowrap}
+.topbar .back .s{display:none}
+footer.site .credits{display:block;font-size:13px;margin-top:4px}
+@media (max-width:980px){.symrow .sym{width:76px}.symrow .sym img{width:52px;height:52px}.symrow .sym b{font-size:12.5px}
+  .topbar .back .l{display:none}.topbar .back .s{display:inline}}
+@media print{.symrow .sym{break-inside:avoid}}

@@ -58,6 +58,7 @@
         '<span><span class="t1">' + COURSE + '</span><br><span class="t2">' + AUTHOR + '</span></span>' +
       '</a>' +
       '<span class="spacer"></span>' +
+      '<a class="btn back" href="../index.html" title="Torna all\'elenco dei corsi di Formazione">← <span class="l">Tutti i corsi</span><span class="s">Corsi</span></a>' +
       '<button class="btn" id="themeBtn" aria-label="Cambia tema chiaro o scuro">Tema</button>' +
       (page !== "home" ? '<button class="btn gold" id="presentBtn">▶ <span class="lbl">Presenta</span></button>' : '') +
     '</header>');
@@ -96,6 +97,13 @@
   document.body.appendChild(el(
     '<footer class="site"><img src="' + LOGO + '" alt="" onerror="this.remove()">' +
     '<span>' + COURSE + ', ' + AUTHOR + '. <a href="../index.html">Formazione</a>, <a href="../../index.html">L\'Archivio del Maestro Stefano Testa</a>.</span></footer>'));
+
+
+  // Crediti dei simboli ARASAAC
+  if (document.querySelector('img[src*="arasaac/"]')) {
+    var fs = document.querySelector("footer.site span");
+    if (fs) fs.insertAdjacentHTML("beforeend", '<span class="credits">Simboli pittografici: Sergio Palao. Provenienza: ARASAAC (<a href="https://arasaac.org">arasaac.org</a>). Licenza: CC (BY-NC-SA). Proprietà: Governo di Aragona (Spagna).</span>');
+  }
 
   // Menu mobile e tema
   document.getElementById("menuBtn").onclick = function () { document.body.classList.toggle("nav-open"); };
