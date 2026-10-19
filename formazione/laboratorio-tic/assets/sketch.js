@@ -212,7 +212,7 @@
 
 
   // Varianti verticali per schermi stretti
-  function narrow(svg) { return svg.getBoundingClientRect().width < 520; }
+  function narrow(svg) { var w = svg.getBoundingClientRect().width; return (w || window.innerWidth) < 520 && window.innerWidth < 760; }
   function ladderV(svg) {
     var p = pen(svg, 13), it = items(svg), n = it.length, H = n * 95 + 40;
     svg.setAttribute("viewBox", "0 0 360 " + H);

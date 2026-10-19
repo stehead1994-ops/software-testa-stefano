@@ -27,9 +27,12 @@
     function add(el) { g.appendChild(el); return el; }
     function raw(tag, a) { return node(tag, a, g); }
     return {
-      path: function (d, x) { x = o(x); return rc ? add(rc.path(d, x)) : raw("path", { d: d, fill: x.fill || "none", stroke: x.stroke, "stroke-width": x.strokeWidth }); },
+      // il colore di riempimento segue esattamente la forma; solo il contorno è "a mano"
+      path: function (d, x) { x = o(x); if (x.fill && x.fill !== "none") { raw("path", { d: d, fill: x.fill, stroke: "none" }); delete x.fill; delete x.fillStyle; }
+        return rc ? add(rc.path(d, x)) : raw("path", { d: d, fill: "none", stroke: x.stroke, "stroke-width": x.strokeWidth }); },
       rect: function (X, Y_, w, h, x) { return this.path("M" + X + " " + Y_ + "h" + w + "v" + h + "h" + (-w) + "Z", x); },
-      ell: function (cx, cy, w, h, x) { x = o(x); return rc ? add(rc.ellipse(cx, cy, w, h, x)) : raw("ellipse", { cx: cx, cy: cy, rx: w / 2, ry: h / 2, fill: x.fill || "none", stroke: x.stroke, "stroke-width": x.strokeWidth }); },
+      ell: function (cx, cy, w, h, x) { x = o(x); if (x.fill && x.fill !== "none") { raw("ellipse", { cx: cx, cy: cy, rx: w / 2, ry: h / 2, fill: x.fill, stroke: "none" }); delete x.fill; delete x.fillStyle; }
+        return rc ? add(rc.ellipse(cx, cy, w, h, x)) : raw("ellipse", { cx: cx, cy: cy, rx: w / 2, ry: h / 2, fill: "none", stroke: x.stroke, "stroke-width": x.strokeWidth }); },
       line: function (x1, y1, x2, y2, x) { return this.path("M" + x1 + " " + y1 + "L" + x2 + " " + y2, x); },
       text: function (x, y, t, size, col, weight) { var e = node("text", { x: x, y: y, "text-anchor": "middle", style: "font:" + (weight || 700) + " " + (size || 12) + "px var(--print,sans-serif);fill:" + (col || K) }, g); e.textContent = t; return e; }
     };

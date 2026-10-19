@@ -126,9 +126,20 @@
       '</div></section>');
     main.insertBefore(c, main.querySelector(".slide"));
   }
+  function fitSlide(s) {
+    if (!s) return;
+    s.style.zoom = ""; var base = parseFloat(getComputedStyle(s).zoom) || 1;
+    s.style.zoom = "1"; s.style.minHeight = "0";
+    var h = s.scrollHeight; s.style.minHeight = "";
+    var avail = window.innerHeight - 48, wl = 9;
+    if (s.classList.contains("has-scene") && window.innerWidth >= 1300) wl = window.innerWidth / 1360;
+    s.style.zoom = String(Math.max(Math.min(1, base, wl), Math.min(base, wl, avail / h)));
+  }
+  window.addEventListener("resize", function () { if (document.body.classList.contains("present")) fitSlide(slides[cur]); });
   function show(i) {
     cur = Math.max(0, Math.min(slides.length - 1, i));
     slides.forEach(function (s, k) { s.classList.toggle("on", k === cur); });
+    fitSlide(slides[cur]);
     pbar.querySelector(".cnt").textContent = (cur + 1) + " / " + slides.length;
     window.scrollTo(0, 0);
   }

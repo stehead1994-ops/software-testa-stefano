@@ -309,3 +309,18 @@ footer.site .credits{display:block;font-size:13px;margin-top:4px}
 @media print{.symrow .sym{break-inside:avoid}}
 figure.scene{margin:18px 0 6px;max-width:620px}
 figure.scene .sketch{max-height:330px}
+body.present figure.scene{margin:8px 0 0}
+body.present .slide{padding-top:4vh;padding-bottom:9vh}
+body.present .slide.on:not(.cover){align-content:safe center}
+figure.scene .sketch .t-sub{font-size:18px}
+figure.scene .sketch .t-node{font-size:23px}
+@media (min-width:1300px){
+  body.present .slide.has-scene{grid-template-columns:var(--mw) minmax(0,600px) minmax(420px,1fr);column-gap:46px}
+  body.present .slide.has-scene > figure.scene{grid-column:3;grid-row:1 / span 40;align-self:center;margin:0}
+  body.present .slide.has-scene > figure.scene .sketch{height:auto;width:100%;max-height:62vh}
+  body.present .slide.has-scene > .wide{grid-column:2}
+}
+body.present figure.scene .sketch{height:29vh;width:auto;max-width:100%}
+body.present .symrow{margin-bottom:8px}
+body.present .symrow .sym{width:80px}
+body.present .symrow .sym img{width:50px;height:50px}
