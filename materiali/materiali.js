@@ -34,4 +34,44 @@
        "data": "2026-10"
      }
    ───────────────────────────────────────────────────────────── */
-window.MATERIALI = /*INIZIO-ELENCO*/[]/*FINE-ELENCO*/;
+window.MATERIALI = /*INIZIO-ELENCO*/[
+  {
+    "titolo": "Crescere, imparare, concentrarsi",
+    "descrizione": "Guida illustrata per genitori e docenti: concentrazione e scrittura, tempo e memoria di lavoro, pause, strumenti digitali e CAA, rituali di passaggio in classe.",
+    "categoria": "collaborazioni",
+    "discipline": [
+      "italiano",
+      "trasversale"
+    ],
+    "ordine": "Primaria",
+    "formato": "pdf",
+    "file": "crescere-imparare-concentrarsi.pdf",
+    "crediti": [
+      {
+        "nome": "@lamaestracolconiglio",
+        "handle": "@lamaestracolconiglio"
+      },
+      {
+        "nome": "@renneantonella",
+        "handle": "@renneantonella"
+      },
+      {
+        "nome": "@maestra_eliisa_",
+        "handle": "@maestra_eliisa_"
+      },
+      {
+        "nome": "@amicidipenna_global",
+        "handle": "@amicidipenna_global"
+      }
+    ],
+    "tag": [
+      "concentrazione",
+      "scrittura",
+      "funzioni esecutive",
+      "CAA",
+      "famiglia e scuola"
+    ],
+    "data": "2026-10",
+    "anteprima": "crescere-imparare-concentrarsi-anteprima.png"
+  }
+]/*FINE-ELENCO*/;
