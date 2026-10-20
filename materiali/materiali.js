@@ -72,6 +72,7 @@ window.MATERIALI = /*INIZIO-ELENCO*/[
       "famiglia e scuola"
     ],
     "data": "2026-10",
-    "anteprima": "crescere-imparare-concentrarsi-anteprima.png"
+    "anteprima": "crescere-imparare-concentrarsi-anteprima.png",
+    "originale": "https://www.instagram.com/p/DedBFZID4Ps/"
   }
 ]/*FINE-ELENCO*/;
