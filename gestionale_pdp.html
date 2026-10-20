@@ -1479,6 +1479,7 @@ async function renderLogs() {
     const AZIONE_LABEL = {
       'apertura_pdp': '👁️ Apertura PDP',
       'modifica_pdp': '✏️ Modifica PDP',
+      'modifica_campo': '🔄 Modifica campo',
       'versione_definitiva': '📌 Versione definitiva',
       'download_pdf': '⬇️ Download PDF',
     };
@@ -1495,6 +1496,7 @@ async function renderLogs() {
               <th style="padding:10px 14px;text-align:left;font-weight:600">Ruolo</th>
               <th style="padding:10px 14px;text-align:left;font-weight:600">Azione</th>
               <th style="padding:10px 14px;text-align:left;font-weight:600">Alunno/a</th>
+              <th style="padding:10px 14px;text-align:left;font-weight:600">Dettaglio cronologia</th>
             </tr>
           </thead>
           <tbody>
@@ -1503,13 +1505,25 @@ async function renderLogs() {
               const ts = l.ts?.toDate?.();
               const dataStr = ts ? ts.toLocaleString('it-IT', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
               const bg = i % 2 === 0 ? '#ffffff' : '#f8fafc';
-              return `<tr style="background:${bg};border-bottom:1px solid #e2e8f0">
-                <td style="padding:9px 14px;color:var(--testo-soft)">${dataStr}</td>
-                <td style="padding:9px 14px;font-weight:500">${l.utente_nome || l.utente_email || '—'}</td>
-                <td style="padding:9px 14px;color:var(--testo-soft)">${l.ruolo || '—'}</td>
-                <td style="padding:9px 14px">${AZIONE_LABEL[l.azione] || l.azione || '—'}</td>
-                <td style="padding:9px 14px">${l.alunno || '—'}</td>
-              </tr>`;
+              // Dettaglio cronologia: mostra valorePrecedente → valoreNuovo per modifica_campo
+              let dettaglio = '—';
+              if (l.azione === 'modifica_campo' && l.campo) {
+                const troncaStr = (s, n) => s && s.length > n ? s.substring(0, n) + '…' : (s || '');
+                const prev = troncaStr(l.valorePrecedente, 60);
+                const next = troncaStr(l.valoreNuovo, 60);
+                dettaglio = '<span style="font-size:0.78rem;color:var(--testo-soft);font-family:monospace">' + l.campo + '</span><br>' +
+                  '<span style="color:#c0392b;text-decoration:line-through;font-size:0.78rem" title="' + (l.valorePrecedente||'').replace(/"/g,'&quot;') + '">' + prev + '</span>' +
+                  '<span style="color:#888;padding:0 4px">→</span>' +
+                  '<span style="color:#27ae60;font-size:0.78rem" title="' + (l.valoreNuovo||'').replace(/"/g,'&quot;') + '">' + next + '</span>';
+              }
+              return '<tr style="background:' + bg + ';border-bottom:1px solid #e2e8f0">' +
+                '<td style="padding:9px 14px;color:var(--testo-soft)">' + dataStr + '</td>' +
+                '<td style="padding:9px 14px;font-weight:500">' + (l.utente_nome || l.utente_email || '—') + '</td>' +
+                '<td style="padding:9px 14px;color:var(--testo-soft)">' + (l.ruolo || '—') + '</td>' +
+                '<td style="padding:9px 14px">' + (AZIONE_LABEL[l.azione] || l.azione || '—') + '</td>' +
+                '<td style="padding:9px 14px">' + (l.alunno || '—') + '</td>' +
+                '<td style="padding:9px 14px;max-width:280px">' + dettaglio + '</td>' +
+                '</tr>';
             }).join('')}
           </tbody>
         </table>
@@ -2009,11 +2023,50 @@ async function salvaOra() {
     nuoviDati['_pap'] = JSON.stringify(papData);
   }
 
+  // ── Cronologia versioni: diff campo per campo ──────────────────────────────
+  // Confronta i nuovi valori con quelli precedentemente salvati in Firestore.
+  // Per ogni campo che è cambiato E aveva un valore precedente non vuoto,
+  // scrive un documento di log separato con valorePrecedente e valoreNuovo,
+  // in modo che il Master possa recuperare cancellazioni accidentali.
+  const datiPrecedenti = pdpCorrenteDoc?.dati || {};
+  const campiCambiati = [];
+  for (const [campo, valoreNuovo] of Object.entries(nuoviDati)) {
+    // Salta i meta-campi interni (prefisso _) e le checkbox/radio
+    if (campo.startsWith('_') || campo.startsWith('cb_') || campo.startsWith('radio_')) continue;
+    const valorePrecedente = datiPrecedenti[campo];
+    // Logga solo se: il valore è cambiato E c'era già qualcosa scritto prima
+    if (
+      valorePrecedente !== undefined &&
+      String(valorePrecedente).trim() !== '' &&
+      String(valoreNuovo).trim() !== String(valorePrecedente).trim()
+    ) {
+      campiCambiati.push({ campo, valorePrecedente: String(valorePrecedente), valoreNuovo: String(valoreNuovo) });
+    }
+  }
+
   try {
     await updateDoc(doc(db, 'pdp', pdpCorrenteId), {
       dati: nuoviDati, stato: 'in-corso', ultimoAgg: serverTimestamp(),
       grado: nuoviDati['_grado']
     });
+
+    // Aggiorna la cache in memoria con i dati appena salvati
+    if (pdpCorrenteDoc) pdpCorrenteDoc.dati = { ...nuoviDati };
+
+    // Scrivi un log per ogni campo modificato (in parallelo, best-effort)
+    if (campiCambiati.length > 0) {
+      const alunno = pdpCorrenteDoc?.alunno || '?';
+      await Promise.allSettled(campiCambiati.map(({ campo, valorePrecedente, valoreNuovo }) =>
+        scriviLog('modifica_campo', pdpCorrenteId, {
+          alunno,
+          campo,
+          valorePrecedente,
+          valoreNuovo
+        })
+      ));
+      console.log('📝 Log cronologia scritto per', campiCambiati.length, 'campo/i:', campiCambiati.map(c => c.campo));
+    }
+
     const dot = document.getElementById('autosave-dot');
     const lbl = document.getElementById('autosave-label');
     if (dot) dot.classList.remove('saving');
