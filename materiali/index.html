@@ -302,7 +302,7 @@
   function creditiHtml(m){
     var cr=(m.crediti||[]).map(function(c){
       var u=igUrl(c), n=esc(c.nome||c.handle||"");
-      return u ? '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+n+(c.handle?' <span>'+esc(c.handle.charAt(0)==="@"?c.handle:"@"+c.handle)+'</span>':'')+'</a>' : n;
+      return u ? '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+n+(c.handle && (c.handle.charAt(0)==="@"?c.handle:"@"+c.handle)!==(c.nome||"")?' <span>'+esc(c.handle.charAt(0)==="@"?c.handle:"@"+c.handle)+'</span>':'')+'</a>' : n;
     });
     if(!cr.length && !m.originale) return "";
     return '<div class="card-crediti">'+(cr.length?'Realizzato con '+cr.join(" · "):'')+
