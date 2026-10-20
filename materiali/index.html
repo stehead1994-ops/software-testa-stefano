@@ -158,6 +158,17 @@
 @media(max-width:768px){.layout{display:flex;flex-direction:column}.sidebar{display:contents}.sidebar-block{width:100%}.content{order:2;width:100%}.sidebar-block.info{order:3}}
 .licenze{font-size:11.5px;color:rgba(255,255,255,.55);max-width:760px;margin:.6rem auto 0}
 @media (prefers-reduced-motion:reduce){.card{animation:none}.card:hover{transform:none}}
+
+/* Schede con crediti (Con altre creator) */
+.card-collab{position:relative}
+.card-collab .card-link{color:inherit;text-decoration:none}
+.card-collab .card-link::after{content:"";position:absolute;inset:0;z-index:1}
+.card-collab:hover .card-title{text-decoration:underline}
+.card-crediti{position:relative;z-index:2;margin-top:.7rem;padding-top:.7rem;border-top:1px dashed #cfd8e3;font-size:12px;line-height:1.7;color:var(--sub)}
+.card-crediti a{color:var(--bib);font-weight:600;text-decoration:none}
+.card-crediti a:hover,.card-crediti a:focus-visible{text-decoration:underline}
+.card-crediti .orig{display:block;margin-top:2px}
+
 </style>
 </head>
 <body>
@@ -235,7 +246,8 @@
     {id:"storie-caa", nome:"Storie in CAA",            ico:"📖"},
     {id:"tabelle-caa",nome:"Tabelle e simboli CAA",    ico:"🗂️"},
     {id:"schede",     nome:"Schede e attività",        ico:"✏️"},
-    {id:"docente",    nome:"Strumenti per il docente", ico:"📋"}
+    {id:"docente",    nome:"Strumenti per il docente", ico:"📋"},
+    {id:"collaborazioni", nome:"Con altre creator",   ico:"🤝"}
   ];
   var DISCIPLINE = {
     "italiano":"Italiano","matematica":"Matematica","scienze":"Scienze","storia":"Storia",
@@ -251,7 +263,7 @@
 
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
   function catDi(id){ for(var i=0;i<CATEGORIE.length;i++) if(CATEGORIE[i].id===id) return CATEGORIE[i]; return {id:id,nome:id,ico:"📄"}; }
-  function testo(m){ return [m.titolo,m.descrizione,(m.tag||[]).join(" "),(m.discipline||[]).map(function(d){return DISCIPLINE[d]||d;}).join(" "),m.ordine].join(" ").toLowerCase(); }
+  function testo(m){ return [m.titolo,m.descrizione,(m.tag||[]).join(" "),(m.crediti||[]).map(function(c){return c.nome+" "+(c.handle||"");}).join(" "),(m.discipline||[]).map(function(d){return DISCIPLINE[d]||d;}).join(" "),m.ordine].join(" ").toLowerCase(); }
   function passa(m, ignoraDisc){
     if(stato.cat!=="tutti" && m.categoria!==stato.cat) return false;
     if(!ignoraDisc && stato.disc && (m.discipline||[]).indexOf(stato.disc)<0) return false;
@@ -285,6 +297,18 @@
     bar.innerHTML=html; bar.hidden=false;
   }
 
+
+  function igUrl(c){ if(c.url) return c.url; var h=String(c.handle||"").replace(/^@/,"").trim(); return h ? "https://www.instagram.com/"+encodeURIComponent(h)+"/" : ""; }
+  function creditiHtml(m){
+    var cr=(m.crediti||[]).map(function(c){
+      var u=igUrl(c), n=esc(c.nome||c.handle||"");
+      return u ? '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+n+(c.handle?' <span>'+esc(c.handle.charAt(0)==="@"?c.handle:"@"+c.handle)+'</span>':'')+'</a>' : n;
+    });
+    if(!cr.length && !m.originale) return "";
+    return '<div class="card-crediti">'+(cr.length?'Realizzato con '+cr.join(" · "):'')+
+      (m.originale?'<a class="orig" href="'+esc(m.originale)+'" target="_blank" rel="noopener">Vedi il post originale su Instagram ↗</a>':'')+'</div>';
+  }
+
   function scheda(m){
     var c=catDi(m.categoria), f=m.formato||"pdf";
     var link = m.pagina || (m.file ? "file/"+m.file : (m.link||""));
@@ -302,6 +326,13 @@
         (tags?'<div class="card-tags">'+tags+'</div>':'')+
         '<div class="card-foot"><span>'+esc(FORMATI[f]||f)+(m.data?' · '+dataIt(m.data):'')+'</span>'+(link?'<span class="card-cta">'+CTA[f]+' →</span>':'<span>In preparazione</span>')+'</div>'+
       '</div>';
+    var cred = creditiHtml(m);
+    if(cred){
+      var corpo = dentro.replace('<h3 class="card-title">'+esc(m.titolo)+'</h3>',
+        '<h3 class="card-title">'+(link?'<a class="card-link" href="'+encodeURI(link)+'"'+(esterno?' target="_blank" rel="noopener"':'')+'>'+esc(m.titolo)+'</a>':esc(m.titolo))+'</h3>');
+      corpo = corpo.replace(/<\/div>\s*$/, cred+'</div>');
+      return '<div class="card card-collab'+(link?'':' soon')+'">'+corpo+'</div>';
+    }
     if(!link) return '<div class="card soon">'+dentro+'</div>';
     return '<a class="card" href="'+encodeURI(link)+'"'+(esterno?' target="_blank" rel="noopener"':'')+'>'+dentro+'</a>';
   }

@@ -18,7 +18,8 @@ FILES = os.path.join(DIR, "file")
 
 CATEGORIE = [("storie-caa", "Storie in CAA"), ("tabelle-caa", "Tabelle e simboli CAA"),
              ("schede", "Schede e attività"),
-             ("docente", "Strumenti per il docente")]
+             ("docente", "Strumenti per il docente"),
+             ("collaborazioni", "Con altre creator (post condivisi)")]
 DISCIPLINE = [("italiano", "Italiano"), ("matematica", "Matematica"), ("scienze", "Scienze"),
               ("storia", "Storia"), ("geografia", "Geografia"), ("inglese", "Inglese"),
               ("arte", "Arte e immagine"), ("musica", "Musica"), ("ed-fisica", "Educazione fisica"),
@@ -48,6 +49,22 @@ def scegli(titolo, voci, multipla=False):
         except ValueError: pass
         print("  Numero non valido, riprova.")
 
+def chiedi_crediti():
+    print("\nCreator con cui hai realizzato il PDF.")
+    print("  Scrivi nome e handle, es.  Maria Rossi @mariarossi   (Invio vuoto per finire)")
+    out = []
+    while True:
+        r = input("  Creator: ").strip()
+        if not r: break
+        m = re.search(r"@?([A-Za-z0-9._]{2,30})\s*$", r) if "@" in r else None
+        if m and "@" in r:
+            handle = "@" + r[r.rindex("@") + 1:].strip().split()[0]
+            nome = r[:r.rindex("@")].strip() or handle
+            out.append({"nome": nome, "handle": handle})
+        else:
+            out.append({"nome": r})
+    return out
+
 def slug(s):
     s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode()
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-") or "materiale"
@@ -71,6 +88,11 @@ def main():
     voce["descrizione"] = chiedi("Descrizione (una o due frasi): ")
     voce["categoria"] = scegli("Categoria:", CATEGORIE)
     voce["discipline"] = scegli("Disciplina:", DISCIPLINE, multipla=True)
+    if voce["categoria"] == "collaborazioni":
+        cr = chiedi_crediti()
+        if cr: voce["crediti"] = cr
+        orig = chiedi("Link al post su Instagram (Invio per saltare): ", False)
+        if orig: voce["originale"] = orig
     o = chiedi("\nOrdine o classe (es. Primaria · classe 1ª — Invio per saltare): ", False)
     if o: voce["ordine"] = o
 
