@@ -74,5 +74,45 @@ window.MATERIALI = /*INIZIO-ELENCO*/[
     "data": "2026-10",
     "anteprima": "crescere-imparare-concentrarsi-anteprima.png",
     "originale": "https://www.instagram.com/p/DedBFZID4Ps/"
+  },
+  {
+    "titolo": "Come avvicinare i bambini alla scrittura",
+    "descrizione": "Carosello illustrato sul pregrafismo creativo e sul Pen Pal: scrittura come gioco, comunicazione ed emozione, CAA e parole chiave, ambiente e autonomia (5-7 anni).",
+    "categoria": "collaborazioni",
+    "discipline": [
+      "italiano",
+      "autonomie"
+    ],
+    "ordine": "Infanzia e primaria · 5-7 anni",
+    "formato": "pdf",
+    "file": "come-avvicinare-i-bambini-alla-scrittura.pdf",
+    "crediti": [
+      {
+        "nome": "@amicidipenna_global",
+        "handle": "@amicidipenna_global"
+      },
+      {
+        "nome": "@lamaestracolconiglio",
+        "handle": "@lamaestracolconiglio"
+      },
+      {
+        "nome": "@renneantonella",
+        "handle": "@renneantonella"
+      },
+      {
+        "nome": "@maestra_eliisa_",
+        "handle": "@maestra_eliisa_"
+      }
+    ],
+    "originale": "https://www.instagram.com/p/DdyF0Jqky1G/",
+    "tag": [
+      "scrittura",
+      "pregrafismo",
+      "Pen Pal",
+      "CAA",
+      "curiosità"
+    ],
+    "data": "2026-09",
+    "anteprima": "come-avvicinare-i-bambini-alla-scrittura-anteprima.png"
   }
 ]/*FINE-ELENCO*/;
