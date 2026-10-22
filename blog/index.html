@@ -379,9 +379,67 @@
   .card:nth-child(2) { animation-delay: .15s; }
   .card:nth-child(3) { animation-delay: .25s; }
   .card:nth-child(4) { animation-delay: .35s; }
+
+  /* ── NAVBAR ── */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(0,32,92,.97);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    height: 52px; display: flex; align-items: center;
+  }
+  .navbar-inner {
+    max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;
+    width: 100%; display: flex; align-items: center;
+    justify-content: space-between; gap: 1rem;
+  }
+  .navbar-brand {
+    font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700;
+    color: #fff; text-decoration: none; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0;
+  }
+  .navbar-brand span { color: var(--oro); }
+  .navbar-links { display: flex; align-items: center; gap: .25rem; flex-shrink: 0; }
+  .navbar-link {
+    font-size: 13px; font-weight: 500; color: rgba(255,255,255,.75);
+    text-decoration: none; padding: 6px 14px; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.12); white-space: nowrap;
+    transition: background .15s, color .15s;
+  }
+  .navbar-link:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .navbar-link-ai  { background:rgba(0,68,200,.85);  color:#fff !important; font-weight:600 !important; }
+  .navbar-link-inc { background:rgba(29,158,117,.85); color:#fff !important; font-weight:600 !important; }
+  .navbar-link-bib { background:rgba(124,58,237,.85);  color:#fff !important; font-weight:600 !important; }
+  .navbar-link-pod { background:rgba(200,168,75,.85);  color:#00205c !important; font-weight:600 !important; }
+  .navbar-link-ai:hover  { background: #0033a0 !important; }
+  .navbar-link-inc:hover { background: #17856a !important; }
+  .navbar-link-bib:hover { background: #6029c5 !important; }
+  header { padding-top: 52px; }
+  @media (max-width: 1100px) {
+    .navbar-brand { display: none; }
+    .navbar-links { overflow-x: auto; max-width: 100%; scrollbar-width: none; }
+    .navbar-links::-webkit-scrollbar { display: none; }
+  }
 </style>
 </head>
 <body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a class="navbar-brand" href="../index.html">🐧 <span>L'Archivio</span> del Maestro Stefano Testa</a>
+    <div class="navbar-links">
+      <a href="../index.html" class="navbar-link">🏠 Home</a>
+      <a href="index.html" class="navbar-link navbar-link-ai">🤖 Blog AI</a>
+      <a href="../inclusione/news/index.html" class="navbar-link navbar-link-inc">♿ Inclusione</a>
+      <a href="../biblioteca/index.html" class="navbar-link navbar-link-bib">🔬 Biblioteca</a>
+      <a href="../formazione/index.html" class="navbar-link navbar-link-for" style="background:#003087;color:#fff;font-weight:700;border-color:#C8A84B">🎓 Formazione</a>
+      <a href="../materiali/index.html" class="navbar-link navbar-link-mat" style="background:#1D9E75;color:#fff;font-weight:700">🧩 Materiali</a>
+      <a href="../podcast.html" class="navbar-link navbar-link-pod">🎙️ Podcast</a>
+    </div>
+  </div>
+</nav>
+
 
 <header>
   <div class="hero-inner">
