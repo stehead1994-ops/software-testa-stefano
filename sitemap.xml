@@ -63,6 +63,11 @@
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
+  <url>
+    <loc>https://stehead1994-ops.github.io/software-testa-stefano/inclusione/news/dl170-docenti-sostegno-numeri-futuro.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
 
   <!-- Biblioteca -->
   <url>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Più docenti di sostegno che di posto comune: i numeri del DL 170 e cosa ci dicono davvero — L'Archivio del Maestro Stefano Testa</title>
+<meta name="description" content="La relazione tecnica del DL 170 proietta che entro quindici anni i docenti di sostegno potrebbero eguagliare quelli di posto comune. Un'analisi dei numeri nazionali ISTAT e dei dati reali di un istituto comprensivo del Bresciano." />
+<meta name="author" content="Stefano Testa" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blu:#003087;--blu2:#00205c;--verde:#1D9E75;--verde2:#085041;
+    --oro:#c8a84b;--bianco:#ffffff;--grigio:#f4f6f9;--testo:#1a1a2e;--sub:#5a6a85;
+    --inc:#1D9E75;--inc2:#085041;
+  }
+  html { scroll-behavior:smooth; }
+  body { font-family:'DM Sans',sans-serif; background:var(--grigio); color:var(--testo); min-height:100vh; padding-top:52px; }
+
+  .navbar { position:fixed; top:0; left:0; right:0; z-index:1000; background:rgba(0,32,92,.97); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,.08); height:52px; display:flex; align-items:center; }
+  .navbar-inner { max-width:1200px; margin:0 auto; padding:0 1.5rem; width:100%; display:flex; align-items:center; justify-content:space-between; }
+  .navbar-brand { font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:#fff; text-decoration:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; min-width:0; }
+  .navbar-brand span { color:var(--oro); }
+  .navbar-links { display:flex; align-items:center; gap:.25rem; flex-shrink:0; }
+  .navbar-link { font-size:13px; font-weight:500; color:rgba(255,255,255,.75); text-decoration:none; padding:6px 14px; border-radius:8px; transition:background .15s,color .15s; white-space:nowrap; border:1px solid rgba(255,255,255,.15); }
+  .navbar-link:hover { background:rgba(255,255,255,.1); color:#fff; }
+  .navbar-link-ai  { background:rgba(0,68,200,.85);  color:#fff !important; font-weight:600 !important; }
+  .navbar-link-inc { background:rgba(29,158,117,.85); color:#fff !important; font-weight:600 !important; }
+  .navbar-link-bib { background:rgba(124,58,237,.85); color:#fff !important; font-weight:600 !important; }
+  .navbar-link-pod { background:rgba(200,168,75,.85); color:#00205c !important; font-weight:600 !important; }
+  @media(max-width:700px) { .navbar-brand { font-size:12px; } .navbar-link { font-size:11px; padding:5px 8px; } }
+
+  header { background:linear-gradient(135deg,var(--inc2) 0%,var(--inc) 60%,#25c48e 100%); color:#fff; position:relative; overflow:hidden; }
+  header::before { content:""; position:absolute; inset:0; background:radial-gradient(ellipse 80% 60% at 110% 120%,rgba(0,48,135,.25) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at -10% -10%,rgba(200,168,75,.15) 0%,transparent 60%); pointer-events:none; }
+  header::after { content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px); background-size:48px 48px; pointer-events:none; }
+  .hero-inner { position:relative; z-index:1; max-width:800px; margin:0 auto; padding:3.5rem 2rem 3rem; text-align:center; }
+  .breadcrumb { font-size:13px; margin-bottom:1.4rem; text-align:left; }
+  .breadcrumb a { color:rgba(255,255,255,.75); text-decoration:none; }
+  .breadcrumb a:hover { color:#fff; }
+  .breadcrumb span { color:rgba(255,255,255,.4); margin:0 6px; }
+  .breadcrumb strong { color:rgba(255,255,255,.9); }
+  .article-meta { display:flex; align-items:center; justify-content:center; gap:10px; font-size:11px; font-weight:600; letter-spacing:1.8px; text-transform:uppercase; color:rgba(255,255,255,.9); margin-bottom:1.2rem; flex-wrap:wrap; }
+  .article-meta .dot { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.4); }
+  .article-meta .date { color:rgba(255,255,255,.65); letter-spacing:normal; text-transform:none; font-weight:500; }
+  .hero-title { font-family:'Playfair Display',serif; font-size:clamp(1.7rem,4vw,2.6rem); font-weight:700; line-height:1.2; margin-bottom:1rem; letter-spacing:-.5px; }
+  .hero-sub { font-size:16px; font-weight:300; color:rgba(255,255,255,.8); line-height:1.7; margin:0 auto; max-width:650px; }
+  .wave { display:block; width:100%; height:60px; background:var(--grigio); clip-path:ellipse(55% 100% at 50% 100%); margin-top:-2px; }
+
+  main { max-width:760px; margin:0 auto; padding:2rem 1.5rem 5rem; }
+  .article-body { background:var(--bianco); border-radius:16px; border:1px solid #e2e8f0; padding:2.5rem; }
+  .article-body h2 { font-family:'Playfair Display',serif; font-size:21px; color:var(--inc2); margin:2rem 0 .8rem; line-height:1.3; }
+  .article-body h2:first-child { margin-top:0; }
+  .article-body p { font-size:15px; line-height:1.85; color:var(--testo); margin-bottom:1rem; }
+  .article-body ul { margin:0 0 1rem 1.4rem; font-size:15px; line-height:1.8; color:var(--testo); }
+  .article-body li { margin-bottom:.5rem; }
+  .article-body strong { color:var(--inc2); }
+  .article-body a { color:var(--inc); }
+
+  .callout { border-radius:10px; padding:1.1rem 1.3rem; font-size:14px; line-height:1.7; margin:1.5rem 0; }
+  .callout-verde { background:#e1f5ee; border-left:3px solid var(--verde); color:var(--inc2); }
+  .callout-blu { background:#eef2ff; border-left:3px solid var(--blu); color:var(--blu2); }
+  .callout-oro { background:#fdf6e3; border-left:3px solid var(--oro); color:#7a5c00; }
+  .callout-rosso { background:#fef2f2; border-left:3px solid #dc2626; color:#7f1d1d; }
+
+  .stat-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1rem; margin:1.5rem 0; }
+  .stat-box { background:#f0fdf8; border:1px solid #a7f3d0; border-radius:10px; padding:1rem 1.1rem; text-align:center; }
+  .stat-num { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--inc); line-height:1; margin-bottom:.3rem; }
+  .stat-label { font-size:12px; color:var(--sub); line-height:1.4; }
+
+  .parere { background:linear-gradient(135deg,#e1f5ee,#f0fdf8); border:1px solid #a7dfc9; border-radius:12px; padding:1.4rem 1.5rem; margin:1.8rem 0; }
+  .parere-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--inc2); margin-bottom:.6rem; display:flex; align-items:center; gap:6px; }
+  .parere p { font-size:14.5px; line-height:1.8; color:#0f3d28; margin-bottom:.7rem; }
+  .parere p:last-child { margin-bottom:0; }
+
+  .podcast-box { background:linear-gradient(135deg,var(--blu2),#003087); color:#fff; border-radius:12px; padding:1.4rem 1.8rem; margin:1.5rem 0; display:flex; align-items:center; gap:16px; }
+  .podcast-box .pod-icon { font-size:2rem; flex-shrink:0; }
+  .podcast-box .pod-text { font-size:13.5px; line-height:1.7; opacity:.9; }
+  .podcast-box .pod-text strong { color:var(--oro); }
+
+  .box-finale { background:linear-gradient(135deg,var(--inc2),#0a6645); color:#fff; border-radius:12px; padding:2rem; margin:2rem 0; }
+  .box-finale h3 { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--oro); margin-bottom:1rem; }
+  .box-finale p { font-size:14.5px; line-height:1.8; color:#ffffff; margin-bottom:.8rem; }
+  .box-finale p:last-child { margin-bottom:0; }
+
+  .article-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:2rem; padding-top:1.5rem; border-top:1px solid #e2e8f0; }
+  .tag { font-size:11px; padding:3px 10px; border-radius:20px; background:#e1f5ee; color:var(--inc2); font-weight:500; border:1px solid #a7f3d0; }
+
+  .article-nav { display:flex; justify-content:space-between; align-items:center; margin-top:2rem; gap:1rem; }
+  .nav-link { font-size:13px; font-weight:600; color:var(--verde); text-decoration:none; display:flex; align-items:center; gap:6px; padding:10px 18px; border-radius:10px; background:var(--bianco); border:1px solid #a7f3d0; transition:opacity .15s,transform .1s; }
+  .nav-link:hover { opacity:.85; transform:translateY(-1px); }
+
+  footer { background:var(--inc2); color:rgba(255,255,255,.55); text-align:center; padding:2rem 1rem; font-size:12px; line-height:1.8; }
+  footer strong { color:rgba(255,255,255,.85); }
+  footer a { color:rgba(255,255,255,.75); text-decoration:none; }
+  footer a:hover { color:#fff; }
+
+  @media(max-width:600px) { .hero-inner { padding:2.5rem 1.25rem 2rem; } .article-body { padding:1.8rem 1.4rem; } .stat-row { grid-template-columns:1fr 1fr; } .podcast-box { flex-direction:column; gap:10px; } }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../../index.html" class="navbar-brand">L'Archivio del <span>Maestro Stefano Testa</span></a>
+    <div class="navbar-links">
+      <a href="../../index.html" class="navbar-link">🏠 Archivio</a>
+      <a href="../../blog/index.html" class="navbar-link navbar-link-ai">🤖 Blog AI</a>
+      <a href="index.html" class="navbar-link navbar-link-inc">♿ Inclusione</a>
+      <a href="../../biblioteca/index.html" class="navbar-link navbar-link-bib">📚 Biblioteca</a>
+      <a href="../../formazione/index.html" class="navbar-link navbar-link-for" style="background:#003087;color:#fff;font-weight:700;border-color:#C8A84B">🎓 Formazione</a>
+      <a href="../../materiali/index.html" class="navbar-link navbar-link-mat" style="background:#1D9E75;color:#fff;font-weight:700">🧩 Materiali</a>
+      <a href="../../podcast.html" class="navbar-link navbar-link-pod">🎙️ Podcast</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="hero-inner">
+    <div class="breadcrumb">
+      <a href="../../index.html">L'Archivio</a>
+      <span>/</span>
+      <a href="index.html">Inclusione</a>
+      <span>/</span>
+      <strong>Articolo</strong>
+    </div>
+    <div class="article-meta">
+      Normativa &amp; Dati
+      <span class="dot"></span>
+      <span class="date">22 Ottobre 2026</span>
+    </div>
+    <h1 class="hero-title">Più docenti di sostegno che di posto comune: i numeri del DL 170 e cosa ci dicono davvero</h1>
+    <p class="hero-sub">
+      La relazione tecnica parla di una proiezione: entro quindici anni, i docenti di sostegno
+      potrebbero essere tanti quanti quelli di posto comune. I numeri nazionali sono reali.
+      Ma il modo in cui vengono letti fa tutta la differenza — e i dati di una scuola di provincia
+      lo raccontano meglio di qualsiasi tabella ministeriale.
+    </p>
+  </div>
+  <div class="wave"></div>
+</header>
+
+<main>
+  <div class="article-body">
+
+    <h2>Una frase che fa titolo</h2>
+
+    <p>
+      Nella relazione tecnica che accompagna il <strong>DL 170</strong> c'è un passaggio che in questi giorni sta girando parecchio: di questo passo, <strong>entro quindici anni i docenti di sostegno potrebbero essere tanti quanti i docenti di posto comune</strong>. Oggi sono già oltre un quarto del totale.
+    </p>
+
+    <p>
+      È una frase che fa effetto. E come tutte le frasi che fanno effetto, rischia di essere usata per dire cose molto diverse tra loro. C'è chi la legge come la prova che il sistema è fuori controllo. C'è chi la legge come la prova che le certificazioni sono troppo facili. C'è chi, più semplicemente, la usa per dire che bisogna "mettere un freno".
+    </p>
+
+    <p>
+      Prima di decidere cosa pensarne, conviene guardare i numeri. Tutti. Perché i numeri ci sono, sono pubblici, e raccontano una storia più complessa — e più interessante — di quella che entra in un titolo.
+    </p>
+
+    <div class="callout callout-oro">
+      ⚠️ <strong>Nota metodologica:</strong> questa analisi lavora su dati ISTAT, sulla relazione tecnica del provvedimento e su dati aggregati di un istituto comprensivo reale. Nessun dato individuale sugli alunni è riportato o elaborato. La critica è tecnica e strutturale: varrebbe identica indipendentemente da chi propone la misura.
+    </div>
+
+    <h2>I numeri nazionali: cosa dicono esattamente</h2>
+
+    <p>
+      Nell'anno scolastico <strong>2024/25</strong> gli alunni con disabilità nella scuola italiana sono circa <strong>377.000</strong>. Rispetto all'anno precedente sono <strong>18.000 in più</strong>, un incremento del <strong>5% in un solo anno</strong>. Negli ultimi dieci anni la loro incidenza sul totale degli iscritti è passata dal <strong>2,6% al 4,8%</strong>: praticamente raddoppiata.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-num">377k</div>
+        <div class="stat-label">alunni con disabilità, a.s. 2024/25</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">+5%</div>
+        <div class="stat-label">in un solo anno (+18.000)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">2,6 → 4,8%</div>
+        <div class="stat-label">incidenza sul totale iscritti in dieci anni</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">−3,9%</div>
+        <div class="stat-label">nascite nel 2025, −2,4% nel primo trimestre 2026</div>
+      </div>
+    </div>
+
+    <p>
+      Qui sta il punto che molti commenti saltano. Quel raddoppio della percentuale <strong>non dipende solo dal numeratore</strong>. Dipende anche — e molto — dal denominatore. Le nascite in Italia sono calate del <strong>3,9% nel 2025</strong> e di un ulteriore <strong>2,4% nel primo trimestre 2026</strong>. Significa che la popolazione scolastica complessiva si sta restringendo, anno dopo anno, in modo strutturale.
+    </p>
+
+    <p>
+      Quando il totale degli alunni scende e il numero di alunni con disabilità sale, la percentuale cresce due volte: una per ogni lato della frazione. La proiezione che arriva a un <strong>10% entro il 2040</strong> è aritmeticamente coerente. Ma non descrive una scuola invasa da certificazioni: descrive una scuola che si svuota, con una componente che invece resta e cresce.
+    </p>
+
+    <div class="callout callout-verde">
+      📊 <strong>Il dato che cambia la lettura:</strong> dire "i docenti di sostegno saranno la metà del corpo docente" suona come un'anomalia del sostegno. Letto correttamente, è anche — e in buona parte — il racconto del <strong>calo demografico italiano</strong>. La stessa proiezione, su una popolazione scolastica stabile, avrebbe numeri molto diversi.
+    </div>
+
+    <h2>Perché crescono le certificazioni (secondo ISTAT)</h2>
+
+    <p>
+      L'ISTAT, che quei dati li raccoglie, indica tre ragioni principali per la crescita. Vale la pena leggerle una per una, perché nessuna delle tre è "si certifica troppo facilmente":
+    </p>
+
+    <ul>
+      <li><strong>Diagnosi più precoci e più accurate.</strong> Condizioni che venti o trent'anni fa non venivano riconosciute oggi hanno un nome, un percorso e una presa in carico. Non è un peggioramento: è un miglioramento della capacità diagnostica.</li>
+      <li><strong>Maggiore richiesta di assistenza da parte delle famiglie.</strong> Le famiglie conoscono i propri diritti più di prima e li esercitano. Anche questo non è un problema: è il funzionamento di un sistema che informa.</li>
+      <li><strong>Crescente sensibilità del sistema scolastico all'inclusione.</strong> La scuola oggi vede bisogni che prima lasciava passare. Un alunno che trent'anni fa veniva etichettato come "svogliato" oggi viene osservato, valutato, accompagnato.</li>
+    </ul>
+
+    <p>
+      Tre fattori che, messi in fila, descrivono un sistema che <strong>funziona meglio di prima</strong>, non peggio. Il che non toglie nulla al problema organizzativo — che è reale, e grosso — ma cambia completamente il modo in cui lo si dovrebbe affrontare.
+    </p>
+
+    <div class="parere">
+      <div class="parere-label">💬 Il mio parere</div>
+      <p>
+        Chi lavora sul sostegno questo lo vede ogni giorno. Non c'è nessuna corsa alla certificazione: ci sono famiglie che arrivano dopo anni di dubbi, osservazioni, rimandi — e che spesso arrivano <strong>tardi</strong>, non presto. Il problema, nella mia esperienza, non è l'eccesso di diagnosi. È il tempo che passa prima che una diagnosi arrivi.
+      </p>
+      <p>
+        E c'è un punto di fondo che nei numeri non si legge mai: <strong>l'inclusione non è un costo da contenere, è una risorsa</strong>. Una classe costruita intorno all'inclusione è una classe dove tutti imparano qualcosa in più — a partire dall'empatia, che è una competenza, non un sentimento. È faticoso, non lo nego mai. Ma il ritorno è garantito.
+      </p>
+    </div>
+
+    <h2>Cosa succede davvero in una scuola: i dati di un istituto comprensivo del Bresciano</h2>
+
+    <p>
+      I numeri nazionali sono utili, ma restano astratti. Allora proviamo a scendere al livello dove le cose accadono: un istituto comprensivo di provincia, nel Bresciano, con infanzia, primaria e secondaria di primo grado su due comuni. Dati aggregati per plesso e per anno, ricostruiti dai prospetti ufficiali e verificati aritmeticamente. Nessun dato individuale.
+    </p>
+
+    <p>
+      Otto anni scolastici a confronto, dal <strong>2018-19 al 2026-27</strong>. Il quadro è questo:
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-num">−12,9%</div>
+        <div class="stat-label">alunni totali (1121 → 976)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">+90,6%</div>
+        <div class="stat-label">alunni con disabilità (32 → 61)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">+55,6%</div>
+        <div class="stat-label">alunni con DSA (27 → 42)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">+106%</div>
+        <div class="stat-label">alunni con BES (16 → 33)</div>
+      </div>
+    </div>
+
+    <p>
+      Sono esattamente le due forbici che si vedono a livello nazionale, ma più marcate: <strong>meno 145 alunni in otto anni</strong> — circa diciassette in meno ogni anno — e contemporaneamente un numero di alunni con disabilità che <strong>quasi raddoppia</strong>. DSA e BES crescono ancora più in fretta.
+    </p>
+
+    <p>
+      Fin qui, nulla che sorprenda chi legge i dati ISTAT. Ma c'è un secondo dato, molto meno citato, che è quello che cambia davvero il lavoro quotidiano.
+    </p>
+
+    <h2>Il dato che nessuno cita: non sono solo più numerosi, sono più gravi</h2>
+
+    <p>
+      In quello stesso istituto, la quota di alunni con disabilità con <strong>certificazione di gravità ai sensi dell'art. 3 comma 3</strong> sul totale degli alunni con disabilità è passata dal <strong>23,3% nel 2022-23 al 45,9% nel 2026-27</strong>. Praticamente raddoppiata in quattro anni.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-num">23,3%</div>
+        <div class="stat-label">quota comma 3 nel 2022-23</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">45,9%</div>
+        <div class="stat-label">quota comma 3 nel 2026-27</div>
+      </div>
+    </div>
+
+    <p>
+      E non è un caso isolato. I report territoriali raccontano lo stesso: nel Veneto, i dati provinciali per l'anno scolastico 2025-26 mostrano che gli alunni con necessità di <strong>sostegno elevato</strong> sono ormai circa il <strong>40% del totale degli alunni con disabilità</strong>, anche lì in aumento. Un pattern del tutto coerente con quello osservato in provincia di Brescia.
+    </p>
+
+    <p>
+      Il parlare con colleghi di altri istituti comprensivi della zona restituisce la stessa fotografia: <strong>situazioni molto simili, e pochissimi casi in cui le cose siano "migliorate"</strong>. Non è l'anomalia di una singola scuola. È una realtà che si ripresenta con frequenza, su un territorio dove si lavora da anni con buone pratiche consolidate.
+    </p>
+
+    <div class="callout callout-blu">
+      🔍 <strong>Perché questo dato conta più del totale:</strong> due alunni con disabilità non sono mai "due alunni con disabilità". Un alunno con certificazione di gravità richiede ore, competenze, assistenza educativa e progettazione che non sono comparabili. Contare le teste e non il bisogno è il modo più sicuro di costruire un organico sbagliato.
+    </div>
+
+    <h2>Le proiezioni locali: la forbice si allarga</h2>
+
+    <p>
+      Applicando una semplice regressione lineare sugli otto anni disponibili — un'estrapolazione statistica, non una previsione demografica rigorosa — l'istituto arriverebbe a circa <strong>968 alunni nel 2027-28 e 951 nel 2028-29</strong>, con <strong>69 e poi 74 alunni con disabilità</strong>. In percentuale: <strong>7,1% e poi 7,8%</strong>.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-num">≈ 951</div>
+        <div class="stat-label">alunni totali proiettati 2028-29</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">≈ 74</div>
+        <div class="stat-label">alunni con disabilità proiettati 2028-29</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">≈ 7,8%</div>
+        <div class="stat-label">incidenza proiettata sul totale</div>
+      </div>
+    </div>
+
+    <p>
+      Tradotto: la scuola continuerà a perdere <strong>quindici-venti alunni l'anno</strong> per calo demografico, ma guadagnerà <strong>quattro-cinque alunni con disabilità l'anno</strong>, una quota crescente dei quali a gravità elevata. Il fabbisogno di ore di sostegno e di assistenza educativa <strong>cresce mentre la popolazione scolastica diminuisce</strong>.
+    </p>
+
+    <p>
+      È qui che la proiezione del DL 170 smette di essere una curiosità statistica e diventa una questione pratica. Non è che "ci sono troppi docenti di sostegno". È che il bisogno si sta concentrando, e l'organico viene calcolato su una logica che quella concentrazione non la vede.
+    </p>
+
+    <div class="parere">
+      <div class="parere-label">💬 Il mio parere</div>
+      <p>
+        Quando si legge "i docenti di sostegno saranno metà del corpo docente", la reazione istintiva di chi guarda i bilanci è: bisogna frenare. La reazione di chi sta in classe è un'altra: <strong>bisogna smettere di considerare il sostegno un reparto separato</strong>.
+      </p>
+      <p>
+        Il punto non è quanti docenti di sostegno servono. Il punto è che <strong>le competenze inclusive di base devono diventare patrimonio di tutti i docenti</strong>, non di una categoria. E che in ogni classe servirebbe la presenza costante di due docenti — di cui uno specializzato, con percorsi di specializzazione sul sostegno degni di questo nome, non percorsi accelerati e semplificati che rischiano di immettere in ruolo persone con una preparazione ancora incompleta, indipendentemente da chi li eroga.
+      </p>
+      <p>
+        Finché il sostegno resta "quello che fa l'insegnante di sostegno", ogni proiezione sui numeri diventa un problema di spesa. Nel momento in cui diventa il modo in cui tutta la scuola lavora, quegli stessi numeri diventano una questione di organizzazione — che si risolve.
+      </p>
+    </div>
+
+    <h2>Il rischio di leggere male questi numeri</h2>
+
+    <p>
+      C'è un modo sbagliato di usare la proiezione del DL 170, ed è prevedibile: trasformarla nell'argomento per <strong>stringere i criteri di certificazione</strong>. Se il problema è che i docenti di sostegno crescono troppo, la via più rapida per fermarli è certificare meno.
+    </p>
+
+    <p>
+      Sarebbe un errore grave, per due ragioni. La prima è che, come dice l'ISTAT stessa, la crescita è in buona parte il frutto di <strong>diagnosi migliori</strong>: stringere i criteri non farebbe sparire i bisogni, li renderebbe solo invisibili. Tornerebbero gli alunni "svogliati" degli anni Ottanta, con la differenza che oggi sapremmo perfettamente che non lo erano.
+    </p>
+
+    <p>
+      La seconda è che non affronta nessuno dei problemi veri. Un criterio più stretto non costruisce un'aula in più, non forma un docente in più, non aggiunge un'ora di assistenza educativa. Sposta il problema dalla scuola alla famiglia, e lì lo lascia.
+    </p>
+
+    <div class="callout callout-rosso">
+      ⚠️ <strong>Attenzione allo schema che si ripete:</strong> è lo stesso meccanismo visto su altri fronti. Invece di investire sulle risorse mancanti, si interviene sul numero — sperando che meno persone da gestire equivalga a problema risolto. Non lo è mai stato.
+    </div>
+
+    <h2>Cosa servirebbe davvero</h2>
+
+    <p>
+      Se i numeri dicono che il bisogno cresce e si concentra, allora le leve sono quelle che agiscono sulla <strong>capacità del sistema di reggere quel bisogno</strong>, non sul suo conteggio:
+    </p>
+
+    <ul>
+      <li><strong>Competenze inclusive di base per tutti i docenti</strong>, non solo per gli specializzati. L'inclusione non è una materia, è un modo di fare scuola.</li>
+      <li><strong>Percorsi di specializzazione seri</strong>, con una formazione costruita sui bisogni reali degli istituti e non su cataloghi generici con accreditamenti discutibili.</li>
+      <li><strong>Due docenti in ogni classe</strong>, di cui uno specializzato, come assetto ordinario e non come eccezione da negoziare ogni settembre.</li>
+      <li><strong>Continuità didattica</strong>: un progetto educativo costruito in un anno e smontato a giugno non produce nulla di duraturo.</li>
+      <li><strong>Organico calcolato sulla gravità</strong>, non sulle teste. Se il 45,9% degli alunni con disabilità di una scuola è in comma 3, il fabbisogno non è quello di una scuola con la stessa cifra al 23%.</li>
+      <li><strong>Edifici e spazi adeguati</strong>: aule che permettano il lavoro in piccolo gruppo, spazi per il defaticamento, ambienti in cui si possa stare. Senza questi, ogni buona pratica resta sulla carta.</li>
+    </ul>
+
+    <p>
+      Nessuna di queste cose si ottiene con una proiezione in una relazione tecnica. Tutte si ottengono con scelte di programmazione a breve, medio e lungo termine — che è esattamente ciò che manca.
+    </p>
+
+    <div class="box-finale">
+      <h3>Il vero tema</h3>
+      <p>La proiezione del DL 170 non è sbagliata. I numeri sono quelli, e la direzione è quella. Ma una proiezione è una descrizione, non una diagnosi: dice dove stiamo andando, non perché, e soprattutto non cosa fare.</p>
+      <p>Letta bene, racconta tre cose insieme: che l'Italia fa meno figli, che la scuola riconosce bisogni che prima ignorava, e che quei bisogni sono sempre più complessi. Nessuna delle tre si risolve contenendo il numero di docenti di sostegno. Tutte e tre richiedono una scuola organizzata diversamente.</p>
+      <p>I dati di un istituto comprensivo di provincia — meno 12,9% di alunni, più 90,6% di alunni con disabilità, gravità raddoppiata in quattro anni — dicono la stessa cosa dei dati nazionali, ma con i nomi e i volti dentro. E dicono che chi si rimbocca le maniche lo fa a prescindere dai titoli e dalle relazioni tecniche. Il resto, troppo spesso, sono carta e parole grosse scritte senza capire la pratica.</p>
+      <p>L'inclusione non è il capitolo di spesa che cresce. È la cosa che rende una scuola una scuola. Riportiamola sul piedistallo che merita.</p>
+    </div>
+
+    <h2>Fonti</h2>
+
+    <ul>
+      <li>Relazione tecnica al <strong>DL 170</strong> — proiezione sull'evoluzione dell'organico di sostegno.</li>
+      <li><strong>ISTAT</strong>, "L'inclusione scolastica degli alunni con disabilità" (aa.ss. 2023-24 e 2024-25).</li>
+      <li><strong>ISTAT</strong>, dati su natalità 2025 e primo trimestre 2026.</li>
+      <li>Dati aggregati di un istituto comprensivo del Bresciano, prospetti ufficiali aa.ss. 2018-19 → 2026-27 (2023-24 non disponibile). Elaborazione a cura della Funzione Strumentale Inclusione.</li>
+      <li>Report territoriali sulla gravità delle certificazioni, a.s. 2025-26.</li>
+    </ul>
+
+    <div class="article-tags">
+      <span class="tag">DL 170</span>
+      <span class="tag">Docenti di sostegno</span>
+      <span class="tag">ISTAT</span>
+      <span class="tag">Dati scolastici</span>
+      <span class="tag">Calo demografico</span>
+      <span class="tag">Art. 3 comma 3</span>
+      <span class="tag">Organico</span>
+      <span class="tag">Inclusione</span>
+      <span class="tag">Formazione docenti</span>
+    </div>
+  </div>
+
+  <div class="article-nav">
+    <a href="index.html" class="nav-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Tutti gli articoli
+    </a>
+    <a href="../../index.html" class="nav-link">
+      Torna all'Archivio
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+</main>
+
+<footer>
+  <strong>L'Archivio del Maestro Stefano Testa</strong> &mdash; Blog Inclusione<br>
+  <a href="index.html">&larr; Torna agli aggiornamenti</a> &mdash; &copy; <span id="anno"></span> Stefano Testa
+</footer>
+
+<script>document.getElementById("anno").textContent = new Date().getFullYear();</script>
+</body>
+</html>
