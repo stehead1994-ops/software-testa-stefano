@@ -9,6 +9,41 @@
 <link rel="stylesheet" href="assets/quaderno.css">
 </head>
 <body data-page="per-tutti">
+<style id="sn-nav-css">
+.sn-nav{position:relative;z-index:900;background:#00205c;border-bottom:1px solid rgba(255,255,255,.08);height:52px;display:flex;align-items:center;font-family:'DM Sans','Segoe UI',Arial,sans-serif;line-height:1.2;box-sizing:border-box}
+.sn-nav *{box-sizing:border-box}
+.sn-nav-in{max-width:1200px;margin:0 auto;padding:0 1.5rem;width:100%;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.sn-brand{font-family:'Playfair Display',Georgia,serif;font-size:15px;font-weight:700;color:#fff!important;text-decoration:none!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.sn-brand span{color:#c8a84b}
+.sn-links{display:flex;align-items:center;gap:.25rem;flex-shrink:0}
+.sn-link{font-size:13px;font-weight:600;color:#fff!important;text-decoration:none!important;padding:6px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.12);white-space:nowrap;background:rgba(255,255,255,.06);transition:filter .15s}
+.sn-link:hover{filter:brightness(1.15)}
+.sn-home{font-weight:500;color:rgba(255,255,255,.8)!important}
+.sn-ai{background:rgba(0,68,200,.85)}
+.sn-inc{background:rgba(29,158,117,.85)}
+.sn-bib{background:rgba(124,58,237,.85)}
+.sn-for{background:#003087;border-color:#C8A84B}
+.sn-mat{background:#1D9E75}
+.sn-pod{background:rgba(200,168,75,.85);color:#00205c!important}
+@media (max-width:1100px){.sn-brand{display:none}.sn-links{overflow-x:auto;max-width:100%;scrollbar-width:none}.sn-links::-webkit-scrollbar{display:none}}
+@media print{.sn-nav{display:none!important}}
+body.present .sn-nav{display:none}
+</style>
+<nav class="sn-nav" aria-label="Navigazione principale">
+  <div class="sn-nav-in">
+    <a class="sn-brand" href="../../index.html">🐧 <span>L'Archivio</span> del Maestro Stefano Testa</a>
+    <div class="sn-links">
+      <a href="../../index.html" class="sn-link sn-home">🏠 Home</a>
+      <a href="../../blog/index.html" class="sn-link sn-ai">🤖 Blog AI</a>
+      <a href="../../inclusione/news/index.html" class="sn-link sn-inc">♿ Inclusione</a>
+      <a href="../../biblioteca/index.html" class="sn-link sn-bib">🔬 Biblioteca</a>
+      <a href="../../formazione/index.html" class="sn-link sn-for">🎓 Formazione</a>
+      <a href="../../materiali/index.html" class="sn-link sn-mat">🧩 Materiali</a>
+      <a href="../../podcast.html" class="sn-link sn-pod">🎙️ Podcast</a>
+    </div>
+  </div>
+</nav>
+
 <main>
 <header class="hero row">
   <p class="date">Secondo incontro, modulo 4</p>

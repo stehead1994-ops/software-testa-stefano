@@ -57,7 +57,7 @@
       '<button class="btn" id="themeBtn" aria-label="Cambia tema chiaro o scuro">Tema</button>' +
       (page !== "home" ? '<button class="btn gold" id="presentBtn">▶ <span class="lbl">Presenta</span></button>' : '') +
     '</header>');
-  document.body.insertBefore(top, document.body.firstChild);
+  var snNav = document.querySelector('.sn-nav'); document.body.insertBefore(top, snNav ? snNav.nextSibling : document.body.firstChild);
 
   // Layout con indice laterale
   var main = document.querySelector("main");
