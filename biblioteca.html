@@ -141,10 +141,10 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-h
       <div class="nav-item nav-bib" onclick="goTo('archive')"><span class="nav-icon">🗄️</span> Archivio</div>
       <div class="nav-section nav-bib">Prestiti</div>
       <div class="nav-item nav-bib" onclick="goTo('loans')"><span class="nav-icon">🔄</span> Gestione prestiti</div>
-      <div class="nav-section nav-mat nav-bib">Materiali inclusione</div>
-      <div class="nav-item nav-mat nav-bib" onclick="goTo('materials')"><span class="nav-icon">🧩</span> Catalogo materiali</div>
-      <div class="nav-item nav-mat nav-bib" onclick="goTo('add-material')"><span class="nav-icon">➕</span> Aggiungi materiale</div>
-      <div class="nav-item nav-mat nav-bib" onclick="goTo('material-loans')"><span class="nav-icon">🔁</span> Prestiti materiali</div>
+      <div class="nav-section nav-mat">Materiali inclusione</div>
+      <div class="nav-item nav-mat" onclick="goTo('materials')"><span class="nav-icon">🧩</span> Catalogo materiali</div>
+      <div class="nav-item nav-mat" onclick="goTo('add-material')"><span class="nav-icon">➕</span> Aggiungi materiale</div>
+      <div class="nav-item nav-mat" onclick="goTo('material-loans')"><span class="nav-icon">🔁</span> Prestiti materiali</div>
     </div>
     <div class="content">
 
@@ -552,20 +552,16 @@ let currentRole = null;
 
 function applyRole(role) {
   currentRole = role;
-  // Ogni voce nav ha una o più classi di ruolo; mostra solo quelle permesse
   document.querySelectorAll('.nav-item, .nav-section').forEach(el => {
     const isBib = el.classList.contains('nav-bib');
     const isMat = el.classList.contains('nav-mat');
-    if (!isBib && !isMat) return; // voce senza ruolo: sempre visibile
+    if (!isBib && !isMat) return;
     if (role === 'biblioteca') {
-      // biblioteca vede tutto (nav-bib e nav-mat)
-      el.style.display = '';
+      el.style.display = isBib ? '' : 'none'; // solo nav-bib
     } else if (role === 'materiali') {
-      // materiali vede solo nav-mat, non nav-bib puri
-      el.style.display = isMat ? '' : 'none';
+      el.style.display = isMat ? '' : 'none'; // solo nav-mat
     }
   });
-  // Topbar: titolo diverso
   if (role === 'materiali') {
     document.querySelector('.topbar h1').textContent = 'Materiali Inclusione — Castelcovati';
   } else {
