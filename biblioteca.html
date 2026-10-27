@@ -129,22 +129,22 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-h
   </div>
   <div class="main">
     <div class="sidebar">
-      <div class="nav-section">Panoramica</div>
-      <div class="nav-item active" onclick="goTo('dashboard')"><span class="nav-icon">🏠</span> Dashboard</div>
-      <div class="nav-section">Catalogo</div>
-      <div class="nav-item" onclick="goTo('catalog')"><span class="nav-icon">📖</span> Libri</div>
-      <div class="nav-item" onclick="goTo('add-book')"><span class="nav-icon">➕</span> Aggiungi libro</div>
-      <div class="nav-item" onclick="goTo('labels')"><span class="nav-icon">🏷️</span> Etichette</div>
-      <div class="nav-section">Utenti</div>
-      <div class="nav-item" onclick="goTo('users')"><span class="nav-icon">👥</span> Alunni e docenti</div>
-      <div class="nav-item" onclick="goTo('add-user')"><span class="nav-icon">👤</span> Registra utente</div>
-      <div class="nav-item" onclick="goTo('archive')"><span class="nav-icon">🗄️</span> Archivio</div>
-      <div class="nav-section">Prestiti</div>
-      <div class="nav-item" onclick="goTo('loans')"><span class="nav-icon">🔄</span> Gestione prestiti</div>
-      <div class="nav-section">Materiali</div>
-      <div class="nav-item" onclick="goTo('materials')"><span class="nav-icon">🧩</span> Catalogo materiali</div>
-      <div class="nav-item" onclick="goTo('add-material')"><span class="nav-icon">➕</span> Aggiungi materiale</div>
-      <div class="nav-item" onclick="goTo('material-loans')"><span class="nav-icon">🔁</span> Prestiti materiali</div>
+      <div class="nav-section nav-bib">Panoramica</div>
+      <div class="nav-item nav-bib active" onclick="goTo('dashboard')"><span class="nav-icon">🏠</span> Dashboard</div>
+      <div class="nav-section nav-bib">Catalogo</div>
+      <div class="nav-item nav-bib" onclick="goTo('catalog')"><span class="nav-icon">📖</span> Libri</div>
+      <div class="nav-item nav-bib" onclick="goTo('add-book')"><span class="nav-icon">➕</span> Aggiungi libro</div>
+      <div class="nav-item nav-bib" onclick="goTo('labels')"><span class="nav-icon">🏷️</span> Etichette</div>
+      <div class="nav-section nav-bib">Utenti</div>
+      <div class="nav-item nav-bib" onclick="goTo('users')"><span class="nav-icon">👥</span> Alunni e docenti</div>
+      <div class="nav-item nav-bib" onclick="goTo('add-user')"><span class="nav-icon">👤</span> Registra utente</div>
+      <div class="nav-item nav-bib" onclick="goTo('archive')"><span class="nav-icon">🗄️</span> Archivio</div>
+      <div class="nav-section nav-bib">Prestiti</div>
+      <div class="nav-item nav-bib" onclick="goTo('loans')"><span class="nav-icon">🔄</span> Gestione prestiti</div>
+      <div class="nav-section nav-mat nav-bib">Materiali inclusione</div>
+      <div class="nav-item nav-mat nav-bib" onclick="goTo('materials')"><span class="nav-icon">🧩</span> Catalogo materiali</div>
+      <div class="nav-item nav-mat nav-bib" onclick="goTo('add-material')"><span class="nav-icon">➕</span> Aggiungi materiale</div>
+      <div class="nav-item nav-mat nav-bib" onclick="goTo('material-loans')"><span class="nav-icon">🔁</span> Prestiti materiali</div>
     </div>
     <div class="content">
 
@@ -527,21 +527,54 @@ const db = {
 };
 
 // ── AUTH ──────────────────────────────────────────────────────
-const CRED = { user: 'BiblioPrimariaCastel', pass: 'Castelcovati26!' };
+const CREDS = [
+  { user: 'BiblioPrimariaCastel', pass: 'Castelcovati26!', role: 'biblioteca' },
+  { user: 'MaterialeInclusione',  pass: 'Inclusione26!',   role: 'materiali'  }
+];
+let currentRole = null;
+
+function applyRole(role) {
+  currentRole = role;
+  // Ogni voce nav ha una o più classi di ruolo; mostra solo quelle permesse
+  document.querySelectorAll('.nav-item, .nav-section').forEach(el => {
+    const isBib = el.classList.contains('nav-bib');
+    const isMat = el.classList.contains('nav-mat');
+    if (!isBib && !isMat) return; // voce senza ruolo: sempre visibile
+    if (role === 'biblioteca') {
+      // biblioteca vede tutto (nav-bib e nav-mat)
+      el.style.display = '';
+    } else if (role === 'materiali') {
+      // materiali vede solo nav-mat, non nav-bib puri
+      el.style.display = isMat ? '' : 'none';
+    }
+  });
+  // Topbar: titolo diverso
+  if (role === 'materiali') {
+    document.querySelector('.topbar h1').textContent = 'Materiali Inclusione — Castelcovati';
+  } else {
+    document.querySelector('.topbar h1').textContent = 'Biblioteca Primaria di Castelcovati';
+  }
+}
+
 function doLogin() {
   const u = document.getElementById('login-user').value.trim();
   const p = document.getElementById('login-pass').value;
-  if (u === CRED.user && p === CRED.pass) {
-    sessionStorage.setItem('bib_auth','1');
+  const found = CREDS.find(c => c.user === u && c.pass === p);
+  if (found) {
+    sessionStorage.setItem('bib_auth', found.role);
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
+    applyRole(found.role);
     loadAll();
+    // Prima pagina in base al ruolo
+    if (found.role === 'materiali') goTo('materials');
   } else {
     document.getElementById('login-err').style.display = 'block';
   }
 }
 function doLogout() {
   sessionStorage.removeItem('bib_auth');
+  currentRole = null;
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
   document.getElementById('login-user').value = '';
@@ -549,9 +582,15 @@ function doLogout() {
 }
 document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 document.getElementById('login-user').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-if (sessionStorage.getItem('bib_auth')==='1') {
+const _savedRole = sessionStorage.getItem('bib_auth');
+if (_savedRole === 'biblioteca' || _savedRole === 'materiali') {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
+  applyRole(_savedRole);
+  if (_savedRole === 'materiali') {
+    // sposta attivo sulla prima voce materiali
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  }
 }
 
 // ── STATE ─────────────────────────────────────────────────────
@@ -567,14 +606,22 @@ function hideLoading() { document.getElementById('loading-overlay').classList.re
 async function loadAll() {
   showLoading('Caricamento dati...');
   try {
-    [books, users, loans, materials, matLoans] = await Promise.all([
-      db.get('books'),
-      db.get('users'),
-      db.get('loans'),
-      db.get('materials'),
-      db.get('material_loans')
-    ]);
-    refreshDash();
+    if (currentRole === 'materiali') {
+      [materials, matLoans] = await Promise.all([
+        db.get('materials'),
+        db.get('material_loans')
+      ]);
+      renderMaterials();
+    } else {
+      [books, users, loans, materials, matLoans] = await Promise.all([
+        db.get('books'),
+        db.get('users'),
+        db.get('loans'),
+        db.get('materials'),
+        db.get('material_loans')
+      ]);
+      refreshDash();
+    }
   } catch(e) {
     toast('Errore di connessione al database','err');
   }
