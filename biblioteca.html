@@ -908,7 +908,7 @@ async function registerLoan(){
   if(!isbn){toast('Seleziona un libro','err');return;}
   if(!uid){toast('Seleziona un utente','err');return;}
   const u=users.find(x=>x.id==uid);
-  if(userActiveLoans(uid).length>=(u?.loan_limit||2)){toast('Limite prestiti raggiunto','err');return;}
+  if(u?.type!=='docente'&&userActiveLoans(uid).length>=(u?.loan_limit||2)){toast('Limite prestiti raggiunto','err');return;}
   showLoad('Salvataggio...');
   try{
     const res=await db.insert('loans',{isbn,user_id:parseInt(uid),date:new Date().toLocaleDateString('it-IT'),returned:false});
