@@ -7,7 +7,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-height:100vh}
-#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh}
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column}
 .login-box{background:white;border-radius:12px;border:1px solid #dde3ea;padding:2.5rem 2rem;width:340px;text-align:center}
 .login-logo{font-size:48px;margin-bottom:1rem}
 .login-box h1{font-size:18px;font-weight:600;margin-bottom:4px}
@@ -109,22 +109,46 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-h
 <body>
 
 <div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">📚</div>
-    <h1>Biblioteca Primaria</h1>
-    <p>Castelcovati — accesso riservato</p>
-    <input type="text" id="login-user" placeholder="Nome utente" autocomplete="username">
-    <input type="password" id="login-pass" placeholder="Password">
-    <button class="login-btn" onclick="doLogin()">Accedi</button>
-    <div class="login-err" id="login-err">Credenziali non valide</div>
+
+  <!-- SCELTA STRUMENTO -->
+  <div id="tool-choice" style="text-align:center;max-width:520px;width:100%;padding:1rem">
+    <div style="font-size:48px;margin-bottom:1rem">🏫</div>
+    <h1 style="font-size:20px;font-weight:600;margin-bottom:6px">IC Martin Luther King</h1>
+    <p style="font-size:13px;color:#666;margin-bottom:2rem">Primaria Castelcovati — scegli lo strumento</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div onclick="showLogin('bib')" style="background:white;border:2px solid #e0e6ed;border-radius:12px;padding:2rem 1rem;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='#1D5FAD'" onmouseout="this.style.borderColor='#e0e6ed'">
+        <div style="font-size:40px;margin-bottom:10px">📚</div>
+        <div style="font-size:16px;font-weight:600;color:#1D5FAD">Biblioteca</div>
+        <div style="font-size:12px;color:#888;margin-top:4px">Gestione libri e prestiti</div>
+      </div>
+      <div onclick="showLogin('mat')" style="background:white;border:2px solid #e0e6ed;border-radius:12px;padding:2rem 1rem;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='#2e7d32'" onmouseout="this.style.borderColor='#e0e6ed'">
+        <div style="font-size:40px;margin-bottom:10px">🧩</div>
+        <div style="font-size:16px;font-weight:600;color:#2e7d32">Materiali Inclusione</div>
+        <div style="font-size:12px;color:#888;margin-top:4px">Materiali e prestiti inclusione</div>
+      </div>
+    </div>
   </div>
+
+  <!-- LOGIN BIBLIOTECA -->
+  <div id="login-bib" style="display:none">
+    <div class="login-box">
+      <div class="login-logo">📚</div>
+      <h1>Biblioteca Primaria</h1>
+      <p>Castelcovati — accesso riservato</p>
+      <input type="text" id="login-user" placeholder="Nome utente" autocomplete="username">
+      <input type="password" id="login-pass" placeholder="Password">
+      <button class="login-btn" onclick="doLogin()">Accedi</button>
+      <div class="login-err" id="login-err">Credenziali non valide</div>
+      <button onclick="showChoice()" style="background:none;border:none;color:#888;font-size:12px;cursor:pointer;margin-top:12px;font-family:inherit">← Torna alla scelta</button>
+    </div>
+  </div>
+
 </div>
 
 <div id="app">
   <div class="topbar">
     <span>📚</span>
     <h1>Biblioteca Primaria di Castelcovati</h1>
-    <a href="materiali.html" class="logout-btn" style="text-decoration:none">🧩 Materiali Inclusione</a>
     <button class="logout-btn" onclick="doLogout()">Esci</button>
   </div>
   <div class="main">
@@ -414,6 +438,19 @@ function bookActiveLoans(isbn){return loans.filter(l=>l.isbn===isbn&&!l.returned
 function bookAvailableCopies(isbn){const b=books.find(x=>x.isbn===isbn);const total=(b&&b.copies)||1;const out=bookActiveLoans(isbn).length;return Math.max(0,total-out);}
 function bookCopiesLabel(isbn){const b=books.find(x=>x.isbn===isbn);const total=(b&&b.copies)||1;const avail=bookAvailableCopies(isbn);return avail+'/'+total;}
 
+function showChoice(){
+  document.getElementById('tool-choice').style.display='block';
+  document.getElementById('login-bib').style.display='none';
+  document.getElementById('login-user').value='';
+  document.getElementById('login-pass').value='';
+  document.getElementById('login-err').style.display='none';
+}
+function showLogin(tool){
+  document.getElementById('tool-choice').style.display='none';
+  if(tool==='mat'){window.location.href='materiali.html';return;}
+  document.getElementById('login-bib').style.display='block';
+  setTimeout(()=>document.getElementById('login-user').focus(),50);
+}
 function doLogin(){
   const u=document.getElementById('login-user').value.trim();
   const p=document.getElementById('login-pass').value;
