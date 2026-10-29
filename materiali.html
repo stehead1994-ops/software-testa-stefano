@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Materiali Inclusione — Castelcovati</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-height:100vh}
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.login-box{background:white;border-radius:12px;border:1px solid #dde3ea;padding:2.5rem 2rem;width:340px;text-align:center}
+.login-logo{font-size:48px;margin-bottom:1rem}
+.login-box h1{font-size:18px;font-weight:600;margin-bottom:4px}
+.login-box p{font-size:13px;color:#666;margin-bottom:1.5rem}
+.login-box input{width:100%;padding:10px 12px;border:1px solid #cdd4dc;border-radius:8px;font-size:14px;margin-bottom:10px;outline:none;font-family:inherit}
+.login-box input:focus{border-color:#2e7d32}
+.login-btn{width:100%;padding:10px;background:#2e7d32;color:white;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}
+.login-btn:hover{background:#1b5e20}
+.login-err{color:#c0392b;font-size:12px;margin-top:8px;display:none}
+#app{display:none;min-height:100vh}
+.topbar{background:#2e7d32;color:white;padding:0 1.5rem;height:52px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.topbar h1{font-size:16px;font-weight:600;flex:1}
+.logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit}
+.logout-btn:hover{background:rgba(255,255,255,0.25)}
+.main{display:flex;min-height:calc(100vh - 52px)}
+.sidebar{width:200px;background:white;border-right:1px solid #e0e6ed;padding:1rem 0;flex-shrink:0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 1.25rem;font-size:14px;color:#555;cursor:pointer;border-left:3px solid transparent}
+.nav-item:hover{background:#f1f8f1;color:#2e7d32}
+.nav-item.active{background:#e8f5e9;color:#2e7d32;border-left-color:#2e7d32;font-weight:500}
+.nav-section{font-size:11px;color:#aaa;padding:12px 1.25rem 4px;letter-spacing:.5px;text-transform:uppercase}
+.content{flex:1;padding:1.5rem;max-width:900px}
+.page{display:none}.page.active{display:block}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:1.5rem}
+.stat{background:white;border:1px solid #e0e6ed;border-radius:10px;padding:14px 16px}
+.stat-label{font-size:12px;color:#888;margin-bottom:4px}
+.stat-val{font-size:26px;font-weight:600}
+.stat-val.green{color:#2e7d32}.stat-val.amber{color:#e67e22}.stat-val.blue{color:#1565c0}
+.card{background:white;border:1px solid #e0e6ed;border-radius:10px;padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:13px;font-weight:600;color:#888;margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px}
+.page-title{font-size:20px;font-weight:600;margin-bottom:1.25rem}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:12px;color:#666;margin-bottom:5px;font-weight:500}
+.fg input,.fg select,.fg textarea{width:100%;padding:9px 12px;border:1px solid #cdd4dc;border-radius:8px;font-size:14px;font-family:inherit;outline:none;background:white}
+.fg input:focus,.fg select:focus{border-color:#2e7d32}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;border:none;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:#2e7d32;color:white}.btn-primary:hover{background:#1b5e20}
+.btn-secondary{background:white;color:#444;border:1px solid #cdd4dc}.btn-secondary:hover{background:#f5f8fc}
+.btn-danger{background:white;color:#c0392b;border:1px solid #e8b4b4}.btn-danger:hover{background:#fdf2f2}
+.btn-success{background:#27ae60;color:white}.btn-success:hover{background:#229954}
+.btn-sm{padding:5px 10px;font-size:12px}
+.item-list{display:flex;flex-direction:column;gap:8px}
+.item-card{background:white;border:1px solid #e0e6ed;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:12px}
+.item-info{flex:1;min-width:0}
+.item-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-meta{font-size:12px;color:#888;margin-top:2px}
+.item-actions{display:flex;gap:6px;flex-shrink:0;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;padding:3px 8px;border-radius:100px;font-weight:500}
+.b-ok{background:#e8f8f0;color:#1e8449}.b-warn{background:#fef3e2;color:#935116}
+.b-info{background:#e8f5e9;color:#1b5e20}.b-gray{background:#f2f2f2;color:#666}
+.b-err{background:#fdecea;color:#c0392b}
+.search-row{display:flex;gap:10px;margin-bottom:12px}
+.search-row input{flex:1;padding:9px 12px;border:1px solid #cdd4dc;border-radius:8px;font-size:14px;font-family:inherit;outline:none}
+.search-row input:focus{border-color:#2e7d32}
+.filter-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{padding:5px 12px;font-size:12px;border-radius:100px;cursor:pointer;border:1px solid #cdd4dc;background:white;color:#666;font-family:inherit}
+.chip.active{background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7;font-weight:500}
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{text-align:left;padding:8px 12px;font-size:11px;color:#888;text-transform:uppercase;border-bottom:1px solid #e0e6ed;font-weight:600}
+.data-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.data-table tr:hover td{background:#f9fbfd}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:white;border-radius:12px;padding:1.5rem;width:440px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:17px;font-weight:600;margin-bottom:1rem}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem}
+.empty{text-align:center;padding:3rem 1rem;color:#aaa;font-size:14px}
+.toast{position:fixed;bottom:24px;right:24px;background:#2c3e50;color:white;padding:12px 20px;border-radius:8px;font-size:13px;z-index:1000;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}.toast.ok{background:#27ae60}.toast.err{background:#c0392b}
+.spinner{width:16px;height:16px;border:2px solid #dde3ea;border-top-color:#2e7d32;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.8);z-index:900;align-items:center;justify-content:center;flex-direction:column;gap:12px;font-size:14px;color:#555}
+.loading-overlay.show{display:flex}
+.spinner-lg{width:36px;height:36px;border:3px solid #dde3ea;border-top-color:#2e7d32;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ac-drop{display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #cdd4dc;border-radius:8px;z-index:50;max-height:200px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.ac-item{padding:10px 14px;cursor:pointer;border-bottom:.5px solid #f0f0f0;font-size:13px}
+.ac-item:hover{background:#f5f8fc}
+.mat-icon{width:40px;height:40px;border-radius:10px;background:#e8f5e9;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.code-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;background:#e8f5e9;color:#2e7d32;font-family:monospace;font-weight:600;margin-left:6px}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">🧩</div>
+    <h1>Materiali Inclusione</h1>
+    <p>Primaria Castelcovati — accesso riservato</p>
+    <input type="text" id="login-user" placeholder="Nome utente" autocomplete="username">
+    <input type="password" id="login-pass" placeholder="Password">
+    <button class="login-btn" onclick="doLogin()">Accedi</button>
+    <div class="login-err" id="login-err">Credenziali non valide</div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <span>🧩</span>
+    <h1>Materiali per l'Inclusione — Castelcovati</h1>
+    <button class="logout-btn" onclick="doLogout()">Esci</button>
+  </div>
+  <div class="main">
+    <div class="sidebar">
+      <div class="nav-section">Panoramica</div>
+      <div class="nav-item active" onclick="goTo('dashboard')">🏠 Dashboard</div>
+      <div class="nav-section">Catalogo</div>
+      <div class="nav-item" onclick="goTo('catalog')">🧩 Materiali</div>
+      <div class="nav-item" onclick="goTo('add-material')">➕ Aggiungi materiale</div>
+      <div class="nav-section">Prestiti</div>
+      <div class="nav-item" onclick="goTo('loans')">🔄 Gestione prestiti</div>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-title">Dashboard</div>
+        <div class="stats">
+          <div class="stat"><div class="stat-label">Materiali totali</div><div class="stat-val green" id="s-total">—</div></div>
+          <div class="stat"><div class="stat-label">Disponibili</div><div class="stat-val green" id="s-avail">—</div></div>
+          <div class="stat"><div class="stat-label">In prestito</div><div class="stat-val amber" id="s-loaned">—</div></div>
+          <div class="stat"><div class="stat-label">Tipi diversi</div><div class="stat-val blue" id="s-types">—</div></div>
+        </div>
+        <div class="card"><div class="card-title">🔄 Prestiti attivi</div><div id="dash-loans"></div></div>
+        <div class="card"><div class="card-title">🧩 Ultimi materiali aggiunti</div><div id="dash-recent"></div></div>
+      </div>
+
+      <!-- CATALOGO -->
+      <div class="page" id="page-catalog">
+        <div class="page-title">Catalogo materiali</div>
+        <div class="search-row">
+          <input type="text" id="mat-search" placeholder="Cerca nome, codice, tipo..." oninput="renderCatalog()">
+          <select id="mat-filter-status" onchange="renderCatalog()" style="width:160px;padding:9px 12px;border:1px solid #cdd4dc;border-radius:8px;font-size:13px;font-family:inherit">
+            <option value="">Tutti</option>
+            <option value="disponibile">Disponibili</option>
+            <option value="in_prestito">In prestito</option>
+          </select>
+        </div>
+        <div class="filter-chips" id="type-chips">
+          <button class="chip active" onclick="setTypeFilter('',this)">Tutti</button>
+        </div>
+        <div id="catalog-stats" style="font-size:12px;color:#888;margin-bottom:10px"></div>
+        <div class="item-list" id="catalog-list"></div>
+      </div>
+
+      <!-- AGGIUNGI MATERIALE -->
+      <div class="page" id="page-add-material">
+        <div class="page-title">Aggiungi materiale</div>
+        <div class="card">
+          <div class="card-title">🧩 Nuovo materiale</div>
+          <div class="row2">
+            <div class="fg"><label>Nome *</label><input type="text" id="f-name" placeholder="Es. Memory delle emozioni"></div>
+            <div class="fg"><label>Marca / Produttore</label><input type="text" id="f-brand" placeholder="Es. Erickson"></div>
+          </div>
+          <div class="row2">
+            <div class="fg"><label>Tipologia</label>
+              <select id="f-type">
+                <option value="">— seleziona —</option>
+                <option>Gioco strutturato</option>
+                <option>Materiale visivo</option>
+                <option>CAA</option>
+                <option>Strumento di valutazione</option>
+                <option>Kit sensoriale</option>
+                <option>Software / App</option>
+                <option>Libro specialistico</option>
+                <option>Altro</option>
+              </select>
+            </div>
+            <div class="fg"><label>Numero pezzi</label>
+              <input type="number" id="f-pieces" value="1" min="1" max="999">
+            </div>
+          </div>
+          <div class="fg"><label>Note</label><textarea id="f-notes" style="height:70px;resize:vertical" placeholder="Descrizione, uso consigliato, ecc."></textarea></div>
+          <button class="btn btn-primary" onclick="saveMaterial()">✅ Aggiungi al catalogo</button>
+        </div>
+      </div>
+
+      <!-- PRESTITI -->
+      <div class="page" id="page-loans">
+        <div class="page-title">Gestione prestiti</div>
+        <div class="card">
+          <div class="card-title">➕ Nuovo prestito</div>
+          <div class="row2">
+            <div class="fg" style="position:relative">
+              <label>Materiale</label>
+              <input type="text" id="loan-mat-input" placeholder="Cerca nome o codice..." autocomplete="off" oninput="filterLoanMats()">
+              <input type="hidden" id="loan-mat-val">
+              <div class="ac-drop" id="loan-mat-drop"></div>
+            </div>
+            <div class="fg">
+              <label>Prestato a (classe o collega)</label>
+              <input type="text" id="loan-borrower" placeholder="Es. 3A, Marco Rossi...">
+            </div>
+          </div>
+          <div style="margin-bottom:10px">
+            <span id="loan-mat-badge" style="display:none" class="badge b-info"></span>
+          </div>
+          <button class="btn btn-primary" onclick="registerLoan()">📤 Registra prestito</button>
+        </div>
+        <div class="card"><div class="card-title">📋 Prestiti attivi</div><div id="loans-table"></div></div>
+        <div class="card"><div class="card-title">📜 Storico restituzioni</div><div id="history-table"></div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODALE CONFERMA -->
+<div class="overlay" id="modal-confirm">
+  <div class="modal" style="max-width:360px">
+    <h3 id="mc-title">Conferma</h3>
+    <p style="font-size:14px;color:#666;margin-bottom:1rem" id="mc-body"></p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-confirm')">Annulla</button>
+      <button class="btn btn-danger" id="mc-ok">Conferma</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODALE RESTITUZIONE -->
+<div class="overlay" id="modal-return">
+  <div class="modal" style="max-width:360px">
+    <h3>Restituzione</h3>
+    <p style="font-size:14px;color:#666;margin-bottom:1rem" id="mr-body"></p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-return')">Annulla</button>
+      <button class="btn btn-success" id="mr-ok">✅ Conferma restituzione</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODALE DETTAGLIO MATERIALE -->
+<div class="overlay" id="modal-mat">
+  <div class="modal">
+    <h3 id="mm-title">Dettaglio materiale</h3>
+    <div id="mm-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-danger btn-sm" id="mm-del">🗑️ Elimina</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-mat')">Chiudi</button>
+    </div>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loading-overlay">
+  <div class="spinner-lg"></div>
+  <span id="loading-msg">Caricamento...</span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL = 'https://aoyagflgtclemnpucgay.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFveWFnZmxndGNsZW1ucHVjZ2F5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NzY0OTEsImV4cCI6MjA5NTM1MjQ5MX0.Pzq4t8pK9S2AmpsI08X2EbfHgC8n4kYCl0AyOcoihz8';
+const CRED = {user:'MaterialeInclusione', pass:'Inclusione26!'};
+
+const db = {
+  async get(table, query='') {
+    let all=[], from=0;
+    const PAGE=1000;
+    while(true){
+      const r=await fetch(SUPA_URL+'/rest/v1/'+table+'?select=*'+(query?'&'+query:'')+'&order=id.asc',{
+        headers:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY,'Content-Type':'application/json','Range-Unit':'items','Range':from+'-'+(from+PAGE-1)}
+      });
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const data=await r.json();
+      if(!data||!data.length) break;
+      all=all.concat(data);
+      if(data.length<PAGE) break;
+      from+=PAGE;
+    }
+    return all;
+  },
+  async insert(table, data){
+    const r=await fetch(SUPA_URL+'/rest/v1/'+table,{method:'POST',headers:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY,'Content-Type':'application/json',Prefer:'return=representation'},body:JSON.stringify(data)});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  },
+  async update(table, id, data){
+    const r=await fetch(SUPA_URL+'/rest/v1/'+table+'?id=eq.'+id,{method:'PATCH',headers:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY,'Content-Type':'application/json',Prefer:'return=representation'},body:JSON.stringify(data)});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  },
+  async del(table, id){
+    await fetch(SUPA_URL+'/rest/v1/'+table+'?id=eq.'+id,{method:'DELETE',headers:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY}});
+  }
+};
+
+let materials=[], loans=[];
+let typeFilter='';
+
+// ── UTILITY ──────────────────────────────────────────────────
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+(type||'ok');setTimeout(()=>t.className='toast',3500);}
+function confirm2(title,body,cb){document.getElementById('mc-title').textContent=title;document.getElementById('mc-body').textContent=body;document.getElementById('mc-ok').onclick=()=>{closeModal('modal-confirm');cb();};document.getElementById('modal-confirm').classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function showLoad(msg){document.getElementById('loading-msg').textContent=msg||'Caricamento...';document.getElementById('loading-overlay').classList.add('show');}
+function hideLoad(){document.getElementById('loading-overlay').classList.remove('show');}
+
+function matIcon(type){
+  const icons={'Gioco strutturato':'🎲','Materiale visivo':'🖼️','CAA':'💬','Strumento di valutazione':'📋','Kit sensoriale':'🤲','Software / App':'💻','Libro specialistico':'📘','Altro':'📦'};
+  return icons[type]||'🧩';
+}
+
+function activeLoans(){return loans.filter(l=>!l.returned);}
+function matActiveLoans(matId){return loans.filter(l=>l.material_id==matId&&!l.returned);}
+
+// ── AUTH ─────────────────────────────────────────────────────
+function doLogin(){
+  const u=document.getElementById('login-user').value.trim();
+  const p=document.getElementById('login-pass').value;
+  if(u===CRED.user&&p===CRED.pass){
+    sessionStorage.setItem('mat_auth','1');
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    loadAll();
+  } else {
+    document.getElementById('login-err').style.display='block';
+  }
+}
+function doLogout(){
+  sessionStorage.removeItem('mat_auth');
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
+document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('login-user').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+// ── CARICAMENTO DATI ──────────────────────────────────────────
+async function loadAll(){
+  showLoad('Caricamento dati...');
+  try{
+    [materials,loans]=await Promise.all([db.get('materials'),db.get('material_loans')]);
+    refreshDash();
+    buildTypeChips();
+  }catch(e){
+    console.error(e);
+    toast('Errore connessione database — riprova','err');
+    document.getElementById('dash-loans').innerHTML='<div class="empty">⚠️ Database non raggiungibile<br><br><button class="btn btn-primary" onclick="loadAll()">🔄 Riprova</button></div>';
+  }
+  hideLoad();
+}
+
+// ── NAVIGAZIONE ───────────────────────────────────────────────
+function goTo(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+name+"'"))n.classList.add('active');});
+  if(name==='catalog'){buildTypeChips();renderCatalog();}
+  if(name==='loans')renderLoans();
+  if(name==='dashboard')refreshDash();
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────
+function refreshDash(){
+  const al=activeLoans();
+  document.getElementById('s-total').textContent=materials.length;
+  document.getElementById('s-avail').textContent=materials.filter(m=>!matActiveLoans(m.id).length).length;
+  document.getElementById('s-loaned').textContent=al.length;
+  const types=[...new Set(materials.map(m=>m.type).filter(Boolean))];
+  document.getElementById('s-types').textContent=types.length;
+
+  const dlEl=document.getElementById('dash-loans');
+  if(!al.length){dlEl.innerHTML='<div class="empty">✅ Nessun prestito attivo</div>';}
+  else dlEl.innerHTML='<table class="data-table"><thead><tr><th>Materiale</th><th>Classe / Collega</th><th>Dal</th><th></th></tr></thead><tbody>'+
+    al.map(l=>{
+      const m=materials.find(x=>x.id==l.material_id)||{name:'—',code:'—'};
+      return'<tr><td>'+esc(m.name.slice(0,35))+(m.code?'<span class="code-tag">'+esc(m.code)+'</span>':'')+'</td><td>'+esc(l.borrower||'—')+'</td><td>'+esc(l.date||'—')+'</td><td><button class="btn btn-success btn-sm" onclick="openReturn('+l.id+')">✅ Restituisci</button></td></tr>';
+    }).join('')+'</tbody></table>';
+
+  const recent=[...materials].reverse().slice(0,5);
+  const drEl=document.getElementById('dash-recent');
+  if(!recent.length)drEl.innerHTML='<div class="empty">🧩 Nessun materiale ancora</div>';
+  else drEl.innerHTML='<table class="data-table"><thead><tr><th>Nome</th><th>Tipo</th><th>Stato</th></tr></thead><tbody>'+
+    recent.map(m=>{const loaned=matActiveLoans(m.id).length>0;return'<tr><td>'+esc(m.name.slice(0,35))+'</td><td>'+esc(m.type||'—')+'</td><td><span class="badge '+(loaned?'b-warn':'b-ok')+'">'+(loaned?'In prestito':'Disponibile')+'</span></td></tr>';}).join('')+'</tbody></table>';
+}
+
+// ── FILTRO TIPOLOGIE ─────────────────────────────────────────
+function buildTypeChips(){
+  const types=[...new Set(materials.map(m=>m.type).filter(Boolean))].sort();
+  const container=document.getElementById('type-chips');
+  container.innerHTML='<button class="chip'+(typeFilter===''?' active':'')+'" onclick="setTypeFilter(\'\',this)">Tutti</button>'+
+    types.map(t=>'<button class="chip'+(typeFilter===t?' active':'')+'" onclick="setTypeFilter(\''+esc(t)+'\',this)">'+esc(t)+'</button>').join('');
+}
+function setTypeFilter(t,el){typeFilter=t;document.querySelectorAll('#type-chips .chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderCatalog();}
+
+// ── CATALOGO ─────────────────────────────────────────────────
+function renderCatalog(){
+  const q=(document.getElementById('mat-search').value||'').toLowerCase();
+  const fs=document.getElementById('mat-filter-status').value;
+  let list=materials.filter(m=>{
+    const loaned=matActiveLoans(m.id).length>0;
+    const matchQ=!q||(m.name+' '+(m.code||'')+' '+(m.type||'')+' '+(m.brand||'')).toLowerCase().includes(q);
+    const matchS=!fs||(fs==='disponibile'&&!loaned)||(fs==='in_prestito'&&loaned);
+    const matchT=!typeFilter||m.type===typeFilter;
+    return matchQ&&matchS&&matchT;
+  });
+
+  document.getElementById('catalog-stats').textContent=list.length+' material'+(list.length===1?'e':'i');
+
+  const el=document.getElementById('catalog-list');
+  if(!list.length){el.innerHTML='<div class="empty">🧩 '+(materials.length?'Nessun risultato':'Nessun materiale nel catalogo')+'</div>';return;}
+
+  el.innerHTML=list.map(m=>{
+    const loaned=matActiveLoans(m.id).length>0;
+    const loan=loaned?activeLoans().find(l=>l.material_id==m.id):null;
+    return'<div class="item-card" onclick="openMatDetail('+m.id+')" style="cursor:pointer">'+
+      '<div class="mat-icon">'+matIcon(m.type)+'</div>'+
+      '<div class="item-info">'+
+        '<div class="item-name">'+esc(m.name)+(m.code?'<span class="code-tag">'+esc(m.code)+'</span>':'')+'</div>'+
+        '<div class="item-meta">'+(m.type||'—')+(m.brand?' · '+esc(m.brand):'')+(m.pieces&&m.pieces>1?' · '+m.pieces+' pezzi':'')+'</div>'+
+        (loan?'<div class="item-meta" style="margin-top:3px">📤 '+esc(loan.borrower||'—')+' dal '+esc(loan.date||'—')+'</div>':'')+
+      '</div>'+
+      '<div class="item-actions" onclick="event.stopPropagation()">'+
+        '<span class="badge '+(loaned?'b-warn':'b-ok')+'">'+(loaned?'In prestito':'Disponibile')+'</span>'+
+        '<button class="btn btn-danger btn-sm" onclick="deleteMaterial('+m.id+')">🗑️</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ── DETTAGLIO MATERIALE ───────────────────────────────────────
+function openMatDetail(id){
+  const m=materials.find(x=>x.id==id);if(!m)return;
+  const al=matActiveLoans(id);
+  const hist=loans.filter(l=>l.material_id==id&&l.returned);
+  document.getElementById('mm-title').textContent=m.name;
+  document.getElementById('mm-body').innerHTML=
+    '<table class="data-table" style="margin-bottom:1rem">'+
+    '<tr><td style="color:#888;width:100px">Codice</td><td><span class="code-tag">'+esc(m.code||'—')+'</span></td></tr>'+
+    '<tr><td style="color:#888">Tipo</td><td>'+esc(m.type||'—')+'</td></tr>'+
+    '<tr><td style="color:#888">Marca</td><td>'+esc(m.brand||'—')+'</td></tr>'+
+    '<tr><td style="color:#888">Pezzi</td><td><strong>'+(m.pieces||1)+'</strong></td></tr>'+
+    (m.notes?'<tr><td style="color:#888">Note</td><td>'+esc(m.notes)+'</td></tr>':'')+
+    '<tr><td style="color:#888">Stato</td><td><span class="badge '+(al.length?'b-warn':'b-ok')+'">'+(al.length?'In prestito':'Disponibile')+'</span></td></tr>'+
+    (al.length?'<tr><td style="color:#888">Presso</td><td>'+esc(al[0].borrower||'—')+' (dal '+esc(al[0].date||'—')+')</td></tr>':'')+
+    '</table>'+
+    (al.length?'<button class="btn btn-success btn-sm" onclick="openReturn('+al[0].id+');closeModal(\'modal-mat\')">✅ Registra restituzione</button>':'')+
+    (hist.length?'<p style="font-size:12px;color:#888;margin-top:10px">Prestiti precedenti: '+hist.length+'</p>':'');
+  document.getElementById('mm-del').onclick=()=>{closeModal('modal-mat');deleteMaterial(id);};
+  document.getElementById('modal-mat').classList.add('open');
+}
+
+// ── AGGIUNGI MATERIALE ────────────────────────────────────────
+async function nextCode(){
+  const codes=materials.map(m=>m.code||'').filter(c=>/^MAT-\d+$/.test(c)).map(c=>parseInt(c.replace('MAT-','')));
+  const max=codes.length?Math.max(...codes):0;
+  return'MAT-'+(max+1).toString().padStart(3,'0');
+}
+
+async function saveMaterial(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){toast('Inserisci il nome del materiale','err');return;}
+  const type=document.getElementById('f-type').value;
+  const brand=document.getElementById('f-brand').value.trim();
+  const pieces=parseInt(document.getElementById('f-pieces').value)||1;
+  const notes=document.getElementById('f-notes').value.trim();
+  const code=await nextCode();
+  showLoad('Salvataggio...');
+  try{
+    const res=await db.insert('materials',{code,name,brand,type,pieces,notes,status:'disponibile'});
+    if(res&&res[0])materials.push(res[0]);
+    hideLoad();
+    ['f-name','f-brand','f-notes'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('f-pieces').value='1';
+    document.getElementById('f-type').value='';
+    refreshDash();buildTypeChips();
+    toast('Materiale aggiunto! Codice: '+code);
+  }catch(e){hideLoad();toast('Errore: '+e.message,'err');}
+}
+
+// ── ELIMINA MATERIALE ─────────────────────────────────────────
+async function deleteMaterial(id){
+  if(matActiveLoans(id).length){toast('Materiale in prestito — registra la restituzione prima','err');return;}
+  confirm2('Elimina materiale','Eliminare definitivamente questo materiale?',async()=>{
+    showLoad('Eliminazione...');
+    await db.del('materials',id);
+    materials=materials.filter(m=>m.id!==id);
+    hideLoad();renderCatalog();refreshDash();buildTypeChips();toast('Materiale eliminato');
+  });
+}
+
+// ── PRESTITI ─────────────────────────────────────────────────
+function filterLoanMats(){
+  const q=document.getElementById('loan-mat-input').value.trim().toLowerCase();
+  const drop=document.getElementById('loan-mat-drop');
+  document.getElementById('loan-mat-val').value='';
+  document.getElementById('loan-mat-badge').style.display='none';
+  if(!q){drop.style.display='none';return;}
+  const results=materials.filter(m=>!matActiveLoans(m.id).length&&(m.name.toLowerCase().includes(q)||(m.code||'').toLowerCase().includes(q)||(m.type||'').toLowerCase().includes(q))).slice(0,8);
+  if(!results.length){drop.innerHTML='<div class="ac-item" style="color:#aaa">Nessun materiale disponibile</div>';drop.style.display='block';return;}
+  drop.innerHTML=results.map(m=>'<div class="ac-item" onclick="selectLoanMat('+m.id+')">'+
+    '<div style="font-weight:500">'+esc(m.name)+(m.code?'<span class="code-tag">'+esc(m.code)+'</span>':'')+'</div>'+
+    '<div style="font-size:11px;color:#888">'+esc(m.type||'—')+(m.brand?' · '+esc(m.brand):'')+'</div>'+
+  '</div>').join('');
+  drop.style.display='block';
+}
+
+function selectLoanMat(id){
+  const m=materials.find(x=>x.id==id);if(!m)return;
+  document.getElementById('loan-mat-val').value=id;
+  document.getElementById('loan-mat-input').value=m.name;
+  document.getElementById('loan-mat-drop').style.display='none';
+  const badge=document.getElementById('loan-mat-badge');
+  badge.textContent='🧩 '+m.name.slice(0,30)+(m.code?' ['+m.code+']':'');
+  badge.style.display='inline-flex';
+}
+
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#loan-mat-input')&&!e.target.closest('#loan-mat-drop'))
+    document.getElementById('loan-mat-drop').style.display='none';
+});
+
+async function registerLoan(){
+  const matId=document.getElementById('loan-mat-val').value;
+  const borrower=document.getElementById('loan-borrower').value.trim();
+  if(!matId){toast('Seleziona un materiale','err');return;}
+  if(!borrower){toast('Inserisci la classe o il nome del collega','err');return;}
+  showLoad('Salvataggio...');
+  try{
+    const res=await db.insert('material_loans',{material_id:parseInt(matId),borrower,date:new Date().toLocaleDateString('it-IT'),returned:false});
+    if(res&&res[0])loans.push(res[0]);
+    hideLoad();
+    document.getElementById('loan-mat-input').value='';
+    document.getElementById('loan-mat-val').value='';
+    document.getElementById('loan-borrower').value='';
+    document.getElementById('loan-mat-badge').style.display='none';
+    renderLoans();refreshDash();toast('Prestito registrato!');
+  }catch(e){hideLoad();toast('Errore: '+e.message,'err');}
+}
+
+function renderLoans(){
+  const al=activeLoans();
+  const lEl=document.getElementById('loans-table');
+  if(!al.length)lEl.innerHTML='<div class="empty">✅ Nessun prestito attivo</div>';
+  else lEl.innerHTML='<table class="data-table"><thead><tr><th>Materiale</th><th>Classe / Collega</th><th>Dal</th><th></th></tr></thead><tbody>'+
+    al.map(l=>{
+      const m=materials.find(x=>x.id==l.material_id)||{name:'—',code:''};
+      return'<tr><td>'+esc(m.name.slice(0,30))+(m.code?'<span class="code-tag">'+esc(m.code)+'</span>':'')+'</td><td>'+esc(l.borrower||'—')+'</td><td>'+esc(l.date||'—')+'</td><td><button class="btn btn-success btn-sm" onclick="openReturn('+l.id+')">✅ Restituisci</button></td></tr>';
+    }).join('')+'</tbody></table>';
+
+  const hist=loans.filter(l=>l.returned).reverse().slice(0,20);
+  const hEl=document.getElementById('history-table');
+  if(!hist.length)hEl.innerHTML='<div class="empty">📜 Nessuna restituzione registrata</div>';
+  else hEl.innerHTML='<table class="data-table"><thead><tr><th>Materiale</th><th>Classe / Collega</th><th>Prestito</th><th>Restituzione</th></tr></thead><tbody>'+
+    hist.map(l=>{
+      const m=materials.find(x=>x.id==l.material_id)||{name:'—'};
+      return'<tr><td>'+esc(m.name.slice(0,30))+'</td><td>'+esc(l.borrower||'—')+'</td><td>'+esc(l.date||'—')+'</td><td>'+esc(l.return_date||'—')+'</td></tr>';
+    }).join('')+'</tbody></table>';
+}
+
+function openReturn(loanId){
+  const l=loans.find(x=>x.id==loanId);if(!l)return;
+  const m=materials.find(x=>x.id==l.material_id)||{name:'—'};
+  document.getElementById('mr-body').textContent='Registrare la restituzione di "'+m.name.slice(0,40)+'" da '+( l.borrower||'—')+'?';
+  document.getElementById('mr-ok').onclick=async()=>{
+    showLoad('Restituzione...');
+    const today=new Date().toLocaleDateString('it-IT');
+    await db.update('material_loans',loanId,{returned:true,return_date:today});
+    loans=loans.map(x=>x.id==loanId?{...x,returned:true,return_date:today}:x);
+    hideLoad();closeModal('modal-return');refreshDash();renderLoans();toast('Restituzione registrata!');
+  };
+  document.getElementById('modal-return').classList.add('open');
+}
+
+if(sessionStorage.getItem('mat_auth')==='1'){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  loadAll();
+}
+</script>
+</body>
+</html>
