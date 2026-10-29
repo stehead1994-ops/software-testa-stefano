@@ -176,6 +176,30 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-h
           <div class="stat"><div class="stat-label">In prestito</div><div class="stat-val amber" id="s-loaned">—</div></div>
           <div class="stat"><div class="stat-label">Utenti attivi</div><div class="stat-val blue" id="s-users">—</div></div>
         </div>
+
+        <!-- I NOSTRI NUMERI -->
+        <div class="card" style="background:linear-gradient(135deg,#1D5FAD 0%,#1850a0 100%);border:none;color:white;margin-bottom:1rem">
+          <div class="card-title" style="color:rgba(255,255,255,.75)">📊 I nostri numeri</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;text-align:center">
+            <div>
+              <div style="font-size:32px;font-weight:700" id="nn-total-loans">—</div>
+              <div style="font-size:12px;opacity:.8;margin-top:4px">Prestiti totali</div>
+            </div>
+            <div>
+              <div style="font-size:32px;font-weight:700" id="nn-active-loans">—</div>
+              <div style="font-size:12px;opacity:.8;margin-top:4px">Prestiti attivi</div>
+            </div>
+            <div>
+              <div style="font-size:32px;font-weight:700" id="nn-alunni">—</div>
+              <div style="font-size:12px;opacity:.8;margin-top:4px">Alunni lettori</div>
+            </div>
+            <div>
+              <div style="font-size:32px;font-weight:700" id="nn-docenti">—</div>
+              <div style="font-size:12px;opacity:.8;margin-top:4px">Docenti lettori</div>
+            </div>
+          </div>
+        </div>
+
         <div class="card"><div class="card-title">📋 Prestiti attivi</div><div id="dash-loans"></div></div>
         <div class="card"><div class="card-title">📚 Ultimi libri aggiunti</div><div id="dash-recent"></div></div>
       </div>
@@ -503,6 +527,15 @@ function refreshDash(){
   document.getElementById('s-avail').textContent=books.filter(b=>!bookActiveLoans(b.isbn).length).length;
   document.getElementById('s-loaned').textContent=al.length;
   document.getElementById('s-users').textContent=users.filter(u=>!u.archived).length;
+  // I nostri numeri
+  const allLoans=loans.filter(l=>!l.archived);
+  const borrowerIds=new Set(allLoans.map(l=>l.user_id));
+  const alunniCount=[...borrowerIds].filter(id=>{const u=users.find(x=>x.id==id);return u&&u.type==='alunno';}).length;
+  const docentiCount=[...borrowerIds].filter(id=>{const u=users.find(x=>x.id==id);return u&&u.type==='docente';}).length;
+  document.getElementById('nn-total-loans').textContent=allLoans.length;
+  document.getElementById('nn-active-loans').textContent=al.length;
+  document.getElementById('nn-alunni').textContent=alunniCount;
+  document.getElementById('nn-docenti').textContent=docentiCount;
   const dlEl=document.getElementById('dash-loans');
   if(!al.length){dlEl.innerHTML='<div class="empty">✅ Nessun prestito attivo</div>';}
   else dlEl.innerHTML='<table class="data-table"><thead><tr><th>Libro</th><th>Utente</th><th>Dal</th><th></th></tr></thead><tbody>'+al.map(l=>{const b=books.find(x=>x.isbn===l.isbn)||{title:l.isbn};const u=users.find(x=>x.id==l.user_id);return'<tr><td>'+esc(b.title.slice(0,35))+'</td><td>'+esc(u?u.name+' '+u.surname:'—')+(u&&u.classe?'<span class="class-tag">'+esc(u.classe)+'</span>':'')+'</td><td>'+esc(l.date)+'</td><td><button class="btn btn-success btn-sm" onclick="openReturn('+l.id+')">Restituisci</button></td></tr>';}).join('')+'</tbody></table>';
