@@ -59,6 +59,10 @@ window.MATERIALI = /*INIZIO-ELENCO*/[
       {
         "nome": "@renneantonella",
         "handle": "@renneantonella"
+      },
+      {
+        "nome": "@amicidipenna_global",
+        "handle": "@amicidipenna_global"
       }
     ],
     "tag": [
