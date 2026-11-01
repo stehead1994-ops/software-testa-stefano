@@ -70,7 +70,8 @@ window.MATERIALI = /*INIZIO-ELENCO*/[
       "cittadinanza digitale"
     ],
     "data": "2026-10",
-    "anteprima": "apprendimento-digitale-social-anteprima.png"
+    "anteprima": "apprendimento-digitale-social-anteprima.png",
+    "originale": "https://www.instagram.com/p/DfBKNtWj2Ux/"
   },
   {
     "titolo": "Crescere, imparare, concentrarsi",
