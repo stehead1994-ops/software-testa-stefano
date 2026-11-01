@@ -36,6 +36,43 @@
    ───────────────────────────────────────────────────────────── */
 window.MATERIALI = /*INIZIO-ELENCO*/[
   {
+    "titolo": "Quaderno o tablet? Imparare tra carta, digitale e social",
+    "descrizione": "Carosello a più voci sull'apprendimento oggi: perché il lavoro tradizionale resta insostituibile, la tecnologia come strumento di inclusione (sintesi vocale, mappe, timer, CAA), i social da usare con criterio e una pagina per i bambini su come verificare ciò che vedono online.",
+    "categoria": "collaborazioni",
+    "discipline": [
+      "tecnologia",
+      "ed-civica",
+      "trasversale"
+    ],
+    "ordine": "Primaria",
+    "formato": "pdf",
+    "file": "apprendimento-digitale-social.pdf",
+    "crediti": [
+      {
+        "nome": "@maestra_eliisa_",
+        "handle": "@maestra_eliisa_"
+      },
+      {
+        "nome": "@lamaestracolconiglio",
+        "handle": "@lamaestracolconiglio"
+      },
+      {
+        "nome": "@renneantonella",
+        "handle": "@renneantonella"
+      }
+    ],
+    "tag": [
+      "digitale",
+      "social media",
+      "inclusione",
+      "CAA",
+      "UDL",
+      "cittadinanza digitale"
+    ],
+    "data": "2026-10",
+    "anteprima": "apprendimento-digitale-social-anteprima.png"
+  },
+  {
     "titolo": "Crescere, imparare, concentrarsi",
     "descrizione": "Guida illustrata per genitori e docenti: concentrazione e scrittura, tempo e memoria di lavoro, pause, strumenti digitali e CAA, rituali di passaggio in classe.",
     "categoria": "collaborazioni",
