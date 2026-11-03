@@ -739,25 +739,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
     background: var(--grigio-bg); padding: 6px 8px; border-radius: 6px;
     line-height: 1.3;
   }
-  .firma-box-pad { padding-bottom: 10px; }
-  .signature-preview {
-    position: relative; margin-top: 10px; min-height: 90px;
-    border: 1.5px dashed var(--azzurro); border-radius: 8px;
-    background: var(--azzurro-light); overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.18s;
-  }
-  .signature-preview:hover { background: #cfe6f9; }
-  .signature-preview img { max-width: 100%; max-height: 90px; display: block; }
-  .signature-preview-ph { color: var(--blu); font-size: 0.85rem; font-weight: 600; }
-  .signature-preview.has-signature { background: white; border-style: solid; border-color: var(--grigio-bordo); cursor: default; }
-  .signature-preview.has-signature:hover { background: #f0f7ff; cursor: pointer; }
-  .signature-actions { margin-top: 6px; display: flex; justify-content: flex-end; }
-  .sig-btn {
-    background: none; border: none; color: var(--testo-soft);
-    font-size: 0.75rem; cursor: pointer; padding: 2px 6px; border-radius: 4px;
-  }
-  .sig-btn:hover { background: var(--grigio-bg); color: var(--arancio); }
 
 
   /* ─── BOTTOM ACTIONS ─── */
@@ -866,11 +847,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
     .table-form td, .table-form th { font-size: 9pt; }
 
     .firma-box { border: 1pt dashed #999; }
-    .signature-actions, .firma-nota { display: none; }
-    .signature-preview { border: none; background: transparent; cursor: default; }
-    .signature-preview-ph { display: none; }
-    #firma-modal { display: none !important; }
-
+    .firma-nota { display: none; }
     /* Nascondi bottoni PAP non selezionati */
     .pap-btn:not(.sel-p):not(.sel-a):not(.sel-pp) { display: none; }
     .pap-btn.sel-p::before { content: "✅ Presente"; }
@@ -2287,8 +2264,8 @@ window.esportaPDF = async () => {
   campoTesto('Interventi specialistici', dati.s3_interventi_specialistici, 16);
 
   // ── SEZIONE 5: STRATEGIE PER DISCIPLINA ──
-  const MATERIE = ['italiano','storia_e_geografia','matematica','scienze','inglese','francese','tecnologia','arte_e_immagine','musica','scienze_motorie','irc___alternativa'];
-  const MATERIE_LABEL = {'italiano':'Italiano','storia_e_geografia':'Storia e Geografia','matematica':'Matematica','scienze':'Scienze','inglese':'Inglese','francese':'Francese','tecnologia':'Tecnologia','arte_e_immagine':'Arte e Immagine','musica':'Musica','scienze_motorie':'Scienze Motorie','irc___alternativa':'IRC / Alternativa'};
+  const MATERIE = ['italiano','storia','geografia','matematica','scienze','inglese','francese','tecnologia','arte_e_immagine','musica','scienze_motorie','irc___alternativa'];
+  const MATERIE_LABEL = {'italiano':'Italiano','storia':'Storia','geografia':'Geografia','matematica':'Matematica','scienze':'Scienze','inglese':'Inglese','francese':'Francese','tecnologia':'Tecnologia','arte_e_immagine':'Arte e Immagine','musica':'Musica','scienze_motorie':'Scienze Motorie','irc___alternativa':'IRC / Alternativa'};
 
   let materieTrovate = false;
   MATERIE.forEach(m => {
@@ -3015,17 +2992,11 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
           <div class="firma-nota">📎 Firmato digitalmente ai sensi del CAD – protocollo informatico</div>
         </div>
 
-        <!-- Coordinatore: nome + firma grafica -->
-        <div class="firma-box firma-box-pad">
+        <!-- Coordinatore: solo testo, firma raccolta tramite software -->
+        <div class="firma-box">
           <label>Coordinatore di classe</label>
           <input data-campo="firma_coordinatore" type="text" placeholder="Nome e cognome">
-          <div class="signature-preview" id="prev-sig-coordinatore" onclick="apriFirma('sig-coordinatore')">
-            <img id="img-sig-coordinatore" style="display:none">
-            <span class="signature-preview-ph">✍️ Tocca per firmare</span>
-          </div>
-          <div class="signature-actions">
-            <button type="button" class="sig-btn" onclick="clearSignature('sig-coordinatore')">🗑️ Cancella firma</button>
-          </div>
+          <div class="firma-nota">📎 La firma viene raccolta tramite il software <strong>Allegato Firme PDP</strong></div>
         </div>
 
         <!-- Genitore: firma raccolta tramite software Allegato Firme PDP -->
@@ -3040,28 +3011,6 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
   </div>
 
 </div><!-- /main -->
-
-<!-- ZONA CARICA BOZZA (drag & drop) -->
-<!-- MODALE FIRMA A SCHERMO INTERO -->
-<div id="firma-modal" style="display:none; position:fixed; inset:0; z-index:1000; background:rgba(26,58,92,0.92); flex-direction:column; align-items:center; justify-content:center; padding:20px;">
-  <div style="background:white; border-radius:16px; padding:20px; width:100%; max-width:720px; box-shadow:0 8px 32px rgba(0,0,0,0.35);">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <div id="firma-modal-titolo" style="font-weight:700; color:var(--blu); font-size:1.05rem;">✍️ Firma</div>
-      <button onclick="chiudiFirma(false)" style="background:none; border:none; font-size:1.3rem; cursor:pointer; color:var(--testo-soft); line-height:1;">✕</button>
-    </div>
-    <p style="font-size:0.8rem; color:var(--testo-soft); margin-bottom:10px;">Disegna la firma con il dito, mouse o penna. Premi "Conferma" per salvarla.</p>
-    <div style="border:2px solid var(--azzurro); border-radius:10px; overflow:hidden; background:#fafcff;">
-      <canvas id="firma-modal-canvas" style="display:block; width:100%; height:280px; touch-action:none; cursor:crosshair;"></canvas>
-    </div>
-    <div style="display:flex; justify-content:space-between; gap:10px; margin-top:14px;">
-      <button class="btn btn-secondary" onclick="cancellaFirmaModal()">🗑️ Cancella</button>
-      <div style="display:flex; gap:10px;">
-        <button class="btn btn-secondary" onclick="chiudiFirma(false)">Annulla</button>
-        <button class="btn btn-primary" onclick="chiudiFirma(true)">✅ Conferma firma</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- MODALE PASSWORD -->
 <div id="password-modal" style="display:none; position:fixed; inset:0; z-index:1100; background:rgba(26,58,92,0.92); flex-direction:column; align-items:center; justify-content:center; padding:20px;">
@@ -3113,147 +3062,6 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
 
 // ── Funzioni PDP integrate ──
 
-// ─── FIRMA GRAFICA — MODALE A SCHERMO INTERO ───
-// Memorizza le firme salvate come dataURL, per id (es. 'sig-coordinatore')
-const signatureData = {};
-let firmaCorrenteId = null;
-let modalCtx = null;
-let modalDrawing = false;
-
-const FIRMA_TITOLI = {
-  'sig-coordinatore': '✍️ Firma del Coordinatore di classe',
-  'sig-genitore': '✍️ Firma del Genitore/Tutore'
-};
-
-function apriFirma(id) {
-  firmaCorrenteId = id;
-  document.getElementById('firma-modal-titolo').textContent = FIRMA_TITOLI[id] || '✍️ Firma';
-
-  const modal = document.getElementById('firma-modal');
-  modal.style.display = 'flex';
-
-  const canvas = document.getElementById('firma-modal-canvas');
-  const ratio = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * ratio;
-  canvas.height = rect.height * ratio;
-  modalCtx = canvas.getContext('2d');
-  modalCtx.scale(ratio, ratio);
-  modalCtx.lineWidth = 2.4;
-  modalCtx.lineCap = 'round';
-  modalCtx.lineJoin = 'round';
-  modalCtx.strokeStyle = '#1a3a5c';
-  modalCtx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Se c'è già una firma salvata, mostrala per poterla correggere
-  if (signatureData[id]) {
-    const img = new Image();
-    img.onload = () => modalCtx.drawImage(img, 0, 0, rect.width, rect.height);
-    img.src = signatureData[id];
-  }
-}
-
-function getModalPos(e) {
-  const canvas = document.getElementById('firma-modal-canvas');
-  const r = canvas.getBoundingClientRect();
-  // PointerEvent e MouseEvent hanno clientX direttamente
-  // TouchEvent ha touches[0]
-  const ev = (e.touches && e.touches.length > 0) ? e.touches[0] : e;
-  return { x: ev.clientX - r.left, y: ev.clientY - r.top };
-}
-
-function modalStart(e) {
-  e.preventDefault();
-  modalDrawing = true;
-  const p = getModalPos(e);
-  modalCtx.beginPath();
-  modalCtx.moveTo(p.x, p.y);
-}
-function modalMove(e) {
-  if (!modalDrawing) return;
-  e.preventDefault();
-  const p = getModalPos(e);
-  modalCtx.lineTo(p.x, p.y);
-  modalCtx.stroke();
-}
-function modalEnd() { modalDrawing = false; }
-
-function cancellaFirmaModal() {
-  const canvas = document.getElementById('firma-modal-canvas');
-  modalCtx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function chiudiFirma(conferma) {
-  const modal = document.getElementById('firma-modal');
-  const canvas = document.getElementById('firma-modal-canvas');
-
-  if (conferma && firmaCorrenteId) {
-    // Verifica se il canvas è vuoto (tutto trasparente)
-    const ctx = canvas.getContext('2d');
-    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-    let isEmpty = true;
-    for (let i = 3; i < pixels.length; i += 4) {
-      if (pixels[i] !== 0) { isEmpty = false; break; }
-    }
-    if (!isEmpty) {
-      signatureData[firmaCorrenteId] = canvas.toDataURL('image/png');
-    } else {
-      delete signatureData[firmaCorrenteId];
-    }
-    aggiornaPreviewFirma(firmaCorrenteId);
-  }
-
-  modal.style.display = 'none';
-  firmaCorrenteId = null;
-}
-
-function aggiornaPreviewFirma(id) {
-  const preview = document.getElementById('prev-' + id);
-  const img = document.getElementById('img-' + id);
-  const ph = preview.querySelector('.signature-preview-ph');
-  if (signatureData[id]) {
-    img.src = signatureData[id];
-    img.style.display = 'block';
-    if (ph) ph.style.display = 'none';
-    preview.classList.add('has-signature');
-  } else {
-    img.style.display = 'none';
-    if (ph) ph.style.display = 'block';
-    preview.classList.remove('has-signature');
-  }
-}
-
-function clearSignature(id) {
-  delete signatureData[id];
-  aggiornaPreviewFirma(id);
-}
-
-// Collega gli eventi al canvas del modale (una sola volta)
-function initModalCanvasEvents() {
-  const canvas = document.getElementById('firma-modal-canvas');
-  if (!canvas || canvas._eventsBound) return;
-
-  // Pointer events — funzionano su mouse, touch e trackpad Mac/iPad
-  canvas.addEventListener('pointerdown', modalStart, { passive: false });
-  canvas.addEventListener('pointermove', modalMove, { passive: false });
-  canvas.addEventListener('pointerup', modalEnd);
-  canvas.addEventListener('pointerleave', modalEnd);
-  canvas.addEventListener('pointercancel', modalEnd);
-
-  // Fallback mouse per browser che non supportano pointer events
-  canvas.addEventListener('mousedown', modalStart);
-  canvas.addEventListener('mousemove', modalMove);
-  canvas.addEventListener('mouseup', modalEnd);
-  canvas.addEventListener('mouseleave', modalEnd);
-
-  // Touch fallback
-  canvas.addEventListener('touchstart', modalStart, { passive: false });
-  canvas.addEventListener('touchmove', modalMove, { passive: false });
-  canvas.addEventListener('touchend', modalEnd);
-
-  canvas._eventsBound = true;
-}
-
 // ─── DSA PANEL ───
 function mostraTipoDSA(show) {
   document.getElementById('pannello-dsa').style.display = show ? 'block' : 'none';
@@ -3274,8 +3082,8 @@ document.addEventListener('change', function(e) {
 });
 
 // ─── MATERIE ───
-const MATERIE_BASE_PRIMARIA = ['Italiano','Storia e Geografia','Matematica','Scienze','Inglese','Tecnologia','Arte e Immagine','Musica','Scienze Motorie'];
-const MATERIE_BASE_SECONDARIA = ['Italiano','Storia e Geografia','Matematica','Scienze','Inglese','Francese','Tecnologia','Arte e Immagine','Musica','Scienze Motorie'];
+const MATERIE_BASE_PRIMARIA = ['Italiano','Storia','Geografia','Matematica','Scienze','Inglese','Tecnologia','Arte e Immagine','Musica','Scienze Motorie'];
+const MATERIE_BASE_SECONDARIA = ['Italiano','Storia','Geografia','Matematica','Scienze','Inglese','Francese','Tecnologia','Arte e Immagine','Musica','Scienze Motorie'];
 
 // ─── BANCA STRUMENTI COMPENSATIVI PER AREA DISCIPLINARE ───
 // Ogni strumento è etichettato con le aree per cui ha senso. Se selezionato fuori area, compare un avviso.
@@ -3330,7 +3138,7 @@ const SUGGERIMENTI_STRUMENTI = {
 
 // Mappa materia → area disciplinare di riferimento (per i suggerimenti guida)
 const MATERIA_AREA = {
-  'Italiano': 'linguistica', 'Storia e Geografia': 'geo_storia', 'Matematica': 'matematica',
+  'Italiano': 'linguistica', 'Storia': 'geo_storia', 'Geografia': 'geo_storia', 'Matematica': 'matematica',
   'Scienze': 'scientifica', 'Inglese': 'lingue', 'Francese': 'lingue',
   'Tecnologia': 'tecnologia', 'Arte e Immagine': 'tutte', 'Musica': 'tutte',
   'Scienze Motorie': 'tutte', 'IRC / Alternativa': 'tutte'
@@ -3799,10 +3607,6 @@ window.toggleSuggerimenti    = toggleSuggerimenti;
 window.toggleGuida           = toggleGuida;
 window.aggiungiRiga          = aggiungiRiga;
 window.rimuoviRiga           = rimuoviRiga;
-window.apriFirma             = apriFirma;
-window.chiudiFirma           = chiudiFirma;
-window.clearSignature        = clearSignature;
-window.cancellaFirmaModal    = cancellaFirmaModal;
 window.aggiornaPercentuale   = aggiornaPercentuale;
 window.mostraTipoDSA         = mostraTipoDSA;
 window.mostraAvvisoConsiglio = mostraAvvisoConsiglio;
