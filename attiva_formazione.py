@@ -6,7 +6,7 @@ Uso (dalla cartella del repo):  python3 attiva_formazione.py
 - aggiunge le pagine alla sitemap
 Si può rilanciare senza problemi: non duplica nulla."""
 import os, re
-BASE = "https://stehead1994-ops.github.io/software-testa-stefano/"
+BASE = "https://maestrotesta.com/"
 root = os.path.dirname(os.path.abspath(__file__))
 nav_n = idx_n = 0
 for d, _, files in os.walk(root):
