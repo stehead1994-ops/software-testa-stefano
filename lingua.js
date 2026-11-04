@@ -22,9 +22,12 @@
 
   var css = document.createElement("style");
   css.textContent =
-    ".sn-lang{position:fixed;right:14px;bottom:14px;z-index:2000;font-family:'DM Sans','Segoe UI',Arial,sans-serif}" +
-    ".sn-lang select{appearance:auto;font:600 13px/1.2 inherit;font-family:inherit;color:#fff;background:#00205c;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:8px 12px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25)}" +
-    ".sn-lang select:focus-visible{outline:3px solid #c8a84b;outline-offset:2px}" +
+    ".sn-lang{position:fixed;right:16px;bottom:16px;z-index:2000;font-family:'DM Sans','Segoe UI',Arial,sans-serif}" +
+    ".sn-lang select{appearance:auto;font:700 15px/1.2 inherit;font-family:inherit;color:#00205c;background:#c8a84b;border:2px solid #fff;border-radius:999px;padding:11px 16px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.35)}" +
+    ".sn-lang select:hover{filter:brightness(1.06)}" +
+    ".sn-lang select:focus-visible{outline:3px solid #00205c;outline-offset:3px}" +
+    "@media (prefers-reduced-motion:no-preference){.sn-lang.sn-pulse select{animation:snPulse 1.6s ease-out 3}}" +
+    "@keyframes snPulse{0%{box-shadow:0 6px 20px rgba(0,0,0,.35),0 0 0 0 rgba(200,168,75,.8)}100%{box-shadow:0 6px 20px rgba(0,0,0,.35),0 0 0 18px rgba(200,168,75,0)}}" +
     "#sn-gt{position:absolute;left:-9999px;top:0;width:1px;height:1px;overflow:hidden}" +
     "body{top:0!important}.skiptranslate iframe,.goog-te-banner-frame{display:none!important}#goog-gt-tt,.goog-te-balloon-frame{display:none!important}" +
     ".goog-text-highlight{background:none!important;box-shadow:none!important}" +
@@ -37,11 +40,15 @@
   var sel = document.createElement("select");
   sel.setAttribute("aria-label", "Lingua / Language");
   sel.title = "Traduzione automatica (Google Traduttore)";
+  if (cur === "it") {
+    var ph = document.createElement("option"); ph.value = ""; ph.textContent = "🌐 Lingua / Language"; ph.selected = true; sel.appendChild(ph);
+    wrap.className += " sn-pulse";
+  }
   LANGS.forEach(function (x) {
-    var o = document.createElement("option"); o.value = x[0]; o.textContent = "🌐 " + x[1];
-    if (x[0] === cur) o.selected = true; sel.appendChild(o);
+    var o = document.createElement("option"); o.value = x[0]; o.textContent = (cur !== "it" && x[0] === cur ? "🌐 " : "") + x[1];
+    if (cur !== "it" && x[0] === cur) o.selected = true; sel.appendChild(o);
   });
-  sel.addEventListener("change", function () { setLang(sel.value); });
+  sel.addEventListener("change", function () { if (sel.value) setLang(sel.value); });
   wrap.appendChild(sel);
   var holder = document.createElement("div"); holder.id = "sn-gt"; holder.className = "notranslate";
   function mount() { document.body.appendChild(wrap); document.body.appendChild(holder); }
