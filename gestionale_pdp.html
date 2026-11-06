@@ -959,9 +959,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
         <span id="autosave-label">Salvato</span>
       </div>
       <div class="editor-azioni">
-        <button class="btn-header" onclick="esportaPDF()">🖨️ PDF</button>
-        <button class="btn-header" id="btn-protocolla" onclick="protocolla()" style="background:rgba(46,125,94,0.4)">✅ Chiudi e conferma PDP</button>
-        <button class="btn-header" onclick="tornaHome()">← Esci</button>
+        <button class="btn-header" id="btn-pdf" onclick="esportaPDF()">🖨️ PDF</button>
+        <button class="btn-header" id="btn-protocolla" onclick="protocolla()" style="background:rgba(46,125,94,0.4)">✅ PROTOCOLLA PDP</button>
+        <button class="btn-header" onclick="tornaHome()">Chiudi</button>
       </div>
     </div>
   </header>
@@ -1818,6 +1818,8 @@ function _aggiornaHeaderEditor(pdp) {
   const isProtocollato = pdp.stato === 'protocollato';
   const btnP = document.getElementById('btn-protocolla');
   if (btnP) btnP.style.display = isProtocollato ? 'none' : '';
+  const btnPdf = document.getElementById('btn-pdf');
+  if (btnPdf) btnPdf.style.display = ruoloCorrente === 'master' ? '' : 'none';
 
   if (isProtocollato) {
     // Docenti con password vedono solo il PDF senza possibilità di download
