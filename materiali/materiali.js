@@ -36,6 +36,49 @@
    ───────────────────────────────────────────────────────────── */
 window.MATERIALI = /*INIZIO-ELENCO*/[
   {
+    "titolo": "Percezione. Chi decide cos'è normale?",
+    "descrizione": "Carosello a più voci sugli stereotipi di genere dall'infanzia alla scuola: le etichette che limitano i bambini, il filtro della percezione, la libertà di essere se stessi, il digitale che abbatte le barriere e piccole scelte quotidiane per cambiare. In chiusura un confronto in inglese tra Australia e Italia.",
+    "categoria": "collaborazioni",
+    "discipline": [
+      "ed-civica",
+      "emozioni",
+      "inglese",
+      "trasversale"
+    ],
+    "ordine": "Infanzia e primaria",
+    "formato": "pdf",
+    "file": "percezione-chi-decide-cosa-e-normale.pdf",
+    "crediti": [
+      {
+        "nome": "@maestra_eliisa_",
+        "handle": "@maestra_eliisa_"
+      },
+      {
+        "nome": "@lamaestracolconiglio",
+        "handle": "@lamaestracolconiglio"
+      },
+      {
+        "nome": "@renneantonella",
+        "handle": "@renneantonella"
+      },
+      {
+        "nome": "@amicidipenna_global",
+        "handle": "@amicidipenna_global"
+      }
+    ],
+    "originale": "https://www.instagram.com/p/DfZY95TmoLS/",
+    "tag": [
+      "stereotipi di genere",
+      "parità",
+      "STEM",
+      "identità",
+      "linguaggio",
+      "famiglia e scuola"
+    ],
+    "data": "2026-11",
+    "anteprima": "percezione-chi-decide-cosa-e-normale-anteprima.png"
+  },
+  {
     "titolo": "Quaderno o tablet? Imparare tra carta, digitale e social",
     "descrizione": "Carosello a più voci sull'apprendimento oggi: perché il lavoro tradizionale resta insostituibile, la tecnologia come strumento di inclusione (sintesi vocale, mappe, timer, CAA), i social da usare con criterio e una pagina per i bambini su come verificare ciò che vedono online.",
     "categoria": "collaborazioni",
