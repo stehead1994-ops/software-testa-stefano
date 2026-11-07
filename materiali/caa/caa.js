@@ -1,0 +1,119 @@
+/* ─────────────────────────────────────────────────────────────
+   MATERIALE IN CAA — elenco delle schede, diviso per disciplina
+   Per aggiungere una scheda:
+     1. metti il PDF in materiali/caa/file/ (e, se vuoi, un'immagine
+        della prima pagina in materiali/caa/anteprime/)
+     2. copia un blocco { ... } qui sotto e cambia i campi
+   Discipline possibili: italiano, matematica, inglese, storia,
+   geografia, scienze, religione, ed-civica, arte, musica, autonomie
+   ───────────────────────────────────────────────────────────── */
+window.CAA_DISCIPLINE = [
+  {id: "italiano",   nome: "Italiano",          ico: "📖"},
+  {id: "matematica", nome: "Matematica",        ico: "🔢"},
+  {id: "inglese",    nome: "Inglese",           ico: "🇬🇧"},
+  {id: "storia",     nome: "Storia",            ico: "⏳"},
+  {id: "geografia",  nome: "Geografia",         ico: "🗺️"},
+  {id: "scienze",    nome: "Scienze",           ico: "🔬"},
+  {id: "religione",  nome: "Religione",         ico: "🕊️"},
+  {id: "ed-civica",  nome: "Educazione civica", ico: "🏛️"},
+  {id: "arte",       nome: "Arte e immagine",   ico: "🎨"},
+  {id: "musica",     nome: "Musica",            ico: "🎵"},
+  {id: "autonomie",  nome: "Autonomie",         ico: "🧺"}
+];
+
+window.CAA_SCHEDE = [
+  {
+    "disciplina": "matematica",
+    "argomento": "I numeri fino a 15",
+    "titolo": "Numeri fino a 15",
+    "descrizione": "Contare, collegare quantità e numero, colorare la quantità, linea dei numeri, prima e dopo, maggiore e minore.",
+    "file": "numeri-fino-a-15-caa.pdf",
+    "anteprima": "numeri-fino-a-15.jpg",
+    "pagine": 12,
+    "livello": "Primo livello"
+  },
+  {
+    "disciplina": "matematica",
+    "argomento": "I numeri fino a 15",
+    "titolo": "Numeri 1-15: quantità e confronti",
+    "descrizione": "Conta e scegli, di più o di meno, uguale o diverso, decina e unità, metti in ordine, le colonne dei numeri.",
+    "file": "numeri-1-15-quantita-e-confronti-caa.pdf",
+    "anteprima": "numeri-1-15-quantita-e-confronti.jpg",
+    "pagine": 12,
+    "livello": "Secondo livello"
+  },
+  {
+    "disciplina": "inglese",
+    "argomento": "Colors, numbers, food, school objects",
+    "titolo": "English worksheets",
+    "descrizione": "Schede in inglese con consegne anche in italiano: i colori, i numeri da 1 a 9, il cibo (I like… I don't like…), gli oggetti della scuola.",
+    "file": "english-worksheets-caa.pdf",
+    "anteprima": "english-worksheets.jpg",
+    "pagine": 26
+  },
+  {
+    "disciplina": "storia",
+    "argomento": "Il tempo",
+    "titolo": "Prima, adesso, dopo",
+    "descrizione": "La successione temporale con situazioni di tutti i giorni: che cosa viene prima e dopo, collega, ritaglia e incolla in ordine.",
+    "file": "prima-adesso-dopo-caa.pdf",
+    "anteprima": "prima-adesso-dopo.jpg",
+    "pagine": 10
+  },
+  {
+    "disciplina": "geografia",
+    "argomento": "Lo spazio e i luoghi",
+    "titolo": "Concetti topologici e luoghi",
+    "descrizione": "In mezzo, tra, accanto, intorno, destra e sinistra, linee aperte e chiuse, il recinto, spazi aperti e chiusi, i luoghi del mio paese.",
+    "file": "concetti-topologici-e-luoghi-caa.pdf",
+    "anteprima": "concetti-topologici-e-luoghi.jpg",
+    "pagine": 12
+  },
+  {
+    "disciplina": "religione",
+    "argomento": "San Francesco e il Cantico delle Creature",
+    "titolo": "Il Cantico delle Creature, testo completo",
+    "descrizione": "Il Cantico intero in simboli, strofa per strofa.",
+    "file": "cantico-delle-creature-completo-caa.pdf",
+    "anteprima": "cantico-delle-creature-completo.jpg",
+    "pagine": 4,
+    "livello": "Versione completa"
+  },
+  {
+    "disciplina": "religione",
+    "argomento": "San Francesco e il Cantico delle Creature",
+    "titolo": "Il Cantico delle Creature, versione semplificata",
+    "descrizione": "Il Cantico in frasi brevi: Francesco dice grazie per il sole, la luna e le stelle, il vento, l'acqua, il fuoco, la terra.",
+    "file": "cantico-delle-creature-semplificato-caa.pdf",
+    "anteprima": "cantico-delle-creature-semplificato.jpg",
+    "pagine": 2,
+    "livello": "Versione semplificata"
+  },
+  {
+    "disciplina": "religione",
+    "argomento": "San Francesco e il Cantico delle Creature",
+    "titolo": "San Francesco: schede di lavoro",
+    "descrizione": "Copertina da colorare, il Cantico da ricomporre con ritaglia e incolla, le tessere delle creature.",
+    "file": "san-francesco-schede-caa.pdf",
+    "anteprima": "san-francesco-schede.jpg",
+    "pagine": 3
+  },
+  {
+    "disciplina": "religione",
+    "argomento": "Mosè",
+    "titolo": "Mosè e il viaggio del popolo",
+    "descrizione": "La storia di Mosè in sequenze illustrate, le regole di Dio ed esercizi: collega immagine e parola, cerchia la risposta, metti in ordine la storia.",
+    "file": "mose-storia-ed-esercizi-caa.pdf",
+    "anteprima": "mose-storia-ed-esercizi.jpg",
+    "pagine": 7
+  },
+  {
+    "disciplina": "ed-civica",
+    "argomento": "La Costituzione",
+    "titolo": "La Costituzione: articoli 1-12",
+    "descrizione": "I principi fondamentali in simboli, un articolo per pagina, con un esempio «in classe» per ciascuno e il riepilogo dei 12 articoli.",
+    "file": "costituzione-articoli-1-12-caa.pdf",
+    "anteprima": "costituzione-articoli-1-12.jpg",
+    "pagine": 14
+  }
+];
