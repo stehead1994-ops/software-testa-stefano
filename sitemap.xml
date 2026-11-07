@@ -469,4 +469,44 @@
     <changefreq>monthly</changefreq>
   </url>
 
+  <url>
+    <loc>https://maestrotesta.com/formazione/digital-storytelling-ai/index.html</loc>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://maestrotesta.com/formazione/digital-storytelling-ai/01-storia-in-3-parole.html</loc>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://maestrotesta.com/formazione/digital-storytelling-ai/02-costruire-una-storia.html</loc>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://maestrotesta.com/formazione/digital-storytelling-ai/03-intelligenza-artificiale.html</loc>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://maestrotesta.com/formazione/digital-storytelling-ai/04-classico-o-ai.html</loc>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://maestrotesta.com/formazione/digital-storytelling-ai/05-silent-book.html</loc>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://maestrotesta.com/formazione/digital-storytelling-ai/06-condividere.html</loc>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://maestrotesta.com/formazione/digital-storytelling-ai/07-materiali.html</loc>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
 </urlset>

@@ -1,0 +1,264 @@
+/* Laboratorio TIC per includere — navigazione condivisa
+   prof. Stefano Testa · Adelia */
+(function () {
+  "use strict";
+
+  var COURSE = "Digital storytelling e AI";
+  var AUTHOR = "Stefano Testa · Francesca Bertuzzi";
+
+  // Elenco moduli: per aggiungerne uno basta una riga qui + la pagina .html
+  var MODULES = [
+    { group: "Il laboratorio", items: [
+      { id: "parole",      n: "01", t: "Per cominciare",                          f: "01-storia-in-3-parole.html" },
+      { id: "storia",      n: "02", t: "Come si costruisce una storia",           f: "02-costruire-una-storia.html" },
+      { id: "ai",          n: "03", t: "Cosa aggiunge l'Intelligenza Artificiale", f: "03-intelligenza-artificiale.html" }
+    ]},
+    { group: "Giochi e gruppi", items: [
+      { id: "gioco",       n: "04", t: "Classico o AI?",                          f: "04-classico-o-ai.html" },
+      { id: "silent",      n: "05", t: "Raccontare un silent book",               f: "05-silent-book.html" },
+      { id: "condividere", n: "06", t: "Le nostre storie sul Padlet",             f: "06-condividere.html" }
+    ]},
+    { group: "Materiali", items: [
+      { id: "materiali",   n: "07", t: "Materiali da scaricare",                  f: "07-materiali.html" }
+    ]}
+  ];
+  window.TIC_MODULES = MODULES;
+
+  var flat = [];
+  MODULES.forEach(function (g) { g.items.forEach(function (m) { if (!m.soon) flat.push(m); }); });
+
+  var page = document.body.getAttribute("data-page") || "home";
+  var idx = flat.findIndex(function (m) { return m.id === page; });
+  var LOGO = "assets/adelia.png";
+
+  function el(html) { var d = document.createElement("div"); d.innerHTML = html.trim(); return d.firstChild; }
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+
+  // Tema
+  var saved = store("tic-theme");
+  if (saved) document.documentElement.setAttribute("data-theme", saved);
+
+  // Barra superiore
+  var top = el(
+    '<header class="topbar">' +
+      '<button class="btn" id="menuBtn" aria-label="Apri indice">☰</button>' +
+      '<a class="brand" href="index.html">' +
+        '<img class="adelia" src="' + LOGO + '" alt="Adelia" onerror="this.outerHTML=\'<span class=adelia-fallback>ST</span>\'">' +
+        '<span><span class="t1">' + COURSE + '</span><br><span class="t2">' + AUTHOR + '</span></span>' +
+      '</a>' +
+      '<span class="spacer"></span>' +
+      '<a class="btn back" href="../index.html" title="Torna all\'elenco dei corsi di Formazione">← <span class="l">Tutti i corsi</span><span class="s">Corsi</span></a>' +
+      '<button class="btn" id="themeBtn" aria-label="Cambia tema chiaro o scuro">Tema</button>' +
+      (page !== "home" ? '<button class="btn gold" id="presentBtn">▶ <span class="lbl">Presenta</span></button>' : '') +
+    '</header>');
+  var snNav = document.querySelector('.sn-nav'); document.body.insertBefore(top, snNav ? snNav.nextSibling : document.body.firstChild);
+
+  // Layout con indice laterale
+  var main = document.querySelector("main");
+  var layout = el('<div class="layout"></div>');
+  var side = el('<nav class="sidebar" aria-label="Moduli del percorso"></nav>');
+  var html = '<a href="../index.html"><span class="n"></span>Formazione</a>' +
+    '<a href="index.html"' + (page === "home" ? ' class="active"' : '') + '><span class="n"></span>Programma del laboratorio</a>';
+  MODULES.forEach(function (g) {
+    html += "<h4>" + g.group + "</h4>";
+    g.items.forEach(function (m) {
+      html += m.soon
+        ? '<a class="soon" aria-disabled="true"><span class="n">' + m.n + "</span>" + m.t + " (in arrivo)</a>"
+        : '<a href="' + m.f + '"' + (m.id === page ? ' class="active" aria-current="page"' : "") + '><span class="n">' + m.n + "</span>" + m.t + "</a>";
+    });
+  });
+  side.innerHTML = html;
+  main.parentNode.insertBefore(layout, main);
+  layout.appendChild(side);
+  layout.appendChild(main);
+
+  // Precedente / successivo
+  if (idx >= 0) {
+    var prev = flat[idx - 1], next = flat[idx + 1];
+    var pager = el('<div class="pager"></div>');
+    pager.innerHTML =
+      (prev ? '<a href="' + prev.f + '"><small>Modulo precedente</small>' + prev.t + "</a>" : '<a href="index.html"><small>Torna al</small>programma</a>') +
+      (next ? '<a class="next" href="' + next.f + '"><small>Modulo successivo</small>' + next.t + "</a>" : '<a class="next" href="index.html"><small>Fine del percorso</small>programma</a>');
+    main.appendChild(pager);
+  }
+
+  // Piè di pagina
+  document.body.appendChild(el(
+    '<footer class="site"><img src="' + LOGO + '" alt="" onerror="this.remove()">' +
+    '<span>' + COURSE + ', ' + AUTHOR + '. <a href="../index.html">Formazione</a>, <a href="../../index.html">L\'Archivio del Maestro Stefano Testa</a>.</span></footer>'));
+
+
+  // Crediti dei simboli ARASAAC
+  if (document.querySelector('img[src*="arasaac/"]')) {
+    var fs = document.querySelector("footer.site span");
+    if (fs) fs.insertAdjacentHTML("beforeend", '<span class="credits">Simboli pittografici: Sergio Palao. Provenienza: ARASAAC (<a href="https://arasaac.org">arasaac.org</a>). Licenza: CC (BY-NC-SA). Proprietà: Governo di Aragona (Spagna).</span>');
+  }
+
+  // Menu mobile e tema
+  document.getElementById("menuBtn").onclick = function () { document.body.classList.toggle("nav-open"); };
+  document.getElementById("themeBtn").onclick = function () {
+    var cur = document.documentElement.getAttribute("data-theme");
+    var dark = cur ? cur === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    var nt = dark ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", nt);
+    store("tic-theme", nt);
+  };
+
+  // ---------- Modalità presentazione ----------
+  var slides = [], cur = 0, pbar;
+  function buildCover() {
+    var h = document.querySelector(".hero");
+    var title = h ? h.querySelector("h1").innerHTML : document.title;
+    var lead = h ? h.querySelector(".lead") : null;
+    var mod = idx >= 0 ? "modulo " + parseInt(flat[idx].n, 10) : "";
+    var c = el(
+      '<section class="slide cover row"><div class="cover-in">' +
+        '<p class="hand cover-mod">' + COURSE + (mod ? ", " + mod : "") + '</p>' +
+        '<h2 class="cover-title">' + title + '</h2>' +
+        (lead ? '<p class="cover-lead">' + lead.innerHTML + '</p>' : '') +
+        '<p class="cover-author"><img src="' + LOGO + '" alt="" onerror="this.remove()">' + AUTHOR.replace("prof. ", "prof. ") + '</p>' +
+      '</div></section>');
+    main.insertBefore(c, main.querySelector(".slide"));
+  }
+  function fitSlide(s) {
+    if (!s) return;
+    s.style.zoom = ""; var base = parseFloat(getComputedStyle(s).zoom) || 1;
+    s.style.zoom = "1"; s.style.minHeight = "0";
+    var h = s.scrollHeight; s.style.minHeight = "";
+    var avail = window.innerHeight - 90, wl = 9;
+    if (s.classList.contains("has-scene") && window.innerWidth >= 1300) wl = window.innerWidth / 1360;
+    var floor = Math.min(1, base, wl), z = Math.max(floor, Math.min(base, wl, avail / h));
+    s.style.minHeight = "0"; s.style.zoom = String(z);
+    for (var it = 0; it < 6; it++) {
+      var rh = s.getBoundingClientRect().height;
+      if (rh <= avail + 2 || z <= floor) break;
+      z = Math.max(floor, z * avail / rh - 0.01); s.style.zoom = String(z);
+    }
+    s.style.minHeight = Math.floor((window.innerHeight - 4) / z) + "px";
+    [].forEach.call(s.querySelectorAll("img"), function (im) { if (!im.complete) { im.loading = "eager"; im.addEventListener("load", function () { if (s.classList.contains("on")) fitSlide(s); }, { once: true }); } });
+  }
+  window.addEventListener("resize", function () { if (document.body.classList.contains("present")) fitSlide(slides[cur]); });
+  function show(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (s, k) { s.classList.toggle("on", k === cur); });
+    fitSlide(slides[cur]);
+    pbar.querySelector(".cnt").textContent = (cur + 1) + " / " + slides.length;
+    window.scrollTo(0, 0);
+  }
+  // ---------- Slide troppo lunghe: divise in più schermate (solo in presentazione) ----------
+  function limitOf(s) { return window.innerHeight - 48 - window.innerHeight * 0.09; }
+  function measure(s) {
+    s.classList.add("on"); s.style.zoom = "1"; s.style.minHeight = "0"; s.style.alignContent = "start";
+  }
+  function unmeasure(s) { s.classList.remove("on"); s.style.zoom = ""; s.style.minHeight = ""; s.style.alignContent = ""; }
+  function bottomOf(el, s) { var r = el.getBoundingClientRect(), t = s.getBoundingClientRect(); return r.bottom - t.top; }
+  function splittable(el) {
+    if (el.matches("ul,ol") && el.children.length > 1) return el;
+    var t = el.matches("table") ? el : el.querySelector(":scope > table");
+    if (t && t.tBodies[0] && t.tBodies[0].rows.length > 1) return t;
+    return null;
+  }
+  function cutInside(el, s, lim) {
+    // divide una lista o una tabella: restituisce il pezzo da spostare, o null
+    var box = splittable(el); if (!box) return null;
+    var items = box.matches("table") ? Array.prototype.slice.call(box.tBodies[0].rows) : Array.prototype.slice.call(box.children);
+    var k = 0; while (k < items.length && bottomOf(items[k], s) <= lim) k++;
+    if (k <= 0 || k >= items.length) return null;
+    var uid = "sp" + Math.random().toString(36).slice(2, 8);
+    el.setAttribute("data-split-id", uid);
+    var clone = el.cloneNode(true); clone.removeAttribute("data-split-id"); var cbox = splittable(clone);
+    var citems = cbox.matches("table") ? Array.prototype.slice.call(cbox.tBodies[0].rows) : Array.prototype.slice.call(cbox.children);
+    citems.slice(0, k).forEach(function (n) { n.remove(); });
+    items.slice(k).forEach(function (n) { n.remove(); });
+    if (cbox.matches("ol")) cbox.setAttribute("start", String((parseInt(box.getAttribute("start") || "1", 10)) + k));
+    clone.setAttribute("data-cont-part", uid);
+    return clone;
+  }
+  function paginate(s) {
+    var made = [], guard = 0;
+    while (guard++ < 8) {
+      measure(s);
+      var lim = limitOf(s);
+      if (s.scrollHeight <= window.innerHeight - 48) { unmeasure(s); break; }
+      var kids = Array.prototype.slice.call(s.children).filter(function (c) { return !c.matches(".note,.margin,figure.scene,h2"); });
+      var i = 0; while (i < kids.length && bottomOf(kids[i], s) <= lim) i++;
+      if (i >= kids.length) { unmeasure(s); break; }
+      var cont = document.createElement("section");
+      cont.className = "slide row cont"; cont.setAttribute("data-cont-of", s.id || ""); cont.id = (s.id || "s") + "-segue";
+      var h = s.querySelector("h2"); if (h) { var h2 = h.cloneNode(true); h2.insertAdjacentHTML("beforeend", ' <small class="segue">(segue)</small>'); cont.appendChild(h2); }
+      var part = cutInside(kids[i], s, lim);
+      if (part) { cont.appendChild(part); i++; }
+      else if (i === 0) { unmeasure(s); break; }
+      kids.slice(i).forEach(function (c) { c.setAttribute("data-moved-from", s.id || ""); cont.appendChild(c); });
+      unmeasure(s);
+      s.parentNode.insertBefore(cont, s.nextSibling);
+      made.push(cont); s = cont;
+    }
+    return made;
+  }
+  function paginateAll() {
+    Array.prototype.slice.call(document.querySelectorAll("main .slide:not(.cover):not(.cont)")).forEach(paginate);
+  }
+  function unpaginate() {
+    Array.prototype.slice.call(document.querySelectorAll("main .slide.cont")).reverse().forEach(function (c) {
+      var orig = document.getElementById(c.getAttribute("data-cont-of")); if (!orig) return;
+      Array.prototype.slice.call(c.children).forEach(function (ch) {
+        if (ch.matches("h2")) return;
+        if (ch.getAttribute("data-cont-part")) {
+          var last = document.querySelector('[data-split-id="' + ch.getAttribute("data-cont-part") + '"]');
+          var src = splittable(ch), dst = last && splittable(last);
+          if (last) last.removeAttribute("data-split-id");
+          if (src && dst) {
+            var from = src.matches("table") ? src.tBodies[0] : src, to = dst.matches("table") ? dst.tBodies[0] : dst;
+            Array.prototype.slice.call(from.children).forEach(function (n) { to.appendChild(n); });
+          }
+          return;
+        }
+        ch.removeAttribute("data-moved-from"); orig.appendChild(ch);
+      });
+      c.remove();
+    });
+    // l'ordine delle figure: il disegno torna in fondo alla sezione
+    Array.prototype.slice.call(document.querySelectorAll("main .slide figure.scene")).forEach(function (f) { f.parentNode.appendChild(f); });
+  }
+  function enter() {
+    if (!document.querySelector(".slide.cover")) buildCover();
+    document.body.classList.add("present"); paginateAll();
+    slides = Array.prototype.slice.call(document.querySelectorAll("main .slide"));
+    if (!pbar) {
+      pbar = el('<div class="pbar"><img src="' + LOGO + '" alt="" onerror="this.remove()"><span>' + AUTHOR + ' · ' + COURSE + '</span><span class="grow"></span>' +
+        '<button class="btn" data-a="p" aria-label="Slide precedente">←</button><span class="cnt"></span><button class="btn" data-a="n" aria-label="Slide successiva">→</button><button class="btn" data-a="x">Esci</button></div>');
+      pbar.addEventListener("click", function (e) {
+        var a = e.target.getAttribute("data-a");
+        if (a === "p") show(cur - 1); else if (a === "n") show(cur + 1); else if (a === "x") exit();
+      });
+      document.body.appendChild(pbar);
+    }
+    document.body.classList.add("present");
+    var c = document.querySelector(".slide.cover"); if (c) c.style.display = "";
+    show(0);
+    if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function () {});
+  }
+  function exit() {
+    unpaginate();
+    document.body.classList.remove("present");
+    var c = document.querySelector(".slide.cover"); if (c) c.style.display = "none";
+    slides.forEach(function (s) { s.classList.remove("on"); });
+    if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function () {});
+  }
+  var pb = document.getElementById("presentBtn");
+  if (pb) pb.onclick = function (e) { e.stopPropagation(); enter(); };
+  document.addEventListener("keydown", function (e) {
+    if (!document.body.classList.contains("present")) return;
+    if (["ArrowRight", "PageDown", " ", "Enter"].indexOf(e.key) >= 0) { e.preventDefault(); show(cur + 1); }
+    else if (["ArrowLeft", "PageUp", "Backspace"].indexOf(e.key) >= 0) { e.preventDefault(); show(cur - 1); }
+    else if (e.key === "Home") show(0);
+    else if (e.key === "End") show(slides.length - 1);
+    else if (e.key === "Escape") exit();
+  });
+  document.addEventListener("click", function (e) {
+    if (!document.body.classList.contains("present") || e.target.closest(".pbar") || e.target.closest("a")) return;
+    show(e.clientX < window.innerWidth / 3 ? cur - 1 : cur + 1);
+  });
+  if (/[?&]presenta=1/.test(location.search) && pb) enter();
+})();

@@ -185,6 +185,7 @@
         <li data-cat="pnrr">🤖 Formazione PNRR <span class="cat-count" id="count-pnrr">0</span></li>
         <li data-cat="caa">🗣 CAA &amp; Inclusione <span class="cat-count" id="count-caa">0</span></li>
         <li data-cat="matematica">&#x1F522; Matematica <span class="cat-count" id="count-matematica">0</span></li>
+        <li data-cat="laboratori">&#x1F4D6; Laboratori <span class="cat-count" id="count-laboratori">0</span></li>
       </ul>
     </div>
     <div class="sidebar-block">
@@ -257,14 +258,25 @@
           <div class="card-cta">Apri il percorso &rarr;</div>
         </div>
       </a>
+      <a href="digital-storytelling-ai/index.html" class="card" data-cats="laboratori" data-title="Microeditoria '26 · Digital storytelling con AI">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-icon">&#x1F4D6;</div>
+          <div class="card-meta">Microeditoria '26 &middot; Laboratorio per adulti</div>
+          <div class="card-title">Digital storytelling con AI</div>
+          <p class="card-desc">Costruire storie per tutti i contesti educativi, dalla carta alla CAA, con l'aiuto dell'AI. Con Francesca Bertuzzi e il supporto della Biblioteca di Castelcovati: struttura narrativa, storie sociali, prompt narrativo, il gioco «Classico o AI?» e i silent book. Con le schede di lavoro da scaricare.</p>
+          <div class="card-tags"><span class="tag">7 moduli</span><span class="tag">Storytelling</span><span class="tag">IA</span><span class="tag">CAA</span><span class="tag">Silent book</span></div>
+          <div class="card-cta">Apri il laboratorio &rarr;</div>
+        </div>
+      </a>
     </div>
   </main>
 </div>
 
 <script>
   const allCards=[...document.querySelectorAll("#grid-articoli .card")];
-  const cats=["universita","pnrr","caa","matematica"];
-  const labels={tutti:"Tutti i percorsi",universita:"Università",pnrr:"Formazione PNRR",caa:"CAA & Inclusione",matematica:"Matematica"};
+  const cats=["universita","pnrr","caa","matematica","laboratori"];
+  const labels={tutti:"Tutti i percorsi",universita:"Università",pnrr:"Formazione PNRR",caa:"CAA & Inclusione",matematica:"Matematica",laboratori:"Laboratori"};
   let activeCat="tutti",q="";
   function apply(){
     const vis=[];
