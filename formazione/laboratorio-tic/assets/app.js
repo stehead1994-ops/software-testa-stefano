@@ -105,6 +105,19 @@
     if (fs) fs.insertAdjacentHTML("beforeend", '<span class="credits">Simboli pittografici: Sergio Palao. Provenienza: ARASAAC (<a href="https://arasaac.org">arasaac.org</a>). Licenza: CC (BY-NC-SA). Proprietà: Governo di Aragona (Spagna).</span>');
   }
 
+
+
+  // ---------- Licenza, DOI e download (aggiunto da licenza.py) ----------
+  (function () {
+    var LIC = "CC BY-NC-SA 4.0", LIC_URL = "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it", DOI_URL = "https://doi.org/10.5281/zenodo.20668858", COPY = "© 2026 Stefano Testa", PDF = "laboratorio-tic.pdf";
+    var fs = document.querySelector("footer.site span");
+    if (fs && !fs.querySelector(".lic")) fs.insertAdjacentHTML("beforeend",
+      '<span class="credits lic">' + COPY + ' · <a href="' + LIC_URL + '" rel="license">' + LIC + '</a> · DOI <a href="' + DOI_URL + '">' + DOI_URL.replace("https://", "") + '</a> · <a href="materiali/' + PDF + '" download>Scarica il percorso (PDF)</a></span>');
+    var sb = document.querySelector(".sidebar");
+    if (sb && !sb.querySelector(".dl-course")) sb.insertAdjacentHTML("beforeend",
+      '<h4>Scarica e cita</h4><a class="dl-course" href="materiali/' + PDF + '" download><span class="n">⬇</span>Il percorso in PDF</a><a href="index.html#cita"><span class="n">§</span>Come citare e licenza</a>');
+  })();
+
   // Menu mobile e tema
   document.getElementById("menuBtn").onclick = function () { document.body.classList.toggle("nav-open"); };
   document.getElementById("themeBtn").onclick = function () {

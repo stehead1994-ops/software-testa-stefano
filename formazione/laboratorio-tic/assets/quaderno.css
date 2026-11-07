@@ -326,3 +326,14 @@ body.present figure.scene .sketch{height:29vh;width:auto;max-width:100%}
 body.present .symrow{margin-bottom:8px}
 body.present .symrow .sym{width:80px}
 body.present .symrow .sym img{width:50px;height:50px}
+
+/* --- licenza e download (licenza.py) --- */
+.citebox{background:#fff;border:2px solid var(--graphite);border-radius:6px;padding:12px 16px;color:#232a36}
+.citebox p{margin:6px 0}
+.citebox .cite{font-size:.95em}
+.citebox .cc{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.citebox .cc b{font:700 13px var(--print);border:2px solid #232a36;border-radius:4px;padding:2px 6px}
+a.dl-big{display:inline-block;margin:6px 0 4px;padding:9px 16px;border:2px solid var(--biro);border-radius:6px;background:var(--hl);color:#232a36;font-weight:700;text-decoration:none}
+a.dl-big:hover{filter:brightness(1.05)}
+footer.site .lic{font-size:13px}
+@media print{.citebox{border:1px solid #999} #cita{display:none!important}}
