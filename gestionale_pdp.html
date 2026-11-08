@@ -914,14 +914,67 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
       <button class="tab-btn" onclick="showTab('utenti')" id="tab-utenti-btn">👥 Utenti</button>
     </div>
     <div id="tab-pdp">
+      <div id="filtri-pdp" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center">
+        <select id="filtro-pdp-ordine" onchange="applicaFiltroPDP()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;background:white;cursor:pointer;color:var(--testo)">
+          <option value="">— Tutti gli ordini —</option>
+          <option value="infanzia">🌱 Infanzia</option>
+          <option value="primaria">📚 Primaria</option>
+          <option value="secondaria">🎓 Secondaria</option>
+        </select>
+        <select id="filtro-pdp-plesso" onchange="applicaFiltroPDP()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;background:white;cursor:pointer;color:var(--testo)">
+          <option value="">— Tutti i plessi —</option>
+          <option value="castelcovati">Castelcovati</option>
+          <option value="comezzano">Comezzano-Cizzago</option>
+        </select>
+        <select id="filtro-pdp-stato" onchange="applicaFiltroPDP()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;background:white;cursor:pointer;color:var(--testo)">
+          <option value="">— Tutti gli stati —</option>
+          <option value="bozza">📝 Bozza</option>
+          <option value="in-corso">✏️ In corso</option>
+          <option value="protocollato">📌 Definitivo</option>
+        </select>
+        <button onclick="resetFiltroPDP()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;cursor:pointer;color:var(--testo-soft)">✕ Reset</button>
+        <span id="filtro-pdp-count" style="font-size:0.8rem;color:var(--testo-soft);margin-left:4px"></span>
+      </div>
       <div class="pdp-lista" id="lista-pdp">
         <div class="lista-vuota"><div class="lista-vuota-icon">📂</div><h3>Nessun PDP ancora</h3><p>Clicca "+ Nuovo PDP" per iniziare</p></div>
       </div>
     </div>
     <div id="tab-archivio" style="display:none">
+      <div id="filtri-archivio" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center">
+        <select id="filtro-arch-ordine" onchange="applicaFiltroArchivio()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;background:white;cursor:pointer;color:var(--testo)">
+          <option value="">— Tutti gli ordini —</option>
+          <option value="infanzia">🌱 Infanzia</option>
+          <option value="primaria">📚 Primaria</option>
+          <option value="secondaria">🎓 Secondaria</option>
+        </select>
+        <select id="filtro-arch-plesso" onchange="applicaFiltroArchivio()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;background:white;cursor:pointer;color:var(--testo)">
+          <option value="">— Tutti i plessi —</option>
+          <option value="castelcovati">Castelcovati</option>
+          <option value="comezzano">Comezzano-Cizzago</option>
+        </select>
+        <select id="filtro-arch-stato" onchange="applicaFiltroArchivio()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;background:white;cursor:pointer;color:var(--testo)">
+          <option value="">— Tutti gli stati —</option>
+          <option value="bozza">📝 Bozza</option>
+          <option value="in-corso">✏️ In corso</option>
+          <option value="protocollato">📌 Definitivo</option>
+        </select>
+        <button onclick="resetFiltroArchivio()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;cursor:pointer;color:var(--testo-soft)">✕ Reset</button>
+        <span id="filtro-arch-count" style="font-size:0.8rem;color:var(--testo-soft);margin-left:4px"></span>
+      </div>
       <div id="archivio-contenuto"></div>
     </div>
     <div id="tab-logs" style="display:none">
+      <div id="filtri-logs" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center">
+        <input type="date" id="filtro-log-data" onchange="applicaFiltroLogs()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;background:white;cursor:pointer;color:var(--testo)">
+        <select id="filtro-log-persona" onchange="applicaFiltroLogs()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;background:white;cursor:pointer;color:var(--testo);min-width:160px">
+          <option value="">— Tutte le persone —</option>
+        </select>
+        <select id="filtro-log-pdp" onchange="applicaFiltroLogs()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;background:white;cursor:pointer;color:var(--testo);min-width:160px">
+          <option value="">— Tutti i PDP —</option>
+        </select>
+        <button onclick="resetFiltroLogs()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;cursor:pointer;color:var(--testo-soft)">✕ Reset</button>
+        <span id="filtro-log-count" style="font-size:0.8rem;color:var(--testo-soft);margin-left:4px"></span>
+      </div>
       <div id="logs-contenuto"></div>
     </div>
     <div id="tab-utenti" style="display:none">
@@ -1057,7 +1110,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getFirestore, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc,
-  collection, onSnapshot, serverTimestamp, query, orderBy }
+  collection, onSnapshot, serverTimestamp, query, orderBy, where }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ─── CONFIG FIREBASE ───
@@ -1324,61 +1377,93 @@ window.showTab = (tab) => {
 };
 
 // ─── CARICA LISTA PDP ───
+let _pdpAllDocs = []; // cache per filtri lato client
+let _pdpAmbito  = null;
+
 function caricaPDP(ambito = null) {
+  _pdpAmbito = ambito;
+  // Mostra filtri solo per master
+  const filtriEl = document.getElementById('filtri-pdp');
+  if (filtriEl) filtriEl.style.display = ruoloCorrente === 'master' ? 'flex' : 'none';
+
   const q = query(collection(db, 'pdp'), orderBy('creatoIl', 'desc'));
   onSnapshot(q, (snap) => {
-    const lista = document.getElementById('lista-pdp');
-    let docs = snap.docs;
-
-    // Filtro per ambito: i referenti vedono solo i PDP del loro ordine+plesso
-    if (ambito && ruoloCorrente === 'admin') {
-      const [ordine, plesso] = ambito.split('_');
-      docs = docs.filter(d => {
-        const p = d.data();
-        const gradoOk = p.grado === ordine;
-        // Le bozze hanno dati vuoti: il campo s1_plesso non è ancora compilato.
-        // In quel caso mostriamo il PDP se il grado corrisponde, indipendentemente dal plesso.
-        const plessoSalvato = (p.dati?.s1_plesso || '').toLowerCase().trim();
-        const plessoOk = !plesso || p.stato === 'bozza' || plessoSalvato.includes(plesso);
-        return gradoOk && plessoOk;
-      });
-    }
-
-    if (docs.length === 0) {
-      lista.innerHTML = `<div class="lista-vuota"><div class="lista-vuota-icon">📂</div><h3>Nessun PDP ancora</h3><p>Clicca "+ Nuovo PDP" per iniziare</p></div>`;
-      return;
-    }
-    lista.innerHTML = docs.map(d => {
-      const p = d.data();
-      const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : 'stato-bozza';
-      const statoLabel = p.stato === 'protocollato' ? '📌 Versione definitiva' : p.stato === 'in-corso' ? '✏️ In corso' : '📝 Bozza';
-      const dataProtocollazione = p.protocollato_data_str ? `<div style="font-size:0.72rem;color:var(--verde);margin-top:3px">📅 ${p.protocollato_data_str}</div>` : '';
-      return `
-      <div class="pdp-card">
-        <div class="pdp-card-info">
-          <div class="pdp-card-nome">${p.alunno || '—'}</div>
-          <div class="pdp-card-meta">${p.grado || ''} · Classe ${p.classe || '—'} · ${p.anno || ''}</div>
-          ${dataProtocollazione}
-        </div>
-        <span class="pdp-card-stato ${statoClass}">${statoLabel}</span>
-        <div class="pdp-card-pw" title="Password di accesso">
-          🔑 <span id="pw-${d.id}" style="letter-spacing:0.15em">••••••••</span>
-          <button onclick="togglePW('${d.id}','${p.password}')" style="background:none;border:none;cursor:pointer;font-size:0.85rem;padding:0 4px" title="Mostra/nascondi password">👁</button>
-        </div>
-        <div class="pdp-card-azioni">
-          <button class="btn-sm btn-sm-blu" onclick="apriEditor('${d.id}')">Apri${p.stato === 'protocollato' ? ' / PDF' : ''}</button>
-          ${ruoloCorrente === 'master' ? `<button class="btn-sm btn-sm-rosso" onclick="eliminaPDP('${d.id}','${p.alunno}')">Elimina</button>` : ''}
-        </div>
-      </div>`;
-    }).join('');
+    _pdpAllDocs = snap.docs.map(d => ({_ref: d.id, ...d.data(), _id: d.id}));
+    _renderListaPDP();
   });
 }
 
+function _renderListaPDP() {
+  const lista = document.getElementById('lista-pdp');
+  let docs = _pdpAllDocs;
+
+  // Filtro per ambito: i referenti vedono solo i PDP del loro ordine+plesso
+  if (_pdpAmbito && ruoloCorrente === 'admin') {
+    const [ordine, plesso] = _pdpAmbito.split('_');
+    docs = docs.filter(p => {
+      const gradoOk = p.grado === ordine;
+      const plessoSalvato = (p.dati?.s1_plesso || '').toLowerCase().trim();
+      const plessoOk = !plesso || p.stato === 'bozza' || plessoSalvato.includes(plesso);
+      return gradoOk && plessoOk;
+    });
+  }
+
+  // Filtri master (menù a tendina)
+  if (ruoloCorrente === 'master') {
+    const fOrdine = document.getElementById('filtro-pdp-ordine')?.value || '';
+    const fPlesso = document.getElementById('filtro-pdp-plesso')?.value || '';
+    const fStato  = document.getElementById('filtro-pdp-stato')?.value  || '';
+    if (fOrdine) docs = docs.filter(p => (p.grado || 'primaria') === fOrdine);
+    if (fPlesso) docs = docs.filter(p => (p.dati?.s1_plesso || '').toLowerCase().includes(fPlesso));
+    if (fStato)  docs = docs.filter(p => (p.stato || 'bozza') === fStato);
+    const countEl = document.getElementById('filtro-pdp-count');
+    if (countEl) countEl.textContent = (fOrdine || fPlesso || fStato) ? `${docs.length} PDP` : '';
+  }
+
+  if (docs.length === 0) {
+    lista.innerHTML = `<div class="lista-vuota"><div class="lista-vuota-icon">📂</div><h3>Nessun PDP ancora</h3><p>Clicca "+ Nuovo PDP" per iniziare</p></div>`;
+    return;
+  }
+  lista.innerHTML = docs.map(p => {
+    const id = p._id;
+    const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : 'stato-bozza';
+    const statoLabel = p.stato === 'protocollato' ? '📌 Versione definitiva' : p.stato === 'in-corso' ? '✏️ In corso' : '📝 Bozza';
+    const dataProtocollazione = p.protocollato_data_str ? `<div style="font-size:0.72rem;color:var(--verde);margin-top:3px">📅 ${p.protocollato_data_str}</div>` : '';
+    return `
+    <div class="pdp-card">
+      <div class="pdp-card-info">
+        <div class="pdp-card-nome">${p.alunno || '—'}</div>
+        <div class="pdp-card-meta">${p.grado || ''} · Classe ${p.classe || '—'} · ${p.anno || ''}</div>
+        ${dataProtocollazione}
+      </div>
+      <span class="pdp-card-stato ${statoClass}">${statoLabel}</span>
+      <div class="pdp-card-pw" title="Password di accesso">
+        🔑 <span id="pw-${id}" style="letter-spacing:0.15em">••••••••</span>
+        <button onclick="togglePW('${id}','${p.password}')" style="background:none;border:none;cursor:pointer;font-size:0.85rem;padding:0 4px" title="Mostra/nascondi password">👁</button>
+      </div>
+      <div class="pdp-card-azioni">
+        <button class="btn-sm btn-sm-blu" onclick="apriEditor('${id}')">Apri${p.stato === 'protocollato' ? ' / PDF' : ''}</button>
+        ${ruoloCorrente === 'master' ? `<button class="btn-sm btn-sm-rosso" onclick="eliminaPDP('${id}','${p.alunno}')">Elimina</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.applicaFiltroPDP  = () => _renderListaPDP();
+window.resetFiltroPDP = () => {
+  ['filtro-pdp-ordine','filtro-pdp-plesso','filtro-pdp-stato'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  _renderListaPDP();
+};
+
 // ─── ARCHIVIO PER ORDINE DI SCUOLA (solo master) ───
+let _archivioAllDocs = []; // cache per filtri lato client
+
 async function renderArchivio() {
   const contenuto = document.getElementById('archivio-contenuto');
   contenuto.innerHTML = '<div style="text-align:center;padding:40px;color:var(--testo-soft)">Caricamento…</div>';
-  
+
   let snap;
   try {
     snap = await getDocs(query(collection(db, 'pdp'), orderBy('creatoIl', 'desc')));
@@ -1398,52 +1483,109 @@ async function renderArchivio() {
     return;
   }
 
-  const gruppi = {
-    infanzia:   { label: '🌱 Scuola dell\'Infanzia', docs: [] },
-    primaria:   { label: '📚 Scuola Primaria',       docs: [] },
-    secondaria: { label: '🎓 Scuola Secondaria I grado', docs: [] },
-  };
-
+  // Salva i dati in memoria per il download diretto e per i filtri
+  window._archivioCache = {};
+  _archivioAllDocs = [];
   snap.docs.forEach(d => {
-    const p = d.data();
-    const g = p.grado || 'primaria';
-    if (gruppi[g]) gruppi[g].docs.push({id: d.id, ...p});
+    window._archivioCache[d.id] = d.data();
+    _archivioAllDocs.push({id: d.id, ...d.data()});
   });
 
-  // Salva i dati in memoria per il download diretto
-  window._archivioCache = {};
-  snap.docs.forEach(d => { window._archivioCache[d.id] = d.data(); });
-
-  contenuto.innerHTML = Object.entries(gruppi).map(([key, gruppo]) => `
-    <div style="margin-bottom:28px">
-      <h2 style="font-family:'Lora',serif;font-size:1.1rem;color:var(--blu);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--grigio-bordo)">${gruppo.label} <span style="font-size:0.8rem;font-weight:400;color:var(--testo-soft)">(${gruppo.docs.length} PDP)</span></h2>
-      ${gruppo.docs.length === 0 ? '<div class="lista-vuota" style="padding:20px"><p>Nessun PDP per questo ordine</p></div>' :
-        `<div class="pdp-lista">
-          ${gruppo.docs.map(p => {
-            const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : 'stato-bozza';
-            const statoLabel = p.stato === 'protocollato' ? '📌 Versione definitiva' : p.stato === 'in-corso' ? '✏️ In corso' : '📝 Bozza';
-            const plesso = p.dati?.s1_plesso ? `· ${p.dati.s1_plesso}` : '';
-            const isPDF = p.stato === 'protocollato';
-            return `
-            <div class="pdp-card">
-              <div class="pdp-card-info">
-                <div class="pdp-card-nome">${p.alunno || '—'}</div>
-                <div class="pdp-card-meta">Classe ${p.classe || '—'} ${plesso} · ${p.anno || ''}</div>
-                ${p.protocollato_data_str ? `<div style="font-size:0.72rem;color:var(--verde);margin-top:3px">📅 ${p.protocollato_data_str}</div>` : ''}
-              </div>
-              <span class="pdp-card-stato ${statoClass}">${statoLabel}</span>
-              <div class="pdp-card-azioni">
-                <button class="btn-sm btn-sm-blu" onclick="apriEditor('${p.id}')">Apri</button>
-                <button class="btn-sm btn-sm-verde" onclick="scaricaPDFDiretto('${p.id}')">⬇️ PDF</button>
-                <button class="btn-sm btn-sm-rosso" onclick="eliminaPDP('${p.id}','${p.alunno}')">Elimina</button>
-              </div>
-            </div>`;
-          }).join('')}
-        </div>`}
-    </div>`).join('');
+  _renderArchivioFiltrato();
 }
 
+function _renderArchivioFiltrato() {
+  const contenuto = document.getElementById('archivio-contenuto');
+  const fOrdine = document.getElementById('filtro-arch-ordine')?.value || '';
+  const fPlesso = document.getElementById('filtro-arch-plesso')?.value || '';
+  const fStato  = document.getElementById('filtro-arch-stato')?.value  || '';
+
+  let docs = _archivioAllDocs;
+  if (fOrdine) docs = docs.filter(p => (p.grado || 'primaria') === fOrdine);
+  if (fPlesso) docs = docs.filter(p => (p.dati?.s1_plesso || '').toLowerCase().includes(fPlesso));
+  if (fStato)  docs = docs.filter(p => (p.stato || 'bozza') === fStato);
+
+  const countEl = document.getElementById('filtro-arch-count');
+  if (countEl) countEl.textContent = docs.length > 0 ? `${docs.length} PDP` : '';
+
+  if (docs.length === 0) {
+    contenuto.innerHTML = '<div class="lista-vuota" style="padding:30px"><div class="lista-vuota-icon">🔍</div><p>Nessun PDP corrisponde ai filtri selezionati</p></div>';
+    return;
+  }
+
+  // Raggruppa per ordine → plesso
+  const struttura = {
+    infanzia:   { label: '🌱 Scuola dell\'Infanzia', plessi: {} },
+    primaria:   { label: '📚 Scuola Primaria',       plessi: {} },
+    secondaria: { label: '🎓 Scuola Secondaria I grado', plessi: {} },
+  };
+
+  docs.forEach(p => {
+    const g = p.grado || 'primaria';
+    if (!struttura[g]) return;
+    const plessoRaw = (p.dati?.s1_plesso || '').trim();
+    const plessoKey = plessoRaw || '—';
+    if (!struttura[g].plessi[plessoKey]) struttura[g].plessi[plessoKey] = [];
+    struttura[g].plessi[plessoKey].push(p);
+  });
+
+  const cardHTML = (p) => {
+    const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : 'stato-bozza';
+    const statoLabel = p.stato === 'protocollato' ? '📌 Versione definitiva' : p.stato === 'in-corso' ? '✏️ In corso' : '📝 Bozza';
+    return `<div class="pdp-card">
+      <div class="pdp-card-info">
+        <div class="pdp-card-nome">${p.alunno || '—'}</div>
+        <div class="pdp-card-meta">Classe ${p.classe || '—'} · ${p.anno || ''}</div>
+        ${p.protocollato_data_str ? `<div style="font-size:0.72rem;color:var(--verde);margin-top:3px">📅 ${p.protocollato_data_str}</div>` : ''}
+      </div>
+      <span class="pdp-card-stato ${statoClass}">${statoLabel}</span>
+      <div class="pdp-card-azioni">
+        <button class="btn-sm btn-sm-blu" onclick="apriEditor('${p.id}')">Apri</button>
+        <button class="btn-sm btn-sm-verde" onclick="scaricaPDFDiretto('${p.id}')">⬇️ PDF</button>
+        <button class="btn-sm btn-sm-rosso" onclick="eliminaPDP('${p.id}','${p.alunno}')">Elimina</button>
+      </div>
+    </div>`;
+  };
+
+  contenuto.innerHTML = Object.entries(struttura)
+    .filter(([, g]) => Object.keys(g.plessi).length > 0)
+    .map(([, gruppo]) => {
+      const plessiHTML = Object.entries(gruppo.plessi).sort(([a],[b]) => a.localeCompare(b)).map(([plesso, pdps]) => `
+        <div style="margin-bottom:16px">
+          <h3 style="font-size:0.88rem;font-weight:600;color:var(--testo-soft);text-transform:uppercase;letter-spacing:0.05em;margin:0 0 10px;padding:6px 10px;background:var(--grigio-bg);border-radius:6px">
+            📍 ${plesso} <span style="font-weight:400">(${pdps.length})</span>
+          </h3>
+          <div class="pdp-lista">${pdps.map(cardHTML).join('')}</div>
+        </div>`).join('');
+      const totOrdine = Object.values(gruppo.plessi).reduce((s, a) => s + a.length, 0);
+      return `<div style="margin-bottom:28px">
+        <h2 style="font-family:'Lora',serif;font-size:1.1rem;color:var(--blu);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--grigio-bordo)">
+          ${gruppo.label} <span style="font-size:0.8rem;font-weight:400;color:var(--testo-soft)">(${totOrdine} PDP)</span>
+        </h2>
+        ${plessiHTML}
+      </div>`;
+    }).join('');
+}
+
+window.applicaFiltroArchivio = () => _renderArchivioFiltrato();
+window.resetFiltroArchivio = () => {
+  ['filtro-arch-ordine','filtro-arch-plesso','filtro-arch-stato'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  _renderArchivioFiltrato();
+};
+
 // ─── RENDER LOG ACCESSI (solo master) ───
+let _logsAllDocs = [];
+
+const AZIONE_LABEL = {
+  'apertura_pdp': '👁️ Apertura PDP',
+  'modifica_pdp': '✏️ Modifica PDP',
+  'modifica_campo': '🔄 Modifica campo',
+  'versione_definitiva': '📌 Versione definitiva',
+  'download_pdf': '⬇️ Download PDF',
+};
+
 async function renderLogs() {
   const contenuto = document.getElementById('logs-contenuto');
   contenuto.innerHTML = '<div style="text-align:center;padding:40px;color:var(--testo-soft)">Caricamento log…</div>';
@@ -1453,62 +1595,116 @@ async function renderLogs() {
       contenuto.innerHTML = '<div class="lista-vuota"><div class="lista-vuota-icon">📋</div><h3>Nessun log ancora</h3></div>';
       return;
     }
-    const AZIONE_LABEL = {
-      'apertura_pdp': '👁️ Apertura PDP',
-      'modifica_pdp': '✏️ Modifica PDP',
-      'modifica_campo': '🔄 Modifica campo',
-      'versione_definitiva': '📌 Versione definitiva',
-      'download_pdf': '⬇️ Download PDF',
-    };
-    contenuto.innerHTML = `
-      <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:0.82rem;color:var(--testo-soft)">${snap.size} eventi registrati — i log non sono modificabili né eliminabili</div>
+    _logsAllDocs = snap.docs.map(d => ({id: d.id, ...d.data()}));
+
+    // Popola i menù filtro persona e PDP con valori unici
+    const persone = [...new Set(_logsAllDocs.map(l => l.utente_nome || l.utente_email || '').filter(Boolean))].sort();
+    const pdps    = [...new Set(_logsAllDocs.map(l => l.alunno || '').filter(Boolean))].sort();
+    const selPersona = document.getElementById('filtro-log-persona');
+    const selPdp     = document.getElementById('filtro-log-pdp');
+    if (selPersona) {
+      selPersona.innerHTML = '<option value="">— Tutte le persone —</option>' +
+        persone.map(p => `<option value="${p}">${p}</option>`).join('');
+    }
+    if (selPdp) {
+      selPdp.innerHTML = '<option value="">— Tutti i PDP —</option>' +
+        pdps.map(p => `<option value="${p}">${p}</option>`).join('');
+    }
+
+    _renderLogsFiltrati();
+  } catch(e) {
+    contenuto.innerHTML = `<div class="lista-vuota"><p>Errore caricamento log: ${e.message}</p></div>`;
+  }
+}
+
+function _renderLogsFiltrati() {
+  const contenuto = document.getElementById('logs-contenuto');
+  const fData    = document.getElementById('filtro-log-data')?.value    || '';
+  const fPersona = document.getElementById('filtro-log-persona')?.value || '';
+  const fPdp     = document.getElementById('filtro-log-pdp')?.value     || '';
+
+  let docs = _logsAllDocs;
+  if (fData)    docs = docs.filter(l => {
+    const ts = l.ts?.toDate?.();
+    if (!ts) return false;
+    return ts.toISOString().slice(0,10) === fData;
+  });
+  if (fPersona) docs = docs.filter(l => (l.utente_nome || l.utente_email || '') === fPersona);
+  if (fPdp)     docs = docs.filter(l => (l.alunno || '') === fPdp);
+
+  const countEl = document.getElementById('filtro-log-count');
+  if (countEl) countEl.textContent = (fData || fPersona || fPdp) ? `${docs.length} eventi` : `${_logsAllDocs.length} eventi totali`;
+
+  if (docs.length === 0) {
+    contenuto.innerHTML = '<div class="lista-vuota" style="padding:30px"><div class="lista-vuota-icon">🔍</div><p>Nessun evento corrisponde ai filtri</p></div>';
+    return;
+  }
+
+  // Raggruppa per giorno
+  const perGiorno = {};
+  docs.forEach(l => {
+    const ts = l.ts?.toDate?.();
+    const giorno = ts ? ts.toLocaleDateString('it-IT', {weekday:'long', day:'2-digit', month:'long', year:'numeric'}) : 'Data sconosciuta';
+    const giornoKey = ts ? ts.toISOString().slice(0,10) : 'z';
+    if (!perGiorno[giornoKey]) perGiorno[giornoKey] = { label: giorno, eventi: [] };
+    perGiorno[giornoKey].eventi.push(l);
+  });
+
+  const rigaLog = (l, i) => {
+    const ts = l.ts?.toDate?.();
+    const oraStr = ts ? ts.toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'}) : '—';
+    const bg = i % 2 === 0 ? '#ffffff' : '#f8fafc';
+    let dettaglio = '—';
+    if (l.azione === 'modifica_campo' && l.campo) {
+      const troncaStr = (s, n) => s && s.length > n ? s.substring(0, n) + '…' : (s || '');
+      const prev = troncaStr(l.valorePrecedente, 60);
+      const next = troncaStr(l.valoreNuovo, 60);
+      dettaglio = '<span style="font-size:0.78rem;color:var(--testo-soft);font-family:monospace">' + l.campo + '</span><br>' +
+        '<span style="color:#c0392b;text-decoration:line-through;font-size:0.78rem">' + prev + '</span>' +
+        '<span style="color:#888;padding:0 4px">→</span>' +
+        '<span style="color:#27ae60;font-size:0.78rem">' + next + '</span>';
+    }
+    return '<tr style="background:' + bg + ';border-bottom:1px solid #e2e8f0">' +
+      '<td style="padding:9px 14px;color:var(--testo-soft);white-space:nowrap">' + oraStr + '</td>' +
+      '<td style="padding:9px 14px;font-weight:500">' + (l.utente_nome || l.utente_email || '—') + '</td>' +
+      '<td style="padding:9px 14px;color:var(--testo-soft)">' + (l.ruolo || '—') + '</td>' +
+      '<td style="padding:9px 14px">' + (AZIONE_LABEL[l.azione] || l.azione || '—') + '</td>' +
+      '<td style="padding:9px 14px">' + (l.alunno || '—') + '</td>' +
+      '<td style="padding:9px 14px;max-width:280px">' + dettaglio + '</td>' +
+      '</tr>';
+  };
+
+  contenuto.innerHTML = Object.entries(perGiorno).map(([, g]) => `
+    <div style="margin-bottom:24px">
+      <div style="font-size:0.82rem;font-weight:700;color:var(--blu);text-transform:capitalize;padding:6px 10px;background:var(--azzurro-light);border-radius:6px;margin-bottom:8px">
+        📅 ${g.label} <span style="font-weight:400;color:var(--testo-soft)">(${g.eventi.length} eventi)</span>
       </div>
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:0.82rem;background:white;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.07)">
           <thead>
             <tr style="background:var(--blu);color:white">
-              <th style="padding:10px 14px;text-align:left;font-weight:600">Data e ora</th>
-              <th style="padding:10px 14px;text-align:left;font-weight:600">Utente</th>
-              <th style="padding:10px 14px;text-align:left;font-weight:600">Ruolo</th>
-              <th style="padding:10px 14px;text-align:left;font-weight:600">Azione</th>
-              <th style="padding:10px 14px;text-align:left;font-weight:600">Alunno/a</th>
-              <th style="padding:10px 14px;text-align:left;font-weight:600">Dettaglio cronologia</th>
+              <th style="padding:8px 14px;text-align:left;font-weight:600">Ora</th>
+              <th style="padding:8px 14px;text-align:left;font-weight:600">Utente</th>
+              <th style="padding:8px 14px;text-align:left;font-weight:600">Ruolo</th>
+              <th style="padding:8px 14px;text-align:left;font-weight:600">Azione</th>
+              <th style="padding:8px 14px;text-align:left;font-weight:600">Alunno/a</th>
+              <th style="padding:8px 14px;text-align:left;font-weight:600">Dettaglio</th>
             </tr>
           </thead>
-          <tbody>
-            ${snap.docs.map((d, i) => {
-              const l = d.data();
-              const ts = l.ts?.toDate?.();
-              const dataStr = ts ? ts.toLocaleString('it-IT', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
-              const bg = i % 2 === 0 ? '#ffffff' : '#f8fafc';
-              // Dettaglio cronologia: mostra valorePrecedente → valoreNuovo per modifica_campo
-              let dettaglio = '—';
-              if (l.azione === 'modifica_campo' && l.campo) {
-                const troncaStr = (s, n) => s && s.length > n ? s.substring(0, n) + '…' : (s || '');
-                const prev = troncaStr(l.valorePrecedente, 60);
-                const next = troncaStr(l.valoreNuovo, 60);
-                dettaglio = '<span style="font-size:0.78rem;color:var(--testo-soft);font-family:monospace">' + l.campo + '</span><br>' +
-                  '<span style="color:#c0392b;text-decoration:line-through;font-size:0.78rem" title="' + (l.valorePrecedente||'').replace(/"/g,'&quot;') + '">' + prev + '</span>' +
-                  '<span style="color:#888;padding:0 4px">→</span>' +
-                  '<span style="color:#27ae60;font-size:0.78rem" title="' + (l.valoreNuovo||'').replace(/"/g,'&quot;') + '">' + next + '</span>';
-              }
-              return '<tr style="background:' + bg + ';border-bottom:1px solid #e2e8f0">' +
-                '<td style="padding:9px 14px;color:var(--testo-soft)">' + dataStr + '</td>' +
-                '<td style="padding:9px 14px;font-weight:500">' + (l.utente_nome || l.utente_email || '—') + '</td>' +
-                '<td style="padding:9px 14px;color:var(--testo-soft)">' + (l.ruolo || '—') + '</td>' +
-                '<td style="padding:9px 14px">' + (AZIONE_LABEL[l.azione] || l.azione || '—') + '</td>' +
-                '<td style="padding:9px 14px">' + (l.alunno || '—') + '</td>' +
-                '<td style="padding:9px 14px;max-width:280px">' + dettaglio + '</td>' +
-                '</tr>';
-            }).join('')}
-          </tbody>
+          <tbody>${g.eventi.map(rigaLog).join('')}</tbody>
         </table>
-      </div>`;
-  } catch(e) {
-    contenuto.innerHTML = `<div class="lista-vuota"><p>Errore caricamento log: ${e.message}</p></div>`;
-  }
+      </div>
+    </div>`).join('');
 }
+
+window.applicaFiltroLogs = () => _renderLogsFiltrati();
+window.resetFiltroLogs = () => {
+  const dataEl = document.getElementById('filtro-log-data'); if (dataEl) dataEl.value = '';
+  ['filtro-log-persona','filtro-log-pdp'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  _renderLogsFiltrati();
+};
 
 // ─── DOWNLOAD PDF DIRETTO DALL'ARCHIVIO ───
 window.scaricaPDFDiretto = async (pdpId) => {
@@ -1660,12 +1856,18 @@ window.aggiungiDocenti = async () => {
   const risultati = [];
   for (const nome of righe) {
     const email = nome.includes('@') ? nome : nome + DOMINIO;
+    // Controlla se esiste già un profilo consolidato (con UID) per questa email
+    const qEmail = await getDocs(query(collection(db, 'utenti'), where('email', '==', email)));
+    if (!qEmail.empty) {
+      risultati.push(`⚠️ ${email} — già presente (profilo attivo)`);
+      continue;
+    }
     // Usa email come ID documento (sostituisce . e @ per Firestore)
     const docId = email.replace(/\./g, '_').replace('@', '__at__');
     const uRef = doc(db, 'utenti', docId);
     const uSnap = await getDoc(uRef);
     if (uSnap.exists()) {
-      risultati.push(`⚠️ ${email} — già presente`);
+      risultati.push(`⚠️ ${email} — già in attesa di primo accesso`);
     } else {
       await setDoc(uRef, {
         nome: nome.split('.').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' '),
