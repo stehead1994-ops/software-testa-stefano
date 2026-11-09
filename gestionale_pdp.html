@@ -934,6 +934,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
         </select>
         <button onclick="resetFiltroPDP()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;cursor:pointer;color:var(--testo-soft)">✕ Reset</button>
         <span id="filtro-pdp-count" style="font-size:0.8rem;color:var(--testo-soft);margin-left:4px"></span>
+        <button onclick="caricaPDP(_pdpAmbito)" style="margin-left:auto;padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;background:white;cursor:pointer;color:var(--testo)" title="Aggiorna lista PDP">🔄 Aggiorna</button>
       </div>
       <div class="pdp-lista" id="lista-pdp">
         <div class="lista-vuota"><div class="lista-vuota-icon">📂</div><h3>Nessun PDP ancora</h3><p>Clicca "+ Nuovo PDP" per iniziare</p></div>
@@ -1358,6 +1359,7 @@ window.tornaHome = async () => {
     mostraSchermata('pdp-login');
   } else {
     mostraSchermata('master');
+    caricaPDP(_pdpAmbito); // ricarica lista con dati freschi (1 lettura)
   }
 };
 
@@ -1380,17 +1382,24 @@ window.showTab = (tab) => {
 let _pdpAllDocs = []; // cache per filtri lato client
 let _pdpAmbito  = null;
 
-function caricaPDP(ambito = null) {
+async function caricaPDP(ambito = null) {
   _pdpAmbito = ambito;
   // Mostra filtri solo per master
   const filtriEl = document.getElementById('filtri-pdp');
   if (filtriEl) filtriEl.style.display = ruoloCorrente === 'master' ? 'flex' : 'none';
 
-  const q = query(collection(db, 'pdp'), orderBy('creatoIl', 'desc'));
-  onSnapshot(q, (snap) => {
+  const lista = document.getElementById('lista-pdp');
+  if (lista) lista.innerHTML = '<div style="padding:1rem;color:var(--testo-soft)">⏳ Caricamento…</div>';
+
+  try {
+    const q = query(collection(db, 'pdp'), orderBy('creatoIl', 'desc'));
+    const snap = await getDocs(q);
     _pdpAllDocs = snap.docs.map(d => ({_ref: d.id, ...d.data(), _id: d.id}));
     _renderListaPDP();
-  });
+  } catch(e) {
+    if (lista) lista.innerHTML = '<div style="padding:1rem;color:#c0392b">⚠️ Errore caricamento PDP. Riprova tra qualche minuto.</div>';
+    console.error('caricaPDP error:', e);
+  }
 }
 
 function _renderListaPDP() {
@@ -1735,10 +1744,10 @@ const AMBITI = {
   'secondaria_castelcovati': '🎓 Secondaria — Castelcovati',
 };
 
-function caricaUtenti() {
+async function caricaUtenti() {
   const q = query(collection(db, 'utenti'), orderBy('creatoIl', 'desc'));
-  onSnapshot(q, (snap) => {
-    const lista = document.getElementById('lista-utenti');
+  const snap = await getDocs(q);
+  const lista = document.getElementById('lista-utenti');
     // Conta master esistenti
     const nMaster = snap.docs.filter(d => d.data().ruolo === 'master').length;
 
@@ -1790,7 +1799,6 @@ function caricaUtenti() {
         <div class="utente-azioni">${azioni}</div>
       </div>`;
     }).join('');
-  });
 }
 
 // ─── SCELTA AMBITO REFERENTE ───
