@@ -115,5 +115,41 @@ window.CAA_SCHEDE = [
     "file": "costituzione-articoli-1-12-caa.pdf",
     "anteprima": "costituzione-articoli-1-12.jpg",
     "pagine": 14
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Fiabe e favole in CAA",
+    "titolo": "I tre porcellini",
+    "descrizione": "La fiaba dei tre porcellini in frasi brevi e simboli: le tre case di paglia, legno e mattoni, il lupo che soffia e le domande di comprensione.",
+    "file": "tre-porcellini-caa.pdf",
+    "anteprima": "tre-porcellini.jpg",
+    "pagine": 16
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Fiabe e favole in CAA",
+    "titolo": "Riccioli d'oro e i tre orsi",
+    "descrizione": "Riccioli d'oro entra nella casa dei tre orsi: tre ciotole, tre sedie, tre letti. Grande, medio e piccolo in simboli, con le domande finali.",
+    "file": "riccioli-doro-caa.pdf",
+    "anteprima": "riccioli-doro.jpg",
+    "pagine": 18
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Fiabe e favole in CAA",
+    "titolo": "Il leone e il topolino",
+    "descrizione": "La favola di Esopo raccontata in simboli: il topolino che il leone lascia andare torna ad aiutarlo. Anche i piccoli possono aiutare i grandi.",
+    "file": "leone-e-topolino-caa.pdf",
+    "anteprima": "leone-e-topolino.jpg",
+    "pagine": 16
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Fiabe e favole in CAA",
+    "titolo": "La cicala e la formica",
+    "descrizione": "La favola della cicala e della formica in simboli, con le stagioni che passano e un finale gentile: la formica aiuta la cicala e l'anno dopo lavorano insieme.",
+    "file": "cicala-e-formica-caa.pdf",
+    "anteprima": "cicala-e-formica.jpg",
+    "pagine": 16
   }
 ];
