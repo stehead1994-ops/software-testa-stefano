@@ -1064,6 +1064,14 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
       </div>
     </div>
     <div class="modale-campo">
+      <label>Plesso <span style="color:#c0392b">*</span></label>
+      <select id="new-plesso">
+        <option value="">— seleziona —</option>
+        <option>Castelcovati</option>
+        <option>Comezzano Cizzago</option>
+      </select>
+    </div>
+    <div class="modale-campo">
       <label>Anno scolastico</label>
       <input type="text" id="new-anno" placeholder="2025/2026" value="2025/2026">
     </div>
@@ -1384,9 +1392,31 @@ let _pdpAmbito  = null;
 
 async function caricaPDP(ambito = null) {
   _pdpAmbito = ambito;
-  // Mostra filtri solo per master
+  // Mostra filtri: master vede tutto, referente vede solo stato + ricerca nome
   const filtriEl = document.getElementById('filtri-pdp');
-  if (filtriEl) filtriEl.style.display = ruoloCorrente === 'master' ? 'flex' : 'none';
+  if (filtriEl) {
+    if (ruoloCorrente === 'master') {
+      filtriEl.style.display = 'flex';
+    } else {
+      // Referente: mostra filtri semplificati (stato + ricerca nome)
+      filtriEl.style.display = 'flex';
+      // Nascondi filtri non pertinenti per il referente
+      const fOrdine = document.getElementById('filtro-pdp-ordine');
+      const fPlesso = document.getElementById('filtro-pdp-plesso');
+      if (fOrdine) fOrdine.style.display = 'none';
+      if (fPlesso) fPlesso.style.display = 'none';
+      // Aggiungi campo ricerca per nome se non esiste già
+      if (!document.getElementById('filtro-pdp-nome')) {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = 'filtro-pdp-nome';
+        input.placeholder = '🔍 Cerca per nome alunno…';
+        input.style.cssText = 'padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:"DM Sans",sans-serif;font-size:0.85rem;color:var(--testo);min-width:200px';
+        input.oninput = applicaFiltroPDP;
+        filtriEl.insertBefore(input, filtriEl.firstChild);
+      }
+    }
+  }
 
   const lista = document.getElementById('lista-pdp');
   if (lista) lista.innerHTML = '<div style="padding:1rem;color:var(--testo-soft)">⏳ Caricamento…</div>';
@@ -1411,8 +1441,8 @@ function _renderListaPDP() {
     const [ordine, plesso] = _pdpAmbito.split('_');
     docs = docs.filter(p => {
       const gradoOk = p.grado === ordine;
-      const plessoSalvato = (p.dati?.s1_plesso || '').toLowerCase().trim();
-      const plessoOk = !plesso || p.stato === 'bozza' || plessoSalvato.includes(plesso);
+      const plessoSalvato = (p.dati?.s1_plesso || p.plesso || '').toLowerCase().trim();
+      const plessoOk = !plesso || plessoSalvato.includes(plesso);
       return gradoOk && plessoOk;
     });
   }
@@ -1427,6 +1457,16 @@ function _renderListaPDP() {
     if (fStato)  docs = docs.filter(p => (p.stato || 'bozza') === fStato);
     const countEl = document.getElementById('filtro-pdp-count');
     if (countEl) countEl.textContent = (fOrdine || fPlesso || fStato) ? `${docs.length} PDP` : '';
+  }
+
+  // Filtri referente (stato + ricerca per nome)
+  if (ruoloCorrente === 'admin') {
+    const fStato = document.getElementById('filtro-pdp-stato')?.value || '';
+    const fNome  = (document.getElementById('filtro-pdp-nome')?.value || '').toLowerCase().trim();
+    if (fStato) docs = docs.filter(p => (p.stato || 'bozza') === fStato);
+    if (fNome)  docs = docs.filter(p => (p.alunno || '').toLowerCase().includes(fNome));
+    const countEl = document.getElementById('filtro-pdp-count');
+    if (countEl) countEl.textContent = (fStato || fNome) ? `${docs.length} PDP` : '';
   }
 
   if (docs.length === 0) {
@@ -1912,13 +1952,17 @@ window.creaPDP = async () => {
   const alunno   = document.getElementById('new-alunno').value.trim();
   const grado    = document.getElementById('new-grado').value;
   const classe   = document.getElementById('new-classe').value.trim();
+  const plesso   = document.getElementById('new-plesso').value.trim();
   const anno     = document.getElementById('new-anno').value.trim();
   const password = document.getElementById('pw-generata').textContent.trim();
-  if (!alunno || !password) { mostraToast('Inserisci nome alunno e password', 'rosso'); return; }
+  if (!alunno) { mostraToast('Inserisci il nome dell\'alunno/a', 'rosso'); return; }
+  if (!grado)  { mostraToast('Seleziona il grado scolastico', 'rosso'); return; }
+  if (!plesso) { mostraToast('Seleziona il plesso di appartenenza', 'rosso'); return; }
+  if (!password) { mostraToast('Password mancante — ricarica la pagina', 'rosso'); return; }
   try {
     await addDoc(collection(db, 'pdp'), {
-      alunno, grado, classe, anno, password,
-      stato: 'bozza', dati: {},
+      alunno, grado, classe, plesso, anno, password,
+      stato: 'bozza', dati: { s1_plesso: plesso, s1_grado: grado, s1_classe: classe },
       creatoIl: serverTimestamp(),
       creatoD: utenteCorrente.email
     });
@@ -2272,6 +2316,15 @@ async function salvaOra() {
 
 // ─── PROTOCOLLA ───
 window.protocolla = async () => {
+  // Validazione campi obbligatori prima di chiudere (legge direttamente dal DOM)
+  const area = document.getElementById('area-editing');
+  const getVal = campo => area?.querySelector(`[data-campo="${campo}"]`)?.value?.trim() || '';
+  const grado  = getVal('s1_grado');
+  const classe = getVal('s1_classe');
+  const plesso = getVal('s1_plesso');
+  if (!grado)  { mostraToast('⚠️ Indica il grado scolastico prima di chiudere', 'rosso'); return; }
+  if (!classe) { mostraToast('⚠️ Indica la classe prima di chiudere', 'rosso'); return; }
+  if (!plesso) { mostraToast('⚠️ Seleziona il plesso di appartenenza prima di chiudere', 'rosso'); return; }
   if (!confirm('Confermi la chiusura di questo PDP?\n\nIl documento verrà marcato come completato e passerà in sola lettura. Potrai scaricarlo in PDF dalla dashboard.')) return;
   try {
     // Salva prima tutti i dati correnti, poi protocolla
