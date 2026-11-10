@@ -113,6 +113,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 .stato-bozza { background: var(--arancio-light); color: var(--arancio); }
 .stato-in-corso { background: var(--azzurro-light); color: var(--blu); }
 .stato-protocollato { background: var(--verde-light); color: var(--verde); }
+.stato-non-redatto { background: #e9ecef; color: #6c757d; }
 .pdp-card-pw { font-family: monospace; background: var(--grigio-bg); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; border: 1px solid var(--grigio-bordo); }
 .pdp-card-azioni { display: flex; gap: 8px; }
 .btn-sm { padding: 6px 14px; border-radius: 7px; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
@@ -229,6 +230,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 .toast.show { display: block; animation: slideUp 0.3s ease; }
 .toast.verde { background: var(--verde); }
 .toast.rosso { background: var(--rosso); }
+.toast.grigio { background: #6c757d; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ─── VUOTO ─── */
@@ -931,6 +933,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
           <option value="bozza">📝 Bozza</option>
           <option value="in-corso">✏️ In corso</option>
           <option value="protocollato">📌 Definitivo</option>
+          <option value="non_redatto">🚫 Non redatto</option>
         </select>
         <button onclick="resetFiltroPDP()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;cursor:pointer;color:var(--testo-soft)">✕ Reset</button>
         <span id="filtro-pdp-count" style="font-size:0.8rem;color:var(--testo-soft);margin-left:4px"></span>
@@ -958,6 +961,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
           <option value="bozza">📝 Bozza</option>
           <option value="in-corso">✏️ In corso</option>
           <option value="protocollato">📌 Definitivo</option>
+          <option value="non_redatto">🚫 Non redatto</option>
         </select>
         <button onclick="resetFiltroArchivio()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;cursor:pointer;color:var(--testo-soft)">✕ Reset</button>
         <span id="filtro-arch-count" style="font-size:0.8rem;color:var(--testo-soft);margin-left:4px"></span>
@@ -1015,6 +1019,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
       <div class="editor-azioni">
         <button class="btn-header" id="btn-pdf" onclick="esportaPDF()">🖨️ PDF</button>
         <button class="btn-header" id="btn-protocolla" onclick="protocolla()" style="background:rgba(46,125,94,0.4)">✅ PROTOCOLLA PDP</button>
+        <button class="btn-header" id="btn-non-redatto" onclick="segnaNonRedattoDaEditor()" style="background:rgba(108,117,125,0.4)">🚫 Non redatto</button>
         <button class="btn-header" onclick="tornaHome()">Chiudi</button>
       </div>
     </div>
@@ -1579,19 +1584,23 @@ function _renderArchivioFiltrato() {
   });
 
   const cardHTML = (p) => {
-    const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : 'stato-bozza';
-    const statoLabel = p.stato === 'protocollato' ? '📌 Versione definitiva' : p.stato === 'in-corso' ? '✏️ In corso' : '📝 Bozza';
+    const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : p.stato === 'non_redatto' ? 'stato-non-redatto' : 'stato-bozza';
+    const statoLabel = p.stato === 'protocollato' ? '📌 Versione definitiva' : p.stato === 'in-corso' ? '✏️ In corso' : p.stato === 'non_redatto' ? '🚫 Non redatto' : '📝 Bozza';
+    const isChiuso = p.stato === 'protocollato' || p.stato === 'non_redatto';
+    const motivazioneNR = p.non_redatto_motivazione || '';
     return `<div class="pdp-card">
       <div class="pdp-card-info">
         <div class="pdp-card-nome">${p.alunno || '—'}</div>
         <div class="pdp-card-meta">Classe ${p.classe || '—'} · ${p.anno || ''}</div>
         ${p.protocollato_data_str ? `<div style="font-size:0.72rem;color:var(--verde);margin-top:3px">📅 ${p.protocollato_data_str}</div>` : ''}
+        ${p.stato === 'non_redatto' ? `<div style="font-size:0.72rem;color:#6c757d;margin-top:3px">🚫 ${motivazioneNR}</div>` : ''}
       </div>
       <span class="pdp-card-stato ${statoClass}">${statoLabel}</span>
       <div class="pdp-card-azioni">
         <button class="btn-sm btn-sm-blu" onclick="apriEditor('${p.id}')">Apri</button>
         <button class="btn-sm btn-sm-verde" onclick="scaricaPDFDiretto('${p.id}')">⬇️ PDF</button>
-        <button class="btn-sm btn-sm-rosso" onclick="eliminaPDP('${p.id}','${p.alunno}')">Elimina</button>
+        ${!isChiuso ? `<button class="btn-sm" style="background:#6c757d;color:white;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:0.78rem" onclick="segnaNonRedatto('${p.id}','${(p.alunno||'').replace(/'/g,"\\'")}','${p.grado||'primaria'}')">🚫 Non redatto</button>` : ''}
+        ${!isChiuso ? `<button class="btn-sm btn-sm-rosso" onclick="eliminaPDP('${p.id}','${p.alunno}')">Elimina</button>` : ''}
       </div>
     </div>`;
   };
@@ -1973,6 +1982,58 @@ window.creaPDP = async () => {
   }
 };
 
+window.segnaNonRedatto = async (id, nome, grado) => {
+  const organo = (grado === 'secondaria') ? 'CDC' : 'GD';
+  const motivazione = `PDP non redatto per delibera del ${organo}`;
+  if (!confirm(`Confermi che il ${organo} ha deliberato di non redigere il PDP per ${nome}?\n\nIl PDP verrà chiuso con la nota "${motivazione}" e non sarà più modificabile.`)) return;
+  try {
+    const now = new Date();
+    const dataStr = now.toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    const chi = utenteCorrente?.displayName || utenteCorrente?.email || 'Utente';
+    await updateDoc(doc(db, 'pdp', id), {
+      stato: 'non_redatto',
+      non_redatto_organo: organo,
+      non_redatto_motivazione: motivazione,
+      non_redatto_da: chi,
+      non_redatto_data_str: dataStr,
+      non_redattoIl: serverTimestamp()
+    });
+    mostraToast(`🚫 PDP segnato come non redatto`, 'grigio');
+    scriviLog('non_redatto', id, { alunno: nome, chi, organo });
+    caricaPDP(_pdpAmbito);
+  } catch(e) {
+    mostraToast('❌ Errore: ' + (e.code || e.message), 'rosso');
+  }
+};
+
+window.segnaNonRedattoDaEditor = async () => {
+  if (!pdpCorrenteId || !pdpCorrenteDoc) return;
+  const grado = pdpCorrenteDoc.grado || 'primaria';
+  const nome = pdpCorrenteDoc.alunno || 'questo alunno';
+  const organo = grado === 'secondaria' ? 'CDC' : 'GD';
+  const motivazione = `PDP non redatto per delibera del ${organo}`;
+  if (!confirm(`Confermi che il ${organo} ha deliberato di non redigere il PDP per ${nome}?\n\nIl PDP verrà chiuso con la nota "${motivazione}" e non sarà più modificabile.`)) return;
+  try {
+    const now = new Date();
+    const dataStr = now.toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    const chi = utenteCorrente?.displayName || utenteCorrente?.email || 'Utente';
+    await updateDoc(doc(db, 'pdp', pdpCorrenteId), {
+      stato: 'non_redatto',
+      non_redatto_organo: organo,
+      non_redatto_motivazione: motivazione,
+      non_redatto_da: chi,
+      non_redatto_data_str: dataStr,
+      non_redattoIl: serverTimestamp()
+    });
+    mostraToast(`🚫 PDP segnato come non redatto`, 'grigio');
+    scriviLog('non_redatto', pdpCorrenteId, { alunno: nome, chi, organo });
+    pdpCorrenteDoc = { ...pdpCorrenteDoc, stato: 'non_redatto', non_redatto_organo: organo, non_redatto_motivazione: motivazione, non_redatto_da: chi, non_redatto_data_str: dataStr };
+    _aggiornaHeaderEditor(pdpCorrenteDoc);
+  } catch(e) {
+    mostraToast('❌ Errore: ' + (e.code || e.message), 'rosso');
+  }
+};
+
 window.eliminaPDP = async (id, nome) => {
   if (!confirm(`Eliminare il PDP di ${nome}? L'operazione è irreversibile.`)) return;
   await deleteDoc(doc(db, 'pdp', id));
@@ -2070,8 +2131,12 @@ function _aggiornaHeaderEditor(pdp) {
   document.getElementById('editor-alunno-nome').textContent =
     `${pdp.alunno || 'PDP'} — ${pdp.classe || ''} (${pdp.anno || ''})`;
   const isProtocollato = pdp.stato === 'protocollato';
+  const isNonRedatto = pdp.stato === 'non_redatto';
+  const isChiuso = isProtocollato || isNonRedatto;
   const btnP = document.getElementById('btn-protocolla');
-  if (btnP) btnP.style.display = isProtocollato ? 'none' : '';
+  if (btnP) btnP.style.display = isChiuso ? 'none' : '';
+  const btnNR = document.getElementById('btn-non-redatto');
+  if (btnNR) btnNR.style.display = isChiuso ? 'none' : '';
   const btnPdf = document.getElementById('btn-pdf');
   if (btnPdf) btnPdf.style.display = ruoloCorrente === 'master' ? '' : 'none';
 
@@ -2102,6 +2167,25 @@ function _aggiornaHeaderEditor(pdp) {
       );
       document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = true);
       document.querySelectorAll('#area-editing button:not(.guida-btn):not(#banner-definitivo button)').forEach(el => el.disabled = true);
+    }
+  }
+
+  if (isNonRedatto) {
+    const area = document.getElementById('area-editing');
+    if (area && !document.getElementById('banner-non-redatto')) {
+      const banner = document.createElement('div');
+      banner.id = 'banner-non-redatto';
+      banner.style.cssText = 'background:#e9ecef;border:1.5px solid #adb5bd;border-radius:10px;padding:20px 24px;margin:16px;display:flex;gap:16px;align-items:center';
+      banner.innerHTML = `
+        <div style="font-size:2rem">🚫</div>
+        <div>
+          <div style="font-weight:700;color:#495057;font-size:0.95rem">PDP non redatto per delibera del ${pdp.non_redatto_organo || 'GD/CDC'}</div>
+          <div style="font-size:0.82rem;color:#6c757d;margin-top:4px">${pdp.non_redatto_motivazione || ''}</div>
+          <div style="font-size:0.78rem;color:#6c757d;margin-top:2px">Registrato il ${pdp.non_redatto_data_str || '—'} da ${pdp.non_redatto_da || '—'}</div>
+        </div>`;
+      area.prepend(banner);
+      document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = true);
+      document.querySelectorAll('#area-editing button:not(.guida-btn):not(#banner-non-redatto button)').forEach(el => el.disabled = true);
     }
   }
 }
