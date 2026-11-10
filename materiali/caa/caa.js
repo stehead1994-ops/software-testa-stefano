@@ -151,5 +151,50 @@ window.CAA_SCHEDE = [
     "file": "cicala-e-formica-caa.pdf",
     "anteprima": "cicala-e-formica.jpg",
     "pagine": 16
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Fiabe e favole in CAA",
+    "titolo": "Il lupo e il cane",
+    "descrizione": "La favola di Esopo in simboli: il lupo affamato incontra il cane ben nutrito, ma quando vede il collare sceglie di restare libero.",
+    "file": "lupo-e-cane-caa.pdf",
+    "anteprima": "lupo-e-cane.jpg",
+    "pagine": 16
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Filastrocche e canzoni in CAA",
+    "titolo": "Giro giro tondo",
+    "descrizione": "La filastrocca popolare in simboli, un verso per pagina, con la pagina finale che la raccoglie tutta: da cantare facendo il girotondo.",
+    "file": "giro-giro-tondo-caa.pdf",
+    "anteprima": "giro-giro-tondo.jpg",
+    "pagine": 7
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Filastrocche e canzoni in CAA",
+    "titolo": "Cinque scimmiette",
+    "descrizione": "La filastrocca delle scimmiette che saltano sul letto, in una versione in simboli: si conta all'indietro da cinque a zero e si ripete la frase del dottore.",
+    "file": "cinque-scimmiette-caa.pdf",
+    "anteprima": "cinque-scimmiette.jpg",
+    "pagine": 13
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Filastrocche e canzoni in CAA",
+    "titolo": "Se sei felice",
+    "descrizione": "La canzone dei gesti in simboli: battere le mani, battere i piedi, saltare, salutare, abbracciare un amico. Ogni strofa un gesto da fare insieme.",
+    "file": "se-sei-felice-caa.pdf",
+    "anteprima": "se-sei-felice.jpg",
+    "pagine": 9
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Filastrocche e canzoni in CAA",
+    "titolo": "Whisky il ragnetto",
+    "descrizione": "La filastrocca del ragnetto che sale sulla grondaia, viene portato giù dalla pioggia e risale quando torna il sole. Da cantare con i gesti.",
+    "file": "whisky-il-ragnetto-caa.pdf",
+    "anteprima": "whisky-il-ragnetto.jpg",
+    "pagine": 10
   }
 ];
