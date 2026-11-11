@@ -933,7 +933,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
           <option value="bozza">📝 Bozza</option>
           <option value="in-corso">✏️ In corso</option>
           <option value="protocollato">📌 Definitivo</option>
-          <option value="non_redatto">📋 Da non redigere</option>
+          <option value="non_redatto">🚫 Da non redigere</option>
         </select>
         <button onclick="resetFiltroPDP()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;cursor:pointer;color:var(--testo-soft)">✕ Reset</button>
         <span id="filtro-pdp-count" style="font-size:0.8rem;color:var(--testo-soft);margin-left:4px"></span>
@@ -961,7 +961,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
           <option value="bozza">📝 Bozza</option>
           <option value="in-corso">✏️ In corso</option>
           <option value="protocollato">📌 Definitivo</option>
-          <option value="non_redatto">📋 Da non redigere</option>
+          <option value="non_redatto">🚫 Da non redigere</option>
         </select>
         <button onclick="resetFiltroArchivio()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;cursor:pointer;color:var(--testo-soft)">✕ Reset</button>
         <span id="filtro-arch-count" style="font-size:0.8rem;color:var(--testo-soft);margin-left:4px"></span>
@@ -1025,7 +1025,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
       <div class="editor-azioni">
         <button class="btn-header" id="btn-pdf" onclick="esportaPDF()">🖨️ PDF</button>
         <button class="btn-header" id="btn-protocolla" onclick="protocolla()" style="background:rgba(46,125,94,0.4)">✅ PROTOCOLLA PDP</button>
-        <button class="btn-header" id="btn-non-redatto" onclick="segnaNonRedattoDaEditor()" style="background:rgba(108,117,125,0.4)">📋 Da non redigere</button>
+        <button class="btn-header" id="btn-non-redatto" onclick="segnaNonRedattoDaEditor()" style="background:rgba(108,117,125,0.4)">🚫 Da non redigere</button>
+        <button class="btn-header" id="btn-riapri" onclick="riapriDaEditor()" style="background:rgba(255,152,0,0.4);display:none">🔓 Riapri</button>
         <button class="btn-header" onclick="tornaHome()">Chiudi</button>
       </div>
     </div>
@@ -1594,7 +1595,7 @@ function _renderArchivioFiltrato() {
 
   const cardHTML = (p) => {
     const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : p.stato === 'non_redatto' ? 'stato-non-redatto' : 'stato-bozza';
-    const statoLabel = p.stato === 'protocollato' ? '📌 Versione definitiva' : p.stato === 'in-corso' ? '✏️ In corso' : p.stato === 'non_redatto' ? '📋 Da non redigere' : '📝 Bozza';
+    const statoLabel = p.stato === 'protocollato' ? '📌 Versione definitiva' : p.stato === 'in-corso' ? '✏️ In corso' : p.stato === 'non_redatto' ? '🚫 Da non redigere' : '📝 Bozza';
     const isChiuso = p.stato === 'protocollato' || p.stato === 'non_redatto';
     const motivazioneNR = p.non_redatto_motivazione || '';
     return `<div class="pdp-card">
@@ -1603,12 +1604,14 @@ function _renderArchivioFiltrato() {
         <div class="pdp-card-meta">Classe ${p.classe || '—'} · ${p.anno || ''}</div>
         ${p.protocollato_data_str ? `<div style="font-size:0.72rem;color:var(--verde);margin-top:3px">📅 ${p.protocollato_data_str}</div>` : ''}
         ${p.stato === 'non_redatto' ? `<div style="font-size:0.72rem;color:#6c757d;margin-top:3px">🚫 ${motivazioneNR}</div>` : ''}
+        ${p.riaperto_da ? `<div style="font-size:0.72rem;color:#e65100;margin-top:3px">🔓 Riaperto il ${p.riaperto_data_str || '—'} da ${p.riaperto_da}</div>` : ''}
       </div>
       <span class="pdp-card-stato ${statoClass}">${statoLabel}</span>
       <div class="pdp-card-azioni">
         <button class="btn-sm btn-sm-blu" onclick="apriEditor('${p.id}')">Apri</button>
         <button class="btn-sm btn-sm-verde" onclick="scaricaPDFDiretto('${p.id}')">⬇️ PDF</button>
-        ${!isChiuso ? `<button class="btn-sm" style="background:#6c757d;color:white;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:0.78rem" onclick="segnaNonRedatto('${p.id}','${(p.alunno||'').replace(/'/g,"\\'")}','${p.grado||'primaria'}')">📋 Da non redigere</button>` : ''}
+        ${!isChiuso ? `<button class="btn-sm" style="background:#6c757d;color:white;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:0.78rem" onclick="segnaNonRedatto('${p.id}','${(p.alunno||'').replace(/'/g,"\\'")}','${p.grado||'primaria'}')">🚫 Da non redigere</button>` : ''}
+        ${isChiuso && ruoloCorrente === 'master' ? `<button class="btn-sm" style="background:#ff9800;color:white;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:0.78rem" onclick="riapriPDP('${p.id}','${(p.alunno||'').replace(/'/g,"\\'")}','${p.stato}')">🔓 Riapri</button>` : ''}
         ${!isChiuso ? `<button class="btn-sm btn-sm-rosso" onclick="eliminaPDP('${p.id}','${p.alunno}')">Elimina</button>` : ''}
       </div>
     </div>`;
@@ -2007,7 +2010,7 @@ window.segnaNonRedatto = async (id, nome, grado) => {
       non_redatto_data_str: dataStr,
       non_redattoIl: serverTimestamp()
     });
-    mostraToast(`📋 PDP segnato come da non redigere`, 'grigio');
+    mostraToast(`🚫 PDP segnato come da non redigere`, 'grigio');
     scriviLog('non_redatto', id, { alunno: nome, chi, organo });
     caricaPDP(_pdpAmbito);
   } catch(e) {
@@ -2034,7 +2037,7 @@ window.segnaNonRedattoDaEditor = async () => {
       non_redatto_data_str: dataStr,
       non_redattoIl: serverTimestamp()
     });
-    mostraToast(`📋 PDP segnato come da non redigere`, 'grigio');
+    mostraToast(`🚫 PDP segnato come da non redigere`, 'grigio');
     scriviLog('non_redatto', pdpCorrenteId, { alunno: nome, chi, organo });
     pdpCorrenteDoc = { ...pdpCorrenteDoc, stato: 'non_redatto', non_redatto_organo: organo, non_redatto_motivazione: motivazione, non_redatto_da: chi, non_redatto_data_str: dataStr };
     _aggiornaHeaderEditor(pdpCorrenteDoc);
@@ -2047,6 +2050,67 @@ window.eliminaPDP = async (id, nome) => {
   if (!confirm(`Eliminare il PDP di ${nome}? L'operazione è irreversibile.`)) return;
   await deleteDoc(doc(db, 'pdp', id));
   mostraToast('PDP eliminato', 'rosso');
+};
+
+// ─── RIAPERTURA PDP (solo master) ───
+window.riapriPDP = async (id, nome, statoAttuale) => {
+  if (ruoloCorrente !== 'master') return;
+  const isNR = statoAttuale === 'non_redatto';
+  const azione = isNR ? 'redigere il PDP (revoca delibera)' : 'riaprire il PDP per revisione';
+  const motivo = prompt(`Motivo della riapertura di "${nome}":\n(campo obbligatorio)`);
+  if (!motivo || !motivo.trim()) { alert('Inserisci il motivo della riapertura.'); return; }
+  try {
+    const now = new Date();
+    const dataStr = now.toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    const chi = utenteCorrente?.displayName || utenteCorrente?.email || 'Utente';
+    const nuovoStato = isNR ? 'bozza' : 'in-corso';
+    await updateDoc(doc(db, 'pdp', id), {
+      stato: nuovoStato,
+      riaperto_da: chi,
+      riaperto_data_str: dataStr,
+      riapertoIl: serverTimestamp(),
+      riaperto_motivo: motivo.trim(),
+      riaperto_da_stato: statoAttuale
+    });
+    mostraToast(`🔓 PDP riaperto (${nuovoStato === 'bozza' ? 'bozza' : 'in corso'})`, 'blu');
+    scriviLog('riapertura_pdp', id, { alunno: nome, chi, motivo: motivo.trim(), da_stato: statoAttuale });
+    caricaPDP(_pdpAmbito);
+  } catch(e) {
+    mostraToast('❌ Errore: ' + (e.code || e.message), 'rosso');
+  }
+};
+
+window.riapriDaEditor = async () => {
+  if (ruoloCorrente !== 'master' || !pdpCorrenteId || !pdpCorrenteDoc) return;
+  const nome = pdpCorrenteDoc.alunno || 'questo alunno';
+  const statoAttuale = pdpCorrenteDoc.stato;
+  const isNR = statoAttuale === 'non_redatto';
+  const motivo = prompt(`Motivo della riapertura del PDP di "${nome}":\n(campo obbligatorio)`);
+  if (!motivo || !motivo.trim()) { alert('Inserisci il motivo della riapertura.'); return; }
+  try {
+    const now = new Date();
+    const dataStr = now.toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    const chi = utenteCorrente?.displayName || utenteCorrente?.email || 'Utente';
+    const nuovoStato = isNR ? 'bozza' : 'in-corso';
+    await updateDoc(doc(db, 'pdp', pdpCorrenteId), {
+      stato: nuovoStato,
+      riaperto_da: chi,
+      riaperto_data_str: dataStr,
+      riapertoIl: serverTimestamp(),
+      riaperto_motivo: motivo.trim(),
+      riaperto_da_stato: statoAttuale
+    });
+    mostraToast(`🔓 PDP riaperto (${nuovoStato === 'bozza' ? 'bozza' : 'in corso'})`, 'blu');
+    scriviLog('riapertura_pdp', pdpCorrenteId, { alunno: nome, chi, motivo: motivo.trim(), da_stato: statoAttuale });
+    pdpCorrenteDoc = { ...pdpCorrenteDoc, stato: nuovoStato, riaperto_da: chi, riaperto_data_str: dataStr, riaperto_motivo: motivo.trim() };
+    // Rimuovi banner e riabilita campi
+    ['banner-definitivo','banner-non-redatto'].forEach(id => { const el = document.getElementById(id); if (el) el.remove(); });
+    document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = false);
+    document.querySelectorAll('#area-editing button').forEach(el => el.disabled = false);
+    _aggiornaHeaderEditor(pdpCorrenteDoc);
+  } catch(e) {
+    mostraToast('❌ Errore: ' + (e.code || e.message), 'rosso');
+  }
 };
 
 // ─── TOGGLE PASSWORD VISIBILITÀ ───
@@ -2146,6 +2210,8 @@ function _aggiornaHeaderEditor(pdp) {
   if (btnP) btnP.style.display = isChiuso ? 'none' : '';
   const btnNR = document.getElementById('btn-non-redatto');
   if (btnNR) btnNR.style.display = isChiuso ? 'none' : '';
+  const btnRiapri = document.getElementById('btn-riapri');
+  if (btnRiapri) btnRiapri.style.display = (isChiuso && ruoloCorrente === 'master') ? '' : 'none';
   const btnPdf = document.getElementById('btn-pdf');
   if (btnPdf) btnPdf.style.display = ruoloCorrente === 'master' ? '' : 'none';
 
@@ -2176,6 +2242,19 @@ function _aggiornaHeaderEditor(pdp) {
       );
       document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = true);
       document.querySelectorAll('#area-editing button:not(.guida-btn):not(#banner-definitivo button)').forEach(el => el.disabled = true);
+    }
+  }
+
+  // Banner storico riapertura (se il PDP è stato riaperto in passato)
+  if (pdp.riaperto_da && !document.getElementById('banner-riapertura')) {
+    const area = document.getElementById('area-editing');
+    if (area) {
+      const b = document.createElement('div');
+      b.id = 'banner-riapertura';
+      b.style.cssText = 'background:#fff3e0;border:1.5px solid #ffb74d;border-radius:10px;padding:12px 18px;margin:12px 16px 0;font-size:0.82rem;color:#e65100;display:flex;gap:10px;align-items:center';
+      const daStato = pdp.riaperto_da_stato === 'non_redatto' ? '🚫 Da non redigere' : '📌 Versione definitiva';
+      b.innerHTML = `<span style="font-size:1.3rem">🔓</span><span>Riaperto il <strong>${pdp.riaperto_data_str || '—'}</strong> da ${pdp.riaperto_da} — "${pdp.riaperto_motivo || '—'}" <span style="opacity:0.7">(era: ${daStato})</span></span>`;
+      area.prepend(b);
     }
   }
 
