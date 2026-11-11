@@ -248,8 +248,7 @@
 (function(){
   "use strict";
   var CATEGORIE = [
-    {id:"storie-caa", nome:"Storie in CAA",            ico:"📖"},
-    {id:"tabelle-caa",nome:"Tabelle e simboli CAA",    ico:"🗂️"},
+    {id:"caa",        nome:"Materiale in CAA",         ico:"🗣️"},
     {id:"schede",     nome:"Schede e attività",        ico:"✏️"},
     {id:"docente",    nome:"Strumenti per il docente", ico:"📋"},
     {id:"collaborazioni", nome:"Con altre creator",   ico:"🤝"}
@@ -258,12 +257,12 @@
     "italiano":"Italiano","matematica":"Matematica","scienze":"Scienze","storia":"Storia",
     "geografia":"Geografia","inglese":"Inglese","arte":"Arte e immagine","musica":"Musica",
     "ed-fisica":"Educazione fisica","tecnologia":"Tecnologia","ed-civica":"Educazione civica",
-    "autonomie":"Autonomie e vita quotidiana","emozioni":"Emozioni e relazioni","trasversale":"Trasversale"
+    "autonomie":"Autonomie e vita quotidiana","emozioni":"Emozioni e relazioni","religione":"Religione","trasversale":"Trasversale"
   };
   var FORMATI = {pdf:"PDF", pagina:"Pagina web", presentazione:"Presentazione", video:"Video", doc:"Documento", zip:"Cartella"};
   var CTA = {pdf:"Scarica il PDF", pagina:"Apri", presentazione:"Apri la presentazione", video:"Guarda", doc:"Scarica", zip:"Scarica"};
 
-  var dati = (window.MATERIALI || []).slice().sort(function(a,b){ return (b.data||"").localeCompare(a.data||""); });
+  var dati = (window.MATERIALI || []).concat((window.CAA_SCHEDE||[]).map(function(c){ return {titolo:c.titolo, descrizione:c.descrizione, categoria:"caa", discipline:[c.disciplina], ordine:c.argomento, formato:"pdf", file:"../caa/file/"+c.file, anteprima:c.anteprima?"../caa/anteprime/"+c.anteprima:"", pagine:c.pagine, tag:["CAA","simboli",c.argomento], data:c.data||"2026-11"}; })).sort(function(a,b){ return (b.data||"").localeCompare(a.data||""); });
   var stato = {cat:"tutti", disc:"", q:""};
 
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
@@ -283,10 +282,9 @@
     voci.forEach(function(c){
       var n = c.id==="tutti" ? dati.length : dati.filter(function(m){return m.categoria===c.id;}).length;
       var on = stato.cat===c.id;
+      if(!n && c.id!=="tutti" && !on) return;
       html += '<li role="option" tabindex="0" data-cat="'+c.id+'" aria-selected="'+on+'" class="'+(on?"active ":"")+(n?"":"empty")+'"><span><span class="cat-ico" aria-hidden="true">'+c.ico+'</span>'+esc(c.nome)+'</span><span class="cat-count">'+n+'</span></li>';
     });
-    var nCaa=(window.CAA_SCHEDE||[]).length;
-    html+='<li class="cat-link" data-vt-n="'+nCaa+' schede in simboli"><a href="caa/index.html"><span><span class="cat-ico" aria-hidden="true">🗣️</span>Materiale in CAA</span><span class="cat-count">'+nCaa+'</span></a></li>';
     ul.innerHTML=html;
   }
 
@@ -331,7 +329,7 @@
         '<h3 class="card-title">'+esc(m.titolo)+'</h3>'+
         '<p class="card-desc">'+esc(m.descrizione)+'</p>'+
         (tags?'<div class="card-tags">'+tags+'</div>':'')+
-        '<div class="card-foot"><span>'+esc(FORMATI[f]||f)+(m.data?' · '+dataIt(m.data):'')+'</span>'+(link?'<span class="card-cta">'+CTA[f]+' →</span>':'<span>In preparazione</span>')+'</div>'+
+        '<div class="card-foot"><span>'+esc(FORMATI[f]||f)+(m.pagine?' · '+m.pagine+' pagine':(m.data?' · '+dataIt(m.data):''))+'</span>'+(link?'<span class="card-cta">'+CTA[f]+' →</span>':'<span>In preparazione</span>')+'</div>'+
       '</div>';
     var cred = creditiHtml(m);
     if(cred){

@@ -8,7 +8,7 @@
    Campi:
      titolo       testo della scheda
      descrizione  una o due frasi
-     categoria    storie-caa | tabelle-caa | schede | docente
+     categoria    schede | docente | collaborazioni   (le schede in CAA stanno in materiali/caa/caa.js)
      discipline   una o più tra: italiano, matematica, scienze, storia,
                   geografia, inglese, arte, musica, ed-fisica, tecnologia,
                   ed-civica, autonomie, emozioni, trasversale
