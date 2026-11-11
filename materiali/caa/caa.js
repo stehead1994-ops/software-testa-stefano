@@ -241,5 +241,50 @@ window.CAA_SCHEDE = [
     "file": "i-colori-caa.pdf",
     "anteprima": "i-colori.jpg",
     "pagine": 13
+  },
+  {
+    "disciplina": "scienze",
+    "argomento": "Il corpo umano",
+    "titolo": "Il corpo umano",
+    "descrizione": "Le parti del corpo in simboli, dalla testa ai piedi: capelli, faccia, collo, pancia, braccia, mani, gambe. Con le domande finali.",
+    "file": "il-corpo-umano-caa.pdf",
+    "anteprima": "il-corpo-umano.jpg",
+    "pagine": 14
+  },
+  {
+    "disciplina": "matematica",
+    "argomento": "Le forme geometriche",
+    "titolo": "Le forme",
+    "descrizione": "Cerchio, quadrato, triangolo e rettangolo in simboli, con il numero dei lati e una cosa di tutti i giorni per ogni forma. Con le domande finali.",
+    "file": "le-forme-caa.pdf",
+    "anteprima": "le-forme.jpg",
+    "pagine": 11
+  },
+  {
+    "disciplina": "ed-civica",
+    "argomento": "I mestieri",
+    "titolo": "I mestieri",
+    "descrizione": "Dieci mestieri in simboli, ciascuno con quello che fa: il medico cura, il pompiere spegne il fuoco, il panettiere fa il pane. Con le domande finali.",
+    "file": "i-mestieri-caa.pdf",
+    "anteprima": "i-mestieri.jpg",
+    "pagine": 13
+  },
+  {
+    "disciplina": "autonomie",
+    "argomento": "I negozi",
+    "titolo": "I negozi",
+    "descrizione": "Dove compro che cosa: panetteria, macelleria, fruttivendolo, pescheria, farmacia, cartoleria e supermercato in simboli, fino alla cassa. Con le domande finali.",
+    "file": "i-negozi-caa.pdf",
+    "anteprima": "i-negozi.jpg",
+    "pagine": 11
+  },
+  {
+    "disciplina": "ed-civica",
+    "argomento": "La raccolta differenziata",
+    "titolo": "La raccolta differenziata",
+    "descrizione": "Come si separano i rifiuti, in simboli: carta, plastica, vetro, umido e indifferenziato, ciascuno nel suo bidone. Con le domande finali per esercitarsi.",
+    "file": "raccolta-differenziata-caa.pdf",
+    "anteprima": "raccolta-differenziata.jpg",
+    "pagine": 10
   }
 ];
