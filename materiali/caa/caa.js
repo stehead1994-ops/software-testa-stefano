@@ -196,5 +196,50 @@ window.CAA_SCHEDE = [
     "file": "whisky-il-ragnetto-caa.pdf",
     "anteprima": "whisky-il-ragnetto.jpg",
     "pagine": 10
+  },
+  {
+    "disciplina": "scienze",
+    "argomento": "Le stagioni",
+    "titolo": "Le stagioni",
+    "descrizione": "Le quattro stagioni in simboli: che cosa succede in natura, che cosa facciamo, come ci vestiamo. Con le domande finali.",
+    "file": "le-stagioni-caa.pdf",
+    "anteprima": "le-stagioni.jpg",
+    "pagine": 13
+  },
+  {
+    "disciplina": "scienze",
+    "argomento": "Il tempo atmosferico",
+    "titolo": "Che tempo fa?",
+    "descrizione": "Sole, nuvole, pioggia, neve, vento, temporale, nebbia e arcobaleno in simboli, con che cosa usiamo quando cambia il tempo. Utile anche per il calendario del mattino.",
+    "file": "il-tempo-atmosferico-caa.pdf",
+    "anteprima": "il-tempo-atmosferico.jpg",
+    "pagine": 12
+  },
+  {
+    "disciplina": "scienze",
+    "argomento": "I cinque sensi",
+    "titolo": "I cinque sensi",
+    "descrizione": "Vista, udito, olfatto, gusto e tatto in simboli: quale parte del corpo usiamo e che cosa scopriamo con ciascun senso. Con le domande finali.",
+    "file": "i-cinque-sensi-caa.pdf",
+    "anteprima": "i-cinque-sensi.jpg",
+    "pagine": 14
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Le vocali",
+    "titolo": "Le vocali",
+    "descrizione": "Le cinque vocali in maiuscolo, ciascuna con parole in simboli che iniziano con quella lettera, e un esercizio finale: con quale vocale inizia la parola?",
+    "file": "le-vocali-caa.pdf",
+    "anteprima": "le-vocali.jpg",
+    "pagine": 8
+  },
+  {
+    "disciplina": "arte",
+    "argomento": "I colori",
+    "titolo": "I colori",
+    "descrizione": "Dieci colori in simboli, ciascuno con una cosa di tutti i giorni: la fragola rossa, il sole giallo, il mare blu, l'erba verde e gli altri. Con le domande finali.",
+    "file": "i-colori-caa.pdf",
+    "anteprima": "i-colori.jpg",
+    "pagine": 13
   }
 ];
