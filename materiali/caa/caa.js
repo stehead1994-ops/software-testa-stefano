@@ -286,5 +286,50 @@ window.CAA_SCHEDE = [
     "file": "raccolta-differenziata-caa.pdf",
     "anteprima": "raccolta-differenziata.jpg",
     "pagine": 10
+  },
+  {
+    "disciplina": "ed-civica",
+    "argomento": "Educazione stradale",
+    "titolo": "Per strada",
+    "descrizione": "Educazione stradale in simboli: il semaforo, le strisce pedonali, guardare a destra e a sinistra, la mano all'adulto, la cintura e il casco. Con le domande finali.",
+    "file": "segnali-stradali-caa.pdf",
+    "anteprima": "segnali-stradali.jpg",
+    "pagine": 12
+  },
+  {
+    "disciplina": "emozioni",
+    "argomento": "Le emozioni e la gentilezza",
+    "titolo": "Le emozioni e la gentilezza",
+    "descrizione": "Felice, triste, arrabbiato, paura e sorpresa in situazioni di tutti i giorni, che cosa posso fare quando sono arrabbiato e le parole gentili: per favore, grazie, scusa, aspetto il mio turno.",
+    "file": "emozioni-e-gentilezza-caa.pdf",
+    "anteprima": "emozioni-e-gentilezza.jpg",
+    "pagine": 15
+  },
+  {
+    "disciplina": "storia",
+    "argomento": "Il tempo",
+    "titolo": "I giorni della settimana",
+    "descrizione": "I sette giorni della settimana in simboli, i giorni di scuola e di festa, ieri oggi e domani, e due pagine da completare ogni mattina: oggi è…, domani sarà…",
+    "file": "giorni-della-settimana-caa.pdf",
+    "anteprima": "giorni-della-settimana.jpg",
+    "pagine": 11
+  },
+  {
+    "disciplina": "geografia",
+    "argomento": "Lo spazio e i luoghi",
+    "titolo": "Sopra, sotto, dentro, fuori",
+    "descrizione": "I concetti spaziali in simboli con oggetti e animali di tutti i giorni: sopra e sotto, dentro e fuori, davanti e dietro, vicino e lontano, in mezzo. Con le domande finali.",
+    "file": "sopra-sotto-dentro-fuori-caa.pdf",
+    "anteprima": "sopra-sotto-dentro-fuori.jpg",
+    "pagine": 12
+  },
+  {
+    "disciplina": "autonomie",
+    "argomento": "La casa",
+    "titolo": "La casa",
+    "descrizione": "Le stanze della casa e che cosa ci facciamo, in simboli: cucina, soggiorno, camera, bagno e giardino. Con le domande finali.",
+    "file": "la-casa-caa.pdf",
+    "anteprima": "la-casa.jpg",
+    "pagine": 11
   }
 ];
