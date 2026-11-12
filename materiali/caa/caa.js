@@ -331,5 +331,14 @@ window.CAA_SCHEDE = [
     "file": "la-casa-caa.pdf",
     "anteprima": "la-casa.jpg",
     "pagine": 11
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Le sillabe",
+    "titolo": "Le sillabe: fusione, inversione e riordino",
+    "descrizione": "Dieci schede di letto-scrittura con simboli e sillabe a colori: unire le sillabe, completare le parole bisillabe, mettere in ordine e ritagliare, scambiare le sillabe per creare parole nuove e riconoscere la sillaba uguale.",
+    "file": "sillabe-fusione-inversione-riordino-caa.pdf",
+    "anteprima": "sillabe-fusione-inversione-riordino.jpg",
+    "pagine": 10
   }
 ];
