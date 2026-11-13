@@ -342,6 +342,15 @@ window.CAA_SCHEDE = [
     "pagine": 10
   },
   {
+    "disciplina": "religione",
+    "argomento": "La Pasqua",
+    "titolo": "La Pasqua ebraica e la Pasqua cristiana",
+    "descrizione": "Otto schede in simboli: la storia della Pasqua ebraica da riordinare, i cibi della cena e il loro significato, il confronto tra Pasqua ebraica e cristiana, vero o falso e le parole della Pasqua da completare.",
+    "file": "pasqua-ebraica-e-cristiana-caa.pdf",
+    "anteprima": "pasqua-ebraica-e-cristiana.jpg",
+    "pagine": 8
+  },
+  {
     "disciplina": "matematica",
     "argomento": "Classificare",
     "titolo": "Le categorie",
@@ -385,14 +394,5 @@ window.CAA_SCHEDE = [
     "file": "carnevale-caa.pdf",
     "anteprima": "carnevale.jpg",
     "pagine": 11
-  },
-  {
-    "disciplina": "religione",
-    "argomento": "La Pasqua",
-    "titolo": "La Pasqua ebraica e la Pasqua cristiana",
-    "descrizione": "Otto schede in simboli: la storia della Pasqua ebraica da riordinare, i cibi della cena e il loro significato, il confronto tra Pasqua ebraica e cristiana, vero o falso e le parole della Pasqua da completare.",
-    "file": "pasqua-ebraica-e-cristiana-caa.pdf",
-    "anteprima": "pasqua-ebraica-e-cristiana.jpg",
-    "pagine": 8
   }
 ];
