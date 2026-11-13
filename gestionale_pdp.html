@@ -914,6 +914,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
       <button class="tab-btn" onclick="showTab('archivio')" id="tab-archivio-btn" style="display:none">🗂️ Archivio per ordine</button>
       <button class="tab-btn" onclick="showTab('logs')" id="tab-logs-btn" style="display:none">📋 Log accessi</button>
       <button class="tab-btn" onclick="showTab('utenti')" id="tab-utenti-btn">👥 Utenti</button>
+      <button class="tab-btn" onclick="scaricaBackup()" id="tab-backup-btn" style="display:none" title="Scarica una copia completa di tutti i PDP">💾 Scarica backup</button>
     </div>
     <div id="tab-pdp">
       <div id="filtri-pdp" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center">
@@ -1283,6 +1284,8 @@ onAuthStateChanged(auth, async (user) => {
   if (tabArchivio) tabArchivio.style.display = ruoloCorrente === 'master' ? '' : 'none';
   const tabLogs = document.getElementById('tab-logs-btn');
   if (tabLogs) tabLogs.style.display = ruoloCorrente === 'master' ? '' : 'none';
+  const tabBackup = document.getElementById('tab-backup-btn');
+  if (tabBackup) tabBackup.style.display = ruoloCorrente === 'master' ? '' : 'none';
   // Crea PDP: master e referente
   if (btnNuovo)  btnNuovo.style.display  = ['master','admin'].includes(ruoloCorrente) ? '' : 'none';
 
@@ -1369,6 +1372,8 @@ async function rimuoviPresenza() {
 }
 
 window.tornaHome = async () => {
+  // Salva le modifiche ancora in sospeso prima di lasciare l'editor
+  await _salvaSeInSospeso();
   await rimuoviPresenza();
   if (unsubPDP) { unsubPDP(); unsubPDP = null; }
   pdpCorrenteId = null;
@@ -1384,7 +1389,23 @@ window.tornaHome = async () => {
 };
 
 // Cleanup alla chiusura del browser
-window.addEventListener('beforeunload', () => { rimuoviPresenza(); });
+window.addEventListener('beforeunload', (e) => {
+  // Se c'è un salvataggio in sospeso o in corso, avvia il salvataggio e chiedi conferma
+  if (_salvataggioInSospeso || _salvataggiInCorso > 0) {
+    if (_salvataggioInSospeso) { clearTimeout(autosaveTimer); salvaOra(); }
+    e.preventDefault();
+    e.returnValue = '';
+    return '';
+  }
+  rimuoviPresenza();
+});
+// Quando la scheda va in secondo piano (cambio scheda, blocco schermo, telefono) salva subito
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && _salvataggioInSospeso) { clearTimeout(autosaveTimer); salvaOra(); }
+});
+window.addEventListener('pagehide', () => {
+  if (_salvataggioInSospeso) { clearTimeout(autosaveTimer); salvaOra(); }
+});
 
 // ─── TABS MASTER ───
 window.showTab = (tab) => {
@@ -1439,7 +1460,7 @@ async function caricaPDP(ambito = null) {
   try {
     const q = query(collection(db, 'pdp'), orderBy('creatoIl', 'desc'));
     const snap = await getDocs(q);
-    _pdpAllDocs = snap.docs.map(d => ({_ref: d.id, ...d.data(), _id: d.id}));
+    _pdpAllDocs = snap.docs.map(d => ({_ref: d.id, ...d.data(), _id: d.id})).filter(p => p.stato !== 'eliminato');
     _renderListaPDP();
   } catch(e) {
     if (lista) lista.innerHTML = '<div style="padding:1rem;color:#c0392b">⚠️ Errore caricamento PDP. Riprova tra qualche minuto.</div>';
@@ -1551,6 +1572,7 @@ async function renderArchivio() {
   window._archivioCache = {};
   _archivioAllDocs = [];
   snap.docs.forEach(d => {
+    if (d.data().stato === 'eliminato') return;
     window._archivioCache[d.id] = d.data();
     _archivioAllDocs.push({id: d.id, ...d.data()});
   });
@@ -1652,6 +1674,8 @@ const AZIONE_LABEL = {
   'apertura_pdp': '👁️ Apertura PDP',
   'modifica_pdp': '✏️ Modifica PDP',
   'modifica_campo': '🔄 Modifica campo',
+  'eliminazione_pdp': '🗑️ Eliminazione PDP',
+  'versione_precedente': '💾 Copia di sicurezza',
   'versione_definitiva': '📌 Versione definitiva',
   'download_pdf': '⬇️ Download PDF',
 };
@@ -1693,7 +1717,8 @@ function _renderLogsFiltrati() {
   const fPersona = document.getElementById('filtro-log-persona')?.value || '';
   const fPdp     = document.getElementById('filtro-log-pdp')?.value     || '';
 
-  let docs = _logsAllDocs;
+  // Le copie di sicurezza restano nel database ma non affollano l'elenco
+  let docs = _logsAllDocs.filter(l => l.azione !== 'versione_precedente');
   if (fData)    docs = docs.filter(l => {
     const ts = l.ts?.toDate?.();
     if (!ts) return false;
@@ -2047,9 +2072,51 @@ window.segnaNonRedattoDaEditor = async () => {
 };
 
 window.eliminaPDP = async (id, nome) => {
-  if (!confirm(`Eliminare il PDP di ${nome}? L'operazione è irreversibile.`)) return;
-  await deleteDoc(doc(db, 'pdp', id));
-  mostraToast('PDP eliminato', 'rosso');
+  if (!confirm(`Eliminare il PDP di ${nome}?\n\nIl PDP sparirà dagli elenchi. I dati restano conservati nel database e possono essere ripristinati.`)) return;
+  try {
+    // Nessuna cancellazione fisica: il documento viene solo nascosto
+    const snapEl = await getDoc(doc(db, 'pdp', id));
+    const statoPrima = snapEl.exists() ? (snapEl.data().stato || 'bozza') : 'bozza';
+    await updateDoc(doc(db, 'pdp', id), {
+      stato: 'eliminato',
+      eliminato_da: utenteCorrente?.displayName || utenteCorrente?.email || 'Utente',
+      eliminato_stato_precedente: statoPrima,
+      eliminatoIl: serverTimestamp()
+    });
+    scriviLog('eliminazione_pdp', id, { alunno: nome, stato_precedente: statoPrima });
+    mostraToast('PDP eliminato (recuperabile)', 'rosso');
+    caricaPDP(_pdpAmbito);
+  } catch(e) {
+    mostraToast('❌ Errore: ' + (e.code || e.message), 'rosso');
+  }
+};
+
+// ─── BACKUP COMPLETO (solo master) ───
+// Scarica sul computer un file con tutti i PDP così come sono nel database.
+window.scaricaBackup = async () => {
+  if (ruoloCorrente !== 'master') return;
+  try {
+    mostraToast('⏳ Preparo il backup…', 'blu');
+    const snap = await getDocs(collection(db, 'pdp'));
+    const pdp = snap.docs.map(d => {
+      const dato = d.data();
+      const conv = {};
+      Object.keys(dato).forEach(k => { const v = dato[k]; conv[k] = (v && typeof v.toDate === 'function') ? v.toDate().toISOString() : v; });
+      return { id: d.id, ...conv };
+    });
+    const ora = new Date();
+    const stamp = ora.toISOString().slice(0, 16).replace(/[:T]/g, '-');
+    const blob = new Blob([JSON.stringify({ creato: ora.toISOString(), totale: pdp.length, pdp }, null, 1)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'backup_pdp_' + stamp + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    scriviLog('backup_scaricato', null, { totale: pdp.length });
+    mostraToast('✅ Backup scaricato: ' + pdp.length + ' PDP', 'verde');
+  } catch(e) {
+    mostraToast('❌ Backup non riuscito: ' + (e.code || e.message), 'rosso');
+  }
 };
 
 // ─── RIAPERTURA PDP (solo master) ───
@@ -2132,7 +2199,7 @@ window.verificaPW = async () => {
   if (!pw) return;
   try {
     const snap = await getDocs(collection(db, 'pdp'));
-    const trovato = snap.docs.find(d => (d.data().password || '').toUpperCase() === pw);
+    const trovato = snap.docs.find(d => d.data().stato !== 'eliminato' && (d.data().password || '').toUpperCase() === pw);
     if (!trovato) { errEl.style.display = 'block'; return; }
     apriEditor(trovato.id);
   } catch(e) {
@@ -2143,6 +2210,8 @@ window.verificaPW = async () => {
 
 // ─── EDITOR PDP (form reale integrato) ───
 window.apriEditor = async (id) => {
+  // Prima di cambiare PDP, salva le modifiche ancora in sospeso su quello aperto
+  await _salvaSeInSospeso();
   pdpCorrenteId = id;
   if (unsubPDP) unsubPDP();
   _formIniettato = false;
@@ -2298,7 +2367,13 @@ function _ripristinaDatiFirebase(dati, grado) {
   // Ripristina tutti i campi per id o data-campo (escludi radio — gestiti sotto)
   area.querySelectorAll('input:not([type="radio"]), select, textarea').forEach((el, i) => {
     if (el.disabled || el.type === 'button' || el.type === 'submit') return;
-    const key = el.dataset.campo || el.id || ('_idx_' + i);
+    if (el.closest('.riga-dinamica')) return; // le righe dinamiche si ripristinano da _righe
+    let key = el.dataset.campo || el.id || ('_idx_' + i);
+    // Compatibilità: la scelta IRC / Alternativa era salvata con una chiave legata alla posizione
+    if (key === 'mat_nome_irc' && !(key in dati)) {
+      const vecchia = Object.keys(dati).find(k => /^_idx_\d+$/.test(k) && (dati[k] === 'irc' || dati[k] === 'alt'));
+      if (vecchia) key = vecchia;
+    }
     if (!key || !(key in dati)) return;
     if (el.type === 'checkbox') el.checked = !!dati[key];
     else el.value = dati[key] || '';
@@ -2427,13 +2502,29 @@ function scheduleAutosave() {
   const lbl = document.getElementById('autosave-label');
   if (dot) dot.classList.add('saving');
   if (lbl) lbl.textContent = 'Salvataggio…';
+  _salvataggioInSospeso = true;
   autosaveTimer = setTimeout(salvaOra, 1500);
 }
 
+let _salvataggioInSospeso = false;   // c'è un salvataggio programmato non ancora partito
+let _salvataggiInCorso = 0;          // scritture verso il database non ancora confermate
+const _versioniSalvate = new Set();  // PDP di cui in questa sessione è già stata salvata la copia di sicurezza
+
+async function _salvaSeInSospeso() {
+  if (!_salvataggioInSospeso) return;
+  clearTimeout(autosaveTimer);
+  try { await salvaOra(); } catch(e) { console.warn('Salvataggio in sospeso non riuscito:', e); }
+}
+
 async function salvaOra() {
+  _salvataggioInSospeso = false;
   if (!pdpCorrenteId) return;
   // FIX: non sovrascrivere dati esistenti se il form è durante caricamento
   if (_caricamentoPDP) return;
+  // Fissa subito a quale PDP appartiene questo salvataggio: se nel frattempo
+  // l'utente apre un'altra scheda, nulla finisce nel PDP sbagliato.
+  const idSalvataggio = pdpCorrenteId;
+  const docSalvataggio = pdpCorrenteDoc;
   const nuoviDati = {};
   const area = document.getElementById('area-editing');
   if (!area) return;
@@ -2441,6 +2532,8 @@ async function salvaOra() {
   // Raccogli TUTTI i campi nell'area editing
   area.querySelectorAll('input, select, textarea').forEach((el, i) => {
     if (el.disabled || el.type === 'button' || el.type === 'submit') return;
+    // Le righe dinamiche sono salvate a parte in _righe: niente chiavi per posizione
+    if (el.closest('.riga-dinamica')) return;
 
     if (el.type === 'checkbox') {
       // Checkbox con name: salva come cb_name_value
@@ -2495,7 +2588,7 @@ async function salvaOra() {
   // form non mostra (es. materie di un altro grado) restano intatti nel database.
   // Un valore già presente viene cambiato o cancellato solo se l'utente ha
   // toccato quel campo; un campo ancora vuoto può sempre essere compilato.
-  const datiPrecedenti = pdpCorrenteDoc?.dati || {};
+  const datiPrecedenti = docSalvataggio?.dati || {};
   const _vuoto = v => v === undefined || v === null || v === false || String(v).trim() === '';
   const _posizionale = k => /^(_idx_|_cb_|_r_)/.test(k);
   const modifiche = {};
@@ -2532,21 +2625,42 @@ async function salvaOra() {
     }
   }
 
+  _salvataggiInCorso++;
   try {
+    // Copia di sicurezza: prima della prima modifica di questa sessione su questo PDP,
+    // lo stato precedente viene salvato nei log (che non si possono modificare né cancellare).
+    if (!_versioniSalvate.has(idSalvataggio) && Object.keys(datiPrecedenti).length > 0) {
+      _versioniSalvate.add(idSalvataggio);
+      try {
+        await addDoc(collection(db, 'logs'), {
+          ts: serverTimestamp(),
+          utente_uid: utenteCorrente?.uid || null,
+          utente_email: utenteCorrente?.email || null,
+          utente_nome: utenteCorrente?.displayName || utenteCorrente?.email || null,
+          ruolo: ruoloCorrente || 'sconosciuto',
+          azione: 'versione_precedente',
+          pdp_id: idSalvataggio,
+          alunno: docSalvataggio?.alunno || '?',
+          grado: docSalvataggio?.grado || null,
+          dati: datiPrecedenti
+        });
+      } catch(e) { console.warn('Copia di sicurezza non scritta:', e.code || e.message); }
+    }
+
     const args = [];
     for (const [campo, valore] of Object.entries(modifiche)) args.push(new FieldPath('dati', campo), valore);
     args.push('stato', 'in-corso', 'ultimoAgg', serverTimestamp());
     if ('_grado' in modifiche) args.push('grado', modifiche['_grado']);
-    await updateDoc(doc(db, 'pdp', pdpCorrenteId), ...args);
+    await updateDoc(doc(db, 'pdp', idSalvataggio), ...args);
 
     // Aggiorna la cache in memoria con i soli campi appena salvati
-    if (pdpCorrenteDoc) pdpCorrenteDoc.dati = { ...datiPrecedenti, ...modifiche };
+    if (docSalvataggio) docSalvataggio.dati = { ...(docSalvataggio.dati || {}), ...modifiche };
 
     // Scrivi un log per ogni campo modificato (in parallelo, best-effort)
     if (campiCambiati.length > 0) {
-      const alunno = pdpCorrenteDoc?.alunno || '?';
+      const alunno = docSalvataggio?.alunno || '?';
       await Promise.allSettled(campiCambiati.map(({ campo, valorePrecedente, valoreNuovo }) =>
-        scriviLog('modifica_campo', pdpCorrenteId, {
+        scriviLog('modifica_campo', idSalvataggio, {
           alunno,
           campo,
           valorePrecedente,
@@ -2560,13 +2674,21 @@ async function salvaOra() {
     const lbl = document.getElementById('autosave-label');
     if (dot) dot.classList.remove('saving');
     if (lbl) lbl.textContent = 'Salvato ✓';
-    scriviLog('modifica_pdp', pdpCorrenteId, { alunno: pdpCorrenteDoc?.alunno || '?' });
+    scriviLog('modifica_pdp', idSalvataggio, { alunno: docSalvataggio?.alunno || '?' });
     console.log('✅ Salvato su Firestore, campi modificati:', Object.keys(modifiche).length);
   } catch(e) {
     console.error('❌ Errore salvataggio:', e.code, e.message);
     const lbl = document.getElementById('autosave-label');
-    if (lbl) lbl.textContent = '⚠️ Errore: ' + (e.code || e.message);
-    mostraToast('❌ Salvataggio fallito: ' + (e.code || e.message), 'rosso');
+    if (lbl) lbl.textContent = '⚠️ Non salvato, riprovo… (' + (e.code || e.message) + ')';
+    mostraToast('❌ Salvataggio fallito, riprovo tra poco: ' + (e.code || e.message), 'rosso');
+    // Le modifiche restano a schermo: si riprova da soli finché la scheda è aperta
+    if (pdpCorrenteId === idSalvataggio) {
+      _salvataggioInSospeso = true;
+      clearTimeout(autosaveTimer);
+      autosaveTimer = setTimeout(salvaOra, 8000);
+    }
+  } finally {
+    _salvataggiInCorso = Math.max(0, _salvataggiInCorso - 1);
   }
 }
 
@@ -3945,7 +4067,7 @@ function ircCard() {
   <div class="materia-card" data-area="tutte">
     <div class="materia-header" style="flex-wrap:wrap;gap:8px;">
       <div style="display:flex;align-items:center;gap:10px;flex:1;">
-        <select class="materia-nome-select"
+        <select class="materia-nome-select" data-campo="mat_nome_irc"
           style="background:transparent;border:none;color:white;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.9rem;outline:none;cursor:pointer;">
           <option value="irc">IRC – Insegnamento Religione Cattolica</option>
           <option value="alt">Attività Alternativa alla Religione</option>
