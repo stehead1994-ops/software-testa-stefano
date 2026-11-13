@@ -2108,6 +2108,8 @@ window.riapriDaEditor = async () => {
     document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = false);
     document.querySelectorAll('#area-editing button').forEach(el => el.disabled = false);
     _aggiornaHeaderEditor(pdpCorrenteDoc);
+    // Ricollegare l'autosave dopo la riapertura (era disabilitato sul PDP chiuso)
+    _collegaAutosave();
   } catch(e) {
     mostraToast('❌ Errore: ' + (e.code || e.message), 'rosso');
   }
@@ -2144,12 +2146,18 @@ window.apriEditor = async (id) => {
   pdpCorrenteId = id;
   if (unsubPDP) unsubPDP();
   _formIniettato = false;
+  // FIX: blocca autosave durante tutto il caricamento per evitare sovrascritture accidentali
+  _caricamentoPDP = true;
+  clearTimeout(autosaveTimer);
   _iniettaFormPDP();
   mostraSchermata('editor');
 
   try {
     const snap = await getDoc(doc(db, 'pdp', id));
-    if (!snap.exists()) return;
+    if (!snap.exists()) {
+      _caricamentoPDP = false;
+      return;
+    }
     pdpCorrenteDoc = snap.data();
     const dati = pdpCorrenteDoc.dati || {};
     const grado = pdpCorrenteDoc.grado || dati['_grado'] || 'primaria';
@@ -2165,7 +2173,10 @@ window.apriEditor = async (id) => {
     _aggiornaHeaderEditor(pdpCorrenteDoc);
     _ripristinaDatiFirebase(dati, grado);
 
-    // 4. Collega autosave SOLO se il PDP non è protocollato
+    // 4. Rilascia il blocco autosave PRIMA di collegare i listener
+    _caricamentoPDP = false;
+
+    // 5. Collega autosave SOLO se il PDP non è protocollato
     // Se è protocollato i campi sono già bloccati da _aggiornaHeaderEditor
     if (!isProtocollato) {
       _collegaAutosave();
@@ -2174,6 +2185,7 @@ window.apriEditor = async (id) => {
     registraPresenza(id);
     scriviLog('apertura_pdp', id, { alunno: pdpCorrenteDoc?.alunno || '?' });
   } catch(e) {
+    _caricamentoPDP = false;
     console.error('Errore caricamento PDP:', e);
     mostraToast('Errore nel caricamento del PDP', 'rosso');
   }
@@ -2294,7 +2306,12 @@ function _ripristinaDatiFirebase(dati, grado) {
   // Ripristina checkbox con name (dsa_tipo, comorbidita, ecc.)
   area.querySelectorAll('input[type="checkbox"][name]').forEach(el => {
     const key = 'cb_' + el.name + '_' + el.value;
-    if (key in dati) el.checked = !!dati[key];
+    if (key in dati) {
+      el.checked = !!dati[key];
+      // Dispatch change per triggerare listener che mostrano/nascondono sezioni dipendenti
+      // (es. comor-altro-box che appare quando "Altro" è spuntato)
+      if (el.checked) el.dispatchEvent(new Event('change', { bubbles: true }));
+    }
   });
 
   // Aggiorna visivamente gli slider (percent-value span)
@@ -2352,16 +2369,25 @@ function _ripristinaDatiFirebase(dati, grado) {
   }
 }
 
+let _autosaveCtrl = null; // AbortController per rimuovere i listener precedenti
+let _caricamentoPDP = false; // FIX: blocca autosave durante caricamento/ripristino PDP
+
 function _collegaAutosave() {
   const area = document.getElementById('area-editing');
   if (!area) return;
+  // Rimuovi eventuali listener precedenti (evita doppia registrazione)
+  if (_autosaveCtrl) _autosaveCtrl.abort();
+  _autosaveCtrl = new AbortController();
+  const signal = _autosaveCtrl.signal;
   // Ascolta input (testo, textarea, slider) e change (select, checkbox, radio)
-  area.addEventListener('input', () => scheduleAutosave());
-  area.addEventListener('change', () => scheduleAutosave());
+  area.addEventListener('input', () => scheduleAutosave(), { signal });
+  area.addEventListener('change', () => scheduleAutosave(), { signal });
 }
 
 // ─── AUTOSAVE ───
 function scheduleAutosave() {
+  // FIX: non schedulare salvataggio durante caricamento/ripristino PDP
+  if (_caricamentoPDP) return;
   clearTimeout(autosaveTimer);
   const dot = document.getElementById('autosave-dot');
   const lbl = document.getElementById('autosave-label');
@@ -2372,6 +2398,8 @@ function scheduleAutosave() {
 
 async function salvaOra() {
   if (!pdpCorrenteId) return;
+  // FIX: non sovrascrivere dati esistenti se il form è durante caricamento
+  if (_caricamentoPDP) return;
   const nuoviDati = {};
   const area = document.getElementById('area-editing');
   if (!area) return;
@@ -2939,7 +2967,7 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
               <label class="comor-pill"><input type="checkbox" name="comorbidita" value="linguaggio"> Disturbi del linguaggio</label>
               <label class="comor-pill"><input type="checkbox" name="comorbidita" value="altro_comor"> Altro</label>
             </div>
-            <div style="margin-top:10px;" id="comor-altro-box" style="display:none">
+            <div style="margin-top:10px;display:none" id="comor-altro-box">
               <input data-campo="s2_comor_altro" type="text" id="comor-altro-testo" placeholder="Specifica altra comorbidità…" style="width:100%;padding:7px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;">
             </div>
           </div>
