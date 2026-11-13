@@ -1132,7 +1132,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getFirestore, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc,
-  collection, onSnapshot, serverTimestamp, query, orderBy, where, FieldPath }
+  collection, onSnapshot, serverTimestamp, query, orderBy, where, FieldPath, increment }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ─── CONFIG FIREBASE ───
@@ -2650,6 +2650,10 @@ async function salvaOra() {
     const args = [];
     for (const [campo, valore] of Object.entries(modifiche)) args.push(new FieldPath('dati', campo), valore);
     args.push('stato', 'in-corso', 'ultimoAgg', serverTimestamp());
+    // Contatore di revisione: le regole del database accettano modifiche ai dati solo se
+    // accompagnate da questo incremento. Le versioni vecchie del gestionale non lo inviano
+    // e quindi non possono più sovrascrivere un PDP.
+    args.push('rev', increment(1));
     if ('_grado' in modifiche) args.push('grado', modifiche['_grado']);
     await updateDoc(doc(db, 'pdp', idSalvataggio), ...args);
 
