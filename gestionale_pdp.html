@@ -2616,12 +2616,12 @@ async function salvaOra() {
   for (const [campo, valoreNuovo] of Object.entries(modifiche)) {
     if (campo.startsWith('_') || campo.startsWith('cb_') || campo.startsWith('radio_')) continue;
     const valorePrecedente = datiPrecedenti[campo];
-    if (
-      valorePrecedente !== undefined &&
-      String(valorePrecedente).trim() !== '' &&
-      String(valoreNuovo).trim() !== String(valorePrecedente).trim()
-    ) {
+    const avevaValore = valorePrecedente !== undefined && String(valorePrecedente).trim() !== '';
+    if (avevaValore && String(valoreNuovo).trim() !== String(valorePrecedente).trim()) {
       campiCambiati.push({ campo, valorePrecedente: String(valorePrecedente), valoreNuovo: String(valoreNuovo) });
+    } else if (!avevaValore && _campiToccati.has(campo) && String(valoreNuovo).trim() !== '' && valoreNuovo !== false) {
+      // Prima scrittura di un campo fatta dall'utente: si registra chi l'ha scritta e cosa
+      campiCambiati.push({ campo, valorePrecedente: '', valoreNuovo: String(valoreNuovo) });
     }
   }
 
