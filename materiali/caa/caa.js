@@ -340,5 +340,50 @@ window.CAA_SCHEDE = [
     "file": "sillabe-fusione-inversione-riordino-caa.pdf",
     "anteprima": "sillabe-fusione-inversione-riordino.jpg",
     "pagine": 10
+  },
+  {
+    "disciplina": "matematica",
+    "argomento": "Classificare",
+    "titolo": "Le categorie",
+    "descrizione": "Mettere insieme le cose che si somigliano: animali, frutta, vestiti, mezzi di trasporto, oggetti della scuola e cibo, in simboli. Con le domande finali per classificare.",
+    "file": "le-categorie-caa.pdf",
+    "anteprima": "le-categorie.jpg",
+    "pagine": 9
+  },
+  {
+    "disciplina": "scienze",
+    "argomento": "Viventi e non viventi",
+    "titolo": "Viventi e non viventi",
+    "descrizione": "Che cosa vuol dire essere vivente, in simboli: nascere, crescere, mangiare, respirare. Persone, animali e piante a confronto con la sedia, il tavolo e la palla. Con le domande finali.",
+    "file": "viventi-e-non-viventi-caa.pdf",
+    "anteprima": "viventi-e-non-viventi.jpg",
+    "pagine": 12
+  },
+  {
+    "disciplina": "autonomie",
+    "argomento": "Chi sono",
+    "titolo": "Chi sono",
+    "descrizione": "Le pagine per presentarsi in simboli, da completare con l'alunno: nome, età, dove abito, la famiglia, la scuola, le cose che piacciono e quelle che non piacciono, e uno spazio per il ritratto.",
+    "file": "chi-sono-caa.pdf",
+    "anteprima": "chi-sono.jpg",
+    "pagine": 13
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Feste e ricorrenze",
+    "titolo": "La festa del papà",
+    "descrizione": "La festa del papà del 19 marzo in simboli: che cosa faccio con il papà, il regalo, gli auguri e l'abbraccio. Con una pagina per festeggiare anche il nonno o chi si prende cura di me.",
+    "file": "festa-del-papa-caa.pdf",
+    "anteprima": "festa-del-papa.jpg",
+    "pagine": 13
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Feste e ricorrenze",
+    "titolo": "Carnevale",
+    "descrizione": "Il carnevale in simboli: le maschere e i travestimenti, coriandoli e stelle filanti, chiacchiere e frittelle. Con una pagina per chi ha bisogno di cuffie quando il rumore è troppo forte.",
+    "file": "carnevale-caa.pdf",
+    "anteprima": "carnevale.jpg",
+    "pagine": 11
   }
 ];
