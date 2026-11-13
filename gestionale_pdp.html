@@ -982,6 +982,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
         <span id="filtro-log-count" style="font-size:0.8rem;color:var(--testo-soft);margin-left:4px"></span>
       </div>
       <div id="logs-contenuto"></div>
+      <button id="btn-log-piu" onclick="caricaLogPrecedenti()" class="btn-secondary" style="display:none;margin:16px auto">⬇️ Carica i 7 giorni precedenti</button>
       <button id="btn-torna-su-log" onclick="window.scrollTo({top:0,behavior:'smooth'})"
         style="display:none;position:fixed;bottom:28px;right:28px;z-index:999;
                background:var(--blu);color:white;border:none;border-radius:50%;
@@ -1669,6 +1670,7 @@ window.resetFiltroArchivio = () => {
 
 // ─── RENDER LOG ACCESSI (solo master) ───
 let _logsAllDocs = [];
+let _logsGiorni = 3; // quanti giorni di log sono caricati (per non consumare letture)
 
 const AZIONE_LABEL = {
   'apertura_pdp': '👁️ Apertura PDP',
@@ -1684,9 +1686,15 @@ async function renderLogs() {
   const contenuto = document.getElementById('logs-contenuto');
   contenuto.innerHTML = '<div style="text-align:center;padding:40px;color:var(--testo-soft)">Caricamento log…</div>';
   try {
-    const snap = await getDocs(query(collection(db, 'logs'), orderBy('ts', 'desc')));
+    // Si caricano solo gli ultimi giorni: leggere tutti i log a ogni apertura
+    // consumava decine di migliaia di letture e poteva esaurire il limite giornaliero.
+    const dal = new Date(); dal.setHours(0, 0, 0, 0); dal.setDate(dal.getDate() - (_logsGiorni - 1));
+    const snap = await getDocs(query(collection(db, 'logs'), where('ts', '>=', dal), orderBy('ts', 'desc')));
+    const btnPiu = document.getElementById('btn-log-piu');
+    if (btnPiu) { btnPiu.style.display = 'block'; btnPiu.textContent = '⬇️ Carica i 7 giorni precedenti (ora: ultimi ' + _logsGiorni + ' giorni)'; }
     if (snap.empty) {
-      contenuto.innerHTML = '<div class="lista-vuota"><div class="lista-vuota-icon">📋</div><h3>Nessun log ancora</h3></div>';
+      _logsAllDocs = [];
+      contenuto.innerHTML = '<div class="lista-vuota"><div class="lista-vuota-icon">📋</div><h3>Nessun log negli ultimi ' + _logsGiorni + ' giorni</h3></div>';
       return;
     }
     _logsAllDocs = snap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -1728,7 +1736,7 @@ function _renderLogsFiltrati() {
   if (fPdp)     docs = docs.filter(l => (l.alunno || '') === fPdp);
 
   const countEl = document.getElementById('filtro-log-count');
-  if (countEl) countEl.textContent = (fData || fPersona || fPdp) ? `${docs.length} eventi` : `${_logsAllDocs.length} eventi totali`;
+  if (countEl) countEl.textContent = (fData || fPersona || fPdp) ? `${docs.length} eventi` : `${docs.length} eventi negli ultimi ${_logsGiorni} giorni`;
 
   if (docs.length === 0) {
     contenuto.innerHTML = '<div class="lista-vuota" style="padding:30px"><div class="lista-vuota-icon">🔍</div><p>Nessun evento corrisponde ai filtri</p></div>';
@@ -1792,7 +1800,23 @@ function _renderLogsFiltrati() {
     </div>`).join('');
 }
 
-window.applicaFiltroLogs = () => _renderLogsFiltrati();
+window.applicaFiltroLogs = () => {
+  // Se si sceglie una data più vecchia dei giorni caricati, si carica fino a quella data
+  const fData = document.getElementById('filtro-log-data')?.value || '';
+  if (fData) {
+    const oggi = new Date(); oggi.setHours(0, 0, 0, 0);
+    const giorni = Math.round((oggi - new Date(fData + 'T00:00:00')) / 86400000) + 1;
+    if (giorni > _logsGiorni && giorni <= 400) { _logsGiorni = giorni; _ricaricaLogMantenendoFiltri(); return; }
+  }
+  _renderLogsFiltrati();
+};
+async function _ricaricaLogMantenendoFiltri() {
+  const v = ['filtro-log-data', 'filtro-log-persona', 'filtro-log-pdp'].map(id => document.getElementById(id)?.value || '');
+  await renderLogs();
+  ['filtro-log-data', 'filtro-log-persona', 'filtro-log-pdp'].forEach((id, i) => { const el = document.getElementById(id); if (el && v[i]) el.value = v[i]; });
+  _renderLogsFiltrati();
+}
+window.caricaLogPrecedenti = () => { _logsGiorni += 7; _ricaricaLogMantenendoFiltri(); };
 window.resetFiltroLogs = () => {
   const dataEl = document.getElementById('filtro-log-data'); if (dataEl) dataEl.value = '';
   ['filtro-log-persona','filtro-log-pdp'].forEach(id => {
@@ -2198,8 +2222,13 @@ window.verificaPW = async () => {
   errEl.style.display = 'none';
   if (!pw) return;
   try {
-    const snap = await getDocs(collection(db, 'pdp'));
-    const trovato = snap.docs.find(d => d.data().stato !== 'eliminato' && (d.data().password || '').toUpperCase() === pw);
+    // Cerca direttamente il PDP con quella password (1 lettura) invece di leggerli tutti
+    let snap = await getDocs(query(collection(db, 'pdp'), where('password', '==', pw)));
+    if (snap.empty) {
+      const comeDigitata = document.getElementById('pdp-pw-input').value.trim();
+      if (comeDigitata !== pw) snap = await getDocs(query(collection(db, 'pdp'), where('password', '==', comeDigitata)));
+    }
+    const trovato = snap.docs.find(d => d.data().stato !== 'eliminato');
     if (!trovato) { errEl.style.display = 'block'; return; }
     apriEditor(trovato.id);
   } catch(e) {
