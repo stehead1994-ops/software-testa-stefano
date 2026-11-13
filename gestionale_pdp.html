@@ -1131,7 +1131,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getFirestore, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc,
-  collection, onSnapshot, serverTimestamp, query, orderBy, where }
+  collection, onSnapshot, serverTimestamp, query, orderBy, where, FieldPath }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ─── CONFIG FIREBASE ───
@@ -2149,6 +2149,7 @@ window.apriEditor = async (id) => {
   // FIX: blocca autosave durante tutto il caricamento per evitare sovrascritture accidentali
   _caricamentoPDP = true;
   clearTimeout(autosaveTimer);
+  _campiToccati.clear();
   _iniettaFormPDP();
   mostraSchermata('editor');
 
@@ -2380,8 +2381,41 @@ function _collegaAutosave() {
   _autosaveCtrl = new AbortController();
   const signal = _autosaveCtrl.signal;
   // Ascolta input (testo, textarea, slider) e change (select, checkbox, radio)
-  area.addEventListener('input', () => scheduleAutosave(), { signal });
-  area.addEventListener('change', () => scheduleAutosave(), { signal });
+  area.addEventListener('input', (e) => { _segnaToccato(e); scheduleAutosave(); }, { signal });
+  area.addEventListener('change', (e) => { _segnaToccato(e); scheduleAutosave(); }, { signal });
+  // Click su pulsanti (grado, PAP, aggiungi/rimuovi riga): non generano input/change
+  area.addEventListener('click', (e) => {
+    if (!e.isTrusted || !e.target.closest) return;
+    const t = e.target;
+    let salva = false;
+    if (t.closest('.pap-btn')) { _campiToccati.add('_pap'); salva = true; }
+    if (t.closest('.grado-bar')) { ['_grado', 's1_grado', 's1_classe'].forEach(k => _campiToccati.add(k)); salva = true; }
+    if (t.closest('button') && !t.closest('.grado-bar')) { _campiToccati.add('_righe'); salva = true; }
+    if (salva) setTimeout(scheduleAutosave, 50);
+  }, { signal });
+}
+
+// ─── PROTEZIONE DATI: campi realmente modificati dall'utente ───
+// Un valore già salvato può essere cambiato o cancellato SOLO se l'utente
+// ha toccato quel campo con mouse/tastiera (evento reale, non da codice).
+// Così un form vuoto, un cambio di grado o uno script non cancellano mai nulla.
+const _campiToccati = new Set();
+
+function _chiaveCampo(el) {
+  if (!el || !el.matches || !el.matches('input, select, textarea')) return null;
+  if (el.type === 'checkbox') return el.name ? ('cb_' + el.name + '_' + el.value) : (el.dataset.campo || el.id || null);
+  if (el.type === 'radio') return el.name ? ('radio_' + el.name) : null;
+  return el.dataset.campo || el.id || null;
+}
+
+function _segnaToccato(e) {
+  if (!e || !e.isTrusted) return;
+  const el = e.target;
+  if (!el || !el.closest) return;
+  if (el.closest('.riga-dinamica')) _campiToccati.add('_righe');
+  const k = _chiaveCampo(el);
+  if (k) _campiToccati.add(k);
+  if (k === 's1_grado') { _campiToccati.add('_grado'); _campiToccati.add('s1_classe'); }
 }
 
 // ─── AUTOSAVE ───
@@ -2456,18 +2490,39 @@ async function salvaOra() {
     nuoviDati['_pap'] = JSON.stringify(papData);
   }
 
-  // ── Cronologia versioni: diff campo per campo ──────────────────────────────
-  // Confronta i nuovi valori con quelli precedentemente salvati in Firestore.
-  // Per ogni campo che è cambiato E aveva un valore precedente non vuoto,
-  // scrive un documento di log separato con valorePrecedente e valoreNuovo,
-  // in modo che il Master possa recuperare cancellazioni accidentali.
+  // ── Salvataggio per differenza, con protezione dei dati già scritti ────────
+  // Si scrivono su Firestore SOLO i campi cambiati, uno per uno: i campi che il
+  // form non mostra (es. materie di un altro grado) restano intatti nel database.
+  // Un valore già presente viene cambiato o cancellato solo se l'utente ha
+  // toccato quel campo; un campo ancora vuoto può sempre essere compilato.
   const datiPrecedenti = pdpCorrenteDoc?.dati || {};
-  const campiCambiati = [];
+  const _vuoto = v => v === undefined || v === null || v === false || String(v).trim() === '';
+  const _posizionale = k => /^(_idx_|_cb_|_r_)/.test(k);
+  const modifiche = {};
+  const protetti = [];
   for (const [campo, valoreNuovo] of Object.entries(nuoviDati)) {
-    // Salta i meta-campi interni (prefisso _) e le checkbox/radio
+    const prec = datiPrecedenti[campo];
+    if (prec === valoreNuovo) continue;
+    if (_vuoto(prec) && _vuoto(valoreNuovo)) continue;
+    if (!_vuoto(prec) && !_campiToccati.has(campo) && !_posizionale(campo)) { protetti.push(campo); continue; }
+    modifiche[campo] = valoreNuovo;
+  }
+  if (protetti.length) console.log('🛡️ Campi già compilati lasciati intatti:', protetti.length, protetti);
+
+  const dot0 = document.getElementById('autosave-dot');
+  const lbl0 = document.getElementById('autosave-label');
+  if (Object.keys(modifiche).length === 0) {
+    // Nessuna modifica reale: non si scrive nulla
+    if (dot0) dot0.classList.remove('saving');
+    if (lbl0) lbl0.textContent = 'Salvato ✓';
+    return;
+  }
+
+  // Cronologia: per ogni campo che aveva già un valore, log con prima e dopo
+  const campiCambiati = [];
+  for (const [campo, valoreNuovo] of Object.entries(modifiche)) {
     if (campo.startsWith('_') || campo.startsWith('cb_') || campo.startsWith('radio_')) continue;
     const valorePrecedente = datiPrecedenti[campo];
-    // Logga solo se: il valore è cambiato E c'era già qualcosa scritto prima
     if (
       valorePrecedente !== undefined &&
       String(valorePrecedente).trim() !== '' &&
@@ -2478,13 +2533,14 @@ async function salvaOra() {
   }
 
   try {
-    await updateDoc(doc(db, 'pdp', pdpCorrenteId), {
-      dati: nuoviDati, stato: 'in-corso', ultimoAgg: serverTimestamp(),
-      grado: nuoviDati['_grado']
-    });
+    const args = [];
+    for (const [campo, valore] of Object.entries(modifiche)) args.push(new FieldPath('dati', campo), valore);
+    args.push('stato', 'in-corso', 'ultimoAgg', serverTimestamp());
+    if ('_grado' in modifiche) args.push('grado', modifiche['_grado']);
+    await updateDoc(doc(db, 'pdp', pdpCorrenteId), ...args);
 
-    // Aggiorna la cache in memoria con i dati appena salvati
-    if (pdpCorrenteDoc) pdpCorrenteDoc.dati = { ...nuoviDati };
+    // Aggiorna la cache in memoria con i soli campi appena salvati
+    if (pdpCorrenteDoc) pdpCorrenteDoc.dati = { ...datiPrecedenti, ...modifiche };
 
     // Scrivi un log per ogni campo modificato (in parallelo, best-effort)
     if (campiCambiati.length > 0) {
@@ -2505,7 +2561,7 @@ async function salvaOra() {
     if (dot) dot.classList.remove('saving');
     if (lbl) lbl.textContent = 'Salvato ✓';
     scriviLog('modifica_pdp', pdpCorrenteId, { alunno: pdpCorrenteDoc?.alunno || '?' });
-    console.log('✅ Salvato su Firestore, campi:', Object.keys(nuoviDati).length);
+    console.log('✅ Salvato su Firestore, campi modificati:', Object.keys(modifiche).length);
   } catch(e) {
     console.error('❌ Errore salvataggio:', e.code, e.message);
     const lbl = document.getElementById('autosave-label');
