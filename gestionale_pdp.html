@@ -2528,6 +2528,9 @@ function _applicaAutori() {
   const conta = {};
   // Le sigle sono etichette sovrapposte all'angolo del campo: non occupano spazio nel form
   area.querySelectorAll('.autore-sigla').forEach(x => x.remove());
+  // L'area del form fa da riferimento per le sigle, così scorrono insieme al contenuto
+  if (getComputedStyle(area).position === 'static') area.style.position = 'relative';
+  const rettArea = area.getBoundingClientRect();
   area.querySelectorAll('input, select, textarea').forEach(el => {
     if (el.type === 'button' || el.type === 'submit' || el.closest('.riga-dinamica')) return;
     const k = _chiaveCampo(el);
@@ -2554,8 +2557,9 @@ function _applicaAutori() {
         b.className = 'autore-sigla';
         b.setAttribute('aria-hidden', 'true');
         b.textContent = _sigla(a.n || nomi[a.u]);
-        b.style.cssText = 'position:absolute;z-index:2;pointer-events:none;font:700 10px/1 "DM Sans",sans-serif;color:#fff;border-radius:8px;padding:2px 5px;background:' + c + ';left:' + (el.offsetLeft + el.offsetWidth - 30) + 'px;top:' + (el.offsetTop - 7) + 'px';
-        el.insertAdjacentElement('afterend', b);
+        const re = el.getBoundingClientRect();
+        b.style.cssText = 'position:absolute;z-index:2;pointer-events:none;font:700 10px/1 "DM Sans",sans-serif;color:#fff;border-radius:8px;padding:2px 5px;background:' + c + ';left:' + Math.round(re.right - rettArea.left + area.scrollLeft - 30) + 'px;top:' + Math.round(re.top - rettArea.top + area.scrollTop - 7) + 'px';
+        area.appendChild(b);
       }
     }
     el.style.outline = (_autoreEvidenziato === a.u) ? ('3px solid ' + c) : '';
