@@ -1033,6 +1033,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
       </div>
     </div>
   </header>
+  <div id="legenda-autori" style="display:none;padding:6px 14px;background:#fff;border-bottom:1px solid var(--grigio-bordo);font-size:0.78rem;line-height:1.9"></div>
   <div class="editor-body">
     <nav class="sidebar-materie" id="sidebar-materie"></nav>
     <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
@@ -1133,7 +1134,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getFirestore, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc,
-  collection, onSnapshot, serverTimestamp, query, orderBy, where, FieldPath, increment }
+  collection, onSnapshot, serverTimestamp, query, orderBy, where, FieldPath, increment, arrayUnion }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ─── CONFIG FIREBASE ───
@@ -1375,6 +1376,7 @@ async function rimuoviPresenza() {
 window.tornaHome = async () => {
   // Salva le modifiche ancora in sospeso prima di lasciare l'editor
   await _salvaSeInSospeso();
+  const _leg = document.getElementById('legenda-autori'); if (_leg) { _leg.style.display = 'none'; _leg.innerHTML = ''; }
   await rimuoviPresenza();
   if (unsubPDP) { unsubPDP(); unsubPDP = null; }
   pdpCorrenteId = null;
@@ -2274,6 +2276,8 @@ window.apriEditor = async (id) => {
 
     // 4. Rilascia il blocco autosave PRIMA di collegare i listener
     _caricamentoPDP = false;
+    _autoreEvidenziato = null;
+    _applicaAutori();
 
     // 5. Collega autosave SOLO se il PDP non è protocollato
     // Se è protocollato i campi sono già bloccati da _aggiornaHeaderEditor
@@ -2499,6 +2503,89 @@ function _collegaAutosave() {
   }, { signal });
 }
 
+// ─── CHI HA SCRITTO COSA: un colore per docente ───
+// Ogni campo compilato mostra una barretta del colore di chi l'ha scritto.
+// I colori sono assegnati nell'ordine in cui i docenti hanno scritto per la prima volta
+// in quel PDP, quindi restano stabili. Si vedono solo a schermo: il PDF non li usa.
+const _COLORI_AUTORI = ['#1f77b4', '#d62728', '#2ca02c', '#ff7f0e', '#9467bd', '#8c564b', '#e377c2', '#17becf', '#bcbd22', '#393b79', '#ad494a', '#637939', '#7b4173', '#3182bd', '#e6550d', '#31a354'];
+let _autoreEvidenziato = null;
+
+function _sigla(nome) {
+  const p = String(nome || '?').trim().split(/\s+/);
+  return ((p[0] || '?')[0] + (p.length > 1 ? p[p.length - 1][0] : '')).toUpperCase();
+}
+
+function _applicaAutori() {
+  const area = document.getElementById('area-editing');
+  const legenda = document.getElementById('legenda-autori');
+  if (!area || !legenda) return;
+  // Visibile solo ai master: per i docenti la scheda resta com'era
+  if (ruoloCorrente !== 'master') { legenda.style.display = 'none'; legenda.innerHTML = ''; return; }
+  const autori = pdpCorrenteDoc?.autori || {};
+  const ordine = pdpCorrenteDoc?.autoriUid || [];
+  const nomi = pdpCorrenteDoc?.autoriNomi || {};
+  const colore = u => _COLORI_AUTORI[Math.max(0, ordine.indexOf(u)) % _COLORI_AUTORI.length];
+  const conta = {};
+  // Le sigle sono etichette sovrapposte all'angolo del campo: non occupano spazio nel form
+  area.querySelectorAll('.autore-sigla').forEach(x => x.remove());
+  area.querySelectorAll('input, select, textarea').forEach(el => {
+    if (el.type === 'button' || el.type === 'submit' || el.closest('.riga-dinamica')) return;
+    const k = _chiaveCampo(el);
+    const a = k ? autori[k] : null;
+    const scelta = el.type === 'checkbox' || el.type === 'radio';
+    const pieno = scelta ? el.checked : String(el.value || '').trim() !== '';
+    const mio = a && pieno && (el.type !== 'radio' || true);
+    if (!el.dataset.titoloOriginale && el.title && !el.dataset.autore) el.dataset.titoloOriginale = el.title;
+    if (!mio) {
+      if (el.dataset.autore) { el.style.boxShadow = ''; el.style.accentColor = ''; el.style.outline = ''; el.title = el.dataset.titoloOriginale || ''; delete el.dataset.autore; }
+      return;
+    }
+    const c = colore(a.u);
+    conta[a.u] = (conta[a.u] || 0) + 1;
+    el.dataset.autore = a.u;
+    const quando = a.t ? new Date(a.t).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+    el.title = 'Scritto da ' + (a.n || nomi[a.u] || 'docente') + (quando ? ' — ' + quando : '');
+    if (scelta) { el.style.accentColor = c; el.style.boxShadow = ''; }
+    else {
+      el.style.boxShadow = 'inset 5px 0 0 ' + c;
+      // Sigla del docente nell'angolo in alto a destra del campo (solo se il campo è visibile)
+      if (el.offsetParent && el.offsetWidth > 60) {
+        const b = document.createElement('span');
+        b.className = 'autore-sigla';
+        b.setAttribute('aria-hidden', 'true');
+        b.textContent = _sigla(a.n || nomi[a.u]);
+        b.style.cssText = 'position:absolute;z-index:2;pointer-events:none;font:700 10px/1 "DM Sans",sans-serif;color:#fff;border-radius:8px;padding:2px 5px;background:' + c + ';left:' + (el.offsetLeft + el.offsetWidth - 30) + 'px;top:' + (el.offsetTop - 7) + 'px';
+        el.insertAdjacentElement('afterend', b);
+      }
+    }
+    el.style.outline = (_autoreEvidenziato === a.u) ? ('3px solid ' + c) : '';
+    if (_autoreEvidenziato === a.u) el.style.outlineOffset = '1px';
+  });
+  const presenti = ordine.filter(u => conta[u]);
+  if (!presenti.length) { legenda.style.display = 'none'; legenda.innerHTML = ''; return; }
+  legenda.style.display = '';
+  legenda.innerHTML = '<span style="color:var(--testo-soft);margin-right:8px">Chi ha scritto (clic per evidenziare):</span>' + presenti.map(u => {
+    const c = colore(u); const n = nomi[u] || 'Docente'; const attivo = _autoreEvidenziato === u;
+    return '<button type="button" data-autore-legenda="' + u + '" style="cursor:pointer;border:1.5px solid ' + c + ';background:' + (attivo ? c : '#fff') + ';color:' + (attivo ? '#fff' : 'inherit') + ';border-radius:14px;padding:1px 9px 1px 4px;margin:0 6px 2px 0;font-family:inherit;font-size:inherit">' +
+      '<span style="display:inline-block;min-width:22px;text-align:center;background:' + c + ';color:#fff;border-radius:10px;padding:0 4px;margin-right:5px;font-weight:700;font-size:0.72rem">' + _sigla(n) + '</span>' +
+      n.replace(/[<>&]/g, '') + ' <span style="opacity:.65">(' + conta[u] + ')</span></button>';
+  }).join('');
+  legenda.querySelectorAll('[data-autore-legenda]').forEach(b => b.addEventListener('click', () => {
+    const u = b.getAttribute('data-autore-legenda');
+    _autoreEvidenziato = (_autoreEvidenziato === u) ? null : u;
+    _applicaAutori();
+    if (_autoreEvidenziato) { const primo = area.querySelector('[data-autore="' + _autoreEvidenziato + '"]'); if (primo) primo.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  }));
+}
+
+let _timerSigle = null;
+function _riposizionaSigle() {
+  clearTimeout(_timerSigle);
+  _timerSigle = setTimeout(() => { if (ruoloCorrente === 'master' && pdpCorrenteId && document.getElementById('area-editing')?.querySelector('[data-autore]')) _applicaAutori(); }, 250);
+}
+window.addEventListener('resize', _riposizionaSigle);
+document.addEventListener('click', (e) => { if (e.target.closest && e.target.closest('#area-editing, #sidebar-materie')) _riposizionaSigle(); });
+
 // ─── PROTEZIONE DATI: campi realmente modificati dall'utente ───
 // Un valore già salvato può essere cambiato o cancellato SOLO se l'utente
 // ha toccato quel campo con mouse/tastiera (evento reale, non da codice).
@@ -2679,6 +2766,18 @@ async function salvaOra() {
     const args = [];
     for (const [campo, valore] of Object.entries(modifiche)) args.push(new FieldPath('dati', campo), valore);
     args.push('stato', 'in-corso', 'ultimoAgg', serverTimestamp());
+    // Chi ha scritto cosa: per ogni campo toccato dall'utente si salva autore e momento
+    const autoriNuovi = {};
+    const uidAutore = utenteCorrente?.uid || null;
+    const nomeAutore = utenteCorrente?.displayName || utenteCorrente?.email || 'Utente';
+    if (uidAutore) {
+      for (const [campo, valore] of Object.entries(modifiche)) {
+        if (campo.startsWith('_') || !_campiToccati.has(campo) || _vuoto(valore)) continue;
+        autoriNuovi[campo] = { u: uidAutore, n: nomeAutore, t: Date.now() };
+        args.push(new FieldPath('autori', campo), autoriNuovi[campo]);
+      }
+      if (Object.keys(autoriNuovi).length) args.push('autoriUid', arrayUnion(uidAutore), new FieldPath('autoriNomi', uidAutore), nomeAutore);
+    }
     // Contatore di revisione: le regole del database accettano modifiche ai dati solo se
     // accompagnate da questo incremento. Le versioni vecchie del gestionale non lo inviano
     // e quindi non possono più sovrascrivere un PDP.
@@ -2688,6 +2787,12 @@ async function salvaOra() {
 
     // Aggiorna la cache in memoria con i soli campi appena salvati
     if (docSalvataggio) docSalvataggio.dati = { ...(docSalvataggio.dati || {}), ...modifiche };
+    if (docSalvataggio && Object.keys(autoriNuovi).length) {
+      docSalvataggio.autori = { ...(docSalvataggio.autori || {}), ...autoriNuovi };
+      if (!(docSalvataggio.autoriUid || []).includes(uidAutore)) docSalvataggio.autoriUid = [...(docSalvataggio.autoriUid || []), uidAutore];
+      docSalvataggio.autoriNomi = { ...(docSalvataggio.autoriNomi || {}), [uidAutore]: nomeAutore };
+      if (pdpCorrenteId === idSalvataggio) _applicaAutori();
+    }
 
     // Scrivi un log per ogni campo modificato (in parallelo, best-effort)
     if (campiCambiati.length > 0) {
