@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="canonical" href="https://maestrotesta.com/motivazione_non_stesura_pdp.html">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Motivazione di Non Stesura PDP – IC Castelcovati</title>
 <style>
@@ -209,48 +208,31 @@
     .firma-trigger { border: 1pt solid #ccc; cursor: default; max-width: 280px; }
     .firma-trigger-overlay { display: none !important; }
     #firma-anteprima { height: 80px; }
+
+    /* Documento di stampa: solo la lettera, senza elementi del modulo */
+    .container, .firma-overlay { display: none !important; }
+    #doc-stampa { display: block !important; padding: 18px 34px 20px; }
   }
 
-  .navbar { position:fixed; top:0; left:0; right:0; z-index:1000; background:rgba(0,32,92,.97); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,.08); height:52px; display:flex; align-items:center; }
-  .navbar-inner { max-width:1200px; margin:0 auto; padding:0 1.5rem; width:100%; display:flex; align-items:center; justify-content:space-between; }
-  .navbar-brand { font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:#fff; text-decoration:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; min-width:0; }
-  .navbar-brand span { color:#c8a84b; }
-  .navbar-links { display:flex; align-items:center; gap:.25rem; flex-shrink:0; }
-  .navbar-link { font-size:13px; font-weight:500; color:rgba(255,255,255,.75); text-decoration:none; padding:6px 14px; border-radius:8px; transition:background .15s,color .15s; white-space:nowrap; }
-  .navbar-link:hover { background:rgba(255,255,255,.1); color:#fff; }
-  
-  
-  
-  
-  @media(max-width:600px) { .navbar-brand { font-size:12px; } .navbar-link { font-size:11px; padding:5px 8px; } }
-  body { padding-top: 52px; }
-  
-  
-  
-  
-  
-  .navbar-link-ai  { background:rgba(0,68,200,.85);  color:#fff !important; font-weight:600 !important; border-radius:8px; }
-  .navbar-link-inc { background:rgba(29,158,117,.85); color:#fff !important; font-weight:600 !important; border-radius:8px; }
-  .navbar-link-bib { background:rgba(124,58,237,.85);  color:#fff !important; font-weight:600 !important; border-radius:8px; }
-  .navbar-link-pod { background:rgba(200,168,75,.85);  color:#00205c !important; font-weight:600 !important; border-radius:8px; }
-  .navbar-link-podcast { background:rgba(200,168,75,.85); color:#00205c !important; font-weight:600 !important; border-radius:8px; }
+  /* ── DOCUMENTO DI STAMPA (nascosto a schermo) ── */
+  #doc-stampa { display: none; color: #000; font-family: 'Times New Roman', Georgia, serif; font-size: 12pt; line-height: 1.6; }
+  #doc-stampa .ds-anno { text-align: right; font-size: 10.5pt; margin-bottom: 14pt; }
+  #doc-stampa p { margin: 0 0 10pt; }
+  #doc-stampa .ds-dest { margin-bottom: 16pt; }
+  #doc-stampa ul.ds-motivi { margin: 4pt 0 14pt 0; padding-left: 20pt; }
+  #doc-stampa ul.ds-motivi li { margin-bottom: 6pt; }
+  #doc-stampa .ds-docenti-titolo { margin: 12pt 0 4pt; font-weight: bold; font-size: 11pt; }
+  #doc-stampa ul.ds-docenti { margin: 0 0 14pt 0; padding-left: 20pt; font-size: 11pt; }
+  #doc-stampa .ds-firme { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 22pt; break-inside: avoid; }
+  #doc-stampa .ds-data { padding-top: 2pt; }
+  #doc-stampa .ds-firma-blocco { min-width: 230pt; text-align: center; }
+  #doc-stampa .ds-firma-img { display: block; margin: 4pt auto 0; max-width: 220pt; max-height: 70pt; }
+  #doc-stampa .ds-firma-linea { border-bottom: 1pt solid #000; height: 46pt; }
+  #doc-stampa .ds-nome { margin-top: 3pt; font-size: 11pt; }
+  #doc-stampa .ds-vuoto { letter-spacing: 1pt; }
 </style>
 </head>
 <body>
-<nav class="navbar">
-  <div class="navbar-inner">
-    <a href="index.html" class="navbar-brand">L'Archivio del <span>Maestro Stefano Testa</span></a>
-    <div class="navbar-links">
-      <a href="index.html" class="navbar-link">🏠 Archivio</a>
-      <a href="blog/index.html" class="navbar-link navbar-link-ai">🤖 Blog AI</a>
-      <a href="inclusione/news/index.html" class="navbar-link navbar-link-inc">♿ Inclusione</a>
-      <a href="biblioteca/index.html" class="navbar-link navbar-link-bib">📚 Biblioteca</a>
-      <a href="formazione/index.html" class="navbar-link navbar-link-for" style="background:#003087;color:#fff;font-weight:700;border-color:#C8A84B">🎓 Formazione</a>
-      <a href="materiali/index.html" class="navbar-link navbar-link-mat" style="background:#1D9E75;color:#fff;font-weight:700">🧩 Materiali</a>
-      <a href="podcast.html" class="navbar-link navbar-link-pod">🎙️ Podcast</a>
-    </div>
-  </div>
-</nav>
 
 <!-- INTESTAZIONE -->
 <div class="intestazione">
@@ -296,7 +278,7 @@
       <div class="riga" style="max-width:260px;">
         <div>
           <label class="obbligatorio">Anno scolastico</label>
-          <input type="text" id="anno" placeholder="es. 2025/2026" value="2025/2026">
+          <input type="text" id="anno" placeholder="es. 2026/2027">
         </div>
       </div>
     </div>
@@ -313,7 +295,7 @@
         </div>
         <div>
           <label>Data di nascita</label>
-          <input type="date" id="alunno-nascita">
+          <input type="date" id="alunno-nascita" onchange="aggiornaTesto()">
         </div>
       </div>
       <div class="riga riga-2">
@@ -329,7 +311,7 @@
       <div class="riga" style="max-width:260px;">
         <div>
           <label>Data della diagnosi</label>
-          <input type="date" id="diagnosi-data">
+          <input type="date" id="diagnosi-data" onchange="aggiornaTesto()">
         </div>
       </div>
     </div>
@@ -469,6 +451,9 @@
 
 </div><!-- /container -->
 
+<!-- DOCUMENTO DI STAMPA (generato da JS, visibile solo in stampa) -->
+<div id="doc-stampa"></div>
+
 <div class="footer">
   <strong>&copy; 2026 Stefano Testa</strong> &ndash; Creato per l&rsquo;IC Castelcovati &nbsp;|&nbsp;
   Funzione Strumentale Inclusione, DSA, BES
@@ -477,7 +462,12 @@
 <script>
 var motCount = 5;
 
+function annoScolasticoCorrente() {
+  var d = new Date(), y = d.getFullYear();
+  return (d.getMonth() >= 8) ? (y + '/' + (y + 1)) : ((y - 1) + '/' + y);
+}
 window.addEventListener('load', function() {
+  document.getElementById('anno').value = annoScolasticoCorrente();
   var oggi = new Date();
   var gg = String(oggi.getDate()).padStart(2,'0');
   var mm = String(oggi.getMonth()+1).padStart(2,'0');
@@ -539,14 +529,18 @@ function aggiornaTesto() {
   var alunno = document.getElementById('alunno-nome').value.trim();
   var diagn  = document.getElementById('tipo-diagnosi').value.trim();
   var autore = document.getElementById('diagnosi-autore').value.trim();
+  var nascita = formattaData(document.getElementById('alunno-nascita').value);
+  var dataDiagn = formattaData(document.getElementById('diagnosi-data').value);
 
   var gruppoLabel = (ordine === 'Secondaria di primo grado') ? 'il Consiglio di Classe' : 'il gruppo docenti';
   var ordStr  = ordine  ? '<strong>' + ordine  + '</strong>' : '<span class="placeholder">[ordine di scuola]</span>';
   var plesStr = plesso  ? '<strong>' + plesso  + '</strong>' : '<span class="placeholder">[plesso]</span>';
-  var claStr  = classe  ? '<strong>' + classe  + '</strong>' : '<span class="placeholder">[classe/sezione]</span>';
-  var alnStr  = alunno  ? '<strong>' + alunno  + '</strong>' : '<span class="placeholder">[nome e cognome alunno/a]</span>';
-  var diagStr = diagn   ? diagn                              : '<span class="placeholder">[tipo diagnosi]</span>';
-  var autStr  = autore  ? '<strong>' + autore  + '</strong>' : '<span class="placeholder">[redattore diagnosi]</span>';
+  var claStr  = classe  ? '<strong>' + esc(classe) + '</strong>' : '<span class="placeholder">[classe/sezione]</span>';
+  var alnStr  = alunno  ? '<strong>' + esc(alunno) + '</strong>' : '<span class="placeholder">[nome e cognome alunno/a]</span>';
+  if (nascita) alnStr += ', nato/a il ' + nascita;
+  var diagStr = diagn   ? esc(diagn)                         : '<span class="placeholder">[tipo diagnosi]</span>';
+  var autStr  = autore  ? '<strong>' + esc(autore) + '</strong>' : '<span class="placeholder">[redattore diagnosi]</span>';
+  if (dataDiagn) autStr += ' in data ' + dataDiagn;
 
   document.getElementById('riepilogo-doc').innerHTML =
     '<p>Alla cortese attenzione della <strong>Dirigente Scolastica prof.ssa Tecla Fogliata</strong></p>' +
@@ -699,9 +693,93 @@ function clearFirma() {
   if (ov) ov.innerHTML = '<span>&#9998; Clicca per firmare</span>';
 }
 
+/* ── UTILITA' ── */
+function esc(t) {
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function formattaData(iso) {
+  if (!iso) return '';
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  return m ? m[3] + '/' + m[2] + '/' + m[1] : iso;
+}
+
+/* ── DOCUMENTO DI STAMPA: solo la lettera ── */
+function costruisciDocStampa() {
+  aggiornaTesto();
+  var ordine = document.getElementById('ordine').value;
+  var anno = document.getElementById('anno').value.trim();
+  var secondaria = (ordine === 'Secondaria di primo grado');
+
+  // Testo principale (segnaposto mancanti -> riga da compilare a mano)
+  var testo = document.getElementById('riepilogo-doc').innerHTML
+    .replace(/<span class="placeholder">\[[^\]]*\]<\/span>/g, '<span class="ds-vuoto">__________</span>');
+
+  // Motivazioni selezionate e non vuote
+  var motivi = '';
+  document.querySelectorAll('.motivazione-item').forEach(function(li) {
+    var chk = li.querySelector('input[type="checkbox"]');
+    var ta = li.querySelector('textarea');
+    var t = ta ? ta.value.trim() : '';
+    if (chk && chk.checked && t) motivi += '<li>' + esc(t) + '</li>';
+  });
+
+  // Docenti compilati
+  var docenti = '';
+  document.querySelectorAll('.docente-input').forEach(function(inp) {
+    var t = inp.value.trim();
+    if (t) docenti += '<li>' + esc(t) + '</li>';
+  });
+
+  var luogoData = document.getElementById('luogo-data').value.trim();
+  var etichetta = document.getElementById('label-firma-gruppo').textContent;
+  var coord = document.getElementById('nome-coordinatore').value.trim();
+  var trigger = document.getElementById('firma-trigger');
+  var firmaImg = '';
+  if (firmaHaContenuto && trigger && trigger.classList.contains('ha-firma')) {
+    try { firmaImg = '<img class="ds-firma-img" alt="Firma" src="' + document.getElementById('firma-anteprima').toDataURL('image/png') + '">'; } catch (e) {}
+  }
+
+  var html = '';
+  if (anno) html += '<div class="ds-anno">Anno scolastico ' + esc(anno) + '</div>';
+  html += testo.replace(/<p>/, '<p class="ds-dest">'); // primo paragrafo = destinatario
+  if (motivi) html += '<ul class="ds-motivi">' + motivi + '</ul>';
+  if (docenti) {
+    html += '<div class="ds-docenti-titolo">' + (secondaria ? 'Docenti del Consiglio di Classe' : 'Docenti del gruppo') + '</div>' +
+            '<ul class="ds-docenti">' + docenti + '</ul>';
+  }
+  html += '<div class="ds-firme">' +
+            '<div class="ds-data">' + esc(luogoData) + '</div>' +
+            '<div class="ds-firma-blocco">' +
+              '<div>' + esc(etichetta) + '</div>' +
+              (firmaImg ? firmaImg : '<div class="ds-firma-linea"></div>') +
+              '<div class="ds-nome">' + (coord ? 'Il coordinatore: ' + esc(coord) : '') + '</div>' +
+            '</div>' +
+          '</div>';
+  document.getElementById('doc-stampa').innerHTML = html;
+}
+// Anche Cmd/Ctrl+P usa il documento aggiornato
+window.addEventListener('beforeprint', costruisciDocStampa);
+
 /* ── STAMPA ── */
 function stampa() {
   aggiornaTesto();
+  var mancanti = [];
+  if (!document.getElementById('ordine').value) mancanti.push('ordine di scuola');
+  if (!document.getElementById('plesso').value) mancanti.push('plesso');
+  if (!document.getElementById('classe').value.trim()) mancanti.push('classe/sezione');
+  if (!document.getElementById('anno').value.trim()) mancanti.push('anno scolastico');
+  if (!document.getElementById('alunno-nome').value.trim()) mancanti.push('cognome e nome dell\u2019alunno/a');
+  if (!document.getElementById('tipo-diagnosi').value.trim()) mancanti.push('tipo di diagnosi');
+  if (!document.getElementById('diagnosi-autore').value.trim()) mancanti.push('redattore della diagnosi');
+  var haMotivo = false;
+  document.querySelectorAll('.motivazione-item').forEach(function(li) {
+    var chk = li.querySelector('input[type="checkbox"]'), ta = li.querySelector('textarea');
+    if (chk && chk.checked && ta && ta.value.trim()) haMotivo = true;
+  });
+  if (!haMotivo) mancanti.push('almeno una motivazione selezionata');
+  if (!document.getElementById('luogo-data').value.trim()) mancanti.push('luogo e data');
+  if (mancanti.length && !confirm('Mancano ancora: ' + mancanti.join(', ') + '.\n\nStampare comunque?')) return;
+  costruisciDocStampa();
   window.print();
 }
 
@@ -711,7 +789,7 @@ function resetModulo() {
   document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(function(el) { el.value = ''; });
   document.getElementById('ordine').selectedIndex = 0;
   document.getElementById('plesso').selectedIndex = 0;
-  document.getElementById('anno').value = '2025/2026';
+  document.getElementById('anno').value = annoScolasticoCorrente();
   document.querySelectorAll('input[type="checkbox"]').forEach(function(el) { el.checked = false; });
   document.querySelectorAll('.motivazione-item').forEach(function(el) { el.classList.remove('selezionata'); });
   var oggi = new Date();
