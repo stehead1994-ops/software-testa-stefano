@@ -1458,9 +1458,9 @@ let _pdpAmbito  = null;
 function _etichettaTipoPDP(p) {
   if (ruoloCorrente !== 'master' && ruoloCorrente !== 'admin') return '';
   const tipi = {
-    dsa:         ['DSA', 'tipo-dsa', 'DSA – L. 170/2010'],
-    diagnosi:    ['BES con diagnosi', 'tipo-diagnosi', 'Altra diagnosi specialistica (non DSA)'],
-    consiglio:   ['BES · Consiglio di classe', 'tipo-consiglio', 'Decisione del Consiglio di classe, senza certificazione'],
+    dsa:         ['con DSA', 'tipo-dsa', 'DSA – L. 170/2010'],
+    diagnosi:    ['con BES · diagnosi', 'tipo-diagnosi', 'Altra diagnosi specialistica (non DSA)'],
+    consiglio:   ['con BES · Consiglio di classe', 'tipo-consiglio', 'Decisione del Consiglio di classe, senza certificazione'],
     linguistico: ['NAI', 'tipo-linguistico', 'Svantaggio linguistico / NAI'],
   };
   const t = tipi[p?.dati?.radio_tipo_pdp];
