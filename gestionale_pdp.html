@@ -114,6 +114,12 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 .stato-in-corso { background: var(--azzurro-light); color: var(--blu); }
 .stato-protocollato { background: var(--verde-light); color: var(--verde); }
 .stato-non-redatto { background: #e9ecef; color: #6c757d; }
+.pdp-tipo { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 20px; margin-left: 8px; vertical-align: middle; white-space: nowrap; }
+.tipo-dsa { background: #ede7f6; color: #5e35b1; }
+.tipo-diagnosi { background: #e0f2f1; color: #00695c; }
+.tipo-consiglio { background: #fff3d6; color: #8a5300; }
+.tipo-linguistico { background: #fce4ec; color: #ad1457; }
+.tipo-mancante { background: white; color: #6c757d; border: 1px dashed #adb5bd; font-weight: 600; }
 .pdp-card-pw { font-family: monospace; background: var(--grigio-bg); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; border: 1px solid var(--grigio-bordo); }
 .pdp-card-azioni { display: flex; gap: 8px; }
 .btn-sm { padding: 6px 14px; border-radius: 7px; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
@@ -1448,6 +1454,20 @@ window.showTab = (tab) => {
 let _pdpAllDocs = []; // cache per filtri lato client
 let _pdpAmbito  = null;
 
+// Etichetta con la tipologia del PDP (scelta nella sezione 2). Solo lettura; visibile a master e referenti.
+function _etichettaTipoPDP(p) {
+  if (ruoloCorrente !== 'master' && ruoloCorrente !== 'admin') return '';
+  const tipi = {
+    dsa:         ['DSA', 'tipo-dsa', 'DSA – L. 170/2010'],
+    diagnosi:    ['BES con diagnosi', 'tipo-diagnosi', 'Altra diagnosi specialistica (non DSA)'],
+    consiglio:   ['BES · Consiglio di classe', 'tipo-consiglio', 'Decisione del Consiglio di classe, senza certificazione'],
+    linguistico: ['NAI', 'tipo-linguistico', 'Svantaggio linguistico / NAI'],
+  };
+  const t = tipi[p?.dati?.radio_tipo_pdp];
+  if (!t) return '<span class="pdp-tipo tipo-mancante" title="Nella sezione 2 non è ancora stata scelta la tipologia">Tipologia da indicare</span>';
+  return `<span class="pdp-tipo ${t[1]}" title="${t[2]}">${t[0]}</span>`;
+}
+
 async function caricaPDP(ambito = null) {
   _pdpAmbito = ambito;
   // Mostra filtri: master vede tutto, referente vede solo stato + ricerca nome
@@ -1539,7 +1559,7 @@ function _renderListaPDP() {
     return `
     <div class="pdp-card">
       <div class="pdp-card-info">
-        <div class="pdp-card-nome">${p.alunno || '—'}</div>
+        <div class="pdp-card-nome">${p.alunno || '—'}${_etichettaTipoPDP(p)}</div>
         <div class="pdp-card-meta">${p.grado || ''} · Classe ${p.classe || '—'} · ${p.anno || ''}</div>
         ${dataProtocollazione}
       </div>
@@ -1644,7 +1664,7 @@ function _renderArchivioFiltrato() {
     const motivazioneNR = p.non_redatto_motivazione || '';
     return `<div class="pdp-card">
       <div class="pdp-card-info">
-        <div class="pdp-card-nome">${p.alunno || '—'}</div>
+        <div class="pdp-card-nome">${p.alunno || '—'}${_etichettaTipoPDP(p)}</div>
         <div class="pdp-card-meta">Classe ${p.classe || '—'} · ${p.anno || ''}</div>
         ${p.protocollato_data_str ? `<div style="font-size:0.72rem;color:var(--verde);margin-top:3px">📅 ${p.protocollato_data_str}</div>` : ''}
         ${p.stato === 'non_redatto' ? `<div style="font-size:0.72rem;color:#6c757d;margin-top:3px">🚫 ${motivazioneNR}</div>` : ''}
