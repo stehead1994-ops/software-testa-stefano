@@ -409,6 +409,20 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
   }
   .table-form td textarea { min-height: 40px; }
 
+  /* Diagnosi o difficoltà rilevate: elenco a righe + dati dello specialista */
+  .diag-blocco { border: 1.5px solid var(--grigio-bordo); border-radius: 10px; padding: 12px 14px; margin-top: 10px; background: white; }
+  .diag-label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--testo); margin-bottom: 8px; }
+  .diag-righe { display: flex; flex-direction: column; gap: 8px; }
+  .diag-riga { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+  .diag-riga input[type="text"] {
+    border: 1.5px solid var(--grigio-bordo); border-radius: 7px;
+    padding: 7px 11px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+    outline: none; color: var(--testo); background: white; font-weight: 500; width: 100%;
+  }
+  .diag-riga input:focus { border-color: var(--azzurro); background: #f7fbff; }
+  .diag-nota { font-size: 0.76rem; color: var(--testo-soft); margin-top: 6px; }
+  .diag-altra { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 0.86rem; font-weight: 600; color: var(--testo); cursor: pointer; }
+
   /* ─── TABELLA ANALISI BISOGNI ─── */
   .analisi-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
   .analisi-table th {
@@ -823,6 +837,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
     .materia-campo { padding: 6pt 8pt; }
     .suggerimenti-panel { display: none !important; }
     .riga-rimuovi, .add-riga-btn { display: none !important; }
+    .diag-riga { grid-template-columns: 1fr; }
+    .diag-riga:has(input:placeholder-shown) { display: none !important; }
+    .diag-nota { display: none !important; }
+    .diag-altra:has(input:not(:checked)) { display: none !important; }
+    .diag-blocco { border: none; padding: 0; }
     .riga-dinamica { grid-template-columns: 1fr 1fr; gap: 6pt; page-break-inside: avoid; }
     .riga-dinamica:has(input.riga-nome:placeholder-shown) { display: none; }
     .criterio-check:has(input:not(:checked)) { display: none; }
@@ -2467,6 +2486,9 @@ function _ripristinaDatiFirebase(dati, grado) {
     } catch(e) { console.warn('Errore ripristino righe:', e); }
   }
 
+  // Diagnosi: mostra le righe compilate e la seconda valutazione se presente
+  aggiornaDiagnosiUI();
+
   // Ripristina PAP buttons
   if (dati._pap) {
     try {
@@ -3022,6 +3044,39 @@ window.esportaPDF = async () => {
     y += 7;
   }
 
+  // Diagnosi o difficoltà rilevate (una o due valutazioni)
+  const _fmtData = d => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ''); return m ? `${m[3]}/${m[2]}/${m[1]}` : (d || ''); };
+  const stampaValutazione = (titolo, voci, nome, ente, data) => {
+    voci = voci.map(v => String(v || '').trim()).filter(Boolean);
+    const rif = [nome && ('Redatta da: ' + nome), ente && ('Presso: ' + ente), data && ('In data: ' + _fmtData(data))].filter(Boolean).join('   ·   ');
+    if (!voci.length && !rif) return;
+    if (y + 14 > 277) { doc.addPage(); y = 15; }
+    doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(80,80,80);
+    doc.text(titolo.toUpperCase(), ML+2, y+3.5);
+    y += 5.5;
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(20,20,20);
+    voci.forEach(v => {
+      const lines = doc.splitTextToSize('\u2022 ' + v, TW-6);
+      if (y + lines.length * 4.2 > 280) { doc.addPage(); y = 15; }
+      doc.text(lines, ML+3, y+3);
+      y += lines.length * 4.2;
+    });
+    if (rif) {
+      const lines = doc.splitTextToSize(rif, TW-6);
+      if (y + lines.length * 4 > 280) { doc.addPage(); y = 15; }
+      doc.setFontSize(8); doc.setTextColor(80,80,80);
+      doc.text(lines, ML+3, y+3.5);
+      y += lines.length * 4 + 1;
+    }
+    y += 3;
+  };
+  stampaValutazione('Diagnosi o difficoltà rilevate',
+    [dati.s2_diagnosi_tipo, ...[2,3,4,5,6,7,8].map(n => dati['s2_diagnosi_riga' + n])],
+    dati.s2_specialista_nome, dati.s2_specialista_ente, dati.s2_diagnosi_data);
+  stampaValutazione('Seconda valutazione',
+    [1,2,3,4,5,6,7,8].map(n => dati['s2_diagnosi2_riga' + n]),
+    dati.s2_specialista2_nome, dati.s2_specialista2_ente, dati.s2_diagnosi2_data);
+
   // ── SEZIONE 3: OSSERVAZIONI ──
   const campoTesto = (titolo, valore, altezza = 20) => {
     if (y + altezza + 10 > 277) { doc.addPage(); y = 15; }
@@ -3295,25 +3350,70 @@ const _PDP_FORM_HTML = `<div class="grado-bar">
       </div>
 
       <div style="margin-top:16px">
-        <div class="sep-label">Dati diagnosi specialistica</div>
-        <table class="table-form">
-          <thead>
-            <tr>
-              <th>Diagnosi specialistica</th>
-              <th>Redatta da</th>
-              <th>Presso</th>
-              <th>In data</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><input data-campo="s2_diagnosi_tipo" type="text" placeholder="es. DSA – Dislessia e Disortografia"></td>
-              <td><input data-campo="s2_specialista_nome" type="text" placeholder="Nome specialista"></td>
-              <td><input data-campo="s2_specialista_ente" type="text" placeholder="Struttura / Ente"></td>
-              <td><input data-campo="s2_diagnosi_data" type="date"></td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="sep-label">Diagnosi o difficoltà rilevate</div>
+        <div class="diag-blocco">
+          <label class="diag-label">Diagnosi o difficoltà rilevate <span class="label-hint">— una per riga, come riportate nella documentazione</span></label>
+          <div class="diag-righe">
+            <div class="diag-riga"><input data-campo="s2_diagnosi_tipo" type="text" placeholder="es. DSA – Dislessia e Disortografia, oppure una difficoltà descritta nella relazione"></div>
+            <div class="diag-riga" style="display:none"><input data-campo="s2_diagnosi_riga2" type="text" placeholder="Altra diagnosi o difficoltà rilevata"><button type="button" class="riga-rimuovi" onclick="rimuoviRigaDiagnosi(this)" title="Togli riga vuota">✕</button></div>
+            <div class="diag-riga" style="display:none"><input data-campo="s2_diagnosi_riga3" type="text" placeholder="Altra diagnosi o difficoltà rilevata"><button type="button" class="riga-rimuovi" onclick="rimuoviRigaDiagnosi(this)" title="Togli riga vuota">✕</button></div>
+            <div class="diag-riga" style="display:none"><input data-campo="s2_diagnosi_riga4" type="text" placeholder="Altra diagnosi o difficoltà rilevata"><button type="button" class="riga-rimuovi" onclick="rimuoviRigaDiagnosi(this)" title="Togli riga vuota">✕</button></div>
+            <div class="diag-riga" style="display:none"><input data-campo="s2_diagnosi_riga5" type="text" placeholder="Altra diagnosi o difficoltà rilevata"><button type="button" class="riga-rimuovi" onclick="rimuoviRigaDiagnosi(this)" title="Togli riga vuota">✕</button></div>
+            <div class="diag-riga" style="display:none"><input data-campo="s2_diagnosi_riga6" type="text" placeholder="Altra diagnosi o difficoltà rilevata"><button type="button" class="riga-rimuovi" onclick="rimuoviRigaDiagnosi(this)" title="Togli riga vuota">✕</button></div>
+            <div class="diag-riga" style="display:none"><input data-campo="s2_diagnosi_riga7" type="text" placeholder="Altra diagnosi o difficoltà rilevata"><button type="button" class="riga-rimuovi" onclick="rimuoviRigaDiagnosi(this)" title="Togli riga vuota">✕</button></div>
+            <div class="diag-riga" style="display:none"><input data-campo="s2_diagnosi_riga8" type="text" placeholder="Altra diagnosi o difficoltà rilevata"><button type="button" class="riga-rimuovi" onclick="rimuoviRigaDiagnosi(this)" title="Togli riga vuota">✕</button></div>
+          </div>
+          <button type="button" class="add-riga-btn" onclick="aggiungiRigaDiagnosi(this)">➕ Aggiungi diagnosi o difficoltà</button>
+          <table class="table-form">
+            <thead>
+              <tr>
+                <th>Redatta da</th>
+                <th>Presso</th>
+                <th>In data</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input data-campo="s2_specialista_nome" type="text" placeholder="Nome specialista"></td>
+                <td><input data-campo="s2_specialista_ente" type="text" placeholder="Struttura / Ente"></td>
+                <td><input data-campo="s2_diagnosi_data" type="date"></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="diag-nota">Redatta da / presso / in data: da compilare solo se esiste una documentazione specialistica.</div>
+        </div>
+
+        <label class="diag-altra"><input type="checkbox" data-campo="s2_altra_valutazione" onchange="toggleAltraValutazione(this)"> È presente un'altra valutazione <span class="label-hint">(altro specialista o altra data)</span></label>
+        <div class="diag-blocco" id="diag-blocco-2" style="display:none">
+          <label class="diag-label">Seconda valutazione <span class="label-hint">— diagnosi o difficoltà rilevate, una per riga</span></label>
+          <div class="diag-righe">
+            <div class="diag-riga"><input data-campo="s2_diagnosi2_riga1" type="text" placeholder="Diagnosi o difficoltà rilevata nella seconda valutazione"></div>
+            <div class="diag-riga" style="display:none"><input data-campo="s2_diagnosi2_riga2" type="text" placeholder="Altra diagnosi o difficoltà rilevata"><button type="button" class="riga-rimuovi" onclick="rimuoviRigaDiagnosi(this)" title="Togli riga vuota">✕</button></div>
+            <div class="diag-riga" style="display:none"><input data-campo="s2_diagnosi2_riga3" type="text" placeholder="Altra diagnosi o difficoltà rilevata"><button type="button" class="riga-rimuovi" onclick="rimuoviRigaDiagnosi(this)" title="Togli riga vuota">✕</button></div>
+            <div class="diag-riga" style="display:none"><input data-campo="s2_diagnosi2_riga4" type="text" placeholder="Altra diagnosi o difficoltà rilevata"><button type="button" class="riga-rimuovi" onclick="rimuoviRigaDiagnosi(this)" title="Togli riga vuota">✕</button></div>
+            <div class="diag-riga" style="display:none"><input data-campo="s2_diagnosi2_riga5" type="text" placeholder="Altra diagnosi o difficoltà rilevata"><button type="button" class="riga-rimuovi" onclick="rimuoviRigaDiagnosi(this)" title="Togli riga vuota">✕</button></div>
+            <div class="diag-riga" style="display:none"><input data-campo="s2_diagnosi2_riga6" type="text" placeholder="Altra diagnosi o difficoltà rilevata"><button type="button" class="riga-rimuovi" onclick="rimuoviRigaDiagnosi(this)" title="Togli riga vuota">✕</button></div>
+            <div class="diag-riga" style="display:none"><input data-campo="s2_diagnosi2_riga7" type="text" placeholder="Altra diagnosi o difficoltà rilevata"><button type="button" class="riga-rimuovi" onclick="rimuoviRigaDiagnosi(this)" title="Togli riga vuota">✕</button></div>
+            <div class="diag-riga" style="display:none"><input data-campo="s2_diagnosi2_riga8" type="text" placeholder="Altra diagnosi o difficoltà rilevata"><button type="button" class="riga-rimuovi" onclick="rimuoviRigaDiagnosi(this)" title="Togli riga vuota">✕</button></div>
+          </div>
+          <button type="button" class="add-riga-btn" onclick="aggiungiRigaDiagnosi(this)">➕ Aggiungi diagnosi o difficoltà</button>
+          <table class="table-form">
+            <thead>
+              <tr>
+                <th>Redatta da</th>
+                <th>Presso</th>
+                <th>In data</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input data-campo="s2_specialista2_nome" type="text" placeholder="Nome specialista"></td>
+                <td><input data-campo="s2_specialista2_ente" type="text" placeholder="Struttura / Ente"></td>
+                <td><input data-campo="s2_diagnosi2_data" type="date"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <div class="info-box-tempistiche">
           <div class="info-box-titolo">⏱️ Quando consegnare il PDP</div>
@@ -4034,6 +4134,59 @@ function rimuoviRiga(btn) {
   btn.closest('.riga-dinamica').remove();
 }
 
+// ─── DIAGNOSI O DIFFICOLTÀ RILEVATE: righe da aggiungere + seconda valutazione ───
+// Ogni riga ha una chiave propria (s2_diagnosi_riga2…): nessun dato dipende dalla posizione
+// e le pagine aperte con una versione precedente non toccano queste chiavi.
+function aggiungiRigaDiagnosi(btn) {
+  const blocco = btn.closest('.diag-blocco');
+  if (!blocco) return;
+  const riga = [...blocco.querySelectorAll('.diag-riga')].find(r => r.style.display === 'none');
+  if (!riga) { mostraToast('Numero massimo di righe raggiunto: usa la seconda valutazione o le criticità', 'rosso'); return; }
+  riga.style.display = '';
+  const inp = riga.querySelector('input');
+  if (inp) inp.focus();
+}
+
+// La ✕ toglie solo righe vuote: un testo scritto non si cancella con un clic
+function rimuoviRigaDiagnosi(btn) {
+  const riga = btn.closest('.diag-riga');
+  if (!riga) return;
+  const inp = riga.querySelector('input');
+  if (inp && inp.value.trim() !== '') { mostraToast('Per togliere la riga cancella prima il testo', 'rosso'); return; }
+  riga.style.display = 'none';
+}
+
+function _bloccoDiagnosiCompilato(blocco) {
+  return !!blocco && [...blocco.querySelectorAll('input')].some(i => String(i.value || '').trim() !== '');
+}
+
+// La seconda valutazione non si può nascondere finché contiene dati
+function toggleAltraValutazione(cb) {
+  const blocco = document.getElementById('diag-blocco-2');
+  if (!blocco) return;
+  if (!cb.checked && _bloccoDiagnosiCompilato(blocco)) {
+    cb.checked = true;
+    mostraToast('Per togliere la seconda valutazione svuota prima i suoi campi', 'rosso');
+  }
+  blocco.style.display = cb.checked ? 'block' : 'none';
+}
+
+// Dopo il caricamento di un PDP: mostra tutte le righe che contengono testo
+function aggiornaDiagnosiUI() {
+  const area = document.getElementById('area-editing');
+  if (!area) return;
+  area.querySelectorAll('.diag-riga').forEach(r => {
+    const inp = r.querySelector('input');
+    if (inp && String(inp.value || '').trim() !== '') r.style.display = '';
+  });
+  const blocco = document.getElementById('diag-blocco-2');
+  const cb = area.querySelector('[data-campo="s2_altra_valutazione"]');
+  if (blocco && cb) {
+    if (_bloccoDiagnosiCompilato(blocco)) cb.checked = true;
+    blocco.style.display = cb.checked ? 'block' : 'none';
+  }
+}
+
 function toggleSuggerimenti(uid) {
   const el = document.getElementById('suggerimenti-' + uid);
   if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
@@ -4392,6 +4545,9 @@ window.toggleSuggerimenti    = toggleSuggerimenti;
 window.toggleGuida           = toggleGuida;
 window.aggiungiRiga          = aggiungiRiga;
 window.rimuoviRiga           = rimuoviRiga;
+window.aggiungiRigaDiagnosi  = aggiungiRigaDiagnosi;
+window.rimuoviRigaDiagnosi   = rimuoviRigaDiagnosi;
+window.toggleAltraValutazione = toggleAltraValutazione;
 window.aggiornaPercentuale   = aggiornaPercentuale;
 window.mostraTipoDSA         = mostraTipoDSA;
 window.mostraAvvisoConsiglio = mostraAvvisoConsiglio;
