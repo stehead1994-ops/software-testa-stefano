@@ -466,5 +466,167 @@ window.CAA_SCHEDE = [
     "file": "vado-dal-dentista-caa.pdf",
     "anteprima": "vado-dal-dentista.jpg",
     "pagine": 15
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Fiabe e favole in CAA",
+    "titolo": "Cappuccetto Rosso",
+    "descrizione": "La fiaba di Cappuccetto Rosso raccontata in simboli con un testo nuovo e semplice: il cestino per la nonna, il lupo nel bosco, il cacciatore. Con le domande di comprensione.",
+    "file": "cappuccetto-rosso-caa.pdf",
+    "anteprima": "cappuccetto-rosso.jpg",
+    "pagine": 16
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Fiabe e favole in CAA",
+    "titolo": "I musicanti di Brema",
+    "descrizione": "La fiaba dei musicanti di Brema in simboli, con un testo nuovo: l'asino, il cane, il gatto e il gallo diventano amici, cantano insieme e trovano una casa. Con le domande di comprensione.",
+    "file": "musicanti-di-brema-caa.pdf",
+    "anteprima": "musicanti-di-brema.jpg",
+    "pagine": 15
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Fiabe e favole in CAA",
+    "titolo": "La bella addormentata",
+    "descrizione": "La fiaba della bella addormentata in simboli, con un testo nuovo: la festa, il dono della fata, il fuso, il lungo sonno nel castello e il risveglio. Con le domande di comprensione.",
+    "file": "bella-addormentata-caa.pdf",
+    "anteprima": "bella-addormentata.jpg",
+    "pagine": 16
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Fiabe e favole in CAA",
+    "titolo": "La volpe e la cicogna",
+    "descrizione": "La favola di Esopo della volpe e della cicogna in simboli, con un testo nuovo: due inviti a cena, un piatto piatto e un vaso lungo, e la morale. Con le domande di comprensione.",
+    "file": "volpe-e-cicogna-caa.pdf",
+    "anteprima": "volpe-e-cicogna.jpg",
+    "pagine": 15
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Fiabe e favole in CAA",
+    "titolo": "Il lupo e i sette capretti",
+    "descrizione": "La fiaba dei fratelli Grimm del lupo e dei sette capretti in simboli, con un testo nuovo: la mamma capra esce, il lupo bussa, il capretto nascosto nell'orologio aiuta a salvare i fratelli. Con le domande di comprensione.",
+    "file": "lupo-e-sette-capretti-caa.pdf",
+    "anteprima": "lupo-e-sette-capretti.jpg",
+    "pagine": 16
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Fiabe e favole in CAA",
+    "titolo": "I giorni della merla",
+    "descrizione": "La leggenda dei giorni della merla in simboli, con un testo nuovo: la merla bianca, gennaio dispettoso, il comignolo caldo e le piume diventate nere. Gli ultimi giorni di gennaio sono i più freddi dell'anno.",
+    "file": "giorni-della-merla-caa.pdf",
+    "anteprima": "giorni-della-merla.jpg",
+    "pagine": 16
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Fiabe e favole in CAA",
+    "titolo": "Pinocchio",
+    "descrizione": "La storia di Pinocchio, dal romanzo di Collodi, raccontata in simboli con un testo nuovo: Geppetto, il burattino di legno, le bugie e il naso lungo, la balena e il ritorno a casa. Con le domande di comprensione.",
+    "file": "pinocchio-caa.pdf",
+    "anteprima": "pinocchio.jpg",
+    "pagine": 17
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Fiabe e favole in CAA",
+    "titolo": "Alice nel paese delle meraviglie",
+    "descrizione": "Alice nel paese delle meraviglie, dal libro di Lewis Carroll, in simboli con un testo nuovo: il coniglio bianco con l'orologio, la buca, la bottiglia e il dolce, il tè e la regina di cuori. Con le domande di comprensione.",
+    "file": "alice-nel-paese-delle-meraviglie-caa.pdf",
+    "anteprima": "alice-nel-paese-delle-meraviglie.jpg",
+    "pagine": 16
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Fiabe e favole in CAA",
+    "titolo": "Il libro della giungla",
+    "descrizione": "La storia di Mowgli, dai racconti di Rudyard Kipling, in simboli con un testo nuovo: il bambino cresciuto dai lupi, l'orso Baloo, la pantera Bagheera, la tigre Shere Khan e il fuoco. Con le domande di comprensione.",
+    "file": "il-libro-della-giungla-caa.pdf",
+    "anteprima": "il-libro-della-giungla.jpg",
+    "pagine": 16
+  },
+  {
+    "disciplina": "italiano",
+    "argomento": "Feste e ricorrenze",
+    "titolo": "Il Natale",
+    "descrizione": "Il Natale in simboli: dicembre, l'albero e il presepe, la lettera a Babbo Natale, la slitta e le renne, i regali sotto l'albero e la festa in famiglia. Con le domande finali.",
+    "file": "il-natale-caa.pdf",
+    "anteprima": "il-natale.jpg",
+    "pagine": 15
+  },
+  {
+    "disciplina": "storia",
+    "argomento": "Feste e ricorrenze",
+    "titolo": "Il Giorno della Memoria",
+    "descrizione": "Il Giorno della Memoria spiegato in simboli con parole semplici e rispettose: il 27 gennaio ricordiamo le persone perseguitate durante la guerra, diciamo no all'odio e diamo valore alla pace e ai diritti di tutti.",
+    "file": "giorno-della-memoria-caa.pdf",
+    "anteprima": "giorno-della-memoria.jpg",
+    "pagine": 14
+  },
+  {
+    "disciplina": "scienze",
+    "argomento": "Gli animali",
+    "titolo": "Dove vivono gli animali?",
+    "descrizione": "Gli ambienti degli animali in simboli: il mare, il bosco, la fattoria, la savana, il polo e la casa. Con le domande finali per abbinare ogni animale al suo ambiente.",
+    "file": "dove-vivono-gli-animali-caa.pdf",
+    "anteprima": "dove-vivono-gli-animali.jpg",
+    "pagine": 10
+  },
+  {
+    "disciplina": "tecnologia",
+    "argomento": "Il computer",
+    "titolo": "Il computer",
+    "descrizione": "Il computer in simboli: le parti (schermo, tastiera, mouse), che cosa ci possiamo fare, come si accende e si spegne, e le regole per usarlo bene. Con le domande finali.",
+    "file": "il-computer-caa.pdf",
+    "anteprima": "il-computer.jpg",
+    "pagine": 13
+  },
+  {
+    "disciplina": "scienze",
+    "argomento": "Gli animali",
+    "titolo": "I dinosauri",
+    "descrizione": "I dinosauri in simboli: quando vivevano, le uova, chi mangiava le piante e chi la carne, i dinosauri grandi e piccoli, i fossili e il museo. Con le domande finali.",
+    "file": "i-dinosauri-caa.pdf",
+    "anteprima": "i-dinosauri.jpg",
+    "pagine": 13
+  },
+  {
+    "disciplina": "autonomie",
+    "argomento": "Vestirsi",
+    "titolo": "Come mi vesto?",
+    "descrizione": "Vestirsi in simboli: che cosa metto quando fa caldo, quando fa freddo e quando piove, e l'ordine giusto per vestirsi la mattina. Con le domande finali.",
+    "file": "come-mi-vesto-caa.pdf",
+    "anteprima": "come-mi-vesto.jpg",
+    "pagine": 11
+  },
+  {
+    "disciplina": "arte",
+    "argomento": "I colori",
+    "titolo": "Memory: la frutta e i colori",
+    "descrizione": "Un memory da ritagliare in simboli: ogni frutto va in coppia con il suo colore. Con le istruzioni del gioco in simboli e la tabella delle soluzioni.",
+    "file": "memory-frutta-e-colori-caa.pdf",
+    "anteprima": "memory-frutta-e-colori.jpg",
+    "pagine": 4
+  },
+  {
+    "disciplina": "emozioni",
+    "argomento": "Le emozioni e la gentilezza",
+    "titolo": "Il dado delle emozioni",
+    "descrizione": "Un dado da ritagliare e costruire con sei emozioni in simboli, le istruzioni del gioco e le carte \"Mi sento… quando…\" da completare a voce o per iscritto.",
+    "file": "dado-delle-emozioni-caa.pdf",
+    "anteprima": "dado-delle-emozioni.jpg",
+    "pagine": 4
+  },
+  {
+    "disciplina": "autonomie",
+    "argomento": "La scuola",
+    "titolo": "Il gioco della scuola",
+    "descrizione": "Un gioco dell'oca in simboli per il rientro a scuola: 24 caselle con gli oggetti e i momenti della giornata, caselle speciali per andare avanti, tornare indietro o stare fermi, e le istruzioni in simboli.",
+    "file": "gioco-della-scuola-caa.pdf",
+    "anteprima": "gioco-della-scuola.jpg",
+    "pagine": 3
   }
 ];
