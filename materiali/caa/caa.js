@@ -394,5 +394,77 @@ window.CAA_SCHEDE = [
     "file": "carnevale-caa.pdf",
     "anteprima": "carnevale.jpg",
     "pagine": 11
+  },
+  {
+    "disciplina": "autonomie",
+    "argomento": "Storie sociali",
+    "titolo": "Andiamo in biblioteca",
+    "descrizione": "Storia sociale in simboli per preparare l'uscita in biblioteca con la classe: la fila, la strada, il silenzio, scegliere un libro e riportarlo. Con le domande finali.",
+    "file": "andiamo-in-biblioteca-caa.pdf",
+    "anteprima": "andiamo-in-biblioteca.jpg",
+    "pagine": 14
+  },
+  {
+    "disciplina": "ed-civica",
+    "argomento": "La sicurezza a scuola",
+    "titolo": "La prova di evacuazione",
+    "descrizione": "Storia sociale in simboli su che cosa si fa quando suona l'allarme a scuola: lasciare le cose, mettersi in fila, uscire con calma dietro alla maestra e aspettare al punto di raccolta. Utile prima delle prove.",
+    "file": "prova-di-evacuazione-caa.pdf",
+    "anteprima": "prova-di-evacuazione.jpg",
+    "pagine": 15
+  },
+  {
+    "disciplina": "autonomie",
+    "argomento": "Storie sociali",
+    "titolo": "L'ora della mensa",
+    "descrizione": "Storia sociale in simboli sul pranzo a scuola: lavare le mani, sedersi al proprio posto, assaggiare, chiedere ancora o dire basta, parlare a voce bassa. Con le domande finali.",
+    "file": "l-ora-della-mensa-caa.pdf",
+    "anteprima": "l-ora-della-mensa.jpg",
+    "pagine": 14
+  },
+  {
+    "disciplina": "autonomie",
+    "argomento": "Storie sociali",
+    "titolo": "Mi soffio il naso",
+    "descrizione": "Storia sociale in simboli per imparare a soffiarsi il naso: perché si fa, il fazzoletto, soffiare piano, buttarlo nel cestino e lavare le mani.",
+    "file": "soffiarsi-il-naso-caa.pdf",
+    "anteprima": "soffiarsi-il-naso.jpg",
+    "pagine": 13
+  },
+  {
+    "disciplina": "emozioni",
+    "argomento": "Storie sociali",
+    "titolo": "La voce giusta",
+    "descrizione": "Storia sociale in simboli sul volume della voce: quando si parla piano, quando si può alzare la voce e che cosa fare quando ci si arrabbia. Con le domande finali.",
+    "file": "la-voce-giusta-caa.pdf",
+    "anteprima": "la-voce-giusta.jpg",
+    "pagine": 13
+  },
+  {
+    "disciplina": "autonomie",
+    "argomento": "Storie sociali",
+    "titolo": "Al parco giochi",
+    "descrizione": "Storia sociale in simboli sul parco giochi: quando si va, stare vicino all'adulto, aspettare il turno sull'altalena e sullo scivolo, giocare con gli altri e tornare a casa.",
+    "file": "al-parco-giochi-caa.pdf",
+    "anteprima": "al-parco-giochi.jpg",
+    "pagine": 13
+  },
+  {
+    "disciplina": "autonomie",
+    "argomento": "Storie sociali",
+    "titolo": "Vado dal dottore",
+    "descrizione": "Storia sociale in simboli per preparare la visita dal pediatra: la sala d'attesa, il lettino, lo stetoscopio, la gola e le orecchie, la bilancia, e alla fine si torna a casa.",
+    "file": "vado-dal-dottore-caa.pdf",
+    "anteprima": "vado-dal-dottore.jpg",
+    "pagine": 14
+  },
+  {
+    "disciplina": "autonomie",
+    "argomento": "Storie sociali",
+    "titolo": "Vado dal dentista",
+    "descrizione": "Storia sociale in simboli per preparare la visita dal dentista: la poltrona, la luce, lo specchietto, aprire la bocca, contare i denti, e come lavarli bene ogni giorno.",
+    "file": "vado-dal-dentista-caa.pdf",
+    "anteprima": "vado-dal-dentista.jpg",
+    "pagine": 15
   }
 ];
