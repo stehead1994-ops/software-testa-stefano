@@ -612,6 +612,15 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
   .suggerimenti-lista { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
   .suggerimenti-lista li { font-size: 0.78rem; color: var(--testo); line-height: 1.35; }
 
+  /* Dichiarazione: nessuno strumento compensativo né misura dispensativa nella disciplina */
+  .nostrum-box { border: 1.5px dashed var(--grigio-bordo); border-radius: 8px; padding: 9px 12px; margin-bottom: 12px; background: #fafbfc; }
+  .nostrum-check { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 600; color: var(--testo); cursor: pointer; }
+  .nostrum-dett { margin-top: 9px; }
+  .nostrum-firma { font-size: 0.76rem; color: var(--testo-soft); margin-top: 6px; }
+  .nostrum-box.nostrum-on { border: 1.5px solid #6c757d; background: #f1f3f5; }
+  .nostrum-box.nostrum-manca { border-color: #c0392b; background: #fdecea; }
+  .materia-card.nostrum-attivo .blocco-strum-misure { display: none; }
+
   /* Motivazione obbligatoria per soglie percentuali fuori range */
   .motivazione-box {
     margin-top: 10px; background: #fdecea; border: 1.5px solid #c0392b;
@@ -846,6 +855,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
     .diag-riga { grid-template-columns: 1fr; }
     .diag-riga:has(input:placeholder-shown) { display: none !important; }
     .diag-nota { display: none !important; }
+    .nostrum-box:not(.nostrum-on) { display: none !important; }
     .diag-altra:has(input:not(:checked)) { display: none !important; }
     .diag-blocco { border: none; padding: 0; }
     .riga-dinamica { grid-template-columns: 1fr 1fr; gap: 6pt; page-break-inside: avoid; }
@@ -2508,6 +2518,8 @@ function _ripristinaDatiFirebase(dati, grado) {
 
   // Diagnosi: mostra le righe compilate e la seconda valutazione se presente
   aggiornaDiagnosiUI();
+  // Discipline: mostra le dichiarazioni "nessuno strumento / misura" già segnate
+  aggiornaNessunoStrumentoUI();
 
   // Ripristina PAP buttons
   if (dati._pap) {
@@ -2653,6 +2665,24 @@ function _segnaToccato(e) {
   const k = _chiaveCampo(el);
   if (k) _campiToccati.add(k);
   if (k === 's1_grado') { _campiToccati.add('_grado'); _campiToccati.add('s1_classe'); }
+  _firmaAutomatica(el);
+}
+
+// Firma docente della disciplina: chi compila un campo della disciplina viene indicato come docente,
+// ma solo se la firma è vuota. Una firma già presente non viene mai sostituita, e se il docente
+// l'ha cancellata o cambiata a mano in questa sessione non viene più riempita in automatico.
+function _firmaAutomatica(el) {
+  const card = el.closest('.materia-card');
+  if (!card) return;
+  const firma = card.querySelector('.materia-firma input');
+  if (!firma || el === firma || firma.disabled) return;
+  if (String(firma.value || '').trim() !== '') return;
+  if (_campiToccati.has(firma.dataset.campo)) return;
+  const compilato = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : String(el.value || '').trim() !== '';
+  if (!compilato) return;
+  const nome = utenteCorrente?.displayName;
+  if (!nome) return;
+  firma.value = nome;
 }
 
 // ─── AUTOSAVE ───
@@ -2837,7 +2867,7 @@ async function salvaOra() {
       docSalvataggio.autori = { ...(docSalvataggio.autori || {}), ...autoriNuovi };
       if (!(docSalvataggio.autoriUid || []).includes(uidAutore)) docSalvataggio.autoriUid = [...(docSalvataggio.autoriUid || []), uidAutore];
       docSalvataggio.autoriNomi = { ...(docSalvataggio.autoriNomi || {}), [uidAutore]: nomeAutore };
-      if (pdpCorrenteId === idSalvataggio) _applicaAutori();
+      if (pdpCorrenteId === idSalvataggio) { _applicaAutori(); aggiornaNessunoStrumentoUI(); }
     }
 
     // Scrivi un log per ogni campo modificato (in parallelo, best-effort)
@@ -2887,6 +2917,8 @@ window.protocolla = async () => {
   if (!grado)  { mostraToast('⚠️ Indica il grado scolastico prima di chiudere', 'rosso'); return; }
   if (!classe) { mostraToast('⚠️ Indica la classe prima di chiudere', 'rosso'); return; }
   if (!plesso) { mostraToast('⚠️ Seleziona il plesso di appartenenza prima di chiudere', 'rosso'); return; }
+  const senzaMotivo = _nessunoStrumentoSenzaMotivo();
+  if (senzaMotivo.length) { mostraToast('⚠️ Manca la motivazione per "nessuno strumento / misura" in: ' + senzaMotivo.join(', '), 'rosso'); return; }
   if (!confirm('Confermi la chiusura di questo PDP?\n\nIl documento verrà marcato come completato e passerà in sola lettura. Potrai scaricarlo in PDF dalla dashboard.')) return;
   try {
     // Salva prima tutti i dati correnti, poi protocolla
@@ -3131,7 +3163,9 @@ window.esportaPDF = async () => {
   MATERIE.forEach(m => {
     const firma = dati['mat_firma_' + m];
     const strategie = dati['mat_strategie_' + m];
-    if (!firma && !strategie) return;
+    const mk = m === 'irc___alternativa' ? 'irc' : m;
+    const nostrum = dati['mat_nostrum_' + mk] === true || !!dati['mat_nostrum_motivo_' + mk];
+    if (!firma && !strategie && !nostrum) return;
     if (!materieTrovate) {
       doc.addPage(); y = 15;
       sezioneHeader("5. STRATEGIE DI INTERVENTO PER DISCIPLINA");
@@ -3150,6 +3184,11 @@ window.esportaPDF = async () => {
     }
     y += 9;
     
+    if (nostrum) {
+      const chi = pdpCorrenteDoc?.autori?.['mat_nostrum_' + mk];
+      const firmaDich = (chi && chi.n) ? ` (dichiarato da ${chi.n}${chi.t ? ' il ' + new Date(chi.t).toLocaleDateString('it-IT') : ''})` : '';
+      campoTesto('Strumenti compensativi e misure dispensative', 'Non applicati in questa disciplina' + firmaDich + '. Motivazione: ' + (dati['mat_nostrum_motivo_' + mk] || 'non indicata'), 16);
+    }
     if (strategie) campoTesto('Strategie metodologiche', strategie, 16);
   });
 
@@ -4072,6 +4111,15 @@ function materiaCard(nome) {
     </div>
     <div class="materia-body-v2">
 
+      <div class="nostrum-box">
+        <label class="nostrum-check"><input type="checkbox" data-campo="mat_nostrum_${s}" onchange="toggleNessunoStrumento(this)"> In questa disciplina non applico strumenti compensativi né misure dispensative</label>
+        <div class="nostrum-dett" style="display:none">
+          <label class="motivazione-label">Perché? — motivazione obbligatoria</label>
+          <textarea class="motivazione-testo" data-campo="mat_nostrum_motivo_${s}" oninput="aggiornaNessunoStrumento(this)" placeholder="es. Le difficoltà rilevate non incidono sulle attività di questa disciplina"></textarea>
+          <div class="nostrum-firma"></div>
+        </div>
+      </div>
+
       ${blocStrumenti(uid, area, nome)}
       ${blocMisureDispensative(uid)}
       ${blocMisureOggettive(uid)}
@@ -4087,7 +4135,7 @@ function materiaCard(nome) {
 function blocStrumenti(uid, area, nomeMateria) {
   const suggerimenti = SUGGERIMENTI_STRUMENTI[area] || SUGGERIMENTI_STRUMENTI.tutte;
   return `
-  <div class="materia-campo-full">
+  <div class="materia-campo-full blocco-strum-misure">
     <div class="label-row">
       <label style="margin-bottom:0">Strumenti compensativi <span class="label-hint">— uno per riga, specificando quando viene usato</span></label>
       <button type="button" class="guida-btn" onclick="toggleSuggerimenti('${uid}')">💡 Suggerimenti per ${nomeMateria || 'questa disciplina'}</button>
@@ -4116,7 +4164,7 @@ function rigaStrumentoHTML() {
 
 function blocMisureDispensative(uid) {
   return `
-  <div class="materia-campo-full">
+  <div class="materia-campo-full blocco-strum-misure">
     <label>Misure dispensative e adattamenti <span class="label-hint">— una per riga, specificando quando si applica</span></label>
     <div class="righe-dinamiche" id="misure-righe-${uid}">
       ${rigaMisuraHTML()}
@@ -4152,6 +4200,63 @@ function rimuoviRiga(btn) {
     return;
   }
   btn.closest('.riga-dinamica').remove();
+}
+
+// ─── DICHIARAZIONE "NESSUNO STRUMENTO / MISURA" PER DISCIPLINA ───
+// Due campi normali per disciplina (mat_nostrum_<materia> e mat_nostrum_motivo_<materia>):
+// si salvano, si tracciano e si ripristinano come tutti gli altri. Nessun dato viene cancellato.
+function _righeStrumMisureCompilate(card) {
+  return [...card.querySelectorAll('.blocco-strum-misure .riga-dinamica input')].some(i => String(i.value || '').trim() !== '');
+}
+
+function _aggiornaCardNessunoStrumento(card) {
+  const box = card.querySelector('.nostrum-box');
+  if (!box) return;
+  const cb = box.querySelector('input[type="checkbox"]');
+  const motivo = box.querySelector('textarea');
+  const haMotivo = String(motivo.value || '').trim() !== '';
+  if (haMotivo && !cb.checked) cb.checked = true;          // una motivazione scritta non resta mai nascosta
+  const on = cb.checked;
+  box.querySelector('.nostrum-dett').style.display = on ? 'block' : 'none';
+  box.classList.toggle('nostrum-on', on);
+  box.classList.toggle('nostrum-manca', on && !haMotivo);
+  // Le righe si nascondono solo se sono vuote: se contengono testo restano visibili
+  card.classList.toggle('nostrum-attivo', on && !_righeStrumMisureCompilate(card));
+  const firma = box.querySelector('.nostrum-firma');
+  const a = pdpCorrenteDoc?.autori?.[cb.dataset.campo];
+  firma.textContent = (on && a && a.n) ? `Dichiarato da ${a.n}${a.t ? ' il ' + new Date(a.t).toLocaleDateString('it-IT') : ''}` : '';
+}
+
+function toggleNessunoStrumento(cb) {
+  const card = cb.closest('.materia-card');
+  if (!card) return;
+  const motivo = card.querySelector('.nostrum-box textarea');
+  if (cb.checked && _righeStrumMisureCompilate(card)) {
+    cb.checked = false;
+    mostraToast('In questa disciplina sono già scritti strumenti o misure: non posso segnare che non vengono applicati', 'rosso');
+  } else if (!cb.checked && String(motivo.value || '').trim() !== '') {
+    cb.checked = true;
+    mostraToast('Per togliere la dichiarazione cancella prima la motivazione', 'rosso');
+  }
+  _aggiornaCardNessunoStrumento(card);
+  if (cb.checked) motivo.focus();
+}
+
+function aggiornaNessunoStrumento(el) {
+  const card = el.closest('.materia-card');
+  if (card) _aggiornaCardNessunoStrumento(card);
+}
+
+function aggiornaNessunoStrumentoUI() {
+  document.querySelectorAll('#area-editing .materia-card').forEach(_aggiornaCardNessunoStrumento);
+}
+
+// Discipline con la dichiarazione segnata ma senza motivazione
+function _nessunoStrumentoSenzaMotivo() {
+  return [...document.querySelectorAll('#area-editing .materia-card')].filter(card => {
+    const box = card.querySelector('.nostrum-box');
+    return box && box.querySelector('input[type="checkbox"]').checked && String(box.querySelector('textarea').value || '').trim() === '';
+  }).map(card => card.querySelector('.materia-nome')?.textContent?.trim() || 'IRC / Attività alternativa');
 }
 
 // ─── DIAGNOSI O DIFFICOLTÀ RILEVATE: righe da aggiungere + seconda valutazione ───
@@ -4391,6 +4496,16 @@ function ircCard() {
       <div class="materia-firma">Firma docente: <input data-campo="mat_firma_irc" type="text" placeholder="…………………………"></div>
     </div>
     <div class="materia-body-v2">
+
+      <div class="nostrum-box">
+        <label class="nostrum-check"><input type="checkbox" data-campo="mat_nostrum_irc" onchange="toggleNessunoStrumento(this)"> In questa disciplina non applico strumenti compensativi né misure dispensative</label>
+        <div class="nostrum-dett" style="display:none">
+          <label class="motivazione-label">Perché? — motivazione obbligatoria</label>
+          <textarea class="motivazione-testo" data-campo="mat_nostrum_motivo_irc" oninput="aggiornaNessunoStrumento(this)" placeholder="es. Le difficoltà rilevate non incidono sulle attività di questa disciplina"></textarea>
+          <div class="nostrum-firma"></div>
+        </div>
+      </div>
+
       ${blocStrumenti(uid, 'tutte', 'IRC / Attività Alternativa')}
       ${blocMisureDispensative(uid)}
       ${blocMisureOggettive(uid)}
@@ -4565,6 +4680,8 @@ window.toggleSuggerimenti    = toggleSuggerimenti;
 window.toggleGuida           = toggleGuida;
 window.aggiungiRiga          = aggiungiRiga;
 window.rimuoviRiga           = rimuoviRiga;
+window.toggleNessunoStrumento = toggleNessunoStrumento;
+window.aggiornaNessunoStrumento = aggiornaNessunoStrumento;
 window.aggiungiRigaDiagnosi  = aggiungiRigaDiagnosi;
 window.rimuoviRigaDiagnosi   = rimuoviRigaDiagnosi;
 window.toggleAltraValutazione = toggleAltraValutazione;
