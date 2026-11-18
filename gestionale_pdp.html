@@ -619,7 +619,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
   .nostrum-firma { font-size: 0.76rem; color: var(--testo-soft); margin-top: 6px; }
   .nostrum-box.nostrum-on { border: 1.5px solid #6c757d; background: #f1f3f5; }
   .nostrum-box.nostrum-manca { border-color: #c0392b; background: #fdecea; }
-  .materia-card.nostrum-attivo .blocco-strum-misure { display: none; }
+  .materia-card.nostrum-attivo .materia-body-v2 > *:not(.nostrum-box) { display: none; }
 
   /* Motivazione obbligatoria per soglie percentuali fuori range */
   .motivazione-box {
@@ -4112,7 +4112,7 @@ function materiaCard(nome) {
     <div class="materia-body-v2">
 
       <div class="nostrum-box">
-        <label class="nostrum-check"><input type="checkbox" data-campo="mat_nostrum_${s}" onchange="toggleNessunoStrumento(this)"> In questa disciplina non applico strumenti compensativi né misure dispensative</label>
+        <label class="nostrum-check"><input type="checkbox" data-campo="mat_nostrum_${s}" onchange="toggleNessunoStrumento(this)"> In questa disciplina non applico strumenti compensativi né misure dispensative: non è previsto nulla di diverso rispetto alla classe</label>
         <div class="nostrum-dett" style="display:none">
           <label class="motivazione-label">Perché? — motivazione obbligatoria</label>
           <textarea class="motivazione-testo" data-campo="mat_nostrum_motivo_${s}" oninput="aggiornaNessunoStrumento(this)" placeholder="es. Le difficoltà rilevate non incidono sulle attività di questa disciplina"></textarea>
@@ -4205,8 +4205,14 @@ function rimuoviRiga(btn) {
 // ─── DICHIARAZIONE "NESSUNO STRUMENTO / MISURA" PER DISCIPLINA ───
 // Due campi normali per disciplina (mat_nostrum_<materia> e mat_nostrum_motivo_<materia>):
 // si salvano, si tracciano e si ripristinano come tutti gli altri. Nessun dato viene cancellato.
-function _righeStrumMisureCompilate(card) {
-  return [...card.querySelectorAll('.blocco-strum-misure .riga-dinamica input')].some(i => String(i.value || '').trim() !== '');
+// La disciplina contiene qualcosa di scritto? (strumenti, misure, verifiche, criteri, strategie)
+// Non contano la firma, la dichiarazione stessa, i cursori e la crocetta "domande chiuse" che è attiva di partenza.
+function _disciplinaCompilata(card) {
+  return [...card.querySelectorAll('.materia-body-v2 input, .materia-body-v2 textarea')].some(el => {
+    if (el.closest('.nostrum-box') || el.type === 'range' || el.type === 'button') return false;
+    if (el.type === 'checkbox' || el.type === 'radio') return el.checked && !/^mat_cb_chiuse_/.test(el.dataset.campo || '');
+    return String(el.value || '').trim() !== '';
+  });
 }
 
 function _aggiornaCardNessunoStrumento(card) {
@@ -4220,8 +4226,8 @@ function _aggiornaCardNessunoStrumento(card) {
   box.querySelector('.nostrum-dett').style.display = on ? 'block' : 'none';
   box.classList.toggle('nostrum-on', on);
   box.classList.toggle('nostrum-manca', on && !haMotivo);
-  // Le righe si nascondono solo se sono vuote: se contengono testo restano visibili
-  card.classList.toggle('nostrum-attivo', on && !_righeStrumMisureCompilate(card));
+  // Il resto della disciplina si nasconde solo se è vuoto: se contiene qualcosa resta visibile
+  card.classList.toggle('nostrum-attivo', on && !_disciplinaCompilata(card));
   const firma = box.querySelector('.nostrum-firma');
   const a = pdpCorrenteDoc?.autori?.[cb.dataset.campo];
   firma.textContent = (on && a && a.n) ? `Dichiarato da ${a.n}${a.t ? ' il ' + new Date(a.t).toLocaleDateString('it-IT') : ''}` : '';
@@ -4231,9 +4237,9 @@ function toggleNessunoStrumento(cb) {
   const card = cb.closest('.materia-card');
   if (!card) return;
   const motivo = card.querySelector('.nostrum-box textarea');
-  if (cb.checked && _righeStrumMisureCompilate(card)) {
+  if (cb.checked && _disciplinaCompilata(card)) {
     cb.checked = false;
-    mostraToast('In questa disciplina sono già scritti strumenti o misure: non posso segnare che non vengono applicati', 'rosso');
+    mostraToast('In questa disciplina c\'è già qualcosa di compilato: toglilo prima di dichiarare che non applichi nulla', 'rosso');
   } else if (!cb.checked && String(motivo.value || '').trim() !== '') {
     cb.checked = true;
     mostraToast('Per togliere la dichiarazione cancella prima la motivazione', 'rosso');
@@ -4498,7 +4504,7 @@ function ircCard() {
     <div class="materia-body-v2">
 
       <div class="nostrum-box">
-        <label class="nostrum-check"><input type="checkbox" data-campo="mat_nostrum_irc" onchange="toggleNessunoStrumento(this)"> In questa disciplina non applico strumenti compensativi né misure dispensative</label>
+        <label class="nostrum-check"><input type="checkbox" data-campo="mat_nostrum_irc" onchange="toggleNessunoStrumento(this)"> In questa disciplina non applico strumenti compensativi né misure dispensative: non è previsto nulla di diverso rispetto alla classe</label>
         <div class="nostrum-dett" style="display:none">
           <label class="motivazione-label">Perché? — motivazione obbligatoria</label>
           <textarea class="motivazione-testo" data-campo="mat_nostrum_motivo_irc" oninput="aggiornaNessunoStrumento(this)" placeholder="es. Le difficoltà rilevate non incidono sulle attività di questa disciplina"></textarea>
