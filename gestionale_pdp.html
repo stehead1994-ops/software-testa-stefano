@@ -82,6 +82,43 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 .header-user img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); }
 .btn-header { background: rgba(255,255,255,0.15); border: none; color: white; padding: 6px 14px; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; cursor: pointer; }
 .btn-header:hover { background: rgba(255,255,255,0.25); }
+.ad-fab { position: fixed; right: 22px; bottom: 20px; z-index: 2900; display: flex; align-items: center; gap: 10px; font-family: 'DM Sans', sans-serif; background: none; border: 0; padding: 0; cursor: pointer; }
+.ad-fab .ad-lab { background: #1a3a5c; color: #fff; padding: 9px 14px; border-radius: 18px 18px 4px 18px; font-size: 0.85rem; font-weight: 600; box-shadow: 0 6px 18px rgba(0,0,0,.2); }
+.ad-fab .ad-ava { width: 64px; height: 64px; border-radius: 50%; background: #fff; border: 3px solid #C8A84B; box-shadow: 0 8px 22px rgba(0,0,0,.28); display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 30px; }
+.ad-fab .ad-ava img, .ad-head .ad-ava img { height: 82%; }
+.ad-fab:focus-visible, .ad-x:focus-visible, .ad-chip:focus-visible, .ad-invia:focus-visible, .ad-gem:focus-visible { outline: 3px solid #C8A84B; outline-offset: 2px; }
+.ad-panel { position: fixed; right: 22px; bottom: 20px; width: 390px; max-width: calc(100vw - 24px); height: 590px; max-height: calc(100vh - 90px); background: #fff; border-radius: 18px; box-shadow: 0 18px 50px rgba(0,0,0,.35); z-index: 2950; display: flex; flex-direction: column; overflow: hidden; font-family: 'DM Sans', sans-serif; color: #1f2937; }
+.ad-head { background: #1a3a5c; color: #fff; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+.ad-head .ad-ava { width: 46px; height: 46px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; border: 2px solid #C8A84B; overflow: hidden; flex-shrink: 0; font-size: 22px; }
+.ad-head b { font-family: 'Lora', serif; font-size: 1.1rem; } .ad-head small { display: block; font-size: 0.75rem; opacity: .9; }
+.ad-x { margin-left: auto; background: none; border: 0; color: #fff; font-size: 1.2rem; cursor: pointer; padding: 6px 8px; border-radius: 6px; }
+.ad-warn { background: #fdecea; color: #7a1f16; font-size: 0.75rem; line-height: 1.4; padding: 7px 14px; border-bottom: 1px solid #f3c9c4; }
+.ad-body { flex: 1; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: #f6f8fb; overflow-y: auto; }
+.ad-m { max-width: 90%; padding: 9px 12px; border-radius: 14px; font-size: 0.84rem; line-height: 1.5; overflow-wrap: anywhere; }
+.ad-m.a { background: #fff; border: 1px solid #e1e7ef; border-top-left-radius: 4px; align-self: flex-start; }
+.ad-m.u { background: #1a3a5c; color: #fff; border-top-right-radius: 4px; align-self: flex-end; }
+.ad-m b.ad-tit { display: block; margin-bottom: 3px; color: #1a3a5c; }
+.ad-src { display: block; margin-top: 6px; font-size: 0.72rem; color: #14785A; font-weight: 700; }
+.ad-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ad-chip { border: 1.5px solid #c9d3df; background: #fff; border-radius: 16px; padding: 5px 10px; font-size: 0.75rem; color: #1a3a5c; font-weight: 600; cursor: pointer; font-family: inherit; text-align: left; }
+.ad-chip:hover { border-color: #1a3a5c; }
+.ad-rif { background: none; border: 0; padding: 0; color: #1a3a5c; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
+.ad-foot { padding: 10px 12px; border-top: 1px solid #e1e7ef; display: flex; flex-direction: column; gap: 8px; background: #fff; }
+.ad-in { display: flex; gap: 8px; }
+.ad-in input { flex: 1; min-width: 0; border: 1.5px solid #c9d3df; border-radius: 10px; padding: 9px 12px; font-size: 0.84rem; font-family: inherit; color: #1f2937; }
+.ad-invia { background: #1a3a5c; color: #fff; border: 0; border-radius: 10px; padding: 9px 13px; font-size: 0.9rem; cursor: pointer; }
+.ad-gem { text-align: center; font-size: 0.78rem; color: #1a3a5c; font-weight: 700; border: 1.5px dashed #C8A84B; border-radius: 10px; padding: 7px; background: #fffaf0; cursor: pointer; font-family: inherit; }
+@media (max-width: 700px) { .ad-fab .ad-lab { display: none; } .ad-panel { right: 12px; bottom: 12px; } }
+@media print { .ad-fab, .ad-panel, .adelia-overlay { display: none !important; } }
+.adelia-overlay { position: fixed; inset: 0; background: rgba(15,30,60,0.55); z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.adelia-box { background: white; border-radius: 14px; max-width: 520px; width: 100%; padding: 22px 24px; font-family: 'DM Sans', sans-serif; color: #1f2937; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+.adelia-box p { font-size: 0.9rem; line-height: 1.5; margin: 0 0 12px; }
+.adelia-titolo { font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 700; color: #1a3a5c; margin-bottom: 10px; }
+.adelia-avviso { background: #fdecea; border-left: 4px solid #c0392b; border-radius: 6px; padding: 10px 12px; font-size: 0.88rem; line-height: 1.5; margin-bottom: 12px; }
+.adelia-nota { font-size: 0.8rem !important; color: #6c757d; }
+.adelia-azioni { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+.adelia-btn { background: #1a3a5c; color: white; text-decoration: none; padding: 9px 16px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; }
+.adelia-btn-sec { background: white; color: #1a3a5c; border: 1.5px solid #c9d3df; padding: 9px 16px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: inherit; }
 
 /* ─── DASHBOARD MASTER ─── */
 #screen-master { flex-direction: column; }
@@ -1061,6 +1098,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
         <span id="autosave-label">Salvato</span>
       </div>
       <div class="editor-azioni">
+        <button class="btn-header" id="btn-adelia" onclick="apriPannelloAdelia()" style="background:rgba(200,168,75,0.45);display:none" title="Assistente per il PDP e la lettura della diagnosi">🐧 Contatta Adelia</button>
         <button class="btn-header" id="btn-pdf" onclick="esportaPDF()">🖨️ PDF</button>
         <button class="btn-header" id="btn-protocolla" onclick="protocolla()" style="background:rgba(46,125,94,0.4)">✅ PROTOCOLLA PDP</button>
         <button class="btn-header" id="btn-non-redatto" onclick="segnaNonRedattoDaEditor()" style="background:rgba(108,117,125,0.4)">🚫 Da non redigere</button>
@@ -1069,6 +1107,38 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
       </div>
     </div>
   </header>
+  <button type="button" class="ad-fab" id="ad-fab" style="display:none" onclick="apriPannelloAdelia()" aria-label="Apri Adelia, l'assistente per il PDP">
+    <span class="ad-lab">Serve una mano? Chiedi ad Adelia</span>
+    <span class="ad-ava"><img src="formazione/caa/assets/adelia.png" alt="" onerror="this.replaceWith('🐧')"></span>
+  </button>
+  <div class="ad-panel" id="ad-panel" style="display:none" role="dialog" aria-labelledby="ad-nome">
+    <div class="ad-head">
+      <span class="ad-ava"><img src="formazione/caa/assets/adelia.png" alt="" onerror="this.replaceWith('🐧')"></span>
+      <div><b id="ad-nome">Adelia</b><small>Aiuto per il PDP e la lettura della diagnosi</small></div>
+      <button type="button" class="ad-x" onclick="chiudiPannelloAdelia()" aria-label="Chiudi Adelia">✕</button>
+    </div>
+    <div class="ad-warn"><strong>Non scrivere dati degli alunni:</strong> solo codici e difficoltà in forma generica. Quello che scrivi qui non viene salvato né inviato.</div>
+    <div class="ad-body" id="ad-body" aria-live="polite"></div>
+    <div class="ad-foot">
+      <form class="ad-in" onsubmit="event.preventDefault(); adeliaInvia();" autocomplete="off">
+        <input type="text" id="ad-input" maxlength="300" placeholder="Scrivi una domanda…" aria-label="Domanda per Adelia">
+        <button type="submit" class="ad-invia" aria-label="Invia">➤</button>
+      </form>
+      <button type="button" class="ad-gem" onclick="apriAdelia()">✨ Vuoi ragionarci insieme? Continua con Adelia su Gemini</button>
+    </div>
+  </div>
+  <div id="adelia-overlay" class="adelia-overlay" style="display:none" onclick="if(event.target===this)chiudiAdelia()">
+    <div class="adelia-box" role="dialog" aria-modal="true" aria-labelledby="adelia-titolo">
+      <div class="adelia-titolo" id="adelia-titolo">🐧 Adelia</div>
+      <p>Adelia è l'assistente dell'istituto: ti aiuta a <strong>compilare il PDP</strong> e a <strong>leggere una diagnosi</strong> (codici, sigle, punteggi, cosa inserire). Risponde a partire dal vademecum "Conoscere, accompagnare, documentare" e da "Leggere una diagnosi senza perdersi".</p>
+      <div class="adelia-avviso"><strong>Non inserire dati degli alunni.</strong> Niente nomi, date di nascita, classi, né diagnosi o relazioni incollate o caricate: lo vieta il Regolamento IA dell'istituto. Scrivi solo codici e difficoltà in forma generica (es. "F81.0", "lentezza nella lettura").</div>
+      <p class="adelia-nota">Si apre in una nuova scheda di Gemini: entra con l'account della scuola. Adelia può sbagliare: fa fede il vademecum.</p>
+      <div class="adelia-azioni">
+        <button type="button" class="adelia-btn-sec" onclick="chiudiAdelia()">Annulla</button>
+        <a class="adelia-btn" href="https://gemini.google.com/gem/6f0992473e92" target="_blank" rel="noopener noreferrer" onclick="chiudiAdelia()">Ho capito, apri Adelia</a>
+      </div>
+    </div>
+  </div>
   <div id="legenda-autori" style="display:none;padding:6px 14px;background:#fff;border-bottom:1px solid var(--grigio-bordo);font-size:0.78rem;line-height:1.9"></div>
   <div class="editor-body">
     <nav class="sidebar-materie" id="sidebar-materie"></nav>
@@ -2365,6 +2435,137 @@ function _iniettaFormPDP() {
     sezioni.map(s => `<div class="sidebar-item" onclick="document.getElementById('${s.id}')?.scrollIntoView({behavior:'smooth',block:'start'})">${s.label}</div>`).join('');
 }
 
+// Adelia nel gestionale: una finestrella che cerca nella base di conoscenza d'istituto (adelia_base.js)
+// e riporta la scheda che risponde. Lavora tutta nel browser: la domanda non viene salvata, non entra
+// nel PDP e non viene inviata a nessun servizio. Per dialogare c'è il Gem su Gemini (apriAdelia).
+const ADELIA_STOP = new Set('a ad al alla alle allo ai agli anche che chi ci come con cosa cos da dal dalla dei del della delle dello di dove e ed è in il la le lo gli i l un una uno ma mi ne nel nella nelle nei non o per piu più quale quali quando quanto se si sono su sul sulla tra fra ha ho hai devo deve posso puo può fare faccio vuol dire significa serve servono mio mia suo sua questo questa quello quella c d dell all nell sull essere sta ti te me io tu lui lei adelia ciao grazie scrivo scrivere scrivi metto mettere inserisco inserire'.split(' '));
+let _adeliaIdx = null, _adeliaCaricamento = null;
+function _adNorm(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, ' '); }
+function _adToken(t) { return (_adNorm(t).match(/[a-z]\d+(?:\.\d+)?|[a-z0-9]+(?:\.\d+)?/g) || []).filter(w => w.length > 1 && !ADELIA_STOP.has(w)); }
+// radice grossolana: basta per avvicinare singolari e plurali (strumento/strumenti, verifica/verifiche)
+function _adRad(w) { return /\d/.test(w) || w.length < 5 ? w : w.slice(0, Math.max(4, w.length - 2)); }
+function _adeliaCarica() {
+  if (_adeliaIdx) return Promise.resolve(_adeliaIdx);
+  if (_adeliaCaricamento) return _adeliaCaricamento;
+  _adeliaCaricamento = new Promise((ok, ko) => {
+    const fine = () => {
+      const b = window.ADELIA_BASE;
+      if (!b || !Array.isArray(b.schede)) return ko(new Error('base assente'));
+      const df = {};
+      const schede = b.schede.map(s => {
+        const o = { s, chiavi: s.k.map(_adNorm), k: new Set(_adToken(s.k.join(' ')).map(_adRad)), t: new Set(_adToken(s.t).map(_adRad)), x: new Set(_adToken(s.x).map(_adRad)) };
+        new Set([...o.k, ...o.t, ...o.x]).forEach(r => { df[r] = (df[r] || 0) + 1; });
+        return o;
+      });
+      _adeliaIdx = { schede, df, n: schede.length, perId: Object.fromEntries(b.schede.map(s => [s.id, s])) };
+      ok(_adeliaIdx);
+    };
+    if (window.ADELIA_BASE) return fine();
+    const sc = document.createElement('script'); sc.src = 'adelia_base.js?v=09';
+    sc.onload = fine; sc.onerror = () => { _adeliaCaricamento = null; ko(new Error('base non raggiungibile')); };
+    document.head.appendChild(sc);
+  });
+  return _adeliaCaricamento;
+}
+function _adeliaCerca(domanda) {
+  const ix = _adeliaIdx, q = _adNorm(domanda), rad = [...new Set(_adToken(domanda).map(_adRad))];
+  if (!rad.length) return [];
+  const ris = ix.schede.filter(o => o.s.id[0] !== 'L').map(o => {
+    let p = 0, trovate = 0;
+    rad.forEach(r => {
+      const idf = Math.log(1 + ix.n / (ix.df[r] || ix.n));
+      const peso = o.k.has(r) ? 3 : o.t.has(r) ? 2.5 : o.x.has(r) ? 1 : 0;
+      if (peso) { p += peso * idf; trovate++; }
+    });
+    // il titolo della scheda coincide con la domanda: è la scheda giusta
+    if (o.t.size) p += 2.5 * rad.filter(r => o.t.has(r)).length / o.t.size;
+    o.chiavi.forEach(c => { if (c.length > 2 && new RegExp('(^|[^a-z0-9])' + c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '($|[^a-z0-9])').test(q)) p += 4 + 2 * c.split(' ').length; });
+    return { s: o.s, p: p * (0.5 + 0.5 * trovate / rad.length) };
+  }).filter(r => r.p > 0).sort((a, b) => b.p - a.p);
+  return ris;
+}
+// Segnali che il docente sta scrivendo dati di un alunno: in quel caso Adelia non cerca nulla.
+function _adeliaDatiPersonali(t) {
+  return /\b\d{1,2}[\/.\-]\d{1,2}[\/.\-](19|20)\d{2}\b/.test(t) || /\bnat[oa] (il|a)\b/i.test(t) || /\b[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]\b/.test(t) || /\b(l'alunn[oa]|alunn[oa]|il bambino|la bambina|il ragazzo|la ragazza) [A-Z][a-zà-ù]+ [A-Z][a-zà-ù]+/.test(t);
+}
+function _adMsg(chi, nodo) {
+  const body = document.getElementById('ad-body'), d = document.createElement('div');
+  d.className = 'ad-m ' + chi; if (typeof nodo === 'string') d.textContent = nodo; else d.appendChild(nodo);
+  body.appendChild(d); return d;
+}
+function _adChips(voci) {
+  const body = document.getElementById('ad-body'), c = document.createElement('div'); c.className = 'ad-chips';
+  voci.forEach(v => { const b = document.createElement('button'); b.type = 'button'; b.className = 'ad-chip'; b.textContent = v.etichetta; b.onclick = v.azione; c.appendChild(b); });
+  body.appendChild(c); return c;
+}
+function _adScheda(s) {
+  const f = document.createDocumentFragment(), t = document.createElement('b'); t.className = 'ad-tit'; t.textContent = s.t; f.appendChild(t);
+  // i rimandi "scheda I7" diventano cliccabili
+  s.x.split(/(sched[ae] [A-O]\d+)/).forEach(pezzo => {
+    const m = pezzo.match(/^sched[ae] ([A-O]\d+)$/);
+    if (m && _adeliaIdx.perId[m[1]]) { const b = document.createElement('button'); b.type = 'button'; b.className = 'ad-rif'; b.textContent = pezzo; b.onclick = () => adeliaMostra(m[1]); f.appendChild(b); }
+    else f.appendChild(document.createTextNode(pezzo));
+  });
+  if (s.f) { const fo = document.createElement('span'); fo.className = 'ad-src'; fo.textContent = '📖 ' + s.f; f.appendChild(fo); }
+  return f;
+}
+function _adInFondo(el) { const body = document.getElementById('ad-body'); body.scrollTop = el ? Math.max(0, el.offsetTop - body.offsetTop - 8) : body.scrollHeight; }
+function adeliaMostra(id) {
+  const s = _adeliaIdx && _adeliaIdx.perId[id]; if (!s) return;
+  _adInFondo(_adMsg('a', _adScheda(s)));
+}
+async function adeliaInvia(testo) {
+  const inp = document.getElementById('ad-input');
+  const domanda = (testo != null ? testo : inp.value).trim(); if (!domanda) return;
+  inp.value = '';
+  try { await _adeliaCarica(); } catch (e) { _adInFondo(_adMsg('a', 'Non riesco a caricare le mie schede: controlla la connessione e riprova.')); return; }
+  if (_adeliaDatiPersonali(domanda)) {
+    // la domanda non viene nemmeno riportata nella finestrella
+    _adMsg('u', '(messaggio non mostrato)');
+    _adInFondo(_adMsg('a', _adeliaIdx.perId.L1 ? _adeliaIdx.perId.L1.x : 'Non posso lavorare su dati di un alunno. Scrivimi solo codici o difficoltà in forma generica.'));
+    return;
+  }
+  _adMsg('u', domanda);
+  const ris = _adeliaCerca(domanda);
+  if (!ris.length || ris[0].p < 2.2) {
+    const m = _adMsg('a', 'Su questo non ho una scheda. Prova con altre parole (un codice, una sigla, il nome di una sezione), oppure continua con me su Gemini o senti la Funzione Strumentale Inclusione.');
+    _adChips([{ etichetta: '✨ Continua su Gemini', azione: apriAdelia }]); _adInFondo(m); return;
+  }
+  const m = _adMsg('a', _adScheda(ris[0].s));
+  const altre = ris.slice(1, 4).filter(r => r.p >= ris[0].p * 0.45);
+  if (altre.length) _adChips(altre.map(r => ({ etichetta: r.s.t, azione: () => adeliaMostra(r.s.id) })));
+  _adInFondo(m);
+}
+// In prova: per ora Adelia è visibile solo ai master.
+function _adeliaAttiva() { return ruoloCorrente === 'master'; }
+function _adeliaAggiornaVisibilita() {
+  const on = _adeliaAttiva(), pn = document.getElementById('ad-panel'), fab = document.getElementById('ad-fab'), btn = document.getElementById('btn-adelia');
+  if (!on && pn) pn.style.display = 'none';
+  if (fab) fab.style.display = on && pn.style.display === 'none' ? '' : 'none';
+  if (btn) btn.style.display = on ? '' : 'none';
+}
+function apriPannelloAdelia() {
+  if (!_adeliaAttiva()) return;
+  const pn = document.getElementById('ad-panel'), body = document.getElementById('ad-body');
+  pn.style.display = 'flex'; document.getElementById('ad-fab').style.display = 'none';
+  if (!body.children.length) {
+    _adMsg('a', 'Ciao, sono Adelia! Scrivimi un codice, una sigla o una sezione del PDP e ti riporto cosa dicono le guide dell\'istituto.');
+    _adChips(['Cosa significa F81.0', 'Strumenti o misure?', 'Cosa scrivo per inglese', 'Cosa vuol dire percentile'].map(t => ({ etichetta: t, azione: () => adeliaInvia(t) })));
+  }
+  _adeliaCarica().catch(() => {});
+  document.getElementById('ad-input').focus();
+}
+function chiudiPannelloAdelia() {
+  document.getElementById('ad-panel').style.display = 'none'; _adeliaAggiornaVisibilita();
+  document.getElementById('ad-fab').focus();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('ad-panel') && document.getElementById('ad-panel').style.display !== 'none' && document.getElementById('adelia-overlay').style.display === 'none') chiudiPannelloAdelia(); });
+
+// Adelia: assistente esterno (Gem di Gemini sull'account della scuola). Il gestionale apre solo il link,
+// dopo un avviso: non invia né legge alcun dato del PDP.
+function apriAdelia() { document.getElementById('adelia-overlay').style.display = 'flex'; }
+function chiudiAdelia() { document.getElementById('adelia-overlay').style.display = 'none'; }
+
 // Etichetta della tipologia accanto al nome nell'intestazione del PDP aperto.
 // Legge la scelta così com'è a schermo (o, se il modulo non è ancora pronto, quella salvata): non scrive nulla.
 function _aggiornaEtichettaEditor() {
@@ -2379,6 +2580,7 @@ function _aggiornaHeaderEditor(pdp) {
   document.getElementById('editor-alunno-nome').textContent =
     `${pdp.alunno || 'PDP'} — ${pdp.classe || ''} (${pdp.anno || ''})`;
   _aggiornaEtichettaEditor();
+  _adeliaAggiornaVisibilita();
   const isProtocollato = pdp.stato === 'protocollato';
   const isNonRedatto = pdp.stato === 'non_redatto';
   const isChiuso = isProtocollato || isNonRedatto;
@@ -4699,6 +4901,12 @@ window.toggleSuggerimenti    = toggleSuggerimenti;
 window.toggleGuida           = toggleGuida;
 window.aggiungiRiga          = aggiungiRiga;
 window.rimuoviRiga           = rimuoviRiga;
+window.apriAdelia = apriAdelia;
+window.chiudiAdelia = chiudiAdelia;
+window.apriPannelloAdelia = apriPannelloAdelia;
+window.chiudiPannelloAdelia = chiudiPannelloAdelia;
+window.adeliaInvia = adeliaInvia;
+window.adeliaMostra = adeliaMostra;
 window.toggleNessunoStrumento = toggleNessunoStrumento;
 window.aggiornaNessunoStrumento = aggiornaNessunoStrumento;
 window.aggiungiRigaDiagnosi  = aggiungiRigaDiagnosi;
