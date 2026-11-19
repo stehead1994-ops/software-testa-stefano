@@ -81,6 +81,11 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-h
 .modal{background:white;border-radius:12px;padding:1.5rem;width:440px;max-width:95vw;max-height:90vh;overflow-y:auto}
 .modal h3{font-size:17px;font-weight:600;margin-bottom:1rem}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem}
+.ml-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid #f0f0f0;cursor:pointer;font-size:13px}
+.ml-row:hover{background:#f5f8fc}
+.ml-row.sel{background:#EBF3FB}
+.ml-row input{width:16px;height:16px;flex-shrink:0;cursor:pointer}
+.ml-list{border:1px solid #e0e6ed;border-radius:8px;max-height:320px;overflow-y:auto;margin-bottom:10px}
 .scan-box{background:#f5f8fc;border:2px dashed #9fc4e8;border-radius:10px;padding:1.5rem;text-align:center;margin-bottom:1rem}
 .isbn-input{font-family:'Courier New',monospace;letter-spacing:2px;font-size:16px;text-align:center;width:240px;display:block;margin:0 auto}
 .api-note{background:#EBF3FB;border:1px solid #9fc4e8;border-radius:8px;padding:10px 14px;font-size:12px;color:#1D5FAD;margin-top:10px}
@@ -314,7 +319,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-h
           <div id="class-fields">
             <div class="row3">
               <div class="fg"><label>Classe</label>
-                <select id="add-class"><option>1A</option><option>1B</option><option>2A</option><option>2B</option><option>3A</option><option>3B</option><option>4A</option><option>4B</option><option>5A</option><option>5B</option></select>
+                <select id="add-class"><option>1A</option><option>1B</option><option>1C</option><option>1D</option><option>2A</option><option>2B</option><option>2C</option><option>2D</option><option>3A</option><option>3B</option><option>3C</option><option>3D</option><option>4A</option><option>4B</option><option>4C</option><option>4D</option><option>5A</option><option>5B</option><option>5C</option><option>5D</option></select>
               </div>
               <div class="fg"><label>Anno scolastico</label><input type="text" id="add-year" value="2025/26"></div>
               <div class="fg"><label>Max prestiti</label>
@@ -329,7 +334,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-h
           <div class="card-title">👥 Importa classe</div>
           <p style="font-size:13px;color:#888;margin-bottom:10px">Un alunno per riga: Nome Cognome</p>
           <div class="row2">
-            <div class="fg"><label>Classe</label><select id="bulk-class"><option>1A</option><option>1B</option><option>2A</option><option>2B</option><option>3A</option><option>3B</option><option>4A</option><option>4B</option><option>5A</option><option>5B</option></select></div>
+            <div class="fg"><label>Classe</label><select id="bulk-class"><option>1A</option><option>1B</option><option>1C</option><option>1D</option><option>2A</option><option>2B</option><option>2C</option><option>2D</option><option>3A</option><option>3B</option><option>3C</option><option>3D</option><option>4A</option><option>4B</option><option>4C</option><option>4D</option><option>5A</option><option>5B</option><option>5C</option><option>5D</option></select></div>
             <div class="fg"><label>Anno</label><input type="text" id="bulk-year" value="2025/26"></div>
           </div>
           <div class="fg"><textarea id="bulk-names" style="width:100%;height:100px;padding:9px;border:1px solid #cdd4dc;border-radius:8px;font-size:13px;font-family:inherit;resize:vertical" placeholder="Marco Rossi&#10;Anna Bianchi"></textarea></div>
@@ -392,6 +397,33 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#222;min-h
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('modal-return')">Annulla</button>
       <button class="btn btn-success" id="mr-ok">✅ Conferma</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-multi">
+  <div class="modal" style="width:620px">
+    <h3>📚 Prestito multiplo</h3>
+    <p style="font-size:13px;color:#666;margin-bottom:12px">Docente: <strong id="mm-teacher"></strong></p>
+    <div class="search-row" style="margin-bottom:8px">
+      <input type="text" id="mm-search" placeholder="Cerca titolo, autore o ISBN..." oninput="renderMultiList()">
+      <select id="mm-grade" onchange="renderMultiList()" style="width:130px;padding:9px 12px;border:1px solid #cdd4dc;border-radius:8px;font-size:13px;font-family:inherit">
+        <option value="">Tutte le classi</option><option value="1">1° Cl.</option><option value="2">2° Cl.</option><option value="3">3° Cl.</option><option value="4">4° Cl.</option><option value="5">5° Cl.</option>
+      </select>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#888;margin-bottom:6px">
+      <span id="mm-avail-count"></span>
+      <span><button class="btn btn-secondary btn-sm" onclick="multiSelectVisible(true)">Seleziona visibili</button> <button class="btn btn-secondary btn-sm" onclick="multiSelectVisible(false)">Deseleziona tutti</button></span>
+    </div>
+    <div class="ml-list" id="mm-list"></div>
+    <div style="font-size:14px;font-weight:600;color:#1D5FAD;margin-bottom:10px">Selezionati: <span id="mm-count">0</span></div>
+    <label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:#444;background:#fef9e7;border:1px solid #f5cba7;border-radius:8px;padding:10px;cursor:pointer">
+      <input type="checkbox" id="mm-cert" style="margin-top:2px;width:16px;height:16px;flex-shrink:0">
+      <span>Il docente certifica di prendere in prestito a proprio nome i libri selezionati e se ne assume la responsabilità fino alla restituzione.</span>
+    </label>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-multi')">Annulla</button>
+      <button class="btn btn-primary" onclick="confirmMultiLoan()">📤 Registra prestito</button>
     </div>
   </div>
 </div>
@@ -798,7 +830,7 @@ function renderUsers(){
   if(q)list=list.filter(u=>(u.name+' '+u.surname+' '+(u.classe||'')).toLowerCase().includes(q));
   const el=document.getElementById('user-list');
   if(!list.length){el.innerHTML='<div class="empty">👥 '+(users.filter(u=>!u.archived).length?'Nessun risultato':'Nessun utente registrato')+'</div>';return;}
-  el.innerHTML=list.map(u=>{const al=userActiveLoans(u.id);return'<div class="item-card"><div class="avatar '+avCol(u.id)+'">'+initials(u.name+' '+u.surname)+'</div><div class="item-info"><div class="item-name">'+esc(u.name+' '+u.surname)+(u.classe?'<span class="class-tag">'+esc(u.classe)+'</span>':'')+'</div><div class="item-meta">'+(u.type==='docente'?'Docente':'Alunno')+' · '+esc(u.year||'')+(u.note?' · '+esc(u.note):'')+'</div><div style="margin-top:4px">'+(al.length?'<span class="badge b-warn">📚 '+al.length+' in prestito</span>':'<span class="badge b-ok">✅ Nessun prestito</span>')+' <span class="badge b-info">max '+(u.loan_limit||2)+'</span></div></div><div class="item-actions"><button class="btn btn-warning btn-sm" onclick="archiveUser('+u.id+')" title="Archivia">🗄️</button><button class="btn btn-danger btn-sm" onclick="deleteUser('+u.id+')" title="Elimina">🗑️</button></div></div>';}).join('');
+  el.innerHTML=list.map(u=>{const al=userActiveLoans(u.id);return'<div class="item-card"><div class="avatar '+avCol(u.id)+'">'+initials(u.name+' '+u.surname)+'</div><div class="item-info"><div class="item-name">'+esc(u.name+' '+u.surname)+(u.classe?'<span class="class-tag">'+esc(u.classe)+'</span>':'')+'</div><div class="item-meta">'+(u.type==='docente'?'Docente':'Alunno')+' · '+esc(u.year||'')+(u.note?' · '+esc(u.note):'')+'</div><div style="margin-top:4px">'+(al.length?'<span class="badge b-warn">📚 '+al.length+' in prestito</span>':'<span class="badge b-ok">✅ Nessun prestito</span>')+' <span class="badge b-info">'+(u.type==='docente'?'nessun limite':'max '+(u.loan_limit||2))+'</span></div></div><div class="item-actions">'+(u.type==='docente'?'<button class="btn btn-secondary btn-sm" onclick="singleLoanFor('+u.id+')" title="Prestito singolo">📕 Singolo</button><button class="btn btn-primary btn-sm" onclick="openMultiLoan('+u.id+')" title="Prestito multiplo">📚 Multiplo</button>':'')+'<button class="btn btn-warning btn-sm" onclick="archiveUser('+u.id+')" title="Archivia">🗄️</button><button class="btn btn-danger btn-sm" onclick="deleteUser('+u.id+')" title="Elimina">🗑️</button></div></div>';}).join('');
 }
 
 function toggleClassFields(){document.getElementById('class-fields').style.display=document.getElementById('add-type').value==='docente'?'none':'block';}
@@ -891,7 +923,7 @@ function filterLoanUsers(){
   if(!q){drop.style.display='none';return;}
   const results=users.filter(u=>!u.archived&&((u.name+' '+u.surname).toLowerCase().includes(q)||(u.classe||'').toLowerCase().includes(q))).slice(0,8);
   if(!results.length){drop.innerHTML='<div class="ac-item" style="color:#aaa">Nessun utente trovato</div>';drop.style.display='block';return;}
-  drop.innerHTML=results.map(u=>{const al=userActiveLoans(u.id).length;const lim=u.loan_limit||2;const full=al>=lim;return'<div class="ac-item" style="opacity:'+(full?'.5':'1')+';cursor:'+(full?'not-allowed':'pointer')+'"'+(full?'':' onclick="selectLoanUser('+u.id+')"')+'><div style="font-weight:500">'+esc(u.name+' '+u.surname)+(u.classe?' <span style="font-size:11px;background:#f0f4f8;padding:1px 6px;border-radius:4px">'+esc(u.classe)+'</span>':'')+(full?' <span style="font-size:11px;color:#e74c3c">limite raggiunto</span>':'')+'</div><div style="font-size:11px;color:#888">'+(u.type==='docente'?'Docente':'Alunno')+' · '+al+'/'+lim+' prestiti</div></div>';}).join('');
+  drop.innerHTML=results.map(u=>{const al=userActiveLoans(u.id).length;const lim=u.loan_limit||2;const full=u.type!=='docente'&&al>=lim;return'<div class="ac-item" style="opacity:'+(full?'.5':'1')+';cursor:'+(full?'not-allowed':'pointer')+'"'+(full?'':' onclick="selectLoanUser('+u.id+')"')+'><div style="font-weight:500">'+esc(u.name+' '+u.surname)+(u.classe?' <span style="font-size:11px;background:#f0f4f8;padding:1px 6px;border-radius:4px">'+esc(u.classe)+'</span>':'')+(full?' <span style="font-size:11px;color:#e74c3c">limite raggiunto</span>':'')+'</div><div style="font-size:11px;color:#888">'+(u.type==='docente'?'Docente':'Alunno')+' · '+al+'/'+lim+' prestiti</div></div>';}).join('');
   drop.style.display='block';
 }
 
@@ -919,6 +951,73 @@ async function registerLoan(){
     ['loan-book-val','loan-user-val'].forEach(id=>document.getElementById(id).value='');
     ['loan-book-badge','loan-user-badge'].forEach(id=>document.getElementById(id).style.display='none');
     renderLoans();refreshDash();toast('Prestito registrato!');
+  }catch(e){hideLoad();toast('Errore: '+e.message,'err');}
+}
+
+// ── PRESTITO MULTIPLO DOCENTI ───────────────────────────────
+let multiUid=null, multiSel=new Set();
+function singleLoanFor(uid){
+  goTo('loans');
+  selectLoanUser(uid);
+  setTimeout(()=>document.getElementById('loan-book-input').focus(),50);
+}
+function openMultiLoan(uid){
+  const u=users.find(x=>x.id==uid);if(!u)return;
+  multiUid=uid;multiSel=new Set();
+  document.getElementById('mm-teacher').textContent=u.name+' '+u.surname;
+  document.getElementById('mm-search').value='';
+  document.getElementById('mm-grade').value='';
+  document.getElementById('mm-cert').checked=false;
+  renderMultiList();
+  document.getElementById('modal-multi').classList.add('open');
+  setTimeout(()=>document.getElementById('mm-search').focus(),50);
+}
+function multiVisibleBooks(){
+  const q=(document.getElementById('mm-search').value||'').toLowerCase().replace(/[-\s]/g,' ');
+  const g=document.getElementById('mm-grade').value;
+  return books.filter(b=>bookAvailableCopies(b.isbn)>0)
+    .filter(b=>!g||String(b.grade||'')===g)
+    .filter(b=>!q||((b.title||'')+' '+(b.author||'')+' '+(b.isbn||'')).toLowerCase().includes(q.trim()))
+    .sort((a,b)=>(a.title||'').localeCompare(b.title||'','it'));
+}
+function renderMultiList(){
+  const list=multiVisibleBooks();
+  document.getElementById('mm-avail-count').textContent=list.length+' libri disponibili';
+  const el=document.getElementById('mm-list');
+  const shown=list.slice(0,300);
+  el.innerHTML=shown.length?shown.map(b=>{
+    const on=multiSel.has(b.isbn);
+    return '<label class="ml-row'+(on?' sel':'')+'"><input type="checkbox"'+(on?' checked':'')+' onchange="toggleMulti(\''+esc(b.isbn)+'\',this)">'+
+      '<div style="flex:1;min-width:0"><div style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(b.title)+'</div>'+
+      '<div style="font-size:11px;color:#888">'+esc(b.author||'—')+' · '+esc(b.isbn)+'</div></div>'+
+      (b.grade?'<span class="'+gradeColor(b.grade)+'">'+gradeLabel(b.grade)+'</span>':'')+
+      '<span class="badge b-gray">'+bookCopiesLabel(b.isbn)+'</span></label>';
+  }).join('')+(list.length>300?'<div class="empty" style="padding:1rem">Mostrati i primi 300 — affina la ricerca</div>':''):'<div class="empty" style="padding:1.5rem">Nessun libro disponibile</div>';
+  document.getElementById('mm-count').textContent=multiSel.size;
+}
+function toggleMulti(isbn,cb){
+  if(cb.checked)multiSel.add(isbn);else multiSel.delete(isbn);
+  cb.closest('.ml-row').classList.toggle('sel',cb.checked);
+  document.getElementById('mm-count').textContent=multiSel.size;
+}
+function multiSelectVisible(on){
+  if(on)multiVisibleBooks().slice(0,300).forEach(b=>multiSel.add(b.isbn));else multiSel.clear();
+  renderMultiList();
+}
+async function confirmMultiLoan(){
+  const u=users.find(x=>x.id==multiUid);if(!u)return;
+  if(!multiSel.size){toast('Seleziona almeno un libro','err');return;}
+  if(!document.getElementById('mm-cert').checked){toast('Spunta la dichiarazione del docente','err');return;}
+  const today=new Date().toLocaleDateString('it-IT');
+  const rows=[...multiSel].filter(isbn=>bookAvailableCopies(isbn)>0).map(isbn=>({isbn,user_id:parseInt(multiUid),date:today,returned:false}));
+  if(!rows.length){toast('Nessuno dei libri selezionati è ancora disponibile','err');return;}
+  showLoad('Registrazione di '+rows.length+' prestiti...');
+  try{
+    const res=await db.insert('loans',rows);
+    if(Array.isArray(res))res.forEach(r=>loans.push(r));
+    hideLoad();closeModal('modal-multi');
+    renderUsers();renderLoans();refreshDash();
+    toast(rows.length+' libri prestati a '+u.name+' '+u.surname);
   }catch(e){hideLoad();toast('Errore: '+e.message,'err');}
 }
 
