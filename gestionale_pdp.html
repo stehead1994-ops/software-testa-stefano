@@ -177,6 +177,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
   display: flex; align-items: center; justify-content: space-between; height: 56px; flex-shrink: 0;
 }
 .editor-alunno { font-family: 'Lora', serif; font-size: 1rem; }
+.editor-alunno .pdp-tipo { font-family: 'DM Sans', sans-serif; margin-left: 12px; }
 .editor-stato { display: flex; align-items: center; gap: 12px; font-size: 0.8rem; }
 .autosave-indicator { display: flex; align-items: center; gap: 6px; opacity: 0.8; }
 .autosave-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; }
@@ -1052,7 +1053,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 <!-- EDITOR PDP -->
 <div id="screen-editor" class="screen">
   <header class="editor-header">
-    <div class="editor-alunno" id="editor-alunno-nome">PDP</div>
+    <div class="editor-alunno"><span id="editor-alunno-nome">PDP</span><span id="editor-tipo-pdp"></span></div>
     <div class="editor-stato">
       <div class="presenza-live" id="presenza-live"></div>
       <div class="autosave-indicator">
@@ -1464,9 +1465,9 @@ window.showTab = (tab) => {
 let _pdpAllDocs = []; // cache per filtri lato client
 let _pdpAmbito  = null;
 
-// Etichetta con la tipologia del PDP (scelta nella sezione 2). Solo lettura; visibile a master e referenti.
+// Etichetta con la tipologia del PDP (scelta nella sezione 2). Solo lettura.
+// Compare nell'elenco (master e referenti) e nell'intestazione del PDP aperto (tutti).
 function _etichettaTipoPDP(p) {
-  if (ruoloCorrente !== 'master' && ruoloCorrente !== 'admin') return '';
   const tipi = {
     dsa:         ['con DSA', 'tipo-dsa', 'DSA – L. 170/2010'],
     diagnosi:    ['con BES · diagnosi', 'tipo-diagnosi', 'Altra diagnosi specialistica (non DSA)'],
@@ -2364,9 +2365,20 @@ function _iniettaFormPDP() {
     sezioni.map(s => `<div class="sidebar-item" onclick="document.getElementById('${s.id}')?.scrollIntoView({behavior:'smooth',block:'start'})">${s.label}</div>`).join('');
 }
 
+// Etichetta della tipologia accanto al nome nell'intestazione del PDP aperto.
+// Legge la scelta così com'è a schermo (o, se il modulo non è ancora pronto, quella salvata): non scrive nulla.
+function _aggiornaEtichettaEditor() {
+  const el = document.getElementById('editor-tipo-pdp');
+  if (!el) return;
+  const scelto = document.querySelector('#area-editing input[name="tipo_pdp"]:checked');
+  const tipo = scelto ? scelto.value : (document.querySelector('#area-editing input[name="tipo_pdp"]') ? null : pdpCorrenteDoc?.dati?.radio_tipo_pdp);
+  el.innerHTML = _etichettaTipoPDP({ dati: { radio_tipo_pdp: tipo } });
+}
+
 function _aggiornaHeaderEditor(pdp) {
   document.getElementById('editor-alunno-nome').textContent =
     `${pdp.alunno || 'PDP'} — ${pdp.classe || ''} (${pdp.anno || ''})`;
+  _aggiornaEtichettaEditor();
   const isProtocollato = pdp.stato === 'protocollato';
   const isNonRedatto = pdp.stato === 'non_redatto';
   const isChiuso = isProtocollato || isNonRedatto;
@@ -2518,6 +2530,7 @@ function _ripristinaDatiFirebase(dati, grado) {
 
   // Diagnosi: mostra le righe compilate e la seconda valutazione se presente
   aggiornaDiagnosiUI();
+  _aggiornaEtichettaEditor();
   // Discipline: mostra le dichiarazioni "nessuno strumento / misura" già segnate
   aggiornaNessunoStrumentoUI();
 
@@ -2544,7 +2557,7 @@ function _collegaAutosave() {
   const signal = _autosaveCtrl.signal;
   // Ascolta input (testo, textarea, slider) e change (select, checkbox, radio)
   area.addEventListener('input', (e) => { _segnaToccato(e); scheduleAutosave(); }, { signal });
-  area.addEventListener('change', (e) => { _segnaToccato(e); scheduleAutosave(); }, { signal });
+  area.addEventListener('change', (e) => { _segnaToccato(e); scheduleAutosave(); if (e.target && e.target.name === 'tipo_pdp') _aggiornaEtichettaEditor(); }, { signal });
   // Click su pulsanti (grado, PAP, aggiungi/rimuovi riga): non generano input/change
   area.addEventListener('click', (e) => {
     if (!e.isTrusted || !e.target.closest) return;
