@@ -943,6 +943,39 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 ═══════════════════════════════════════════════ -->
 
 <!-- LOGIN -->
+<!-- Adelia: assistente (fuori dalle schermate, visibile dove previsto da _adeliaModo) -->
+  <button type="button" class="ad-fab" id="ad-fab" style="display:none" onclick="apriPannelloAdelia()" aria-label="Apri Adelia, l'assistente per il PDP">
+    <span class="ad-lab">Serve una mano? Chiedi ad Adelia</span>
+    <span class="ad-ava"><span class="ad-masc" aria-hidden="true"></span></span>
+  </button>
+  <div class="ad-panel" id="ad-panel" style="display:none" role="dialog" aria-labelledby="ad-nome">
+    <div class="ad-head">
+      <span class="ad-ava"><span class="ad-masc" aria-hidden="true"></span></span>
+      <div><b id="ad-nome">Adelia</b><small>Aiuto per il PDP e la lettura della diagnosi</small></div>
+      <button type="button" class="ad-x" onclick="chiudiPannelloAdelia()" aria-label="Chiudi Adelia">✕</button>
+    </div>
+    <div class="ad-warn"><strong>Non scrivere dati degli alunni:</strong> solo codici e difficoltà in forma generica. Quello che scrivi qui non viene salvato né inviato.</div>
+    <div class="ad-body" id="ad-body" aria-live="polite"></div>
+    <div class="ad-foot">
+      <form class="ad-in" onsubmit="event.preventDefault(); adeliaInvia();" autocomplete="off">
+        <input type="text" id="ad-input" maxlength="300" placeholder="Scrivi una domanda…" aria-label="Domanda per Adelia">
+        <button type="submit" class="ad-invia" aria-label="Invia">➤</button>
+      </form>
+      <button type="button" class="ad-gem" onclick="apriAdelia()">✨ Vuoi ragionarci insieme? Continua con Adelia su Gemini</button>
+    </div>
+  </div>
+  <div id="adelia-overlay" class="adelia-overlay" style="display:none" onclick="if(event.target===this)chiudiAdelia()">
+    <div class="adelia-box" role="dialog" aria-modal="true" aria-labelledby="adelia-titolo">
+      <div class="adelia-titolo" id="adelia-titolo">🐧 Adelia</div>
+      <p>Adelia è l'assistente dell'istituto: ti aiuta a <strong>compilare il PDP</strong> e a <strong>leggere una diagnosi</strong> (codici, sigle, punteggi, cosa inserire). Risponde a partire dal vademecum "Conoscere, accompagnare, documentare" e da "Leggere una diagnosi senza perdersi".</p>
+      <div class="adelia-avviso"><strong>Non inserire dati degli alunni.</strong> Niente nomi, date di nascita, classi, né diagnosi o relazioni incollate o caricate: lo vieta il Regolamento IA dell'istituto. Scrivi solo codici e difficoltà in forma generica (es. "F81.0", "lentezza nella lettura").</div>
+      <p class="adelia-nota">Si apre in una nuova scheda di Gemini: entra con l'account della scuola. Adelia può sbagliare: fa fede il vademecum.</p>
+      <div class="adelia-azioni">
+        <button type="button" class="adelia-btn-sec" onclick="chiudiAdelia()">Annulla</button>
+        <a class="adelia-btn" href="https://gemini.google.com/gem/6f0992473e92" target="_blank" rel="noopener noreferrer" onclick="chiudiAdelia()">Ho capito, apri Adelia</a>
+      </div>
+    </div>
+  </div>
 <div id="screen-login" class="screen active">
   <div class="login-box">
     <div class="login-logo">📋</div>
@@ -1107,38 +1140,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
       </div>
     </div>
   </header>
-  <button type="button" class="ad-fab" id="ad-fab" style="display:none" onclick="apriPannelloAdelia()" aria-label="Apri Adelia, l'assistente per il PDP">
-    <span class="ad-lab">Serve una mano? Chiedi ad Adelia</span>
-    <span class="ad-ava"><span class="ad-masc" aria-hidden="true"></span></span>
-  </button>
-  <div class="ad-panel" id="ad-panel" style="display:none" role="dialog" aria-labelledby="ad-nome">
-    <div class="ad-head">
-      <span class="ad-ava"><span class="ad-masc" aria-hidden="true"></span></span>
-      <div><b id="ad-nome">Adelia</b><small>Aiuto per il PDP e la lettura della diagnosi</small></div>
-      <button type="button" class="ad-x" onclick="chiudiPannelloAdelia()" aria-label="Chiudi Adelia">✕</button>
-    </div>
-    <div class="ad-warn"><strong>Non scrivere dati degli alunni:</strong> solo codici e difficoltà in forma generica. Quello che scrivi qui non viene salvato né inviato.</div>
-    <div class="ad-body" id="ad-body" aria-live="polite"></div>
-    <div class="ad-foot">
-      <form class="ad-in" onsubmit="event.preventDefault(); adeliaInvia();" autocomplete="off">
-        <input type="text" id="ad-input" maxlength="300" placeholder="Scrivi una domanda…" aria-label="Domanda per Adelia">
-        <button type="submit" class="ad-invia" aria-label="Invia">➤</button>
-      </form>
-      <button type="button" class="ad-gem" onclick="apriAdelia()">✨ Vuoi ragionarci insieme? Continua con Adelia su Gemini</button>
-    </div>
-  </div>
-  <div id="adelia-overlay" class="adelia-overlay" style="display:none" onclick="if(event.target===this)chiudiAdelia()">
-    <div class="adelia-box" role="dialog" aria-modal="true" aria-labelledby="adelia-titolo">
-      <div class="adelia-titolo" id="adelia-titolo">🐧 Adelia</div>
-      <p>Adelia è l'assistente dell'istituto: ti aiuta a <strong>compilare il PDP</strong> e a <strong>leggere una diagnosi</strong> (codici, sigle, punteggi, cosa inserire). Risponde a partire dal vademecum "Conoscere, accompagnare, documentare" e da "Leggere una diagnosi senza perdersi".</p>
-      <div class="adelia-avviso"><strong>Non inserire dati degli alunni.</strong> Niente nomi, date di nascita, classi, né diagnosi o relazioni incollate o caricate: lo vieta il Regolamento IA dell'istituto. Scrivi solo codici e difficoltà in forma generica (es. "F81.0", "lentezza nella lettura").</div>
-      <p class="adelia-nota">Si apre in una nuova scheda di Gemini: entra con l'account della scuola. Adelia può sbagliare: fa fede il vademecum.</p>
-      <div class="adelia-azioni">
-        <button type="button" class="adelia-btn-sec" onclick="chiudiAdelia()">Annulla</button>
-        <a class="adelia-btn" href="https://gemini.google.com/gem/6f0992473e92" target="_blank" rel="noopener noreferrer" onclick="chiudiAdelia()">Ho capito, apri Adelia</a>
-      </div>
-    </div>
-  </div>
   <div id="legenda-autori" style="display:none;padding:6px 14px;background:#fff;border-bottom:1px solid var(--grigio-bordo);font-size:0.78rem;line-height:1.9"></div>
   <div class="editor-body">
     <nav class="sidebar-materie" id="sidebar-materie"></nav>
@@ -1409,6 +1410,7 @@ onAuthStateChanged(auth, async (user) => {
 function mostraSchermata(nome) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + nome)?.classList.add('active');
+  try { _adeliaAggiornaVisibilita(); } catch (e) {}
 }
 window.mostraLogin = () => mostraSchermata('login');
 // ─── PRESENZA LIVE ───
@@ -2438,7 +2440,7 @@ function _iniettaFormPDP() {
 // Adelia nel gestionale: una finestrella che cerca nella base di conoscenza d'istituto (adelia_base.js)
 // e riporta la scheda che risponde. Lavora tutta nel browser: la domanda non viene salvata, non entra
 // nel PDP e non viene inviata a nessun servizio. Per dialogare c'è il Gem su Gemini (apriAdelia).
-const ADELIA_STOP = new Set('a ad al alla alle allo ai agli anche che chi ci come con cosa cos da dal dalla dei del della delle dello di dove e ed è in il la le lo gli i l un una uno ma mi ne nel nella nelle nei non o per piu più quale quali quando quanto se si sono su sul sulla tra fra ha ho hai devo deve posso puo può fare faccio vuol dire significa serve servono mio mia suo sua questo questa quello quella c d dell all nell sull essere sta ti te me io tu lui lei adelia ciao grazie scrivo scrivere scrivi metto mettere inserisco inserire'.split(' '));
+const ADELIA_STOP = new Set('a ad al alla alle allo ai agli anche che chi ci come con cosa cos da dal dalla dei del della delle dello di dove e ed è in il la le lo gli i l un una uno ma mi ne nel nella nelle nei non o per piu più quale quali quando quanto se si sono su sul sulla tra fra ha ho hai devo deve posso puo può fare faccio vuol dire significa serve servono mio mia suo sua questo questa quello quella c d dell all nell sull essere sta ti te me io tu lui lei adelia ciao grazie scrivo scrivere scrivi metto mettere inserisco inserire qual devo dobbiamo bisogna vuol vuole voglio dire fa fare faccio fatto quando alunno alunna alunni studente bambino ragazzo docente insegno sempre niente tutto tutti molto poco ancora solo gia cosi anche oppure'.split(' '));
 let _adeliaIdx = null, _adeliaCaricamento = null;
 function _adNorm(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, ' '); }
 function _adToken(t) { return (_adNorm(t).match(/[a-z]\d+(?:\.\d+)?|[a-z0-9]+(?:\.\d+)?/g) || []).filter(w => w.length > 1 && !ADELIA_STOP.has(w)); }
@@ -2461,32 +2463,60 @@ function _adeliaCarica() {
       ok(_adeliaIdx);
     };
     if (window.ADELIA_BASE) return fine();
-    const sc = document.createElement('script'); sc.src = 'adelia_base.js?v=09';
+    const sc = document.createElement('script'); sc.src = 'adelia_base.js?v=16';
     sc.onload = fine; sc.onerror = () => { _adeliaCaricamento = null; ko(new Error('base non raggiungibile')); };
     document.head.appendChild(sc);
   });
   return _adeliaCaricamento;
 }
+// Distanza di una sola lettera (aggiunta, tolta o cambiata): serve a perdonare i refusi ("dislesia", "stumenti").
+function _adVicina(a, b) {
+  if (Math.abs(a.length - b.length) > 1) return false;
+  let i = 0, j = 0, diff = 0;
+  while (i < a.length && j < b.length) {
+    if (a[i] === b[j]) { i++; j++; continue; }
+    if (++diff > 1) return false;
+    if (a.length > b.length) i++; else if (a.length < b.length) j++; else { i++; j++; }
+  }
+  return diff + (a.length - i) + (b.length - j) <= 1;
+}
 function _adeliaCerca(domanda) {
-  const ix = _adeliaIdx, q = _adNorm(domanda), rad = [...new Set(_adToken(domanda).map(_adRad))];
-  if (!rad.length) return [];
-  const ris = ix.schede.filter(o => o.s.id[0] !== 'L').map(o => {
-    let p = 0, trovate = 0;
+  const ix = _adeliaIdx, q = _adNorm(domanda);
+  const rad = [...new Set(_adToken(domanda).map(_adRad).map(r => {
+    if (ix.df[r] || r.length < 6 || /\d/.test(r)) return r;
+    return Object.keys(ix.df).find(v => v.length >= 5 && _adVicina(r, v)) || r;
+  }))];
+  const consiglio = /consigl|cosa (posso |devo )?(fare|faccio|metto|uso)|come (lo |la |posso )?aiut|da dove (parto|comincio|partire|cominciare)|che strumenti/.test(q), perche = /\bperche\b|come mai|a cosa serv/.test(q), dove = /\bdov[e ]|in (che|quale) (sezione|parte|punto)|dove si (scrive|mette|trova)/.test(q);
+  const soloAccesso = _adeliaModo() === 'accesso';
+  const ris = ix.schede.filter(o => soloAccesso ? o.s.id[0] === 'U' : o.s.id[0] !== 'L').map(o => {
+    let p = 0, trovate = 0, forte = false;
     rad.forEach(r => {
       const idf = Math.log(1 + ix.n / (ix.df[r] || ix.n));
       const peso = o.k.has(r) ? 3 : o.t.has(r) ? 2.5 : o.x.has(r) ? 1 : 0;
-      if (peso) { p += peso * idf; trovate++; }
+      if (peso) { p += peso * idf; trovate++; if (peso > 1) forte = true; }
     });
     // il titolo della scheda coincide con la domanda: è la scheda giusta
     if (o.t.size) p += 2.5 * rad.filter(r => o.t.has(r)).length / o.t.size;
-    o.chiavi.forEach(c => { if (c.length > 2 && new RegExp('(^|[^a-z0-9])' + c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '($|[^a-z0-9])').test(q)) p += 4 + 2 * c.split(' ').length; });
-    return { s: o.s, p: p * (0.5 + 0.5 * trovate / rad.length) };
+    o.chiavi.forEach(c => { if (c.length > 2 && new RegExp('(^|[^a-z0-9])' + c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '($|[^a-z0-9])').test(q)) { p += 4 + 2 * c.split(' ').length; forte = true; } });
+    // chi chiede un consiglio vuole le schede "Cosa consiglio per…" (Q); chi chiede perché, quelle sul perché (P)
+    if (p > 0 && ((consiglio && o.s.id[0] === 'Q') || (perche && o.s.id[0] === 'P') || (dove && o.s.id[0] === 'T'))) p *= 2.2;
+    return { s: o.s, p: forte ? p * (rad.length ? 0.5 + 0.5 * trovate / rad.length : 1) : 0 };
   }).filter(r => r.p > 0).sort((a, b) => b.p - a.p);
   return ris;
 }
 // Segnali che il docente sta scrivendo dati di un alunno: in quel caso Adelia non cerca nulla.
 function _adeliaDatiPersonali(t) {
-  return /\b\d{1,2}[\/.\-]\d{1,2}[\/.\-](19|20)\d{2}\b/.test(t) || /\bnat[oa] (il|a)\b/i.test(t) || /\b[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]\b/.test(t) || /\b(l'alunn[oa]|alunn[oa]|il bambino|la bambina|il ragazzo|la ragazza) [A-Z][a-zà-ù]+ [A-Z][a-zà-ù]+/.test(t);
+  return /\b\d{1,2}[\/.\-]\d{1,2}[\/.\-](19|20)\d{2}\b/.test(t) || /[\w.+-]+@[\w-]+\.[\w.]+/.test(t) || /(?:\+39[\s.]?)?\b3\d{2}[\s.]?\d{6,7}\b/.test(t) || /\bnat[oa] (il|a)\b/i.test(t) || /\b[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]\b/.test(t) || /\b(l'alunn[oa]|alunn[oa]|il bambino|la bambina|il ragazzo|la ragazza) [A-Z][a-zà-ù]+ [A-Z][a-zà-ù]+/.test(t);
+}
+// Nomi di persona frequenti: se compaiono, Adelia risponde lo stesso ma non riporta il nome e ricorda che non serve.
+const ADELIA_NOMI = new Set('marco luca matteo andrea alessandro lorenzo mattia gabriele leonardo riccardo tommaso davide giuseppe antonio federico francesco giovanni simone samuele nicola daniele filippo michele edoardo pietro paolo stefano emanuele christian cristian diego elia giacomo giorgio enea kevin omar mohamed mohammed ahmed youssef adam amir ali ibrahim hamza rayan yassin singh giulia sofia aurora alice ginevra emma giorgia greta martina beatrice anna sara ludovica francesca elisa noemi camilla arianna rebecca gaia matilde vittoria elena nicole alessia marta ilaria federica valentina erika jessica maria laura silvia paola irene carlotta eleonora miriam fatima aisha amina malak nour mariam kaur'.split(' '));
+function _adeliaTogliNomi(t) {
+  let trovato = false;
+  const pulito = t.replace(/(^|[^A-Za-zÀ-ÿ])([A-ZÀ-Ý][a-zà-ÿ]+)(\s+[A-ZÀ-Ý][a-zà-ÿ]+)?/g, (m, prima, nome) => {
+    if (!ADELIA_NOMI.has(_adNorm(nome))) return m;
+    trovato = true; return prima + '…';
+  });
+  return { pulito, trovato };
 }
 function _adMsg(chi, nodo) {
   const body = document.getElementById('ad-body'), d = document.createElement('div');
@@ -2501,17 +2531,21 @@ function _adChips(voci) {
 function _adScheda(s) {
   const f = document.createDocumentFragment(), t = document.createElement('b'); t.className = 'ad-tit'; t.textContent = s.t; f.appendChild(t);
   // i rimandi "scheda I7" diventano cliccabili
-  s.x.split(/(sched[ae] [A-O]\d+)/).forEach(pezzo => {
-    const m = pezzo.match(/^sched[ae] ([A-O]\d+)$/);
-    if (m && _adeliaIdx.perId[m[1]]) { const b = document.createElement('button'); b.type = 'button'; b.className = 'ad-rif'; b.textContent = pezzo; b.onclick = () => adeliaMostra(m[1]); f.appendChild(b); }
-    else f.appendChild(document.createTextNode(pezzo));
+  s.x.split(/(sched[ae] (?:[A-V]\d+(?:, | e )?)+)/).forEach(pezzo => {
+    if (!/^sched[ae] [A-V]\d/.test(pezzo)) { f.appendChild(document.createTextNode(pezzo)); return; }
+    pezzo.split(/([A-V]\d+)/).forEach(pz => {
+      if (/^[A-V]\d+$/.test(pz) && _adeliaIdx.perId[pz]) { const b = document.createElement('button'); b.type = 'button'; b.className = 'ad-rif'; b.textContent = pz; b.title = _adeliaIdx.perId[pz].t; b.onclick = () => adeliaMostra(pz); f.appendChild(b); }
+      else f.appendChild(document.createTextNode(pz));
+    });
   });
   if (s.f) { const fo = document.createElement('span'); fo.className = 'ad-src'; fo.textContent = '📖 ' + s.f; f.appendChild(fo); }
   return f;
 }
 function _adInFondo(el) { const body = document.getElementById('ad-body'); body.scrollTop = el ? Math.max(0, el.offsetTop - body.offsetTop - 8) : body.scrollHeight; }
+var _adeliaUltima = null, _adeliaAltre = [];
 function adeliaMostra(id) {
   const s = _adeliaIdx && _adeliaIdx.perId[id]; if (!s) return;
+  _adeliaUltima = s;
   _adInFondo(_adMsg('a', _adScheda(s)));
 }
 async function adeliaInvia(testo) {
@@ -2525,32 +2559,83 @@ async function adeliaInvia(testo) {
     _adInFondo(_adMsg('a', _adeliaIdx.perId.L1 ? _adeliaIdx.perId.L1.x : 'Non posso lavorare su dati di un alunno. Scrivimi solo codici o difficoltà in forma generica.'));
     return;
   }
-  _adMsg('u', domanda);
+  const senzaNomi = _adeliaTogliNomi(domanda);
+  _adMsg('u', senzaNomi.pulito);
+  if (senzaNomi.trovato) _adMsg('a', 'Una cosa prima: non serve scrivermi il nome dell\'alunno. La prossima volta scrivi solo il disturbo o la difficoltà.');
+  if (/^(ciao|buongiorno|buonasera|salve|ehi|hey)[\s!.,]*$/i.test(domanda)) { _adInFondo(_adMsg('a', 'Ciao! Scrivimi che cosa ti serve: una sigla, un disturbo, uno strumento, oppure "cosa devo fare" se parti da zero.')); return; }
+  if (/^(grazie|ok grazie|grazie mille|perfetto)[\s!.,]*$/i.test(domanda)) { _adInFondo(_adMsg('a', 'Di niente! Se serve altro, sono qui.')); return; }
+  // "perché?" da solo: si riferisce all'ultima scheda mostrata
+  if (/^(e )?(perch[eé]|come mai)\s*\??$/i.test(domanda)) {
+    const rif = _adeliaUltima && _adeliaUltima.id[0] !== 'P' ? (_adeliaUltima.x.match(/sched[ae] (P\d+)/) || [])[1] : null;
+    if (rif) { adeliaMostra(rif); return; }
+    _adInFondo(_adMsg('a', 'Perché che cosa? Scrivimi lo strumento o la misura, per esempio "perché la calcolatrice" o "perché più tempo".')); return;
+  }
+  if (/^(non ho capito|non capisco|nn capisco|cioe|cioè|spiega(mi)? meglio|puoi spiegare meglio|piu semplice|più semplice|in parole semplici|in breve)[\s?!.]*$/i.test(domanda)) {
+    if (!_adeliaUltima) { _adInFondo(_adMsg('a', 'Dimmi che cosa non ti è chiaro: una sigla, uno strumento, un passaggio del gestionale. Oppure scrivi "cosa devo fare" e partiamo dall\'inizio.')); return; }
+    // la versione breve: le prime due frasi dell'ultima scheda
+    const frasi = _adeliaUltima.x.match(/[^.!?]+[.!?]+(\s|$)/g) || [_adeliaUltima.x];
+    const m = _adMsg('a', 'In breve: ' + frasi.slice(0, 2).join('').trim());
+    _adChips([{ etichetta: 'Rileggi tutta la scheda', azione: () => adeliaMostra(_adeliaUltima.id) }, { etichetta: 'Le sigle spiegate', azione: () => adeliaInvia('sigle') }]); _adInFondo(m); return;
+  }
+  if (/^(e poi|e dopo|ok e dopo|ok e poi|poi|altro|c'è altro|continua|avanti)[\s?!.]*$/i.test(domanda)) {
+    const prossima = _adeliaAltre.shift();
+    if (prossima) { adeliaMostra(prossima); return; }
+    _adInFondo(_adMsg('a', 'Su questo ti ho detto ciò che ho. Fammi un\'altra domanda, oppure scrivi "cosa devo fare" per i passi da seguire.')); return;
+  }
   const ris = _adeliaCerca(domanda);
+  if (_adeliaModo() === 'accesso' && (!ris.length || ris[0].p < 2.2)) {
+    const m = _adMsg('a', 'Qui, prima di entrare, rispondo solo alle domande sull\'accesso. Per il resto ci ritroviamo dentro. Se non riesci a entrare, scrivi alla Funzione Strumentale Inclusione.');
+    _adChips(['Chi può entrare?', 'Che cosa mi serve?', 'Accesso non autorizzato', 'Dove trovo la password del PDP?'].map(t => ({ etichetta: t, azione: () => adeliaInvia(t) }))); _adInFondo(m); return;
+  }
   if (!ris.length || ris[0].p < 2.2) {
     const m = _adMsg('a', 'Su questo non ho una scheda. Prova con altre parole (un codice, una sigla, il nome di una sezione), oppure continua con me su Gemini o senti la Funzione Strumentale Inclusione.');
-    _adChips([{ etichetta: '✨ Continua su Gemini', azione: apriAdelia }]); _adInFondo(m); return;
+    _adChips([{ etichetta: 'Parto da zero: cosa devo fare', azione: () => adeliaInvia('io cosa devo fare') }, { etichetta: 'Dove si scrive: la mappa del PDP', azione: () => adeliaInvia('mappa del pdp') }, { etichetta: 'Le sigle spiegate', azione: () => adeliaInvia('sigle') }, { etichetta: '✨ Continua su Gemini', azione: apriAdelia }]); _adInFondo(m); return;
   }
-  const m = _adMsg('a', _adScheda(ris[0].s));
+  const m = _adMsg('a', _adScheda(ris[0].s)); _adeliaUltima = ris[0].s;
   const altre = ris.slice(1, 4).filter(r => r.p >= ris[0].p * 0.45);
+  // per "e poi?": prima i rimandi della scheda mostrata, poi le schede vicine
+  _adeliaAltre = [...new Set([...(ris[0].s.x.match(/\b[A-V]\d+\b/g) || []).filter(id => _adeliaIdx.perId[id] && /sched[ae] [^.]*$/.test(ris[0].s.x.slice(0, ris[0].s.x.indexOf(id)))), ...altre.map(r => r.s.id)])].filter(id => id !== ris[0].s.id);
   if (altre.length) _adChips(altre.map(r => ({ etichetta: r.s.t, azione: () => adeliaMostra(r.s.id) })));
   _adInFondo(m);
 }
-// In prova: per ora Adelia è visibile solo ai master.
-function _adeliaAttiva() { return ruoloCorrente === 'master'; }
+// Dove compare Adelia:
+// - 'accesso': pagina di apertura, attesa di approvazione, richiesta della password del PDP. La vedono tutti,
+//   ma risponde solo con le schede del blocco U (chi può entrare, che cosa serve, cosa fare se non funziona).
+// - 'pieno': elenco dei PDP e PDP aperto, solo per master e referenti (i docenti per ora non la vedono).
+let _adeliaModoCorrente = null;
+function _adeliaModo() {
+  const sc = document.querySelector('.screen.active'), id = sc ? sc.id : '';
+  if (id === 'screen-login' || id === 'screen-attesa' || id === 'screen-pdp-login') return 'accesso';
+  if ((id === 'screen-master' || id === 'screen-editor') && ['master', 'admin'].includes(ruoloCorrente)) return 'pieno';
+  return null;
+}
+function _adeliaAttiva() { return !!_adeliaModo(); }
 function _adeliaAggiornaVisibilita() {
-  const on = _adeliaAttiva(), pn = document.getElementById('ad-panel'), fab = document.getElementById('ad-fab'), btn = document.getElementById('btn-adelia');
-  if (!on && pn) pn.style.display = 'none';
-  if (fab) fab.style.display = on && pn.style.display === 'none' ? '' : 'none';
-  if (btn) btn.style.display = on ? '' : 'none';
+  const modo = _adeliaModo(), pn = document.getElementById('ad-panel'), fab = document.getElementById('ad-fab'), btn = document.getElementById('btn-adelia');
+  if (!pn || !fab) return;
+  if (modo !== _adeliaModoCorrente) {
+    // cambiando pagina la conversazione riparte: le risposte di una modalità non valgono nell'altra
+    _adeliaModoCorrente = modo; pn.style.display = 'none'; document.getElementById('ad-body').textContent = ''; _adeliaUltima = null;
+    const gem = pn.querySelector('.ad-gem'); if (gem) gem.style.display = modo === 'pieno' ? '' : 'none';
+    const sotto = pn.querySelector('.ad-head small'); if (sotto) sotto.textContent = modo === 'accesso' ? 'Ti aiuto a entrare nel gestionale' : 'Aiuto per il PDP e la lettura della diagnosi';
+    const lab = fab.querySelector('.ad-lab'); if (lab) lab.textContent = modo === 'accesso' ? 'Non riesci a entrare? Chiedi ad Adelia' : 'Serve una mano? Chiedi ad Adelia';
+  }
+  if (!modo) pn.style.display = 'none';
+  fab.style.display = modo && pn.style.display === 'none' ? '' : 'none';
+  if (btn) btn.style.display = modo === 'pieno' ? '' : 'none';
 }
 function apriPannelloAdelia() {
   if (!_adeliaAttiva()) return;
   const pn = document.getElementById('ad-panel'), body = document.getElementById('ad-body');
   pn.style.display = 'flex'; document.getElementById('ad-fab').style.display = 'none';
   if (!body.children.length) {
-    _adMsg('a', 'Ciao, sono Adelia! Scrivimi un codice, una sigla o una sezione del PDP e ti riporto cosa dicono le guide dell\'istituto.');
-    _adChips(['Cosa significa F81.0', 'Strumenti o misure?', 'Cosa scrivo per inglese', 'Cosa vuol dire percentile'].map(t => ({ etichetta: t, azione: () => adeliaInvia(t) })));
+    if (_adeliaModo() === 'accesso') {
+      _adMsg('a', 'Ciao, sono Adelia! Qui ti aiuto a entrare: chi può accedere, che cosa serve, cosa fare se non funziona.');
+      _adChips(['Chi può entrare?', 'Che cosa mi serve?', 'Accesso non autorizzato', 'Dove trovo la password del PDP?'].map(t => ({ etichetta: t, azione: () => adeliaInvia(t) })));
+    } else {
+      _adMsg('a', 'Ciao, sono Adelia! Scrivimi un codice, un disturbo, una difficoltà o uno strumento: ti riporto cosa dicono le guide dell\'istituto, e perché.');
+      _adChips(['Io cosa devo fare?', 'Dove scrivo gli strumenti?', 'Consigli per la dislessia', 'Perché la calcolatrice?', 'Guida per i referenti'].map(t => ({ etichetta: t, azione: () => adeliaInvia(t) })));
+    }
   }
   _adeliaCarica().catch(() => {});
   document.getElementById('ad-input').focus();
@@ -2559,6 +2644,7 @@ function chiudiPannelloAdelia() {
   document.getElementById('ad-panel').style.display = 'none'; _adeliaAggiornaVisibilita();
   document.getElementById('ad-fab').focus();
 }
+setTimeout(() => { try { _adeliaAggiornaVisibilita(); } catch (e) {} }, 0);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('ad-panel') && document.getElementById('ad-panel').style.display !== 'none' && document.getElementById('adelia-overlay').style.display === 'none') chiudiPannelloAdelia(); });
 
 // Adelia: assistente esterno (Gem di Gemini sull'account della scuola). Il gestionale apre solo il link,
