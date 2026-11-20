@@ -2463,7 +2463,7 @@ function _adeliaCarica() {
       ok(_adeliaIdx);
     };
     if (window.ADELIA_BASE) return fine();
-    const sc = document.createElement('script'); sc.src = 'adelia_base.js?v=16';
+    const sc = document.createElement('script'); sc.src = 'adelia_base.js?v=17';
     sc.onload = fine; sc.onerror = () => { _adeliaCaricamento = null; ko(new Error('base non raggiungibile')); };
     document.head.appendChild(sc);
   });
@@ -2488,7 +2488,8 @@ function _adeliaCerca(domanda) {
   }))];
   const consiglio = /consigl|cosa (posso |devo )?(fare|faccio|metto|uso)|come (lo |la |posso )?aiut|da dove (parto|comincio|partire|cominciare)|che strumenti/.test(q), perche = /\bperche\b|come mai|a cosa serv/.test(q), dove = /\bdov[e ]|in (che|quale) (sezione|parte|punto)|dove si (scrive|mette|trova)/.test(q);
   const soloAccesso = _adeliaModo() === 'accesso';
-  const ris = ix.schede.filter(o => soloAccesso ? o.s.id[0] === 'U' : o.s.id[0] !== 'L').map(o => {
+  const docente = ruoloCorrente === 'docente';
+  const ris = ix.schede.filter(o => soloAccesso ? o.s.id[0] === 'U' : o.s.id[0] !== 'L' && !(docente && o.s.id[0] === 'V')).map(o => {
     let p = 0, trovate = 0, forte = false;
     rad.forEach(r => {
       const idf = Math.log(1 + ix.n / (ix.df[r] || ix.n));
@@ -2588,8 +2589,8 @@ async function adeliaInvia(testo) {
     _adChips(['Chi può entrare?', 'Che cosa mi serve?', 'Accesso non autorizzato', 'Dove trovo la password del PDP?'].map(t => ({ etichetta: t, azione: () => adeliaInvia(t) }))); _adInFondo(m); return;
   }
   if (!ris.length || ris[0].p < 2.2) {
-    const m = _adMsg('a', 'Su questo non ho una scheda. Prova con altre parole (un codice, una sigla, il nome di una sezione), oppure continua con me su Gemini o senti la Funzione Strumentale Inclusione.');
-    _adChips([{ etichetta: 'Parto da zero: cosa devo fare', azione: () => adeliaInvia('io cosa devo fare') }, { etichetta: 'Dove si scrive: la mappa del PDP', azione: () => adeliaInvia('mappa del pdp') }, { etichetta: 'Le sigle spiegate', azione: () => adeliaInvia('sigle') }, { etichetta: '✨ Continua su Gemini', azione: apriAdelia }]); _adInFondo(m); return;
+    const m = _adMsg('a', 'Su questo non ho una scheda. Prova con altre parole (un codice, una sigla, il nome di una sezione)' + (ruoloCorrente === 'master' ? ', oppure continua con me su Gemini' : '') + ' o senti la Funzione Strumentale Inclusione.');
+    _adChips([{ etichetta: 'Parto da zero: cosa devo fare', azione: () => adeliaInvia('io cosa devo fare') }, { etichetta: 'Dove si scrive: la mappa del PDP', azione: () => adeliaInvia('mappa del pdp') }, { etichetta: 'Le sigle spiegate', azione: () => adeliaInvia('sigle') }, ...(ruoloCorrente === 'master' ? [{ etichetta: '✨ Continua su Gemini', azione: apriAdelia }] : [])]); _adInFondo(m); return;
   }
   const m = _adMsg('a', _adScheda(ris[0].s)); _adeliaUltima = ris[0].s;
   const altre = ris.slice(1, 4).filter(r => r.p >= ris[0].p * 0.45);
@@ -2601,12 +2602,13 @@ async function adeliaInvia(testo) {
 // Dove compare Adelia:
 // - 'accesso': pagina di apertura, attesa di approvazione, richiesta della password del PDP. La vedono tutti,
 //   ma risponde solo con le schede del blocco U (chi può entrare, che cosa serve, cosa fare se non funziona).
-// - 'pieno': elenco dei PDP e PDP aperto, solo per master e referenti (i docenti per ora non la vedono).
+// - 'pieno': elenco dei PDP e PDP aperto, per tutti gli utenti entrati (master, referenti, docenti).
+//   Ai docenti non propone la guida dei referenti (blocco V); il collegamento a Gemini per ora è solo per il master.
 let _adeliaModoCorrente = null;
 function _adeliaModo() {
   const sc = document.querySelector('.screen.active'), id = sc ? sc.id : '';
   if (id === 'screen-login' || id === 'screen-attesa' || id === 'screen-pdp-login') return 'accesso';
-  if ((id === 'screen-master' || id === 'screen-editor') && ['master', 'admin'].includes(ruoloCorrente)) return 'pieno';
+  if ((id === 'screen-master' || id === 'screen-editor') && ['master', 'admin', 'docente'].includes(ruoloCorrente)) return 'pieno';
   return null;
 }
 function _adeliaAttiva() { return !!_adeliaModo(); }
@@ -2616,7 +2618,7 @@ function _adeliaAggiornaVisibilita() {
   if (modo !== _adeliaModoCorrente) {
     // cambiando pagina la conversazione riparte: le risposte di una modalità non valgono nell'altra
     _adeliaModoCorrente = modo; pn.style.display = 'none'; document.getElementById('ad-body').textContent = ''; _adeliaUltima = null;
-    const gem = pn.querySelector('.ad-gem'); if (gem) gem.style.display = modo === 'pieno' ? '' : 'none';
+    const gem = pn.querySelector('.ad-gem'); if (gem) gem.style.display = modo === 'pieno' && ruoloCorrente === 'master' ? '' : 'none';
     const sotto = pn.querySelector('.ad-head small'); if (sotto) sotto.textContent = modo === 'accesso' ? 'Ti aiuto a entrare nel gestionale' : 'Aiuto per il PDP e la lettura della diagnosi';
     const lab = fab.querySelector('.ad-lab'); if (lab) lab.textContent = modo === 'accesso' ? 'Non riesci a entrare? Chiedi ad Adelia' : 'Serve una mano? Chiedi ad Adelia';
   }
@@ -2634,7 +2636,7 @@ function apriPannelloAdelia() {
       _adChips(['Chi può entrare?', 'Che cosa mi serve?', 'Accesso non autorizzato', 'Dove trovo la password del PDP?'].map(t => ({ etichetta: t, azione: () => adeliaInvia(t) })));
     } else {
       _adMsg('a', 'Ciao, sono Adelia! Scrivimi un codice, un disturbo, una difficoltà o uno strumento: ti riporto cosa dicono le guide dell\'istituto, e perché.');
-      _adChips(['Io cosa devo fare?', 'Dove scrivo gli strumenti?', 'Consigli per la dislessia', 'Perché la calcolatrice?', 'Guida per i referenti'].map(t => ({ etichetta: t, azione: () => adeliaInvia(t) })));
+      _adChips(['Io cosa devo fare?', 'Dove scrivo gli strumenti?', 'Consigli per la dislessia', 'Perché la calcolatrice?', ruoloCorrente === 'docente' ? 'Cosa significa F81.0' : 'Guida per i referenti'].map(t => ({ etichetta: t, azione: () => adeliaInvia(t) })));
     }
   }
   _adeliaCarica().catch(() => {});
