@@ -2482,7 +2482,7 @@ function _adeliaCarica() {
       ok(_adeliaIdx);
     };
     if (window.ADELIA_BASE) return fine();
-    const sc = document.createElement('script'); sc.src = 'adelia_base.js?v=18';
+    const sc = document.createElement('script'); sc.src = 'adelia_base.js?v=20';
     sc.onload = fine; sc.onerror = () => { _adeliaCaricamento = null; ko(new Error('base non raggiungibile')); };
     document.head.appendChild(sc);
   });
@@ -2505,7 +2505,7 @@ function _adeliaCerca(domanda) {
     if (ix.df[r] || r.length < 6 || /\d/.test(r)) return r;
     return Object.keys(ix.df).find(v => v.length >= 5 && _adVicina(r, v)) || r;
   }))];
-  const consiglio = /consigl|cosa (posso |devo )?(fare|faccio|metto|uso)|come (lo |la |posso )?aiut|da dove (parto|comincio|partire|cominciare)|che strumenti/.test(q), perche = /\bperche\b|come mai/.test(q), strum = /a cos(a|\s)? ?serv|come si usa|come funziona|potenzial|limiti|vantagg|che cos e |cos e (il|la|lo|l|un|una) /.test(q), dove = /\bdov[e ]|in (che|quale) (sezione|parte|punto)|dove si (scrive|mette|trova)/.test(q);
+  const consiglio = /consigl|cosa (posso |devo )?(fare|faccio|metto|uso)|come (lo |la |posso )?aiut|da dove (parto|comincio|partire|cominciare)|che strumenti/.test(q), perche = /\bperche\b|come mai/.test(q), strum = /a cos(a|\s)? ?serv|come si usa|quando (uso|usare|si usa|si puo usare|posso usare|devo usare|va usat)|come funziona|potenzial|limiti|vantagg|che cos e |cos e (il|la|lo|l|un|una) /.test(q), dove = /\bdov[e ]|in (che|quale) (sezione|parte|punto)|dove si (scrive|mette|trova)/.test(q);
   const soloAccesso = _adeliaModo() === 'accesso';
   const docente = ruoloCorrente === 'docente';
   const ris = ix.schede.filter(o => soloAccesso ? o.s.id[0] === 'U' : o.s.id[0] !== 'L' && !(docente && o.s.id[0] === 'V')).map(o => {
@@ -2626,6 +2626,15 @@ function _adeliaIncrocio(domanda) {
   if (!voci.length) return null;
   return { dist, disc, voci, dsaGenerico };
 }
+function _adeliaPresentazione(domanda) {
+  const q = _adNorm(domanda);
+  if (q.split(' ').length > 9 || /\?|\b(come|cosa|dove|quando|perche|chi|quale|quali|posso|devo)\b/.test(domanda.toLowerCase())) return null;
+  if (!/^(io )?(sono|insegno|faccio)\b/.test(q) || ADELIA_DISTURBI.some(d => d[2].test(q))) return null;
+  const disc = ADELIA_DISCIPLINE.find(d => d[2].test(q));
+  if (disc) return disc;
+  // docente che si presenta senza dire la disciplina ("sono la maestra di terza")
+  return /maestr|docente|prof|insegnante|supplente/.test(q) && !/coordinat|sostegno|genitor|referente|funzione strumentale/.test(q) ? ['', ''] : null;
+}
 function _adeliaMostraIncrocio(inc) {
   const f = document.createDocumentFragment(), t = document.createElement('b'); t.className = 'ad-tit';
   const chi = inc.dsaGenerico ? 'DSA' : inc.dist.map(d => d[1]).join(' e ');
@@ -2705,6 +2714,13 @@ async function _adeliaRispondi(testo) {
     _adInFondo(_adMsg('a', 'Su questo ti ho detto ciò che ho. Fammi un\'altra domanda, oppure scrivi "cosa devo fare" per i passi da seguire.')); return;
   }
   const inc = _adeliaModo() === 'pieno' ? _adeliaIncrocio(domanda) : null;
+  const pres = _adeliaModo() === 'pieno' && !inc && _adeliaPresentazione(domanda);
+  if (pres) {
+    const m = _adMsg('a', pres[1] ? 'Bene, insegni ' + pres[1] + '. Da dove vuoi partire?' : 'Bene. Da dove vuoi partire?'), F = pres[0] ? ADELIA_F[pres[0]] : 'R1';
+    const voci = [['R3', null], ['T7', null], [F, null]].filter(v => v[0] && _adeliaIdx.perId[v[0]]).map(v => ({ etichetta: _adeliaIdx.perId[v[0]].t, azione: () => adeliaMostra(v[0]) }));
+    voci.push({ etichetta: 'Ho un alunno con DSA', azione: () => adeliaInvia('strumenti per alunno con dsa' + (pres[1] ? ' in ' + pres[1] : '')) });
+    _adChips(voci); _adInFondo(m); return;
+  }
   if (inc && inc.bes) {
     const m = _adMsg('a', 'BES è una sigla larga: dentro ci sono difficoltà molto diverse, e gli strumenti cambiano. Qual è la difficoltà che vedi di più?');
     const dove = inc.disc.length ? ' in ' + inc.disc[0][1] : '';
