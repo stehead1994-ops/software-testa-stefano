@@ -100,6 +100,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 .ad-m b.ad-tit { display: block; margin-bottom: 3px; color: #1a3a5c; }
 .ad-src { display: block; margin-top: 6px; font-size: 0.72rem; color: #14785A; font-weight: 700; }
 .ad-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ad-grp { display: block; margin: 9px 0 4px; font-size: 0.72rem; font-weight: 700; color: #14785A; text-transform: uppercase; letter-spacing: 0.03em; }
+.ad-grp.ad-dom { text-transform: none; letter-spacing: 0; font-size: 0.8rem; color: #1a3a5c; }
 .ad-chip { border: 1.5px solid #c9d3df; background: #fff; border-radius: 16px; padding: 5px 10px; font-size: 0.75rem; color: #1a3a5c; font-weight: 600; cursor: pointer; font-family: inherit; text-align: left; }
 .ad-chip:hover { border-color: #1a3a5c; }
 .ad-rif { background: none; border: 0; padding: 0; color: #1a3a5c; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
@@ -954,7 +956,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
       <div><b id="ad-nome">Adelia</b><small>Aiuto per il PDP e la lettura della diagnosi</small></div>
       <button type="button" class="ad-x" onclick="chiudiPannelloAdelia()" aria-label="Chiudi Adelia">✕</button>
     </div>
-    <div class="ad-warn"><strong>Non scrivere dati degli alunni:</strong> solo codici e difficoltà in forma generica. Quello che scrivi qui non viene salvato né inviato.</div>
+    <div class="ad-warn"><strong>Non scrivere dati degli alunni:</strong> solo codici e difficoltà in forma generica. <span id="ad-warn-salva">Quello che scrivi qui non viene salvato né inviato.</span></div>
     <div class="ad-body" id="ad-body" aria-live="polite"></div>
     <div class="ad-foot">
       <form class="ad-in" onsubmit="event.preventDefault(); adeliaInvia();" autocomplete="off">
@@ -1085,6 +1087,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
           <option value="">— Tutti i PDP —</option>
         </select>
         <button onclick="resetFiltroLogs()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;cursor:pointer;color:var(--testo-soft)">✕ Reset</button>
+        <button onclick="mostraDomandeAdelia()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;cursor:pointer;color:var(--blu);font-weight:600">🐧 Domande ad Adelia</button>
         <span id="filtro-log-count" style="font-size:0.8rem;color:var(--testo-soft);margin-left:4px"></span>
       </div>
       <div id="logs-contenuto"></div>
@@ -1804,7 +1807,23 @@ const AZIONE_LABEL = {
   'versione_precedente': '💾 Copia di sicurezza',
   'versione_definitiva': '📌 Versione definitiva',
   'download_pdf': '⬇️ Download PDF',
+  'adelia_domanda': '🐧 Domanda ad Adelia',
 };
+// Elenco delle domande fatte ad Adelia nei giorni caricati: solo giorno e testo.
+function mostraDomandeAdelia() {
+  const contenuto = document.getElementById('logs-contenuto'), docs = (_logsAllDocs || []).filter(l => l.azione === 'adelia_domanda');
+  const countEl = document.getElementById('filtro-log-count'); if (countEl) countEl.textContent = docs.length + ' domande negli ultimi ' + _logsGiorni + ' giorni';
+  contenuto.textContent = '';
+  if (!docs.length) { contenuto.innerHTML = '<div class="lista-vuota" style="padding:30px"><div class="lista-vuota-icon">🐧</div><p>Nessuna domanda ad Adelia nei giorni caricati</p></div>'; return; }
+  const righe = docs.map(l => { const ts = l.ts?.toDate?.(); return [ts ? ts.toLocaleDateString('it-IT') : '—', l.domanda || '']; });
+  const btn = document.createElement('button'); btn.className = 'btn-secondary'; btn.style.marginBottom = '12px'; btn.textContent = '📋 Copia l\'elenco';
+  btn.onclick = async () => { try { await navigator.clipboard.writeText(['Giorno\tDomanda', ...righe.map(r => r.join('\t'))].join('\n')); btn.textContent = '✓ Copiato: incollalo in un foglio'; } catch (e) { btn.textContent = 'Copia non riuscita'; } };
+  contenuto.appendChild(btn);
+  const tab = document.createElement('table'); tab.style.cssText = 'width:100%;border-collapse:collapse;font-size:0.85rem;background:white;border-radius:10px;overflow:hidden';
+  const riga = (celle, th) => { const tr = document.createElement('tr'); tr.style.borderBottom = '1px solid #e2e8f0'; celle.forEach((c, i) => { const td = document.createElement(th ? 'th' : 'td'); td.textContent = c; td.style.cssText = 'padding:9px 14px;text-align:left;vertical-align:top' + (i === 1 ? ';font-weight:500' : ';color:var(--testo-soft)') + (i === 0 ? ';white-space:nowrap' : ''); tr.appendChild(td); }); return tr; };
+  tab.appendChild(riga(['Giorno', 'Domanda'], true)); righe.forEach(r => tab.appendChild(riga(r)));
+  contenuto.appendChild(tab);
+}
 
 async function renderLogs() {
   const contenuto = document.getElementById('logs-contenuto');
@@ -1850,7 +1869,7 @@ function _renderLogsFiltrati() {
   const fPdp     = document.getElementById('filtro-log-pdp')?.value     || '';
 
   // Le copie di sicurezza restano nel database ma non affollano l'elenco
-  let docs = _logsAllDocs.filter(l => l.azione !== 'versione_precedente');
+  let docs = _logsAllDocs.filter(l => l.azione !== 'versione_precedente' && l.azione !== 'adelia_domanda');
   if (fData)    docs = docs.filter(l => {
     const ts = l.ts?.toDate?.();
     if (!ts) return false;
@@ -2438,8 +2457,8 @@ function _iniettaFormPDP() {
 }
 
 // Adelia nel gestionale: una finestrella che cerca nella base di conoscenza d'istituto (adelia_base.js)
-// e riporta la scheda che risponde. Lavora tutta nel browser: la domanda non viene salvata, non entra
-// nel PDP e non viene inviata a nessun servizio. Per dialogare c'è il Gem su Gemini (apriAdelia).
+// e riporta la scheda che risponde. La ricerca avviene tutta nel browser: la domanda non entra nel PDP e non va a
+// nessun servizio esterno. Dopo l'accesso il solo testo della domanda viene raccolto, senza nome, per la FS (_adeliaRegistra). Per dialogare c'è il Gem su Gemini (apriAdelia).
 const ADELIA_STOP = new Set('a ad al alla alle allo ai agli anche che chi ci come con cosa cos da dal dalla dei del della delle dello di dove e ed è in il la le lo gli i l un una uno ma mi ne nel nella nelle nei non o per piu più quale quali quando quanto se si sono su sul sulla tra fra ha ho hai devo deve posso puo può fare faccio vuol dire significa serve servono mio mia suo sua questo questa quello quella c d dell all nell sull essere sta ti te me io tu lui lei adelia ciao grazie scrivo scrivere scrivi metto mettere inserisco inserire qual devo dobbiamo bisogna vuol vuole voglio dire fa fare faccio fatto quando alunno alunna alunni studente bambino ragazzo docente insegno sempre niente tutto tutti molto poco ancora solo gia cosi anche oppure'.split(' '));
 let _adeliaIdx = null, _adeliaCaricamento = null;
 function _adNorm(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, ' '); }
@@ -2463,7 +2482,7 @@ function _adeliaCarica() {
       ok(_adeliaIdx);
     };
     if (window.ADELIA_BASE) return fine();
-    const sc = document.createElement('script'); sc.src = 'adelia_base.js?v=17';
+    const sc = document.createElement('script'); sc.src = 'adelia_base.js?v=18';
     sc.onload = fine; sc.onerror = () => { _adeliaCaricamento = null; ko(new Error('base non raggiungibile')); };
     document.head.appendChild(sc);
   });
@@ -2486,7 +2505,7 @@ function _adeliaCerca(domanda) {
     if (ix.df[r] || r.length < 6 || /\d/.test(r)) return r;
     return Object.keys(ix.df).find(v => v.length >= 5 && _adVicina(r, v)) || r;
   }))];
-  const consiglio = /consigl|cosa (posso |devo )?(fare|faccio|metto|uso)|come (lo |la |posso )?aiut|da dove (parto|comincio|partire|cominciare)|che strumenti/.test(q), perche = /\bperche\b|come mai|a cosa serv/.test(q), dove = /\bdov[e ]|in (che|quale) (sezione|parte|punto)|dove si (scrive|mette|trova)/.test(q);
+  const consiglio = /consigl|cosa (posso |devo )?(fare|faccio|metto|uso)|come (lo |la |posso )?aiut|da dove (parto|comincio|partire|cominciare)|che strumenti/.test(q), perche = /\bperche\b|come mai/.test(q), strum = /a cos(a|\s)? ?serv|come si usa|come funziona|potenzial|limiti|vantagg|che cos e |cos e (il|la|lo|l|un|una) /.test(q), dove = /\bdov[e ]|in (che|quale) (sezione|parte|punto)|dove si (scrive|mette|trova)/.test(q);
   const soloAccesso = _adeliaModo() === 'accesso';
   const docente = ruoloCorrente === 'docente';
   const ris = ix.schede.filter(o => soloAccesso ? o.s.id[0] === 'U' : o.s.id[0] !== 'L' && !(docente && o.s.id[0] === 'V')).map(o => {
@@ -2498,9 +2517,14 @@ function _adeliaCerca(domanda) {
     });
     // il titolo della scheda coincide con la domanda: è la scheda giusta
     if (o.t.size) p += 2.5 * rad.filter(r => o.t.has(r)).length / o.t.size;
-    o.chiavi.forEach(c => { if (c.length > 2 && new RegExp('(^|[^a-z0-9])' + c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '($|[^a-z0-9])').test(q)) { p += 4 + 2 * c.split(' ').length; forte = true; } });
+    let frase = false;
+    o.chiavi.forEach(c => { if (c.length > 2 && new RegExp('(^|[^a-z0-9])' + c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '($|[^a-z0-9])').test(q)) { p += 4 + 2 * c.split(' ').length; forte = true; frase = true; } });
     // chi chiede un consiglio vuole le schede "Cosa consiglio per…" (Q); chi chiede perché, quelle sul perché (P)
-    if (p > 0 && ((consiglio && o.s.id[0] === 'Q') || (perche && o.s.id[0] === 'P') || (dove && o.s.id[0] === 'T'))) p *= 2.2;
+    if (p > 0 && ((consiglio && o.s.id[0] === 'Q') || (perche && o.s.id[0] === 'P') || (dove && o.s.id[0] === 'T') || (strum && !perche && !dove && o.s.id[0] === 'W'))) p *= 2.2;
+    // chi chiede come valutare o correggere vuole le schede su verifiche e valutazione (G)
+    else if (p > 0 && o.s.id[0] === 'G' && /come (si )?valut|\bvaluto\b|\bvot[oi]\b|corregg/.test(q) && !/diagnosi|pdp/.test(q) && !dove) p *= 1.8;
+    // chi nomina uno strumento senza altro vuole la sua scheda (W): che cos'è, che cosa dà, dove si ferma
+    else if (p > 0 && o.s.id[0] === 'W' && !perche && !dove && !consiglio && (frase || rad.length <= 3)) p *= 1.5;
     return { s: o.s, p: forte ? p * (rad.length ? 0.5 + 0.5 * trovate / rad.length : 1) : 0 };
   }).filter(r => r.p > 0).sort((a, b) => b.p - a.p);
   return ris;
@@ -2532,15 +2556,94 @@ function _adChips(voci) {
 function _adScheda(s) {
   const f = document.createDocumentFragment(), t = document.createElement('b'); t.className = 'ad-tit'; t.textContent = s.t; f.appendChild(t);
   // i rimandi "scheda I7" diventano cliccabili
-  s.x.split(/(sched[ae] (?:[A-V]\d+(?:, | e )?)+)/).forEach(pezzo => {
-    if (!/^sched[ae] [A-V]\d/.test(pezzo)) { f.appendChild(document.createTextNode(pezzo)); return; }
-    pezzo.split(/([A-V]\d+)/).forEach(pz => {
-      if (/^[A-V]\d+$/.test(pz) && _adeliaIdx.perId[pz]) { const b = document.createElement('button'); b.type = 'button'; b.className = 'ad-rif'; b.textContent = pz; b.title = _adeliaIdx.perId[pz].t; b.onclick = () => adeliaMostra(pz); f.appendChild(b); }
+  const conRimandi = testo => testo.split(/(sched[ae] (?:[A-W]\d+(?:, | e )?)+)/).forEach(pezzo => {
+    if (!/^sched[ae] [A-W]\d/.test(pezzo)) { f.appendChild(document.createTextNode(pezzo)); return; }
+    pezzo.split(/([A-W]\d+)/).forEach(pz => {
+      if (/^[A-W]\d+$/.test(pz) && _adeliaIdx.perId[pz]) { const b = document.createElement('button'); b.type = 'button'; b.className = 'ad-rif'; b.textContent = pz; b.title = _adeliaIdx.perId[pz].t; b.onclick = () => adeliaMostra(pz); f.appendChild(b); }
       else f.appendChild(document.createTextNode(pz));
     });
   });
+  // le schede degli strumenti (blocco W) hanno parti fisse: le etichette vanno a capo, in evidenza
+  if (s.tp) s.x.split(/(Che cos'è\.|A chi serve\.|Come si usa\.|Il potenziale\.|I limiti\.|Nel PDP\.) /).forEach(pezzo => {
+    if (/^(Che cos'è|A chi serve|Come si usa|Il potenziale|I limiti|Nel PDP)\.$/.test(pezzo)) { const h = document.createElement('span'); h.className = 'ad-grp'; h.textContent = pezzo.slice(0, -1); f.appendChild(h); }
+    else if (pezzo) conRimandi(pezzo);
+  });
+  else conRimandi(s.x);
   if (s.f) { const fo = document.createElement('span'); fo.className = 'ad-src'; fo.textContent = '📖 ' + s.f; f.appendChild(fo); }
   return f;
+}
+// Domande incrociate: un disturbo o una difficoltà, da solo ("cosa posso usare per la discalculia") o insieme a una
+// disciplina ("sono docente di italiano, alunno dislessico"). La risposta è un elenco di strumenti scelti dal blocco W.
+const ADELIA_DISTURBI = [
+  ['dislessia', 'Dislessia', /disles|dislet|(difficolta|problemi|fatica|lent[oa]|lentezza) (di|nella|nel|in|a) (lettura|leggere)|legge (male|lent|pian|a fatica|con fatica|stentat|sillab)|lettura (lenta|stentata|scorretta|faticosa)|non (sa|riesce a) leggere|(confonde|inverte|scambia) le lettere|salta le righe|f81\.0/],
+  ['disortografia', 'Disortografia', /disortog|errori (di )?ortograf|sbaglia (le doppie|gli accenti|l ortografia)|scrive (con|pieno di|facendo) (tanti |molti |troppi )?errori|(tanti|molti|troppi) errori (quando|nello|nel) scriv|f81\.1/],
+  ['disgrafia', 'Disgrafia', /disgraf|scrive (male|malissimo|lentissim)|\bgrafia\b|calligrafia|(brutta|pessima) scrittura|scrittura (illeggibile|brutta|disordinata)|non si (capisce|legge) (cosa|quello che|come|cio che) scrive|f81\.8/],
+  ['discalculia', 'Discalculia', /discalc|(difficolta|problemi|fatica) (di|nel|in|a|con il|con i|nei) (calcol|numer|cont)|non sa (fare )?i (conti|calcoli)|sbaglia i (conti|calcoli)|non (sa|ricorda|impara) le tabelline|f81\.2/],
+  ['attenzione', 'Difficoltà di attenzione', /\badhd\b|\bddai\b|attenzion|iperattiv|si distrae|distratt|non sta (attent|ferm|sedut)|non si concentra|concentrazion/],
+  ['memoria', 'Memoria fragile', /memoria|non ricorda|dimentica|non memorizza|si scorda/],
+  ['linguaggio', 'Disturbo del linguaggio', /disturbo (del|di) linguaggio|\bdsl\b|non trova le parole|fatica a (parlare|esprimersi)|si esprime (male|a fatica)|lessico (povero|ridotto)/],
+  ['nai', 'NAI', /\bnai\b|neo ?arrivat|non italofon|alfabetizzazion|non (sa|conosce|capisce|parla) (ancora )?(l )?italiano|(alunn|bambin|ragazz|student)\w* (stranier|(appena|da poco) arrivat)|(appena|da poco) arrivat[oa] (in italia|da|dal|dall)/]
+];
+// Le discipline con i modi in cui i docenti le chiamano. L'ordine conta: ciò che viene riconosciuto è tolto dalla domanda
+// prima di cercare il resto ("educazione fisica" non deve diventare fisica, "disegno tecnico" non deve diventare arte).
+const ADELIA_DISCIPLINE = [
+  ['motoria', 'scienze motorie', /scienze motorie|motori[ae]|educazione fisica|ed\.? ?fisica|ginnastica|\bpalestra\b/],
+  ['tecnologia', 'tecnologia', /tecnologia|\btecno\b|educazione tecnica|ed\.? ?tecnica|\btecnica\b|disegno tecnico|informatica|\bcoding\b/],
+  ['civica', 'educazione civica', /educazione civica|ed\.? ?civica|\bcivica\b/],
+  ['arte', 'arte', /storia dell arte|arte e immagine|\barte\b|artistica|\bdisegno\b/],
+  ['lingue', 'lingue straniere', /inglese|english|\bing\b|francese|spagnolo|tedesco|\blingue\b|lingu[ae] (stranier[ae]|comunitari[ae])|seconda lingua/],
+  ['italiano', 'italiano', /\bita\b|\bital\b|italiano|lingua italiana|(^|\bdi |\bin |\bper |insegno |insegnante |prof\w* |docente |maestr[oa] |strumenti )lettere|letteratura|grammatica|antologia|\bepica\b|narrativa|(ambito|area) linguistic|\btem[ai]\b|analisi (grammaticale|logica|del periodo)|riassunt/],
+  ['matematica', 'matematica', /\bmate\b|\bmat\b|matematica|geometria|aritmetica|algebra|(ambito|area) (logico|matematic)|logico.matematic|espressioni|equazioni|frazioni/],
+  ['storia', 'storia', /\bstoria\b|geostoria|(ambito|area) antropologic/],
+  ['geografia', 'geografia', /geografia|\bgeo\b|geostoria|(ambito|area) antropologic/],
+  ['scienze', 'scienze', /\bscienze\b|biologia|chimica|\bfisica\b/],
+  ['musica', 'musica', /\bmusica\b|musicale|(\bdi|insegno|prof\w*|docente) strumento\b|flauto|solfeggio|pentagramma|pianoforte|chitarra|violino|clarinetto|percussioni/],
+  ['religione', 'religione', /religione|\birc\b|attivita alternativa|\balternativa\b/]
+];
+const ADELIA_Q = { dislessia: 'Q1', disortografia: 'Q2', disgrafia: 'Q3', discalculia: 'Q4', attenzione: 'Q15', memoria: 'Q13', linguaggio: 'Q21', nai: 'O1' };
+const ADELIA_F = { italiano: 'F9', matematica: 'F10', scienze: 'F11', lingue: 'F12', storia: 'F13', geografia: 'F13', tecnologia: 'F14', arte: 'F15', musica: 'F15', motoria: 'F15', religione: 'F15' };
+function _adeliaIncrocio(domanda) {
+  const q = _adNorm(domanda), ix = _adeliaIdx;
+  // domande su perché, dove, valutazione, obbligo di compilare: hanno già le loro schede
+  if (/\bperche\b|come mai|\bdov[e ]|in (che|quale) (sezione|parte|punto)|valut|\bvot[oi]\b|corregg|serve (il|un) pdp|cosa (devo )?compil|devo compilare|chi compila|esame|invalsi|dispensa dallo scritto|esonero/.test(q)) return null;
+  let dist = ADELIA_DISTURBI.filter(d => d[2].test(q));
+  const dsaGenerico = !dist.length && /\bdsa\b|disturb[oi] specific[oi]/.test(q);
+  if (dsaGenerico) dist = ADELIA_DISTURBI.slice(0, 4);
+  // tolgo dalla domanda le parole del disturbo ("non parla italiano" non è la disciplina italiano), poi cerco le discipline
+  let resto = q; dist.forEach(d => { resto = resto.replace(new RegExp(d[2].source, 'g'), ' '); });
+  const disc = ADELIA_DISCIPLINE.filter(d => { const c = d[2].test(resto); if (c && (d[0] === 'motoria' || d[0] === 'tecnologia' || d[0] === 'civica' || d[0] === 'arte')) resto = resto.replace(new RegExp(d[2].source, 'g'), ' '); return c; });
+  if (!dist.length) return /\bbes\b/.test(q) && (disc.length || /strument|(usare|utilizzare|uso)\b|misur[ae]|cosa (faccio|gli do|le do)/.test(q)) ? { bes: true, disc } : null;
+  const vuole = /strument|cosa (posso|si puo|potrei|devo|dovrei) (usare|utilizzare|dare|dargli|darle|mettere|fare|proporre)|cosa (uso|gli do|le do|metto|faccio|serve)|che cosa (uso|posso usare|serve)|misur[ae]|compensativ|dispensativ|\baiut|trovare|consigl|da dove (parto|comincio)/.test(q);
+  // se la domanda nomina già uno strumento ("calcolatrice per la discalculia"), vale la sua scheda
+  const nominato = ix.schede.find(o => o.s.tp && [_adNorm(o.s.t), ...o.chiavi].some(c => c.length > 3 && !/^strument/.test(c) && new RegExp('(^|[^a-z0-9])' + c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '($|[^a-z0-9])').test(q)));
+  if (nominato) return { strumento: nominato.s, dist };
+  const haAlunno = /\b(ho|abbiamo|c e|mi e arrivat[oa]|seguo)\b.*(alunn|bambin|ragazz|student)|in classe (ho|abbiamo)|(verific|prov)[ae] (per|a|di) (un |una |l )?(alunn|bambin|ragazz|student)/.test(q);
+  if (!disc.length && !haAlunno && !/strument|(usare|utilizzare|uso)\b|misur[ae]|compensativ|dispensativ/.test(q)) return null;
+  const idDist = dist.map(d => d[0]), idDisc = disc.map(d => d[0]);
+  const voci = ix.schede.map(o => o.s).filter(s => s.tp && s.pr.some(x => idDist.includes(x)) && (!idDisc.length || s.dv.includes('tutte') || s.dv.some(x => idDisc.includes(x))))
+    .map(s => ({ s, peso: (s.dv.some(x => idDisc.includes(x)) ? 10 : 0) + s.pr.filter(x => idDist.includes(x)).length * 2 - s.pr.length * 0.1 }))
+    .sort((a, b) => b.peso - a.peso).map(v => v.s);
+  if (!voci.length) return null;
+  return { dist, disc, voci, dsaGenerico };
+}
+function _adeliaMostraIncrocio(inc) {
+  const f = document.createDocumentFragment(), t = document.createElement('b'); t.className = 'ad-tit';
+  const chi = inc.dsaGenerico ? 'DSA' : inc.dist.map(d => d[1]).join(' e ');
+  t.textContent = chi + (inc.disc.length ? ' in ' + inc.disc.map(d => d[1]).join(' e ') : '') + ': che cosa si può usare'; f.appendChild(t);
+  f.appendChild(document.createTextNode('Ecco che cosa di solito aiuta. Tocca una voce per vedere che cos\'è, che cosa può dare e dove si ferma.'));
+  [['strumento', 'Strumenti'], ['misura', 'Da che cosa si può dispensare'], ['verifica', 'Nelle verifiche']].forEach(([tp, titolo]) => {
+    const gruppo = inc.voci.filter(s => s.tp === tp); if (!gruppo.length) return;
+    const h = document.createElement('span'); h.className = 'ad-grp'; h.textContent = titolo; f.appendChild(h);
+    const c = document.createElement('div'); c.className = 'ad-chips';
+    gruppo.forEach(s => { const b = document.createElement('button'); b.type = 'button'; b.className = 'ad-chip'; b.textContent = s.t; b.onclick = () => adeliaMostra(s.id); c.appendChild(b); });
+    f.appendChild(c);
+  });
+  const fine = document.createElement('span'); fine.className = 'ad-grp ad-dom'; fine.textContent = 'Non servono tutti. Quali servono davvero a questo alunno, e in quali momenti?'; f.appendChild(fine);
+  const m = _adMsg('a', f);
+  const rimandi = [...new Set([...(inc.dsaGenerico ? ['Q5'] : inc.dist.map(d => ADELIA_Q[d[0]])), ...inc.disc.map(d => ADELIA_F[d[0]])])].filter(id => id && _adeliaIdx.perId[id]).slice(0, 4);
+  if (rimandi.length) _adChips(rimandi.map(id => ({ etichetta: _adeliaIdx.perId[id].t, azione: () => adeliaMostra(id) })));
+  _adeliaUltima = null; _adeliaAltre = [...rimandi, ...inc.voci.map(s => s.id)];
+  _adInFondo(m);
 }
 function _adInFondo(el) { const body = document.getElementById('ad-body'); body.scrollTop = el ? Math.max(0, el.offsetTop - body.offsetTop - 8) : body.scrollHeight; }
 var _adeliaUltima = null, _adeliaAltre = [];
@@ -2549,7 +2652,25 @@ function adeliaMostra(id) {
   _adeliaUltima = s;
   _adInFondo(_adMsg('a', _adScheda(s)));
 }
+// Raccolta delle domande: serve alla FS per capire che cosa chiedono i colleghi e che cosa manca nelle schede.
+// Si salva solo il testo della domanda scritta a mano (non i pulsanti), dopo l'accesso, con il giorno: senza ora, ruolo,
+// nome o indirizzo di chi la fa e senza PDP. Le domande con dati di un alunno non vengono salvate; i nomi di persona riconosciuti sono tolti.
+async function _adeliaRegistra(domanda) {
+  try {
+    if (_adeliaModo() !== 'pieno' || !utenteCorrente || _adeliaDatiPersonali(domanda)) return;
+    const testo = _adeliaTogliNomi(domanda).pulito.slice(0, 300);
+    if (testo.length < 3 || /^(ciao|buongiorno|buonasera|salve|ehi|hey|grazie|ok grazie|grazie mille|perfetto)[\s!.,]*$/i.test(testo)) return;
+    // solo il testo e il giorno: niente ora, ruolo o utente, così la domanda non si può accostare agli accessi del registro
+    const giorno = new Date(); giorno.setHours(0, 0, 0, 0);
+    await addDoc(collection(db, 'logs'), { ts: giorno, azione: 'adelia_domanda', domanda: testo });
+  } catch (e) { console.warn('Domanda non registrata:', e.code || e.message); }
+}
 async function adeliaInvia(testo) {
+  const scritta = testo == null ? document.getElementById('ad-input').value.trim() : '';
+  await _adeliaRispondi(testo);
+  if (scritta) _adeliaRegistra(scritta);
+}
+async function _adeliaRispondi(testo) {
   const inp = document.getElementById('ad-input');
   const domanda = (testo != null ? testo : inp.value).trim(); if (!domanda) return;
   inp.value = '';
@@ -2583,6 +2704,21 @@ async function adeliaInvia(testo) {
     if (prossima) { adeliaMostra(prossima); return; }
     _adInFondo(_adMsg('a', 'Su questo ti ho detto ciò che ho. Fammi un\'altra domanda, oppure scrivi "cosa devo fare" per i passi da seguire.')); return;
   }
+  const inc = _adeliaModo() === 'pieno' ? _adeliaIncrocio(domanda) : null;
+  if (inc && inc.bes) {
+    const m = _adMsg('a', 'BES è una sigla larga: dentro ci sono difficoltà molto diverse, e gli strumenti cambiano. Qual è la difficoltà che vedi di più?');
+    const dove = inc.disc.length ? ' in ' + inc.disc[0][1] : '';
+    _adChips([['Lettura', 'difficoltà di lettura'], ['Scrittura', 'disgrafia e disortografia'], ['Calcolo', 'difficoltà di calcolo'], ['Attenzione', 'difficoltà di attenzione'], ['Memoria', 'memoria fragile'], ['Lingua italiana', 'alunno nai']].map(v => ({ etichetta: v[0], azione: () => adeliaInvia('strumenti per ' + v[1] + dove) })));
+    _adInFondo(m); return;
+  }
+  if (inc && inc.strumento) {
+    // strumento nominato insieme a un disturbo: la scheda dello strumento, con il rimando al disturbo
+    adeliaMostra(inc.strumento.id);
+    const rim = inc.dist.map(d => ADELIA_Q[d[0]]).filter(id => _adeliaIdx.perId[id]).slice(0, 3); _adeliaAltre = rim;
+    if (rim.length) _adChips(rim.map(id => ({ etichetta: _adeliaIdx.perId[id].t, azione: () => adeliaMostra(id) })));
+    return;
+  }
+  if (inc) { _adeliaMostraIncrocio(inc); return; }
   const ris = _adeliaCerca(domanda);
   if (_adeliaModo() === 'accesso' && (!ris.length || ris[0].p < 2.2)) {
     const m = _adMsg('a', 'Qui, prima di entrare, rispondo solo alle domande sull\'accesso. Per il resto ci ritroviamo dentro. Se non riesci a entrare, scrivi alla Funzione Strumentale Inclusione.');
@@ -2595,7 +2731,7 @@ async function adeliaInvia(testo) {
   const m = _adMsg('a', _adScheda(ris[0].s)); _adeliaUltima = ris[0].s;
   const altre = ris.slice(1, 4).filter(r => r.p >= ris[0].p * 0.45);
   // per "e poi?": prima i rimandi della scheda mostrata, poi le schede vicine
-  _adeliaAltre = [...new Set([...(ris[0].s.x.match(/\b[A-V]\d+\b/g) || []).filter(id => _adeliaIdx.perId[id] && /sched[ae] [^.]*$/.test(ris[0].s.x.slice(0, ris[0].s.x.indexOf(id)))), ...altre.map(r => r.s.id)])].filter(id => id !== ris[0].s.id);
+  _adeliaAltre = [...new Set([...(ris[0].s.x.match(/\b[A-W]\d+\b/g) || []).filter(id => _adeliaIdx.perId[id] && /sched[ae] [^.]*$/.test(ris[0].s.x.slice(0, ris[0].s.x.indexOf(id)))), ...altre.map(r => r.s.id)])].filter(id => id !== ris[0].s.id);
   if (altre.length) _adChips(altre.map(r => ({ etichetta: r.s.t, azione: () => adeliaMostra(r.s.id) })));
   _adInFondo(m);
 }
@@ -2620,6 +2756,7 @@ function _adeliaAggiornaVisibilita() {
     _adeliaModoCorrente = modo; pn.style.display = 'none'; document.getElementById('ad-body').textContent = ''; _adeliaUltima = null;
     const gem = pn.querySelector('.ad-gem'); if (gem) gem.style.display = modo === 'pieno' && ruoloCorrente === 'master' ? '' : 'none';
     const sotto = pn.querySelector('.ad-head small'); if (sotto) sotto.textContent = modo === 'accesso' ? 'Ti aiuto a entrare nel gestionale' : 'Aiuto per il PDP e la lettura della diagnosi';
+    const sal = document.getElementById('ad-warn-salva'); if (sal) sal.textContent = modo === 'pieno' ? 'Le domande che scrivi vengono raccolte senza il tuo nome, per migliorare Adelia.' : 'Quello che scrivi qui non viene salvato né inviato.';
     const lab = fab.querySelector('.ad-lab'); if (lab) lab.textContent = modo === 'accesso' ? 'Non riesci a entrare? Chiedi ad Adelia' : 'Serve una mano? Chiedi ad Adelia';
   }
   if (!modo) pn.style.display = 'none';
@@ -4994,6 +5131,7 @@ window.chiudiAdelia = chiudiAdelia;
 window.apriPannelloAdelia = apriPannelloAdelia;
 window.chiudiPannelloAdelia = chiudiPannelloAdelia;
 window.adeliaInvia = adeliaInvia;
+window.mostraDomandeAdelia = mostraDomandeAdelia;
 window.adeliaMostra = adeliaMostra;
 window.toggleNessunoStrumento = toggleNessunoStrumento;
 window.aggiornaNessunoStrumento = aggiornaNessunoStrumento;
