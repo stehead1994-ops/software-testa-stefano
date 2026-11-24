@@ -2380,6 +2380,18 @@ window.verificaPW = async () => {
   }
 };
 
+// Mentre i dati del PDP arrivano dal database il modulo è visibile ma ancora vuoto: se qualcuno ci scrive,
+// all'arrivo dei dati il testo verrebbe sostituito. Per questo, finché il caricamento non è finito, il modulo
+// non accetta clic né tastiera. Il blocco viene sempre tolto, anche in caso di errore.
+function _bloccaFormInCaricamento(blocca) {
+  const area = document.getElementById('area-editing');
+  if (!area) return;
+  area.inert = !!blocca;
+  area.style.pointerEvents = blocca ? 'none' : '';
+  area.style.opacity = blocca ? '0.55' : '';
+  area.setAttribute('aria-busy', blocca ? 'true' : 'false');
+}
+
 // ─── EDITOR PDP (form reale integrato) ───
 window.apriEditor = async (id) => {
   // Prima di cambiare PDP, salva le modifiche ancora in sospeso su quello aperto
@@ -2392,12 +2404,14 @@ window.apriEditor = async (id) => {
   clearTimeout(autosaveTimer);
   _campiToccati.clear();
   _iniettaFormPDP();
+  _bloccaFormInCaricamento(true);
   mostraSchermata('editor');
 
   try {
     const snap = await getDoc(doc(db, 'pdp', id));
     if (!snap.exists()) {
       _caricamentoPDP = false;
+      _bloccaFormInCaricamento(false);
       return;
     }
     pdpCorrenteDoc = snap.data();
@@ -2417,6 +2431,7 @@ window.apriEditor = async (id) => {
 
     // 4. Rilascia il blocco autosave PRIMA di collegare i listener
     _caricamentoPDP = false;
+    _bloccaFormInCaricamento(false);
     _autoreEvidenziato = null;
     _applicaAutori();
 
@@ -2430,6 +2445,7 @@ window.apriEditor = async (id) => {
     scriviLog('apertura_pdp', id, { alunno: pdpCorrenteDoc?.alunno || '?' });
   } catch(e) {
     _caricamentoPDP = false;
+    _bloccaFormInCaricamento(false);
     console.error('Errore caricamento PDP:', e);
     mostraToast('Errore nel caricamento del PDP', 'rosso');
   }
@@ -2910,6 +2926,14 @@ function _ripristinaDatiFirebase(dati, grado) {
     if (key === 'mat_nome_irc' && !(key in dati)) {
       const vecchia = Object.keys(dati).find(k => /^_idx_\d+$/.test(k) && (dati[k] === 'irc' || dati[k] === 'alt'));
       if (vecchia) key = vecchia;
+    }
+    // Compatibilità: fino al 12/11/2026 la data della diagnosi e la data di condivisione con la famiglia erano
+    // salvate con una chiave legata alla posizione (_idx_N). Il valore è ancora nel database: qui viene riletto,
+    // e al primo salvataggio passa da solo alla chiave nuova. La chiave vecchia non viene toccata.
+    if ((key === 's2_diagnosi_data' || key === 's_firme_data_condivisione') && !(key in dati)) {
+      const vecchie = Object.keys(dati).filter(k => /^_idx_\d+$/.test(k) && /^\d{4}-\d{2}-\d{2}$/.test(String(dati[k])))
+        .filter(k => { const n = parseInt(k.slice(5), 10); return key === 's2_diagnosi_data' ? n < 100 : n >= 100; });
+      if (vecchie.length === 1) key = vecchie[0];
     }
     if (!key || !(key in dati)) return;
     if (el.type === 'checkbox') el.checked = !!dati[key];
