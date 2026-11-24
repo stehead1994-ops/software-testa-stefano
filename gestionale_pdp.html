@@ -2382,7 +2382,7 @@ window.verificaPW = async () => {
 
 // Mentre i dati del PDP arrivano dal database il modulo è visibile ma ancora vuoto: se qualcuno ci scrive,
 // all'arrivo dei dati il testo verrebbe sostituito. Per questo, finché il caricamento non è finito, il modulo
-// non accetta clic né tastiera. Il blocco viene sempre tolto, anche in caso di errore.
+// non accetta clic né tastiera. Se il caricamento fallisce il blocco resta: si esce e si riapre il PDP.
 function _bloccaFormInCaricamento(blocca) {
   const area = document.getElementById('area-editing');
   if (!area) return;
@@ -2410,8 +2410,9 @@ window.apriEditor = async (id) => {
   try {
     const snap = await getDoc(doc(db, 'pdp', id));
     if (!snap.exists()) {
+      // PDP non trovato: il modulo resta bloccato, così nessuno scrive su una scheda vuota
       _caricamentoPDP = false;
-      _bloccaFormInCaricamento(false);
+      mostraToast('PDP non trovato. Torna all\'elenco e riaprilo.', 'rosso');
       return;
     }
     pdpCorrenteDoc = snap.data();
@@ -2444,10 +2445,11 @@ window.apriEditor = async (id) => {
     registraPresenza(id);
     scriviLog('apertura_pdp', id, { alunno: pdpCorrenteDoc?.alunno || '?' });
   } catch(e) {
+    // I dati non sono arrivati: il modulo vuoto resta bloccato. Se restasse scrivibile, i campi sembrerebbero
+    // spariti e chi li riscrive lavorerebbe su una scheda non caricata. Si esce e si riapre.
     _caricamentoPDP = false;
-    _bloccaFormInCaricamento(false);
     console.error('Errore caricamento PDP:', e);
-    mostraToast('Errore nel caricamento del PDP', 'rosso');
+    mostraToast('PDP non caricato: i campi restano bloccati. Torna all\'elenco e riaprilo, o ricarica la pagina.', 'rosso');
   }
 };
 
