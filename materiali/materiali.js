@@ -199,5 +199,43 @@ window.MATERIALI = /*INIZIO-ELENCO*/[
     ],
     "data": "2026-09",
     "anteprima": "come-avvicinare-i-bambini-alla-scrittura-anteprima.png"
+  },
+  {
+    "titolo": "Il DNA",
+    "descrizione": "Cinque schede di studio sul DNA con parole chiave evidenziate a colori: che cos'è, nucleotidi e doppia elica, il DNA come un libro, la mappa riassuntiva e le domande per il ripasso con l'autovalutazione.",
+    "categoria": "schede",
+    "discipline": [
+      "scienze"
+    ],
+    "ordine": "Il DNA",
+    "formato": "pdf",
+    "file": "il-dna.pdf",
+    "anteprima": "il-dna-anteprima.png",
+    "tag": [
+      "metodo di studio",
+      "evidenziatori",
+      "mappa",
+      "ripasso"
+    ],
+    "data": "2026-11"
+  },
+  {
+    "titolo": "La bussola del nonno",
+    "descrizione": "Un racconto breve con tre schede di comprensione: domande a colori sui paragrafi, la teoria della mente (chi sa che cosa, che cosa pensano i personaggi, gli indizi nel testo) e i simboli nel racconto.",
+    "categoria": "schede",
+    "discipline": [
+      "italiano"
+    ],
+    "ordine": "Comprensione del testo",
+    "formato": "pdf",
+    "file": "la-bussola-del-nonno.pdf",
+    "anteprima": "la-bussola-del-nonno-anteprima.png",
+    "tag": [
+      "comprensione",
+      "inferenze",
+      "teoria della mente",
+      "racconto"
+    ],
+    "data": "2026-11"
   }
 ]/*FINE-ELENCO*/;
