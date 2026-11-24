@@ -104,6 +104,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 .ad-grp.ad-dom { text-transform: none; letter-spacing: 0; font-size: 0.8rem; color: #1a3a5c; }
 .ad-chip { border: 1.5px solid #c9d3df; background: #fff; border-radius: 16px; padding: 5px 10px; font-size: 0.75rem; color: #1a3a5c; font-weight: 600; cursor: pointer; font-family: inherit; text-align: left; }
 .ad-chip:hover { border-color: #1a3a5c; }
+.ad-link { color: #1a3a5c; font-weight: 700; text-decoration: underline; word-break: break-all; }
 .ad-rif { background: none; border: 0; padding: 0; color: #1a3a5c; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
 .ad-foot { padding: 10px 12px; border-top: 1px solid #e1e7ef; display: flex; flex-direction: column; gap: 8px; background: #fff; }
 .ad-in { display: flex; gap: 8px; }
@@ -2565,7 +2566,7 @@ function _adeliaCarica() {
       ok(_adeliaIdx);
     };
     if (window.ADELIA_BASE) return fine();
-    const sc = document.createElement('script'); sc.src = 'adelia_base.js?v=21';
+    const sc = document.createElement('script'); sc.src = 'adelia_base.js?v=22';
     sc.onload = fine; sc.onerror = () => { _adeliaCaricamento = null; ko(new Error('base non raggiungibile')); };
     document.head.appendChild(sc);
   });
@@ -2638,9 +2639,14 @@ function _adChips(voci) {
 }
 function _adScheda(s) {
   const f = document.createDocumentFragment(), t = document.createElement('b'); t.className = 'ad-tit'; t.textContent = s.t; f.appendChild(t);
+  // gli indirizzi dei moduli d'istituto sul sito (maestrotesta.com/....html) diventano collegamenti
+  const testo = t => t.split(/(maestrotesta\.com\/[a-z0-9_]+\.html)/).forEach(pz => {
+    if (!/^maestrotesta\.com\/[a-z0-9_]+\.html$/.test(pz)) { f.appendChild(document.createTextNode(pz)); return; }
+    const a = document.createElement('a'); a.href = 'https://' + pz; a.target = '_blank'; a.rel = 'noopener'; a.className = 'ad-link'; a.textContent = pz; f.appendChild(a);
+  });
   // i rimandi "scheda I7" diventano cliccabili
-  const conRimandi = testo => testo.split(/(sched[ae] (?:[A-W]\d+(?:, | e )?)+)/).forEach(pezzo => {
-    if (!/^sched[ae] [A-W]\d/.test(pezzo)) { f.appendChild(document.createTextNode(pezzo)); return; }
+  const conRimandi = testo2 => testo2.split(/(sched[ae] (?:[A-W]\d+(?:, | e )?)+)/).forEach(pezzo => {
+    if (!/^sched[ae] [A-W]\d/.test(pezzo)) { testo(pezzo); return; }
     pezzo.split(/([A-W]\d+)/).forEach(pz => {
       if (/^[A-W]\d+$/.test(pz) && _adeliaIdx.perId[pz]) { const b = document.createElement('button'); b.type = 'button'; b.className = 'ad-rif'; b.textContent = pz; b.title = _adeliaIdx.perId[pz].t; b.onclick = () => adeliaMostra(pz); f.appendChild(b); }
       else f.appendChild(document.createTextNode(pz));
