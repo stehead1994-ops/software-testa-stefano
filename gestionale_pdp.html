@@ -3198,16 +3198,16 @@ function _unisciRighe(mieTesto, serverTesto) {
   const mie = leggi(mieTesto), srv = leggi(serverTesto);
   if (!mie || !srv) return null;   // un campo illeggibile non si tocca
   const sulServer = new Map(srv.map(c => [c.containerId, c.items || []]));
-  const unione = [], visti = new Set(), cambiati = {};
+  const unione = [], visti = new Set(), cambiati = {}, precedenti = {};
   mie.forEach(c => {
     visti.add(c.containerId);
     const mioTesto = JSON.stringify(c.items || []);
     const cambiato = mioTesto !== _righeBase[c.containerId];
-    if (cambiato) cambiati[c.containerId] = mioTesto;
+    if (cambiato) { cambiati[c.containerId] = mioTesto; precedenti[c.containerId] = JSON.stringify(sulServer.get(c.containerId) || []); }
     unione.push({ containerId: c.containerId, items: (cambiato || !sulServer.has(c.containerId)) ? (c.items || []) : sulServer.get(c.containerId) });
   });
   srv.forEach(c => { if (!visti.has(c.containerId)) unione.push({ containerId: c.containerId, items: c.items || [] }); });
-  return { testo: JSON.stringify(unione), cambiati };
+  return { testo: JSON.stringify(unione), cambiati, precedenti };
 }
 
 // ─── AUTOSAVE ───
@@ -3320,14 +3320,14 @@ async function salvaOra() {
   if (protetti.length) console.log('🛡️ Campi già compilati lasciati intatti:', protetti.length, protetti);
 
   // Righe di strumenti e misure: si uniscono con la versione più recente nel database (vedi _unisciRighe)
-  let righeCambiate = null;
+  let righeCambiate = null, righePrecedenti = null;
   if ('_righe' in modifiche) {
     try {
       const fresco = await getDoc(doc(db, 'pdp', idSalvataggio));
       const sulServer = fresco.exists() ? (fresco.data().dati || {})._righe : undefined;
       const u = _unisciRighe(modifiche['_righe'], sulServer);
       if (!u) throw new Error('righe non leggibili');
-      righeCambiate = u.cambiati;
+      righeCambiate = u.cambiati; righePrecedenti = u.precedenti;
       if (u.testo === sulServer) delete modifiche['_righe']; else modifiche['_righe'] = u.testo;
     } catch(e) {
       // Se non si riesce a rileggere il PDP, le righe non si scrivono: meglio riprovare che sovrascrivere
@@ -3427,6 +3427,23 @@ async function salvaOra() {
         })
       ));
       console.log('📝 Log cronologia scritto per', campiCambiati.length, 'campo/i:', campiCambiati.map(c => c.campo));
+    }
+
+    // Righe di strumenti e misure: per ogni riquadro cambiato si registra com'era e com'è, come per i campi di testo.
+    // Così una riga aggiunta o tolta resta sempre nel registro e si può recuperare.
+    if (righeCambiate && righePrecedenti && '_righe' in modifiche) {
+      const leggibile = t => { try { return JSON.parse(t).filter(it => String(it[0] || '').trim() || String(it[1] || '').trim()).map(it => String(it[0] || '').trim() + (String(it[1] || '').trim() ? ' — ' + String(it[1]).trim() : '')).join(' | '); } catch(e) { return ''; } };
+      const voci = Object.keys(righeCambiate).filter(cid => leggibile(righeCambiate[cid]) !== leggibile(righePrecedenti[cid] || '[]'));
+      if (voci.length) await Promise.allSettled(voci.map(cid => {
+        const nomeDisc = (document.getElementById(cid)?.closest('.materia-card')?.querySelector('.materia-nome')?.textContent || '').trim();
+        return scriviLog('modifica_campo', idSalvataggio, {
+          alunno: docSalvataggio?.alunno || '?',
+          campo: 'righe · ' + (nomeDisc || cid) + ' · ' + (cid.startsWith('strumenti') ? 'strumenti' : 'misure'),
+          valorePrecedente: leggibile(righePrecedenti[cid] || '[]'),
+          valoreNuovo: leggibile(righeCambiate[cid]),
+          riquadro: cid, righePrima: righePrecedenti[cid] || '[]', righeDopo: righeCambiate[cid]
+        });
+      }));
     }
 
     const dot = document.getElementById('autosave-dot');
