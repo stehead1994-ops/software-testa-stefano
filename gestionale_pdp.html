@@ -1639,15 +1639,18 @@ function _renderListaPDP() {
   }
   lista.innerHTML = docs.map(p => {
     const id = p._id;
-    const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : 'stato-bozza';
-    const statoLabel = p.stato === 'protocollato' ? '📌 Versione definitiva' : p.stato === 'in-corso' ? '✏️ In corso' : '📝 Bozza';
+    // Anche nell'elenco PDP un "Da non redigere" si riconosce: prima compariva come bozza
+    const statoClass = p.stato === 'protocollato' ? 'stato-protocollato' : p.stato === 'in-corso' ? 'stato-in-corso' : p.stato === 'non_redatto' ? 'stato-non-redatto' : 'stato-bozza';
+    const statoLabel = p.stato === 'protocollato' ? '📌 Versione definitiva' : p.stato === 'in-corso' ? '✏️ In corso' : p.stato === 'non_redatto' ? '🚫 Da non redigere' : '📝 Bozza';
     const dataProtocollazione = p.protocollato_data_str ? `<div style="font-size:0.72rem;color:var(--verde);margin-top:3px">📅 ${p.protocollato_data_str}</div>` : '';
+    const notaNonRedatto = p.stato === 'non_redatto' ? `<div style="font-size:0.72rem;color:#6c757d;margin-top:3px">🚫 ${String(p.non_redatto_motivazione || '').replace(/[<>&]/g, '')}${p.non_redatto_data_str ? ' · ' + p.non_redatto_data_str : ''}</div>` : '';
     return `
     <div class="pdp-card">
       <div class="pdp-card-info">
         <div class="pdp-card-nome">${p.alunno || '—'}${_etichettaTipoPDP(p)}</div>
         <div class="pdp-card-meta">${p.grado || ''} · Classe ${p.classe || '—'} · ${p.anno || ''}</div>
         ${dataProtocollazione}
+        ${notaNonRedatto}
       </div>
       <span class="pdp-card-stato ${statoClass}">${statoLabel}</span>
       <div class="pdp-card-pw" title="Password di accesso">
