@@ -1414,11 +1414,68 @@ onAuthStateChanged(auth, async (user) => {
 
 // ─── NAVIGAZIONE ───
 function mostraSchermata(nome) {
+  const daEditor = document.getElementById('screen-editor')?.classList.contains('active');
+  if (daEditor && nome !== 'editor') _avvisoRicarica('chiuso');
+  if (nome === 'editor') _controllaRicarica('apertura');
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + nome)?.classList.add('active');
   try { _adeliaAggiornaVisibilita(); } catch (e) {}
 }
 window.mostraLogin = () => mostraSchermata('login');
+// ─── PROMEMORIA: RICARICA LA PAGINA ───
+// Una pagina aperta da molto tempo, o rimasta indietro rispetto alla versione pubblicata, può salvare dati con
+// regole vecchie. Il promemoria compare: (1) quando esce una versione nuova del gestionale; (2) quando la pagina
+// è aperta da più di 3 ore o da un altro giorno; (3) quando si chiude un PDP, prima di aprirne un altro.
+// "Ricarica ora" salva prima ciò che è in sospeso. Non legge né scrive nulla nel database.
+const _paginaAperta = Date.now();
+let _versioneCaricata = null, _avvisoMostrato = null;
+async function _versionePubblicata() {
+  try {
+    const r = await fetch(location.pathname + '?v=' + Date.now(), { method: 'HEAD', cache: 'no-store' });
+    if (!r.ok) return null;
+    return r.headers.get('etag') || r.headers.get('last-modified') || null;
+  } catch(e) { return null; }
+}
+_versionePubblicata().then(v => { _versioneCaricata = v; });
+async function _controllaRicarica(occasione) {
+  if (!utenteCorrente) return;
+  const ore = (Date.now() - _paginaAperta) / 3600000;
+  const altroGiorno = new Date(_paginaAperta).toDateString() !== new Date().toDateString();
+  if (altroGiorno || ore >= 3) { _avvisoRicarica('vecchia'); return; }
+  const ora = await _versionePubblicata();
+  if (_versioneCaricata && ora && ora !== _versioneCaricata) _avvisoRicarica('nuova');
+}
+function _avvisoRicarica(motivo) {
+  if (!utenteCorrente) return;
+  const testi = {
+    nuova: 'È uscita una versione aggiornata del gestionale. Ricarica la pagina prima di continuare: quello che hai scritto è già salvato.',
+    vecchia: 'Questa pagina è aperta da molto tempo. Ricaricala prima di continuare a lavorare: quello che hai scritto è già salvato.',
+    chiuso: 'Hai chiuso il PDP. Prima di aprirne un altro, ricarica la pagina.'
+  };
+  // un avviso più importante sostituisce quello sul PDP chiuso, non il contrario
+  if (_avvisoMostrato && _avvisoMostrato !== 'chiuso' && motivo === 'chiuso') return;
+  _avvisoMostrato = motivo;
+  let box = document.getElementById('avviso-ricarica');
+  if (!box) {
+    box = document.createElement('div'); box.id = 'avviso-ricarica'; box.setAttribute('role', 'alert');
+    box.style.cssText = 'position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:9000;max-width:min(640px,calc(100vw - 32px));background:#fff4d6;border:2px solid #e0a100;color:#5a4300;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.18);padding:12px 14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-family:\'DM Sans\',sans-serif;font-size:0.9rem';
+    const t = document.createElement('span'); t.id = 'avviso-ricarica-testo'; t.style.cssText = 'flex:1;min-width:200px;font-weight:600';
+    const ok = document.createElement('button'); ok.type = 'button'; ok.textContent = '🔄 Ricarica ora';
+    ok.style.cssText = 'padding:8px 14px;border-radius:8px;border:none;background:#1a3a5c;color:#fff;font:inherit;font-weight:700;cursor:pointer';
+    ok.onclick = async () => { ok.disabled = true; ok.textContent = 'Salvo e ricarico…'; try { await _salvaSeInSospeso(); } catch(e) {}
+      const attesa = Date.now(); while (_salvataggiInCorso > 0 && Date.now() - attesa < 8000) await new Promise(r => setTimeout(r, 200));
+      if (_salvataggiInCorso > 0) { ok.disabled = false; ok.textContent = '🔄 Ricarica ora'; mostraToast('Salvataggio ancora in corso: riprova tra qualche secondo', 'rosso'); return; }
+      location.reload(); };
+    const no = document.createElement('button'); no.type = 'button'; no.textContent = 'Più tardi'; no.setAttribute('aria-label', 'Chiudi il promemoria');
+    no.style.cssText = 'padding:8px 10px;border-radius:8px;border:1px solid #c9a227;background:transparent;color:#5a4300;font:inherit;cursor:pointer';
+    no.onclick = () => { box.remove(); _avvisoMostrato = null; };
+    box.append(t, ok, no); document.body.appendChild(box);
+  }
+  document.getElementById('avviso-ricarica-testo').textContent = testi[motivo] || testi.vecchia;
+}
+setInterval(() => { if (document.visibilityState === 'visible') _controllaRicarica('periodico'); }, 10 * 60 * 1000);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') _controllaRicarica('ritorno'); });
+
 // ─── PRESENZA LIVE ───
 let _presenzaRef = null;
 let _presenzaInterval = null;
@@ -1909,8 +1966,9 @@ function _renderLogsFiltrati() {
     let dettaglio = '—';
     if (l.azione === 'modifica_campo' && l.campo) {
       const troncaStr = (s, n) => s && s.length > n ? s.substring(0, n) + '…' : (s || '');
-      const prev = troncaStr(l.valorePrecedente, 60);
-      const next = troncaStr(l.valoreNuovo, 60);
+      const leggi = v => { const m = { 'true': '✓ spuntato', 'false': '✗ non spuntato', 'sel-p': '✅ Presente', 'sel-a': '❌ Assente', 'sel-pp': '⚡ Parziale' }; return m[String(v)] || v; };
+      const prev = troncaStr(leggi(l.valorePrecedente), 60);
+      const next = troncaStr(leggi(l.valoreNuovo), 60);
       dettaglio = '<span style="font-size:0.78rem;color:var(--testo-soft);font-family:monospace">' + l.campo + '</span><br>' +
         '<span style="color:#c0392b;text-decoration:line-through;font-size:0.78rem">' + prev + '</span>' +
         '<span style="color:#888;padding:0 4px">→</span>' +
@@ -3010,14 +3068,18 @@ function _ripristinaDatiFirebase(dati, grado) {
   // Discipline: mostra le dichiarazioni "nessuno strumento / misura" già segnate
   aggiornaNessunoStrumentoUI();
 
-  // Ripristina PAP buttons
-  if (dati._pap) {
-    try {
-      JSON.parse(dati._pap).forEach(({i, cls}) => {
-        const btns = area.querySelectorAll('.pap-btn');
-        if (btns[i] && cls) { btns[i].classList.remove('sel-p','sel-a','sel-pp'); btns[i].classList.add(cls); }
-      });
-    } catch(e) {}
+  // Ripristina i pulsanti Presente / Assente / Parziale (infanzia).
+  // Ogni campo di esperienza ha il suo campo (s4i_pap_0 … s4i_pap_4). I PDP salvati prima avevano tutto in un
+  // unico blocco (_pap): se il campo nuovo non c'è ancora si legge da lì, e al primo salvataggio passa al campo nuovo.
+  {
+    let vecchio = [];
+    try { vecchio = dati._pap ? JSON.parse(dati._pap) : []; } catch(e) { vecchio = []; }
+    area.querySelectorAll('.pap-group').forEach((gruppo, g) => {
+      let cls = dati['s4i_pap_' + g];
+      if (cls === undefined) { const v = vecchio.find(x => Math.floor(x.i / 3) === g && x.cls); cls = v ? v.cls : ''; }
+      gruppo.querySelectorAll('.pap-btn').forEach(b => b.classList.remove('sel-p','sel-a','sel-pp'));
+      if (cls) { const b = [...gruppo.querySelectorAll('.pap-btn')].find(x => (x.getAttribute('onclick') || '').includes("'" + cls + "'")); if (b) b.classList.add(cls); }
+    });
   }
 }
 
@@ -3039,7 +3101,12 @@ function _collegaAutosave() {
     if (!e.isTrusted || !e.target.closest) return;
     const t = e.target;
     let salva = false;
-    if (t.closest('.pap-btn')) { _campiToccati.add('_pap'); salva = true; }
+    if (t.closest('.pap-btn')) {
+      const gruppi = [...document.querySelectorAll('#area-editing .pap-group')];
+      const g = gruppi.indexOf(t.closest('.pap-group'));
+      if (g >= 0) _campiToccati.add('s4i_pap_' + g);
+      salva = true;
+    }
     if (t.closest('.grado-bar')) { ['_grado', 's1_grado', 's1_classe'].forEach(k => _campiToccati.add(k)); salva = true; }
     if (t.closest('button') && !t.closest('.grado-bar')) { _campiToccati.add('_righe'); salva = true; }
     if (salva) setTimeout(scheduleAutosave, 50);
@@ -3292,16 +3359,12 @@ async function salvaOra() {
   });
   if (righeData.length) nuoviDati['_righe'] = JSON.stringify(righeData);
 
-  // PAP buttons
-  const papBtns = area.querySelectorAll('.pap-btn');
-  if (papBtns.length) {
-    const papData = [];
-    papBtns.forEach((b, i) => {
-      const cls = ['sel-p','sel-a','sel-pp'].find(c => b.classList.contains(c)) || '';
-      papData.push({i, cls});
-    });
-    nuoviDati['_pap'] = JSON.stringify(papData);
-  }
+  // Pulsanti Presente / Assente / Parziale (infanzia): un campo per ogni campo di esperienza.
+  // Il vecchio blocco unico _pap non si scrive più (resta nel database com'era).
+  area.querySelectorAll('.pap-group').forEach((gruppo, g) => {
+    const sel = gruppo.querySelector('.pap-btn.sel-p, .pap-btn.sel-a, .pap-btn.sel-pp');
+    nuoviDati['s4i_pap_' + g] = sel ? (['sel-p','sel-a','sel-pp'].find(c => sel.classList.contains(c)) || '') : '';
+  });
 
   // ── Salvataggio per differenza, con protezione dei dati già scritti ────────
   // Si scrivono su Firestore SOLO i campi cambiati, uno per uno: i campi che il
@@ -3352,7 +3415,8 @@ async function salvaOra() {
   // Cronologia: per ogni campo che aveva già un valore, log con prima e dopo
   const campiCambiati = [];
   for (const [campo, valoreNuovo] of Object.entries(modifiche)) {
-    if (campo.startsWith('_') || campo.startsWith('cb_') || campo.startsWith('radio_')) continue;
+    // Si registrano tutti i campi, comprese spunte e scelte; restano fuori solo i campi tecnici (che iniziano con _)
+    if (campo.startsWith('_')) continue;
     const valorePrecedente = datiPrecedenti[campo];
     const avevaValore = valorePrecedente !== undefined && String(valorePrecedente).trim() !== '';
     if (avevaValore && String(valoreNuovo).trim() !== String(valorePrecedente).trim()) {
