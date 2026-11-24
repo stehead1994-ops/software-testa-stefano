@@ -2432,6 +2432,7 @@ window.apriEditor = async (id) => {
     // 3. Aggiorna header e ripristina tutti i dati
     _aggiornaHeaderEditor(pdpCorrenteDoc);
     _ripristinaDatiFirebase(dati, grado);
+    _righeBase = _fotografaRighe();
 
     // 4. Rilascia il blocco autosave PRIMA di collegare i listener
     _caricamentoPDP = false;
@@ -3170,6 +3171,45 @@ function _firmaAutomatica(el) {
   firma.value = nome;
 }
 
+// ─── RIGHE DI STRUMENTI E MISURE: UNIONE CON CIÒ CHE HANNO SCRITTO I COLLEGHI ───
+// Tutte le righe del PDP stanno in un unico campo (_righe). Se due docenti lavorano sullo stesso PDP, chi salva
+// per ultimo riscriverebbe l'intero campo con ciò che vede sul proprio schermo, cancellando le righe aggiunte
+// dall'altro nel frattempo. Per questo, prima di salvare, si rilegge il PDP: di ogni riquadro (strumenti o misure
+// di una disciplina) si scrive la propria versione solo se in questa sessione è stata cambiata; per tutti gli
+// altri vale ciò che è nel database.
+let _righeBase = {};   // riquadro -> righe com'erano all'apertura (o all'ultimo salvataggio di questo utente)
+function _fotografaRighe() {
+  const foto = {};
+  const area = document.getElementById('area-editing');
+  if (!area) return foto;
+  area.querySelectorAll('.righe-dinamiche').forEach(container => {
+    if (!container.id) return;
+    const items = [];
+    container.querySelectorAll('.riga-dinamica').forEach(riga => {
+      const inputs = riga.querySelectorAll('input[type="text"]');
+      items.push([inputs[0]?.value || '', inputs[1]?.value || '']);
+    });
+    foto[container.id] = JSON.stringify(items);
+  });
+  return foto;
+}
+function _unisciRighe(mieTesto, serverTesto) {
+  const leggi = t => { try { const a = JSON.parse(t || '[]'); return Array.isArray(a) ? a.filter(c => c && c.containerId) : []; } catch(e) { return null; } };
+  const mie = leggi(mieTesto), srv = leggi(serverTesto);
+  if (!mie || !srv) return null;   // un campo illeggibile non si tocca
+  const sulServer = new Map(srv.map(c => [c.containerId, c.items || []]));
+  const unione = [], visti = new Set(), cambiati = {};
+  mie.forEach(c => {
+    visti.add(c.containerId);
+    const mioTesto = JSON.stringify(c.items || []);
+    const cambiato = mioTesto !== _righeBase[c.containerId];
+    if (cambiato) cambiati[c.containerId] = mioTesto;
+    unione.push({ containerId: c.containerId, items: (cambiato || !sulServer.has(c.containerId)) ? (c.items || []) : sulServer.get(c.containerId) });
+  });
+  srv.forEach(c => { if (!visti.has(c.containerId)) unione.push({ containerId: c.containerId, items: c.items || [] }); });
+  return { testo: JSON.stringify(unione), cambiati };
+}
+
 // ─── AUTOSAVE ───
 function scheduleAutosave() {
   // FIX: non schedulare salvataggio durante caricamento/ripristino PDP
@@ -3279,6 +3319,24 @@ async function salvaOra() {
   }
   if (protetti.length) console.log('🛡️ Campi già compilati lasciati intatti:', protetti.length, protetti);
 
+  // Righe di strumenti e misure: si uniscono con la versione più recente nel database (vedi _unisciRighe)
+  let righeCambiate = null;
+  if ('_righe' in modifiche) {
+    try {
+      const fresco = await getDoc(doc(db, 'pdp', idSalvataggio));
+      const sulServer = fresco.exists() ? (fresco.data().dati || {})._righe : undefined;
+      const u = _unisciRighe(modifiche['_righe'], sulServer);
+      if (!u) throw new Error('righe non leggibili');
+      righeCambiate = u.cambiati;
+      if (u.testo === sulServer) delete modifiche['_righe']; else modifiche['_righe'] = u.testo;
+    } catch(e) {
+      // Se non si riesce a rileggere il PDP, le righe non si scrivono: meglio riprovare che sovrascrivere
+      console.warn('Righe non salvate in questo passaggio, si riprova:', e.code || e.message);
+      delete modifiche['_righe'];
+      setTimeout(() => { if (pdpCorrenteId === idSalvataggio) scheduleAutosave(); }, 5000);
+    }
+  }
+
   const dot0 = document.getElementById('autosave-dot');
   const lbl0 = document.getElementById('autosave-label');
   if (Object.keys(modifiche).length === 0) {
@@ -3348,6 +3406,8 @@ async function salvaOra() {
 
     // Aggiorna la cache in memoria con i soli campi appena salvati
     if (docSalvataggio) docSalvataggio.dati = { ...(docSalvataggio.dati || {}), ...modifiche };
+    // I riquadri di righe che questo utente ha cambiato diventano il suo nuovo punto di partenza
+    if (righeCambiate && pdpCorrenteId === idSalvataggio) Object.assign(_righeBase, righeCambiate);
     if (docSalvataggio && Object.keys(autoriNuovi).length) {
       docSalvataggio.autori = { ...(docSalvataggio.autori || {}), ...autoriNuovi };
       if (!(docSalvataggio.autoriUid || []).includes(uidAutore)) docSalvataggio.autoriUid = [...(docSalvataggio.autoriUid || []), uidAutore];
