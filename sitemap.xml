@@ -170,6 +170,11 @@
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
+  <url>
+    <loc>https://maestrotesta.com/biblioteca/didattica-senza-barriere-mangiatordi.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
 
   <!-- Blog AI — articoli -->
   <url>
@@ -189,6 +194,11 @@
   </url>
   <url>
     <loc>https://maestrotesta.com/blog/schermo-sempre-acceso-ai-act-dipendenza-digitale.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://maestrotesta.com/blog/norvegia-carta-italia-digitale-inclusione.html</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
