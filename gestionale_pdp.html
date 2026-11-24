@@ -1050,7 +1050,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
         </select>
         <button onclick="resetFiltroPDP()" style="padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;cursor:pointer;color:var(--testo-soft)">✕ Reset</button>
         <span id="filtro-pdp-count" style="font-size:0.8rem;color:var(--testo-soft);margin-left:4px"></span>
-        <button onclick="caricaPDP(_pdpAmbito)" style="margin-left:auto;padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;background:white;cursor:pointer;color:var(--testo)" title="Aggiorna lista PDP">🔄 Aggiorna</button>
+        <button id="btn-aggiorna-lista" onclick="aggiornaListaPDP(this)" style="margin-left:auto;padding:6px 12px;border:1.5px solid var(--grigio-bordo);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;background:white;cursor:pointer;color:var(--testo)" title="Aggiorna lista PDP">🔄 Aggiorna</button>
       </div>
       <div class="pdp-lista" id="lista-pdp">
         <div class="lista-vuota"><div class="lista-vuota-icon">📂</div><h3>Nessun PDP ancora</h3><p>Clicca "+ Nuovo PDP" per iniziare</p></div>
@@ -3884,6 +3884,16 @@ window.mostraToast = (msg, tipo='') => {
 // Esponi funzioni usate nei template HTML
 window.apriEditor   = apriEditor;
 window.caricaPDP    = caricaPDP;
+// Pulsante "Aggiorna" dell'elenco: rilegge i PDP dal database mantenendo lo stesso ambito.
+// (prima l'onclick usava una variabile del modulo non visibile dall'HTML e il clic non faceva nulla)
+window.aggiornaListaPDP = async (btn) => {
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Aggiorno…'; }
+  try { await caricaPDP(_pdpAmbito); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = '🔄 Aggiorna'; } }
+  const lista = document.getElementById('lista-pdp');
+  if (!lista || !/Errore caricamento/.test(lista.textContent)) window.mostraToast('🔄 Elenco aggiornato');
+};
+window.mostraSchermata = mostraSchermata;
 window.caricaUtenti = caricaUtenti;
 
 
