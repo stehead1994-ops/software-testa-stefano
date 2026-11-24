@@ -153,6 +153,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 .stato-in-corso { background: var(--azzurro-light); color: var(--blu); }
 .stato-protocollato { background: var(--verde-light); color: var(--verde); }
 .stato-non-redatto { background: #e9ecef; color: #6c757d; }
+/* Menu IRC / Alternativa: il testo del menu chiuso è bianco sull'intestazione colorata, ma le voci dell'elenco
+   aperto devono essere scure su bianco, altrimenti su Windows e Chromebook risultano invisibili. */
+.materia-nome-select option { color: #1a2b3c; background: #ffffff; font-weight: 500; }
 .pdp-tipo { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 20px; margin-left: 8px; vertical-align: middle; white-space: nowrap; }
 .tipo-dsa { background: #ede7f6; color: #5e35b1; }
 .tipo-diagnosi { background: #e0f2f1; color: #00695c; }
