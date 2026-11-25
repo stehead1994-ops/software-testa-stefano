@@ -8,7 +8,7 @@
    Campi:
      titolo       testo della scheda
      descrizione  una o due frasi
-     categoria    schede | docente | collaborazioni   (le schede in CAA stanno in materiali/caa/caa.js)
+     categoria    schede | docente | guide | collaborazioni   (le schede in CAA stanno in materiali/caa/caa.js)
      discipline   una o più tra: italiano, matematica, scienze, storia,
                   geografia, inglese, arte, musica, ed-fisica, tecnologia,
                   ed-civica, autonomie, emozioni, trasversale
@@ -35,6 +35,28 @@
      }
    ───────────────────────────────────────────────────────────── */
 window.MATERIALI = /*INIZIO-ELENCO*/[
+  {
+    "titolo": "L'IA a scuola, senza panico",
+    "descrizione": "Guida pratica per docenti: cosa si può fare con l'intelligenza artificiale generativa, cosa è meglio evitare e come proteggere i dati di alunni e colleghi. Quadro normativo (Linee guida MIM, AI Act, GDPR), usi sensati, richieste pronte da copiare, IA e inclusione, valutazione, lavoro con gli studenti e una checklist prima di usare uno strumento.",
+    "categoria": "guide",
+    "discipline": [
+      "ia",
+      "trasversale"
+    ],
+    "ordine": "Tutti gli ordini di scuola",
+    "formato": "pdf",
+    "file": "ia-a-scuola-senza-panico.pdf",
+    "anteprima": "ia-a-scuola-senza-panico-anteprima.png",
+    "tag": [
+      "AI",
+      "privacy",
+      "AI Act",
+      "GDPR",
+      "prompt",
+      "inclusione"
+    ],
+    "data": "2026-11"
+  },
   {
     "titolo": "Percezione. Chi decide cos'è normale?",
     "descrizione": "Carosello a più voci sugli stereotipi di genere dall'infanzia alla scuola: le etichette che limitano i bambini, il filtro della percezione, la libertà di essere se stessi, il digitale che abbatte le barriere e piccole scelte quotidiane per cambiare. In chiusura un confronto in inglese tra Australia e Italia.",
