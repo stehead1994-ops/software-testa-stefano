@@ -1040,6 +1040,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
       <button class="tab-btn" onclick="showTab('archivio')" id="tab-archivio-btn" style="display:none">🗂️ Archivio per ordine</button>
       <button class="tab-btn" onclick="showTab('logs')" id="tab-logs-btn" style="display:none">📋 Log accessi</button>
       <button class="tab-btn" onclick="showTab('utenti')" id="tab-utenti-btn">👥 Utenti</button>
+      <button class="tab-btn" onclick="showTab('tempi')" id="tab-tempi-btn" style="display:none" title="Tempi di lavoro sui PDP (solo Super Admin)">⏱️ Tempi</button>
       <button class="tab-btn" onclick="scaricaBackup()" id="tab-backup-btn" style="display:none" title="Scarica una copia completa di tutti i PDP">💾 Scarica backup</button>
     </div>
     <div id="tab-pdp">
@@ -1116,6 +1117,14 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
                width:46px;height:46px;font-size:1.3rem;cursor:pointer;
                box-shadow:0 4px 16px rgba(0,0,0,0.18);transition:opacity .2s"
         title="Torna in cima">⬆</button>
+    </div>
+    <div id="tab-tempi" style="display:none">
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px">
+        <button class="btn-secondary" onclick="renderTempi()">🔄 Aggiorna</button>
+        <button class="btn-secondary" onclick="scaricaTempiCSV()">⬇️ Scarica CSV</button>
+        <span id="tempi-info" style="font-size:0.8rem;color:var(--testo-soft)"></span>
+      </div>
+      <div id="tempi-contenuto"></div>
     </div>
     <div id="tab-utenti" style="display:none">
       <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
@@ -1283,6 +1292,9 @@ const db   = getFirestore(app);
 
 // ─── STATO GLOBALE ───
 let utenteCorrente = null;
+// Super Admin: vedono la scheda "Tempi". Il ruolo nel database resta "master" (da cui dipendono le regole di sicurezza).
+const SUPERADMIN_EMAIL = ['stefano.testa@primaria.iccastelcovati.edu.it', 'luca.recaldini@primaria.iccastelcovati.edu.it'];
+const _isSuperAdmin = () => SUPERADMIN_EMAIL.includes(String(utenteCorrente?.email || '').toLowerCase());
 let ruoloCorrente  = null;
 let pdpCorrenteId  = null;
 let pdpCorrenteDoc = null;
@@ -1305,6 +1317,7 @@ window.loginGoogle = async () => {
 };
 
 window.logout = async () => {
+  _sessioneChiudi('uscita');
   _accessoNegato = false;
   if (unsubPDP) { unsubPDP(); unsubPDP = null; }
   await signOut(auth);
@@ -1404,7 +1417,7 @@ onAuthStateChanged(auth, async (user) => {
   document.getElementById('master-avatar').src = user.photoURL || '';
   document.getElementById('master-nome').textContent = user.displayName?.split(' ')[0] || '';
   document.getElementById('master-ruolo-badge').textContent =
-    ruoloCorrente === 'master' ? '👑 Master' : '🔑 Referente';
+    _isSuperAdmin() ? '🛡️ Super Admin' : (ruoloCorrente === 'master' ? '👑 Master' : '🔑 Referente');
 
   // Visibilità per ruolo
   const tabUtenti   = document.getElementById('tab-utenti-btn');
@@ -1416,6 +1429,8 @@ onAuthStateChanged(auth, async (user) => {
   if (tabArchivio) tabArchivio.style.display = ruoloCorrente === 'master' ? '' : 'none';
   const tabLogs = document.getElementById('tab-logs-btn');
   if (tabLogs) tabLogs.style.display = ruoloCorrente === 'master' ? '' : 'none';
+  const tabTempi = document.getElementById('tab-tempi-btn');
+  if (tabTempi) tabTempi.style.display = _isSuperAdmin() ? '' : 'none';
   const tabBackup = document.getElementById('tab-backup-btn');
   if (tabBackup) tabBackup.style.display = ruoloCorrente === 'master' ? '' : 'none';
   // Crea PDP: master e referente
@@ -1564,9 +1579,63 @@ async function rimuoviPresenza() {
   if (el) el.innerHTML = '';
 }
 
+// ─── DURATA DELLE SESSIONI DI LAVORO ───
+// Per ogni PDP aperto conta il tempo con la pagina in primo piano ("aperto") e quello con attività
+// reale negli ultimi 2,5 minuti ("attivo": scrivere, cliccare, scorrere). A fine sessione scrive UNA riga
+// nel registro "logs" (azione sessione_pdp). Non legge né modifica i dati dei PDP.
+let _sess = null;
+let _sessUltimaAttivita = Date.now();
+const _SESS_INATTIVO = 150000, _SESS_TICK = 10000;
+['keydown', 'pointerdown', 'input', 'wheel', 'touchstart', 'scroll', 'mousemove'].forEach(ev =>
+  document.addEventListener(ev, () => { _sessUltimaAttivita = Date.now(); }, { passive: true, capture: true }));
+setInterval(() => {
+  if (!_sess) return;
+  const ora = Date.now(), d = Math.min(ora - _sess.tick, 2 * _SESS_TICK); // tetto: dopo uno standby non si conta il buco
+  _sess.tick = ora;
+  if (document.visibilityState !== 'visible') return;
+  _sess.apertoMs += d;
+  if (ora - _sessUltimaAttivita <= _SESS_INATTIVO) _sess.attivoMs += d;
+}, _SESS_TICK);
+function _sessioneAvvia(pdpId, alunno) {
+  if (_sess) _sessioneChiudi('nuova_apertura');
+  const ora = Date.now();
+  _sess = { pdpId, alunno: alunno || '?', inizio: ora, tick: ora, apertoMs: 0, attivoMs: 0, segmento: 1 };
+  _sessUltimaAttivita = ora;
+}
+function _sessioneScrivi(motivo) {
+  if (!_sess) return;
+  const ora = Date.now(), d = Math.min(ora - _sess.tick, 2 * _SESS_TICK);
+  if (document.visibilityState === 'visible' || motivo === 'scheda_nascosta') { _sess.apertoMs += d; if (ora - _sessUltimaAttivita <= _SESS_INATTIVO) _sess.attivoMs += d; }
+  _sess.tick = ora;
+  if (_sess.apertoMs >= 20000 && utenteCorrente) { // sotto i 20 secondi non si registra (apertura e chiusura al volo)
+    // Raccolta separata dal Log: si può leggere (Super Admin) e cancellare a fine ricerca senza toccare il Log
+    addDoc(collection(db, 'tempi'), {
+      ts: serverTimestamp(), utente_uid: utenteCorrente.uid, utente_email: utenteCorrente.email,
+      utente_nome: utenteCorrente.displayName || utenteCorrente.email, ruolo: ruoloCorrente || 'sconosciuto',
+      pdp_id: _sess.pdpId, alunno: _sess.alunno, inizio: _sess.inizio, fine: ora, motivo, segmento: _sess.segmento,
+      minuti_aperto: Math.round(_sess.apertoMs / 6000) / 10, minuti_attivi: Math.round(_sess.attivoMs / 6000) / 10
+    }).catch(e => console.warn('Tempi non registrati:', e && e.code));
+  }
+}
+// Fine della sessione: chiusura del PDP, cambio PDP, uscita, chiusura della pagina
+function _sessioneChiudi(motivo) { if (!_sess) return; _sessioneScrivi(motivo); _sess = null; }
+// Scheda in secondo piano: si salva il pezzo fatto e il conteggio riparte quando si torna
+function _sessioneParziale() {
+  if (!_sess) return;
+  _sessioneScrivi('scheda_nascosta');
+  const ora = Date.now();
+  _sess = { ..._sess, inizio: ora, tick: ora, apertoMs: 0, attivoMs: 0, segmento: _sess.segmento + 1 };
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') _sessioneParziale();
+  else if (_sess) { _sess.tick = Date.now(); _sess.inizio = Date.now(); _sessUltimaAttivita = Date.now(); }
+});
+window.addEventListener('pagehide', () => _sessioneChiudi('chiusura_pagina'));
+
 window.tornaHome = async () => {
   // Prima di lasciare l'editor aspetta che ogni modifica sia salvata (altrimenti blocca e avvisa)
   if (!(await _uscitaSicura())) return;
+  _sessioneChiudi('chiusura');
   const _leg = document.getElementById('legenda-autori'); if (_leg) { _leg.style.display = 'none'; _leg.innerHTML = ''; }
   await rimuoviPresenza();
   if (unsubPDP) { unsubPDP(); unsubPDP = null; }
@@ -1609,6 +1678,8 @@ window.showTab = (tab) => {
   document.getElementById('tab-utenti').style.display   = tab === 'utenti'   ? 'block' : 'none';
   document.getElementById('tab-archivio').style.display = tab === 'archivio' ? 'block' : 'none';
   document.getElementById('tab-logs').style.display     = tab === 'logs'     ? 'block' : 'none';
+  const _tt = document.getElementById('tab-tempi'); if (_tt) _tt.style.display = tab === 'tempi' ? 'block' : 'none';
+  if (tab === 'tempi') renderTempi();
   if (tab === 'archivio') renderArchivio();
   if (tab === 'logs') renderLogs();
   // Mostra/nascondi pulsante torna-su solo quando il tab logs è attivo
@@ -1892,6 +1963,48 @@ const AZIONE_LABEL = {
   'download_pdf': '⬇️ Download PDF',
   'adelia_domanda': '🐧 Domanda ad Adelia',
 };
+// ─── TEMPI DI LAVORO (solo Super Admin) ───
+let _tempiRighe = [];
+window.renderTempi = async () => {
+  const cont = document.getElementById('tempi-contenuto'), info = document.getElementById('tempi-info');
+  if (!_isSuperAdmin()) { cont.textContent = ''; return; }
+  cont.innerHTML = '<div class="lista-vuota" style="padding:30px"><p>Caricamento…</p></div>';
+  try {
+    const snap = await getDocs(collection(db, 'tempi'));
+    _tempiRighe = snap.docs.map(d => d.data());
+  } catch (e) {
+    cont.innerHTML = '<div class="lista-vuota" style="padding:30px"><p>⚠️ Non riesco a leggere i tempi (' + (e.code || 'errore') + '). Se è "permission-denied", manca la regola della raccolta "tempi" in Firebase.</p></div>';
+    return;
+  }
+  const r1 = x => Math.round(x * 10) / 10, esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const perU = {}, perP = {};
+  _tempiRighe.forEach(t => {
+    const u = (perU[t.utente_uid] = perU[t.utente_uid] || { nome: t.utente_nome, ruolo: t.ruolo, pdp: new Set(), sess: 0, ap: 0, at: 0 });
+    u.pdp.add(t.pdp_id); u.sess++; u.ap += t.minuti_aperto || 0; u.at += t.minuti_attivi || 0;
+    const p = (perP[t.pdp_id] = perP[t.pdp_id] || { alunno: t.alunno, pers: new Set(), sess: 0, ap: 0, at: 0 });
+    p.pers.add(t.utente_uid); p.sess++; p.ap += t.minuti_aperto || 0; p.at += t.minuti_attivi || 0;
+  });
+  const U = Object.values(perU).sort((a, b) => b.at - a.at), P = Object.values(perP).sort((a, b) => b.at - a.at);
+  const totAt = U.reduce((s, u) => s + u.at, 0);
+  info.textContent = _tempiRighe.length + ' sessioni registrate · ' + U.length + ' persone · ' + P.length + ' PDP · ' + r1(totAt / 60) + ' ore attive in tutto';
+  const tab = (titolo, cols, righe) => '<h3 style="font-size:0.95rem;color:var(--blu);margin:18px 0 8px">' + titolo + '</h3><div style="overflow-x:auto"><table style="border-collapse:collapse;width:100%;font-size:0.82rem;background:#fff"><thead><tr>'
+    + cols.map(c => '<th style="text-align:left;padding:6px 8px;border-bottom:2px solid var(--grigio-bordo)">' + c + '</th>').join('') + '</tr></thead><tbody>'
+    + righe.map(r => '<tr>' + r.map(v => '<td style="padding:5px 8px;border-bottom:1px solid var(--grigio-bordo)">' + esc(v) + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>';
+  if (!_tempiRighe.length) { cont.innerHTML = '<div class="lista-vuota" style="padding:30px"><p>Nessuna sessione registrata finora.</p></div>'; return; }
+  cont.innerHTML = '<p style="font-size:0.8rem;color:var(--testo-soft)">Minuti attivi: con attività reale (scrivere, cliccare, scorrere) negli ultimi 2,5 minuti. Minuti aperto: pagina in primo piano.</p>'
+    + tab('Per persona', ['Nome', 'Ruolo', 'PDP', 'Sessioni', 'Min. attivi', 'Min. aperto', 'Min. attivi per PDP'], U.map(u => [u.nome, u.ruolo, u.pdp.size, u.sess, r1(u.at), r1(u.ap), r1(u.at / u.pdp.size)]))
+    + tab('Per PDP', ['Alunno', 'Persone', 'Sessioni', 'Min. attivi', 'Min. aperto'], P.map(p => [p.alunno, p.pers.size, p.sess, r1(p.at), r1(p.ap)]));
+};
+window.scaricaTempiCSV = () => {
+  if (!_isSuperAdmin() || !_tempiRighe.length) { mostraToast('Nessun dato da scaricare: premi prima Aggiorna'); return; }
+  const cols = ['utente_nome', 'utente_email', 'ruolo', 'pdp_id', 'alunno', 'inizio', 'fine', 'minuti_aperto', 'minuti_attivi', 'motivo', 'segmento'];
+  const f = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const righe = _tempiRighe.map(t => cols.map(c => (c === 'inizio' || c === 'fine') && t[c] ? f(new Date(t[c]).toLocaleString('it-IT')) : f(t[c])).join(';'));
+  const blob = new Blob(['\ufeff' + cols.join(';') + '\n' + righe.join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'tempi_gestionale_' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
+
 // Elenco delle domande fatte ad Adelia nei giorni caricati: solo giorno e testo.
 function mostraDomandeAdelia() {
   const contenuto = document.getElementById('logs-contenuto'), docs = (_logsAllDocs || []).filter(l => l.azione === 'adelia_domanda');
@@ -2480,6 +2593,7 @@ function _bloccaFormInCaricamento(blocca) {
 window.apriEditor = async (id) => {
   // Prima di cambiare PDP, aspetta che le modifiche su quello aperto siano salvate
   if (pdpCorrenteId && pdpCorrenteId !== id && !(await _uscitaSicura())) return;
+  if (pdpCorrenteId && pdpCorrenteId !== id) _sessioneChiudi('cambio_pdp');
   await _salvaSeInSospeso();
   pdpCorrenteId = id;
   if (unsubPDP) unsubPDP();
@@ -2530,6 +2644,7 @@ window.apriEditor = async (id) => {
 
     registraPresenza(id);
     scriviLog('apertura_pdp', id, { alunno: pdpCorrenteDoc?.alunno || '?' });
+    _sessioneAvvia(id, pdpCorrenteDoc?.alunno);
   } catch(e) {
     // I dati non sono arrivati: il modulo vuoto resta bloccato. Se restasse scrivibile, i campi sembrerebbero
     // spariti e chi li riscrive lavorerebbe su una scheda non caricata. Si esce e si riapre.
