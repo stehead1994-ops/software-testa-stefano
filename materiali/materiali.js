@@ -237,5 +237,161 @@ window.MATERIALI = /*INIZIO-ELENCO*/[
       "racconto"
     ],
     "data": "2026-11"
+  },
+  {
+    "titolo": "Monarchie e imperi",
+    "descrizione": "Otto schede di studio sul Basso Medioevo con il codice colori: la guerra dei Cent'anni, i regni della Penisola iberica, l'Impero e i regni d'Europa, l'Impero ottomano e il Giappone, la mappa con la linea del tempo, le domande per il ripasso e le frasi da completare per prepararsi alla verifica.",
+    "categoria": "schede",
+    "discipline": [
+      "storia"
+    ],
+    "ordine": "Il Medioevo",
+    "formato": "pdf",
+    "file": "monarchie-e-imperi.pdf",
+    "anteprima": "monarchie-e-imperi-anteprima.png",
+    "tag": [
+      "metodo di studio",
+      "codice colori",
+      "mappa",
+      "linea del tempo",
+      "ripasso"
+    ],
+    "data": "2026-11"
+  },
+  {
+    "titolo": "La cellula",
+    "descrizione": "Sette schede di studio sulla cellula con il codice colori: che cos'è e quali tipi esistono, la cellula procariote, la cellula animale come una città, la cellula vegetale, la respirazione cellulare, la mappa e le domande per il ripasso.",
+    "categoria": "schede",
+    "discipline": [
+      "scienze"
+    ],
+    "ordine": "La cellula",
+    "formato": "pdf",
+    "file": "la-cellula.pdf",
+    "anteprima": "la-cellula-anteprima.png",
+    "tag": [
+      "metodo di studio",
+      "codice colori",
+      "mappa",
+      "ripasso"
+    ],
+    "data": "2026-11"
+  },
+  {
+    "titolo": "Il Dolce Stil Novo",
+    "descrizione": "Un testo di studio da sottolineare in due giri (matita e colori), con l'esempio svolto, il paragrafo da fare insieme e quello da fare da soli, e poi la mappa da completare a testo girato, solo con parole chiave.",
+    "categoria": "schede",
+    "discipline": [
+      "italiano"
+    ],
+    "ordine": "Letteratura",
+    "formato": "pdf",
+    "file": "il-dolce-stil-novo.pdf",
+    "anteprima": "il-dolce-stil-novo-anteprima.png",
+    "tag": [
+      "metodo di studio",
+      "sottolineare",
+      "codice colori",
+      "mappa"
+    ],
+    "data": "2026-11"
+  },
+  {
+    "titolo": "La ginnastica artistica",
+    "descrizione": "Quattro schede sullo stesso tema: un testo informativo da sottolineare con i colori e trasformare in mappa, e un racconto su una ragazza alla gara di trave con le domande a colori sui paragrafi e le domande per verificare se ho capito.",
+    "categoria": "schede",
+    "discipline": [
+      "italiano",
+      "ed-fisica"
+    ],
+    "ordine": "Comprensione del testo",
+    "formato": "pdf",
+    "file": "la-ginnastica-artistica.pdf",
+    "anteprima": "la-ginnastica-artistica-anteprima.png",
+    "tag": [
+      "comprensione",
+      "sottolineare",
+      "codice colori",
+      "mappa",
+      "compito a casa"
+    ],
+    "data": "2026-11"
+  },
+  {
+    "titolo": "Il Mar Baltico",
+    "descrizione": "Cinque schede per studiare un testo di geografia: sottolineo con la guida a colori, ricostruisco il testo a pagina girata, coloro e ordino le informazioni sparse da ritagliare, ricostruisco la mappa. Con le soluzioni per l'adulto.",
+    "categoria": "schede",
+    "discipline": [
+      "geografia"
+    ],
+    "ordine": "I mari d'Europa",
+    "formato": "pdf",
+    "file": "il-mar-baltico.pdf",
+    "anteprima": "il-mar-baltico-anteprima.png",
+    "tag": [
+      "metodo di studio",
+      "codice colori",
+      "mappa",
+      "soluzioni"
+    ],
+    "data": "2026-11"
+  },
+  {
+    "titolo": "Il Mar Nero",
+    "descrizione": "Due schede per allenare la memoria visiva nello studio: leggo con la matita, coloro di giallo al massimo tre parole per paragrafo, giro la pagina e ricordo dove erano le parole, poi passo dal giallo alla mappa.",
+    "categoria": "schede",
+    "discipline": [
+      "geografia"
+    ],
+    "ordine": "I mari d'Europa",
+    "formato": "pdf",
+    "file": "il-mar-nero.pdf",
+    "anteprima": "il-mar-nero-anteprima.png",
+    "tag": [
+      "metodo di studio",
+      "parole chiave",
+      "memoria",
+      "mappa"
+    ],
+    "data": "2026-11"
+  },
+  {
+    "titolo": "Leggo tra le righe",
+    "descrizione": "Un racconto breve di amicizia e un malinteso, con le domande a colori sui paragrafi e una scheda sulle inferenze: le risposte non sono scritte nel testo, si capiscono dagli indizi da sottolineare.",
+    "categoria": "schede",
+    "discipline": [
+      "italiano",
+      "emozioni"
+    ],
+    "ordine": "Comprensione del testo",
+    "formato": "pdf",
+    "file": "leggo-tra-le-righe.pdf",
+    "anteprima": "leggo-tra-le-righe-anteprima.png",
+    "tag": [
+      "comprensione",
+      "inferenze",
+      "indizi",
+      "racconto"
+    ],
+    "data": "2026-11"
+  },
+  {
+    "titolo": "Il mio codice colori",
+    "descrizione": "La legenda del metodo di studio con i colori (giallo, verde, azzurro, arancione, matita) con un testo per esercitarsi, e i cartoncini da ritagliare da tenere nell'astuccio o nel diario.",
+    "categoria": "schede",
+    "discipline": [
+      "trasversale"
+    ],
+    "ordine": "Metodo di studio",
+    "formato": "pdf",
+    "file": "il-mio-codice-colori.pdf",
+    "anteprima": "il-mio-codice-colori-anteprima.png",
+    "tag": [
+      "metodo di studio",
+      "codice colori",
+      "legenda",
+      "da ritagliare"
+    ],
+    "data": "2026-11"
   }
 ]/*FINE-ELENCO*/;
