@@ -227,7 +227,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 .autosave-dot.saving { background: #facc15; animation: pulse 0.8s infinite; }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 .editor-azioni { display: flex; gap: 8px; }
-.editor-body { display: flex; flex: 1; overflow: hidden; }
+.editor-body { display: flex; flex: 1; overflow: clip; }
+/* Colonna sinistra: resta ferma mentre si scorre il PDP (sezioni + chi è presente) */
+.sidebar-col { width: 220px; flex-shrink: 0; background: white; border-right: 1px solid var(--grigio-bordo); position: sticky; top: 0; align-self: flex-start; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
+.sidebar-col .sidebar-materie { border-right: none; overflow: visible; width: auto; }
 
 /* SIDEBAR MATERIE */
 .sidebar-materie {
@@ -290,12 +293,23 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 .lista-vuota p { font-size: 0.83rem; }
 
 /* Presenza live */
-.presenza-live { display: flex; gap: 6px; align-items: center; }
+.presenza-live { margin: 4px 12px 16px; display: flex; flex-direction: column; gap: 6px;
+  background: #f4f8fc; border: 1.5px solid var(--azzurro); border-radius: 12px; padding: 8px 10px; font-size: 0.78rem; color: var(--testo); }
+.presenza-live:empty { display: none; }
+.presenza-titolo { font-weight: 700; font-size: 0.72rem; color: var(--blu); }
+.presenza-riga { display: flex; align-items: center; gap: 7px; }
+.presenza-riga img, .presenza-riga .presenza-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-left: 0; border: none; flex-shrink: 0; }
+.presenza-nome { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .presenza-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--azzurro); color: white; font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid white; margin-left: -6px; }
 .presenza-avatar:first-child { margin-left: 0; }
 
 @media (max-width: 640px) {
   .sidebar-materie { display: none; }
+  /* Sul telefono la colonna non c'è: il riquadro presenza resta fisso in alto a destra */
+  .sidebar-col { position: static; width: 0; height: auto; border: none; background: none; overflow: visible; }
+  .presenza-live { position: fixed; top: 64px; right: 10px; z-index: 800; margin: 0; padding: 5px 7px; flex-direction: row; align-items: center; gap: 4px; background: #fff; box-shadow: 0 6px 20px rgba(26,58,92,.18); }
+  .presenza-live .presenza-titolo { font-size: 0; } .presenza-live .presenza-titolo::before { content: '👥'; font-size: 0.85rem; }
+  .presenza-live .presenza-nome { display: none; }
   #mobile-nav-sezioni { display: block !important; }
   .row-2 { grid-template-columns: 1fr; }
   .pdp-card { flex-wrap: wrap; }
@@ -1132,7 +1146,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
   <header class="editor-header">
     <div class="editor-alunno"><span id="editor-alunno-nome">PDP</span><span id="editor-tipo-pdp"></span></div>
     <div class="editor-stato">
-      <div class="presenza-live" id="presenza-live"></div>
       <div class="autosave-indicator">
         <div class="autosave-dot" id="autosave-dot"></div>
         <span id="autosave-label">Salvato</span>
@@ -1149,7 +1162,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
   </header>
   <div id="legenda-autori" style="display:none;padding:6px 14px;background:#fff;border-bottom:1px solid var(--grigio-bordo);font-size:0.78rem;line-height:1.9"></div>
   <div class="editor-body">
-    <nav class="sidebar-materie" id="sidebar-materie"></nav>
+    <aside class="sidebar-col">
+      <nav class="sidebar-materie" id="sidebar-materie"></nav>
+      <div class="presenza-live" id="presenza-live" role="status" aria-live="polite"></div>
+    </aside>
     <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
       <!-- Navigazione mobile: select sezioni (visibile solo su mobile) -->
       <div id="mobile-nav-sezioni" style="display:none;padding:8px 12px;background:white;border-bottom:1px solid var(--grigio-bordo)">
@@ -1525,12 +1541,15 @@ async function registraPresenza(pdpId) {
     const el = document.getElementById('presenza-live');
     if (!el) return;
     if (attivi.length === 0) { el.innerHTML = ''; return; }
-    el.innerHTML = '<span style="font-size:0.75rem;opacity:0.8">Ora online:</span> ' +
+    // Riquadro fisso a destra: resta visibile anche scorrendo il PDP
+    const esc = s => String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    el.innerHTML = '<div class="presenza-titolo">👥 Ora in questo PDP con te</div>' +
       attivi.map(d => {
-        const u = d.data();
-        return u.foto
-          ? `<img src="${u.foto}" title="${u.nome}" style="width:26px;height:26px;border-radius:50%;border:2px solid white;object-fit:cover" onerror="this.style.display='none'">`
-          : `<div class="presenza-avatar" title="${u.nome}">${u.nome[0]}</div>`;
+        const u = d.data(); const nome = esc(u.nome || 'Docente');
+        const icona = u.foto
+          ? `<img src="${esc(u.foto)}" alt="" onerror="this.outerHTML='<div class=&quot;presenza-avatar&quot;>${esc(_sigla(u.nome))}</div>'">`
+          : `<div class="presenza-avatar">${esc(_sigla(u.nome))}</div>`;
+        return `<div class="presenza-riga" title="${nome}">${icona}<span class="presenza-nome">${nome}</span></div>`;
       }).join('');
   }, () => {});
 }
@@ -3136,8 +3155,7 @@ function _applicaAutori() {
   const area = document.getElementById('area-editing');
   const legenda = document.getElementById('legenda-autori');
   if (!area || !legenda) return;
-  // Visibile solo ai master: per i docenti la scheda resta com'era
-  if (ruoloCorrente !== 'master') { legenda.style.display = 'none'; legenda.innerHTML = ''; return; }
+  // Visibile a tutti (master, referenti, docenti): ognuno vede chi ha scritto cosa
   const autori = pdpCorrenteDoc?.autori || {};
   const ordine = pdpCorrenteDoc?.autoriUid || [];
   const nomi = pdpCorrenteDoc?.autoriNomi || {};
@@ -3189,7 +3207,7 @@ function _applicaAutori() {
     const c = colore(u); const n = nomi[u] || 'Docente'; const attivo = _autoreEvidenziato === u;
     return '<button type="button" data-autore-legenda="' + u + '" style="cursor:pointer;border:1.5px solid ' + c + ';background:' + (attivo ? c : '#fff') + ';color:' + (attivo ? '#fff' : 'inherit') + ';border-radius:14px;padding:1px 9px 1px 4px;margin:0 6px 2px 0;font-family:inherit;font-size:inherit">' +
       '<span style="display:inline-block;min-width:22px;text-align:center;background:' + c + ';color:#fff;border-radius:10px;padding:0 4px;margin-right:5px;font-weight:700;font-size:0.72rem">' + _sigla(n) + '</span>' +
-      n.replace(/[<>&]/g, '') + ' <span style="opacity:.65">(' + conta[u] + ')</span></button>';
+      n.replace(/[<>&]/g, '') + (ruoloCorrente === 'master' ? ' <span style="opacity:.65">(' + conta[u] + ')</span>' : '') + '</button>';
   }).join('');
   legenda.querySelectorAll('[data-autore-legenda]').forEach(b => b.addEventListener('click', () => {
     const u = b.getAttribute('data-autore-legenda');
@@ -3202,7 +3220,7 @@ function _applicaAutori() {
 let _timerSigle = null;
 function _riposizionaSigle() {
   clearTimeout(_timerSigle);
-  _timerSigle = setTimeout(() => { if (ruoloCorrente === 'master' && pdpCorrenteId && document.getElementById('area-editing')?.querySelector('[data-autore]')) _applicaAutori(); }, 250);
+  _timerSigle = setTimeout(() => { if (pdpCorrenteId && document.getElementById('area-editing')?.querySelector('[data-autore]')) _applicaAutori(); }, 250);
 }
 window.addEventListener('resize', _riposizionaSigle);
 document.addEventListener('click', (e) => { if (e.target.closest && e.target.closest('#area-editing, #sidebar-materie')) _riposizionaSigle(); });
