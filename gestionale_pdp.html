@@ -1463,9 +1463,9 @@ function _avvisoRicarica(motivo) {
     const t = document.createElement('span'); t.id = 'avviso-ricarica-testo'; t.style.cssText = 'flex:1;min-width:200px;font-weight:600';
     const ok = document.createElement('button'); ok.type = 'button'; ok.textContent = '🔄 Ricarica ora';
     ok.style.cssText = 'padding:8px 14px;border-radius:8px;border:none;background:#1a3a5c;color:#fff;font:inherit;font-weight:700;cursor:pointer';
-    ok.onclick = async () => { ok.disabled = true; ok.textContent = 'Salvo e ricarico…'; try { await _salvaSeInSospeso(); } catch(e) {}
-      const attesa = Date.now(); while (_salvataggiInCorso > 0 && Date.now() - attesa < 8000) await new Promise(r => setTimeout(r, 200));
-      if (_salvataggiInCorso > 0) { ok.disabled = false; ok.textContent = '🔄 Ricarica ora'; mostraToast('Salvataggio ancora in corso: riprova tra qualche secondo', 'rosso'); return; }
+    ok.onclick = async () => { ok.disabled = true; ok.textContent = 'Salvo e ricarico…';
+      const puoi = await _uscitaSicura();
+      if (!puoi) { ok.disabled = false; ok.textContent = '🔄 Ricarica ora'; return; }
       location.reload(); };
     const no = document.createElement('button'); no.type = 'button'; no.textContent = 'Più tardi'; no.setAttribute('aria-label', 'Chiudi il promemoria');
     no.style.cssText = 'padding:8px 10px;border-radius:8px;border:1px solid #c9a227;background:transparent;color:#5a4300;font:inherit;cursor:pointer';
@@ -1546,8 +1546,8 @@ async function rimuoviPresenza() {
 }
 
 window.tornaHome = async () => {
-  // Salva le modifiche ancora in sospeso prima di lasciare l'editor
-  await _salvaSeInSospeso();
+  // Prima di lasciare l'editor aspetta che ogni modifica sia salvata (altrimenti blocca e avvisa)
+  if (!(await _uscitaSicura())) return;
   const _leg = document.getElementById('legenda-autori'); if (_leg) { _leg.style.display = 'none'; _leg.innerHTML = ''; }
   await rimuoviPresenza();
   if (unsubPDP) { unsubPDP(); unsubPDP = null; }
@@ -2459,7 +2459,8 @@ function _bloccaFormInCaricamento(blocca) {
 
 // ─── EDITOR PDP (form reale integrato) ───
 window.apriEditor = async (id) => {
-  // Prima di cambiare PDP, salva le modifiche ancora in sospeso su quello aperto
+  // Prima di cambiare PDP, aspetta che le modifiche su quello aperto siano salvate
+  if (pdpCorrenteId && pdpCorrenteId !== id && !(await _uscitaSicura())) return;
   await _salvaSeInSospeso();
   pdpCorrenteId = id;
   if (unsubPDP) unsubPDP();
@@ -3302,6 +3303,74 @@ function scheduleAutosave() {
 let _salvataggioInSospeso = false;   // c'è un salvataggio programmato non ancora partito
 let _salvataggiInCorso = 0;          // scritture verso il database non ancora confermate
 const _versioniSalvate = new Set();  // PDP di cui in questa sessione è già stata salvata la copia di sicurezza
+
+// ─── USCITA SICURA: prima di lasciare un PDP aspetta che ogni modifica sia salvata ───
+// Ritorna true quando non resta nulla da salvare, false se il salvataggio non riesce.
+async function _attendiSalvataggi(limiteMs = 20000) {
+  const fine = Date.now() + limiteMs;
+  let tentato = false;
+  while (Date.now() < fine) {
+    if (_salvataggioInSospeso && !tentato) {
+      tentato = true; clearTimeout(autosaveTimer);
+      try { await salvaOra(); } catch (e) { console.warn('Salvataggio prima di uscire non riuscito:', e); }
+      continue;
+    }
+    if (_salvataggiInCorso > 0) { await new Promise(r => setTimeout(r, 200)); continue; }
+    return !_salvataggioInSospeso;
+  }
+  return false;
+}
+
+// Finestra che blocca l'uscita finché il salvataggio non è confermato
+function _finestraSalvataggio() {
+  let ov = document.getElementById('ov-uscita-salvataggio');
+  if (!ov) {
+    ov = document.createElement('div'); ov.id = 'ov-uscita-salvataggio';
+    ov.setAttribute('role', 'alertdialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'ov-us-tit');
+    ov.style.cssText = 'position:fixed;inset:0;z-index:9500;background:rgba(26,58,92,.55);display:flex;align-items:center;justify-content:center;padding:16px;font-family:\'DM Sans\',sans-serif';
+    ov.innerHTML = '<div style="background:#fff;border-radius:14px;max-width:440px;width:100%;padding:20px 22px;box-shadow:0 12px 40px rgba(0,0,0,.25);color:#1a2b3c">'
+      + '<div id="ov-us-tit" style="font-weight:700;font-size:1.05rem;margin-bottom:8px"></div>'
+      + '<div id="ov-us-txt" style="font-size:.92rem;line-height:1.45"></div>'
+      + '<div id="ov-us-btn" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px"></div></div>';
+    document.body.appendChild(ov);
+  }
+  const tit = ov.querySelector('#ov-us-tit'), txt = ov.querySelector('#ov-us-txt'), bt = ov.querySelector('#ov-us-btn');
+  const bottone = (testo, stile, val, risolvi) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = testo;
+    b.style.cssText = 'padding:9px 14px;border-radius:8px;font:inherit;font-weight:700;cursor:pointer;' + stile; b.onclick = () => risolvi(val); return b; };
+  return {
+    attesa() { ov.style.display = 'flex'; tit.textContent = '⏳ Sto salvando le ultime modifiche…'; txt.textContent = 'Aspetta qualche secondo: il PDP si chiude da solo appena il salvataggio è confermato. Non chiudere la pagina.'; bt.innerHTML = ''; },
+    errore() { ov.style.display = 'flex';
+      tit.textContent = '⚠️ Le ultime modifiche non sono ancora salvate';
+      txt.textContent = 'Il salvataggio non è riuscito (connessione assente o lenta). Quello che hai scritto è ancora sullo schermo. Resta nel PDP: il gestionale riprova da solo e l\'indicatore in alto torna su "Salvato ✓". Se esci adesso, queste modifiche andranno perse.';
+      bt.innerHTML = '';
+      return new Promise(risolvi => {
+        const r = bt.appendChild(bottone('🔁 Riprova a salvare', 'border:none;background:#1a3a5c;color:#fff', 'riprova', risolvi)); r.focus();
+        bt.appendChild(bottone('Resta nel PDP', 'border:1.5px solid #1a3a5c;background:#fff;color:#1a3a5c', 'resta', risolvi));
+        bt.appendChild(bottone('Esci senza salvare', 'border:1px solid #c0392b;background:#fff;color:#c0392b;font-weight:600', 'esci', risolvi));
+      });
+    },
+    chiudi() { ov.style.display = 'none'; }
+  };
+}
+
+// Da chiamare prima di chiudere o cambiare PDP: true = si può uscire
+async function _uscitaSicura() {
+  if (!_salvataggioInSospeso && _salvataggiInCorso === 0) return true;
+  const f = _finestraSalvataggio();
+  f.attesa();
+  let ok = await _attendiSalvataggi();
+  while (!ok) {
+    const scelta = await f.errore();
+    if (scelta === 'riprova') { f.attesa(); ok = await _attendiSalvataggi(); continue; }
+    f.chiudi();
+    if (scelta === 'esci') { _salvataggioInSospeso = false; clearTimeout(autosaveTimer); return true; }
+    // resta: il nuovo tentativo automatico riparte
+    _salvataggioInSospeso = true; clearTimeout(autosaveTimer); autosaveTimer = setTimeout(salvaOra, 3000);
+    return false;
+  }
+  f.chiudi();
+  return true;
+}
 
 async function _salvaSeInSospeso() {
   if (!_salvataggioInSospeso) return;
