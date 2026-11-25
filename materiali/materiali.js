@@ -393,5 +393,27 @@ window.MATERIALI = /*INIZIO-ELENCO*/[
       "da ritagliare"
     ],
     "data": "2026-11"
+  },
+  {
+    "titolo": "L'intelligenza artificiale a scuola: quadro normativo, governance e strumenti",
+    "descrizione": "La mia sintesi del corso sull'IA a scuola di Vargiu Scuola, rivista e aggiornata: AI Act e AI literacy, GDPR, legge italiana 132/2025, Linee guida AgID e MIM, ruoli nella scuola, Piano d'Istituto e Regolamento, maturità digitale, casi d'uso e rischi, Google Workspace e Microsoft 365, scelta degli strumenti di IA generativa e i documenti da predisporre.",
+    "categoria": "docente",
+    "discipline": [
+      "trasversale",
+      "tecnologia"
+    ],
+    "ordine": "Intelligenza artificiale",
+    "formato": "pdf",
+    "file": "intelligenza-artificiale-a-scuola-sintesi.pdf",
+    "anteprima": "intelligenza-artificiale-a-scuola-sintesi-anteprima.png",
+    "tag": [
+      "intelligenza artificiale",
+      "AI Act",
+      "GDPR",
+      "regolamento IA",
+      "governance",
+      "privacy"
+    ],
+    "data": "2026-11"
   }
 ]/*FINE-ELENCO*/;
