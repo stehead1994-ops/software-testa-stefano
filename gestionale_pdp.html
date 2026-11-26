@@ -82,6 +82,13 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 .header-user img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); }
 .btn-header { background: rgba(255,255,255,0.15); border: none; color: white; padding: 6px 14px; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; cursor: pointer; }
 .btn-header:hover { background: rgba(255,255,255,0.25); }
+/* Scelta della dimensione del testo (4 livelli, ricordata su questo dispositivo) */
+.dim-testo { display: inline-flex; align-items: stretch; background: rgba(255,255,255,0.12); border-radius: 8px; padding: 2px; flex-shrink: 0; }
+.dim-testo button { display: inline-flex; align-items: flex-end; justify-content: center; min-width: 24px; min-height: 26px; background: none; border: none; color: #fff; font-family: 'DM Sans', sans-serif; font-weight: 700; cursor: pointer; line-height: 1; padding: 3px 5px; border-radius: 6px; opacity: .7; }
+.dim-testo button:hover { opacity: 1; }
+.dim-testo button[aria-pressed="true"] { background: #fff; color: #1a3a5c; opacity: 1; }
+.dim-testo button:focus-visible { outline: 2px solid #C8A84B; outline-offset: 1px; }
+@media print { html { font-size: 100% !important; } .dim-testo { display: none !important; } }
 .ad-fab { position: fixed; left: 22px; bottom: 20px; flex-direction: row-reverse; z-index: 2900; display: flex; align-items: center; gap: 10px; font-family: 'DM Sans', sans-serif; background: none; border: 0; padding: 0; cursor: pointer; }
 .ad-fab .ad-lab { background: #1a3a5c; color: #fff; padding: 9px 14px; border-radius: 18px 18px 18px 4px; font-size: 0.85rem; font-weight: 600; box-shadow: 0 6px 18px rgba(0,0,0,.2); }
 .ad-fab .ad-ava { width: 64px; height: 64px; border-radius: 50%; background: #fff; border: 3px solid #C8A84B; box-shadow: 0 8px 22px rgba(0,0,0,.28); display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 30px; }
@@ -217,16 +224,18 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 #screen-editor { flex-direction: column; }
 .editor-header {
   background: var(--blu); color: white; padding: 0 24px;
-  display: flex; align-items: center; justify-content: space-between; height: 56px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between; min-height: 56px; flex-shrink: 0;
+  flex-wrap: wrap; gap: 6px 12px; /* con il testo ingrandito i pulsanti vanno a capo invece di uscire dallo schermo */
 }
 .editor-alunno { font-family: 'Lora', serif; font-size: 1rem; }
 .editor-alunno .pdp-tipo { font-family: 'DM Sans', sans-serif; margin-left: 12px; }
-.editor-stato { display: flex; align-items: center; gap: 12px; font-size: 0.8rem; }
+.editor-stato { display: flex; align-items: center; gap: 12px; font-size: 0.8rem; flex-wrap: wrap; justify-content: flex-end; padding: 6px 0; }
 .autosave-indicator { display: flex; align-items: center; gap: 6px; opacity: 0.8; }
 .autosave-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; }
 .autosave-dot.saving { background: #facc15; animation: pulse 0.8s infinite; }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-.editor-azioni { display: flex; gap: 8px; }
+.editor-azioni { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.editor-azioni .btn-header { white-space: nowrap; }
 .editor-body { display: flex; flex: 1; overflow: clip; }
 /* Colonna sinistra: resta ferma mentre si scorre il PDP (sezioni + chi è presente) */
 .sidebar-col { width: 220px; flex-shrink: 0; background: white; border-right: 1px solid var(--grigio-bordo); position: sticky; top: 0; align-self: flex-start; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
@@ -313,6 +322,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
   #mobile-nav-sezioni { display: block !important; }
   .row-2 { grid-template-columns: 1fr; }
   .pdp-card { flex-wrap: wrap; }
+  /* Intestazione del PDP: su schermi stretti va a capo invece di uscire dallo schermo */
+  .editor-header { padding: 8px 12px; }
   .master-body { padding: 16px 12px; }
   .area-editing { padding: 16px 12px; }
 }
@@ -1579,6 +1590,45 @@ async function rimuoviPresenza() {
   if (el) el.innerHTML = '';
 }
 
+// ─── DIMENSIONE DEL TESTO (solo aspetto a schermo: non tocca dati, salvataggi né PDF) ───
+const _DIM_TESTO = [['Normale', 100, 12], ['Grande', 112.5, 14], ['Molto grande', 125, 16], ['Massima', 140, 18]];
+function _dimTestoApplica(i, ricorda) {
+  i = Math.max(0, Math.min(_DIM_TESTO.length - 1, Number(i) || 0));
+  document.documentElement.style.fontSize = i === 0 ? '' : _DIM_TESTO[i][1] + '%';
+  document.querySelectorAll('.dim-testo button').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.i) === i)));
+  if (ricorda) { try { localStorage.setItem('pdp_dim_testo', String(i)); } catch (e) {} }
+  setTimeout(_autoAltoTutti, 60);
+}
+(function _dimTestoAvvia() {
+  let i = 0; try { i = Number(localStorage.getItem('pdp_dim_testo')) || 0; } catch (e) {}
+  document.querySelectorAll('.header-user, .editor-azioni').forEach(dove => {
+    const g = document.createElement('div'); g.className = 'dim-testo'; g.setAttribute('role', 'group'); g.setAttribute('aria-label', 'Dimensione del testo');
+    _DIM_TESTO.forEach(([nome, , px], k) => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = 'A'; b.dataset.i = k; b.style.fontSize = px + 'px';
+      b.title = 'Testo: ' + nome; b.setAttribute('aria-label', 'Dimensione del testo: ' + nome);
+      b.onclick = () => _dimTestoApplica(k, true); g.appendChild(b);
+    });
+    dove.insertBefore(g, dove.firstChild);
+  });
+  _dimTestoApplica(i, false);
+})();
+
+// ─── CASELLE DI TESTO CHE SI ALLUNGANO CON IL CONTENUTO ───
+// Cambia solo l'altezza a schermo: il valore del campo non viene toccato e non parte nessun salvataggio.
+function _autoAlto(lista) {
+  const v = lista.filter(t => t && t.offsetParent !== null);
+  v.forEach(t => { t.style.height = 'auto'; t.style.overflowY = 'hidden'; });
+  const h = v.map(t => t.scrollHeight + (t.offsetHeight - t.clientHeight));
+  v.forEach((t, k) => { t.style.height = h[k] + 'px'; });
+}
+function _autoAltoTutti() { _autoAlto([...document.querySelectorAll('#area-editing textarea')]); }
+document.addEventListener('input', e => { if (e.target && e.target.matches && e.target.matches('#area-editing textarea')) _autoAlto([e.target]); });
+// Le sezioni nascoste non si possono misurare: si ricalcola quando si clicca (cambio sezione, righe aggiunte) o cambia la finestra
+let _autoAltoTimer = null;
+const _autoAltoDopo = () => { clearTimeout(_autoAltoTimer); _autoAltoTimer = setTimeout(_autoAltoTutti, 80); };
+document.addEventListener('click', e => { if (e.target && e.target.closest && e.target.closest('#screen-editor')) _autoAltoDopo(); });
+window.addEventListener('resize', _autoAltoDopo);
+
 // ─── DURATA DELLE SESSIONI DI LAVORO ───
 // Per ogni PDP aperto conta il tempo con la pagina in primo piano ("aperto") e quello con attività
 // reale negli ultimi 2,5 minuti ("attivo": scrivere, cliccare, scorrere). A fine sessione scrive UNA riga
@@ -2645,6 +2695,7 @@ window.apriEditor = async (id) => {
     registraPresenza(id);
     scriviLog('apertura_pdp', id, { alunno: pdpCorrenteDoc?.alunno || '?' });
     _sessioneAvvia(id, pdpCorrenteDoc?.alunno);
+    setTimeout(_autoAltoTutti, 80); setTimeout(_autoAltoTutti, 600);
   } catch(e) {
     // I dati non sono arrivati: il modulo vuoto resta bloccato. Se restasse scrivibile, i campi sembrerebbero
     // spariti e chi li riscrive lavorerebbe su una scheda non caricata. Si esce e si riapre.
