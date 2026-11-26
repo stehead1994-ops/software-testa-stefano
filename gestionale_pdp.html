@@ -3548,9 +3548,16 @@ function _finestraSalvataggio() {
 // Una riga con lo strumento/la misura scritti e il "quando" vuoto viene segnata in rosso.
 // Chi ha lavorato su quel riquadro non può lasciare il PDP senza completarla (o toglierla di sua scelta).
 const _riquadriRigheMiei = new Set();   // riquadri (strumenti/misure di una disciplina) toccati da questo utente in questa apertura
+// Chi ha scritto a mano "Non si utilizzano strumenti compensativi", "Nessuna misura" e simili dichiara che non c'è nulla:
+// per quella riga il "quando" non serve. Una misura vera che inizia con "Non" (es. "Non valutare gli errori ortografici") lo richiede.
+function _rigaDichiaraNessuno(testo) {
+  const t = String(testo || '').trim().toLowerCase();
+  if (/^(nessun[oa]?|nessun'|niente|nulla)(\s|$|[.,;])/.test(t)) return true;
+  return /^non\s/.test(t) && /(strument|misur|compensativ|dispensativ)/.test(t);
+}
 function _rigaIncompleta(r) {
   const n = r.querySelector('.riga-nome'), q = r.querySelector('.riga-quando');
-  return !!n && !!q && !q.disabled && n.value.trim() !== '' && q.value.trim() === '';
+  return !!n && !!q && !q.disabled && n.value.trim() !== '' && q.value.trim() === '' && !_rigaDichiaraNessuno(n.value);
 }
 function _segnaRigheIncomplete() {
   document.querySelectorAll('#materie-container .riga-dinamica').forEach(r => {
@@ -3929,7 +3936,7 @@ function _controlliChiusura() {
     const nostrum = card.querySelector('.nostrum-box input[type="checkbox"]');
     if (nostrum && nostrum.checked) return; // "nessuno strumento / misura": le righe non contano
     [['strumenti-righe-', 'strumento', 'strumenti'], ['misure-righe-', 'misura', 'misure']].forEach(([pref, uno, tanti]) => {
-      const senza = [...card.querySelectorAll('[id^="' + pref + '"] .riga-dinamica')].filter(r => val(r.querySelector('.riga-nome')) && !val(r.querySelector('.riga-quando')));
+      const senza = [...card.querySelectorAll('[id^="' + pref + '"] .riga-dinamica')].filter(r => val(r.querySelector('.riga-nome')) && !val(r.querySelector('.riga-quando')) && !_rigaDichiaraNessuno(val(r.querySelector('.riga-nome'))));
       if (senza.length) out.push({ dove: nome, cosa: 'manca "quando / in quali attività" per ' + senza.length + ' ' + (senza.length === 1 ? uno : tanti), el: senza[0].querySelector('.riga-quando') });
     });
   });
