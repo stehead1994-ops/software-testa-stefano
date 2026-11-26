@@ -3139,7 +3139,8 @@ function _aggiornaHeaderEditor(pdp) {
     if (!document.getElementById('banner-definitivo')) {
       _mostraBannerProtocollato(
         pdp.protocollato_da || '—',
-        pdp.protocollato_data_str || '—'
+        pdp.protocollato_data_str || '—',
+        Array.isArray(pdp.protocollato_mancanze) ? pdp.protocollato_mancanze : []
       );
       document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = true);
       document.querySelectorAll('#area-editing button:not(.guida-btn):not(#banner-definitivo button)').forEach(el => el.disabled = true);
@@ -3546,7 +3547,7 @@ function _finestraSalvataggio() {
 
 // ─── "QUANDO" OBBLIGATORIO PER STRUMENTI E MISURE ───
 // Una riga con lo strumento/la misura scritti e il "quando" vuoto viene segnata in rosso.
-// Chi ha lavorato su quel riquadro non può lasciare il PDP senza completarla (o toglierla di sua scelta).
+// Chi ha lavorato su quel riquadro, uscendo dal PDP, riceve un promemoria: non è un blocco e nulla viene tolto.
 const _riquadriRigheMiei = new Set();   // riquadri (strumenti/misure di una disciplina) toccati da questo utente in questa apertura
 // Chi ha scritto a mano "Non si utilizzano strumenti compensativi", "Nessuna misura" e simili dichiara che non c'è nulla:
 // per quella riga il "quando" non serve. Una misura vera che inizia con "Non" (es. "Non valutare gli errori ortografici") lo richiede.
@@ -3584,7 +3585,7 @@ function _righeMieIncomplete() {
   if (t.closest('#area-editing')) setTimeout(_segnaRigheIncomplete, 0);
 }, true));
 
-// true = si può uscire. Se restano righe senza "quando" nei riquadri su cui ho lavorato: completare oppure toglierle.
+// true = si può uscire. Se restano righe senza "quando" nei riquadri su cui ho lavorato: promemoria (completare oppure uscire comunque).
 function _uscitaRigheComplete() {
   const inc = _righeMieIncomplete();
   if (!inc.length) return Promise.resolve(true);
@@ -3596,9 +3597,9 @@ function _uscitaRigheComplete() {
     const box = document.createElement('div');
     box.style.cssText = 'background:#fff;border-radius:14px;max-width:560px;width:100%;max-height:86vh;display:flex;flex-direction:column;padding:20px 22px;box-shadow:0 12px 40px rgba(0,0,0,.25);color:#1a2b3c';
     const tit = document.createElement('div'); tit.id = 'ov-righe-tit'; tit.style.cssText = 'font-weight:700;font-size:1.05rem;margin-bottom:6px';
-    tit.textContent = '⚠️ Manca il "quando" per ' + (inc.length === 1 ? '1 riga' : inc.length + ' righe');
+    tit.textContent = '⚠️ Promemoria: manca il "quando" per ' + (inc.length === 1 ? '1 riga' : inc.length + ' righe');
     const sot = document.createElement('div'); sot.style.cssText = 'font-size:0.88rem;line-height:1.4;margin-bottom:10px';
-    sot.textContent = 'Per ogni strumento compensativo o misura dispensativa va indicato quando / in quali attività si applica. Clicca una voce per completarla.';
+    sot.textContent = 'Per ogni strumento compensativo o misura dispensativa va indicato quando / in quali attività si applica. Clicca una voce per completarla, oppure esci: le righe restano salvate e segnate come incomplete.';
     const lista = document.createElement('div'); lista.style.cssText = 'overflow-y:auto;border:1px solid #d5dde6;border-radius:10px;padding:4px 0;flex:1;min-height:50px';
     const chiudi = v => { ov.remove(); risolvi(v); };
     inc.forEach(m => {
@@ -3612,16 +3613,10 @@ function _uscitaRigheComplete() {
     const b1 = document.createElement('button'); b1.type = 'button'; b1.textContent = '✏️ Torna a completare';
     b1.style.cssText = 'padding:9px 14px;border-radius:8px;font:inherit;font-weight:700;cursor:pointer;border:none;background:#1a3a5c;color:#fff';
     b1.onclick = () => { chiudi(false); _vaiAlCampo(inc[0].riga.querySelector('.riga-quando')); };
-    const b2 = document.createElement('button'); b2.type = 'button'; b2.id = 'ov-righe-togli';
-    b2.textContent = inc.length === 1 ? 'Togli la riga incompleta ed esci' : 'Togli le ' + inc.length + ' righe incomplete ed esci';
-    b2.style.cssText = 'padding:9px 14px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer;border:1px solid #c0392b;background:#fff;color:#c0392b';
-    b2.onclick = () => {
-      // Tolgo solo le righe elencate, per scelta di chi le ha scritte: la modifica passa dal salvataggio di sempre (e dal Log)
-      inc.forEach(m => { const c = m.riga.parentElement; if (!c) return;
-        if (c.querySelectorAll('.riga-dinamica').length <= 1) m.riga.querySelectorAll('input').forEach(i => i.value = ''); else m.riga.remove(); });
-      _segnaRigheIncomplete(); _campiToccati.add('_righe'); _salvataggioInSospeso = true;
-      chiudi(true);
-    };
+    // Promemoria, non blocco: le righe restano come sono (salvate e segnate in rosso), si può uscire comunque
+    const b2 = document.createElement('button'); b2.type = 'button'; b2.id = 'ov-righe-esci'; b2.textContent = 'Esci comunque';
+    b2.style.cssText = 'padding:9px 14px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer;border:1px solid #8a97a5;background:#fff;color:#1a2b3c';
+    b2.onclick = () => chiudi(true);
     riga.append(b1, b2); box.append(tit, sot, lista, riga); ov.appendChild(box); document.body.appendChild(ov); b1.focus();
   });
 }
@@ -4004,13 +3999,13 @@ async function _protocollaNow(mancanze = []) {
   scriviLog('versione_definitiva', pdpCorrenteId, { alunno: pdpCorrenteDoc?.alunno || '?', chi, ...(mancanze.length ? { chiuso_con_mancanze: mancanze.length, mancanze: mancanze.join(' · ').slice(0, 1400) } : {}) });
   const btnP = document.getElementById('btn-protocolla');
   if (btnP) btnP.style.display = 'none';
-  _mostraBannerProtocollato(chi, dataStr);
+  _mostraBannerProtocollato(chi, dataStr, mancanze);
   // Blocca tutti i campi DOPO aver salvato e protocollato
   document.querySelectorAll('#area-editing input, #area-editing textarea, #area-editing select').forEach(el => el.disabled = true);
   document.querySelectorAll('#area-editing button:not(.guida-btn):not(#banner-definitivo button)').forEach(el => el.disabled = true);
 }
 
-function _mostraBannerProtocollato(chi, data) {
+function _mostraBannerProtocollato(chi, data, mancanze = []) {
   const area = document.getElementById('area-editing');
   if (!area || document.getElementById('banner-definitivo')) return;
   const banner = document.createElement('div');
@@ -4027,6 +4022,16 @@ function _mostraBannerProtocollato(chi, data) {
     <button onclick="esportaPDF()" style="background:white;color:var(--verde);border:none;border-radius:6px;padding:6px 14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.82rem;">🖨️ Scarica PDF</button>
   `;
   area.prepend(banner);
+  // Chiuso con elementi mancanti: resta visibile a chi apre il PDP, con l'elenco per disciplina
+  if (mancanze && mancanze.length) {
+    const av = document.createElement('details'); av.id = 'banner-mancanze';
+    av.style.cssText = 'background:#fff4d6;border:2px solid #e0a100;color:#5a4300;border-radius:10px;padding:10px 16px;margin:10px 0 14px;font-size:0.85rem;line-height:1.45';
+    const sm = document.createElement('summary'); sm.style.cssText = 'font-weight:700;cursor:pointer';
+    sm.textContent = '⚠️ PDP chiuso incompleto: ' + (mancanze.length === 1 ? 'mancava 1 elemento' : 'mancavano ' + mancanze.length + ' elementi') + ' (clicca per l\'elenco)';
+    const ul = document.createElement('ul'); ul.style.cssText = 'margin:8px 0 2px 18px;padding:0';
+    mancanze.forEach(m => { const li = document.createElement('li'); li.textContent = String(m); ul.appendChild(li); });
+    av.append(sm, ul); banner.after(av);
+  }
 }
 
 
