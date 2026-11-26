@@ -659,6 +659,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
   .riga-dinamica input.riga-nome { font-weight: 500; }
   .riga-dinamica input.riga-quando { color: var(--testo-soft); }
   .riga-dinamica input:focus { border-color: var(--azzurro); background: #f7fbff; }
+  /* Strumento o misura scritti senza "quando": campo obbligatorio */
+  .riga-dinamica.riga-incompleta input.riga-quando { border-color: #c0392b; background: #fdf1ef; }
+  .riga-dinamica.riga-incompleta input.riga-quando::placeholder { color: #a5281b; opacity: 1; }
+  .riga-dinamica.riga-incompleta::after { content: '⚠ Obbligatorio: scrivi quando / in quali attività si applica'; grid-column: 1 / -1; font-size: 0.78rem; font-weight: 600; color: #a5281b; margin-top: -3px; }
+  @media print { .riga-dinamica.riga-incompleta::after { display: none; } .riga-dinamica.riga-incompleta input.riga-quando { border-color: var(--grigio-bordo); background: white; } }
   .riga-rimuovi {
     background: #fdecea; color: #c0392b; border: 1.5px solid #f0c4be;
     border-radius: 7px; width: 30px; height: 30px; cursor: pointer; font-size: 0.85rem;
@@ -1621,7 +1626,7 @@ function _autoAlto(lista) {
   const h = v.map(t => t.scrollHeight + (t.offsetHeight - t.clientHeight));
   v.forEach((t, k) => { t.style.height = h[k] + 'px'; });
 }
-function _autoAltoTutti() { _autoAlto([...document.querySelectorAll('#area-editing textarea')]); }
+function _autoAltoTutti() { _autoAlto([...document.querySelectorAll('#area-editing textarea')]); try { _segnaRigheIncomplete(); } catch (x) {} }
 document.addEventListener('input', e => { if (e.target && e.target.matches && e.target.matches('#area-editing textarea')) _autoAlto([e.target]); });
 // Le sezioni nascoste non si possono misurare: si ricalcola quando si clicca (cambio sezione, righe aggiunte) o cambia la finestra
 let _autoAltoTimer = null;
@@ -1683,7 +1688,8 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('pagehide', () => _sessioneChiudi('chiusura_pagina'));
 
 window.tornaHome = async () => {
-  // Prima di lasciare l'editor aspetta che ogni modifica sia salvata (altrimenti blocca e avvisa)
+  // Prima di lasciare l'editor: righe senza "quando" da completare, poi attesa del salvataggio (altrimenti blocca e avvisa)
+  if (!(await _uscitaRigheComplete())) return;
   if (!(await _uscitaSicura())) return;
   _sessioneChiudi('chiusura');
   const _leg = document.getElementById('legenda-autori'); if (_leg) { _leg.style.display = 'none'; _leg.innerHTML = ''; }
@@ -2642,6 +2648,7 @@ function _bloccaFormInCaricamento(blocca) {
 // ─── EDITOR PDP (form reale integrato) ───
 window.apriEditor = async (id) => {
   // Prima di cambiare PDP, aspetta che le modifiche su quello aperto siano salvate
+  if (pdpCorrenteId && pdpCorrenteId !== id && !(await _uscitaRigheComplete())) return;
   if (pdpCorrenteId && pdpCorrenteId !== id && !(await _uscitaSicura())) return;
   if (pdpCorrenteId && pdpCorrenteId !== id) _sessioneChiudi('cambio_pdp');
   await _salvaSeInSospeso();
@@ -2651,7 +2658,7 @@ window.apriEditor = async (id) => {
   // FIX: blocca autosave durante tutto il caricamento per evitare sovrascritture accidentali
   _caricamentoPDP = true;
   clearTimeout(autosaveTimer);
-  _campiToccati.clear();
+  _campiToccati.clear(); _riquadriRigheMiei.clear();
   _iniettaFormPDP();
   _bloccaFormInCaricamento(true);
   mostraSchermata('editor');
@@ -3537,6 +3544,81 @@ function _finestraSalvataggio() {
   };
 }
 
+// ─── "QUANDO" OBBLIGATORIO PER STRUMENTI E MISURE ───
+// Una riga con lo strumento/la misura scritti e il "quando" vuoto viene segnata in rosso.
+// Chi ha lavorato su quel riquadro non può lasciare il PDP senza completarla (o toglierla di sua scelta).
+const _riquadriRigheMiei = new Set();   // riquadri (strumenti/misure di una disciplina) toccati da questo utente in questa apertura
+function _rigaIncompleta(r) {
+  const n = r.querySelector('.riga-nome'), q = r.querySelector('.riga-quando');
+  return !!n && !!q && !q.disabled && n.value.trim() !== '' && q.value.trim() === '';
+}
+function _segnaRigheIncomplete() {
+  document.querySelectorAll('#materie-container .riga-dinamica').forEach(r => {
+    const inc = _rigaIncompleta(r), q = r.querySelector('.riga-quando');
+    r.classList.toggle('riga-incompleta', inc);
+    if (q) { if (inc) { q.setAttribute('aria-invalid', 'true'); q.setAttribute('aria-required', 'true'); } else q.removeAttribute('aria-invalid'); }
+  });
+}
+function _righeMieIncomplete() {
+  const out = [];
+  _riquadriRigheMiei.forEach(id => {
+    const c = document.getElementById(id); if (!c) return;
+    const card = c.closest('.materia-card');
+    const sel = card?.querySelector('.materia-nome-select');
+    const disc = (card?.querySelector('.materia-nome')?.textContent || (sel ? sel.options[sel.selectedIndex]?.text : '') || 'Disciplina').trim();
+    c.querySelectorAll('.riga-dinamica').forEach(r => { if (_rigaIncompleta(r)) out.push({ riga: r, disc, tipo: id.startsWith('strumenti') ? 'strumento' : 'misura', testo: r.querySelector('.riga-nome').value.trim() }); });
+  });
+  return out;
+}
+['input', 'click', 'focusout'].forEach(ev => document.addEventListener(ev, e => {
+  const t = e.target; if (!t || !t.closest) return;
+  const c = t.closest('#materie-container .righe-dinamiche');
+  if (c && c.id && e.isTrusted && ev === 'input') _riquadriRigheMiei.add(c.id);
+  if (t.closest('#area-editing')) setTimeout(_segnaRigheIncomplete, 0);
+}, true));
+
+// true = si può uscire. Se restano righe senza "quando" nei riquadri su cui ho lavorato: completare oppure toglierle.
+function _uscitaRigheComplete() {
+  const inc = _righeMieIncomplete();
+  if (!inc.length) return Promise.resolve(true);
+  return new Promise(risolvi => {
+    document.getElementById('ov-righe')?.remove();
+    const ov = document.createElement('div'); ov.id = 'ov-righe';
+    ov.setAttribute('role', 'alertdialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'ov-righe-tit');
+    ov.style.cssText = "position:fixed;inset:0;z-index:9400;background:rgba(26,58,92,.55);display:flex;align-items:center;justify-content:center;padding:16px;font-family:'DM Sans',sans-serif";
+    const box = document.createElement('div');
+    box.style.cssText = 'background:#fff;border-radius:14px;max-width:560px;width:100%;max-height:86vh;display:flex;flex-direction:column;padding:20px 22px;box-shadow:0 12px 40px rgba(0,0,0,.25);color:#1a2b3c';
+    const tit = document.createElement('div'); tit.id = 'ov-righe-tit'; tit.style.cssText = 'font-weight:700;font-size:1.05rem;margin-bottom:6px';
+    tit.textContent = '⚠️ Manca il "quando" per ' + (inc.length === 1 ? '1 riga' : inc.length + ' righe');
+    const sot = document.createElement('div'); sot.style.cssText = 'font-size:0.88rem;line-height:1.4;margin-bottom:10px';
+    sot.textContent = 'Per ogni strumento compensativo o misura dispensativa va indicato quando / in quali attività si applica. Clicca una voce per completarla.';
+    const lista = document.createElement('div'); lista.style.cssText = 'overflow-y:auto;border:1px solid #d5dde6;border-radius:10px;padding:4px 0;flex:1;min-height:50px';
+    const chiudi = v => { ov.remove(); risolvi(v); };
+    inc.forEach(m => {
+      const b = document.createElement('button'); b.type = 'button';
+      b.style.cssText = 'display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid #eef2f6;padding:8px 12px;font:inherit;font-size:0.88rem;cursor:pointer;color:inherit';
+      const st = document.createElement('strong'); st.textContent = m.disc + ' (' + m.tipo + '): '; b.appendChild(st); b.appendChild(document.createTextNode(m.testo));
+      b.onclick = () => { chiudi(false); _vaiAlCampo(m.riga.querySelector('.riga-quando')); };
+      lista.appendChild(b);
+    });
+    const riga = document.createElement('div'); riga.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:14px';
+    const b1 = document.createElement('button'); b1.type = 'button'; b1.textContent = '✏️ Torna a completare';
+    b1.style.cssText = 'padding:9px 14px;border-radius:8px;font:inherit;font-weight:700;cursor:pointer;border:none;background:#1a3a5c;color:#fff';
+    b1.onclick = () => { chiudi(false); _vaiAlCampo(inc[0].riga.querySelector('.riga-quando')); };
+    const b2 = document.createElement('button'); b2.type = 'button'; b2.id = 'ov-righe-togli';
+    b2.textContent = inc.length === 1 ? 'Togli la riga incompleta ed esci' : 'Togli le ' + inc.length + ' righe incomplete ed esci';
+    b2.style.cssText = 'padding:9px 14px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer;border:1px solid #c0392b;background:#fff;color:#c0392b';
+    b2.onclick = () => {
+      // Tolgo solo le righe elencate, per scelta di chi le ha scritte: la modifica passa dal salvataggio di sempre (e dal Log)
+      inc.forEach(m => { const c = m.riga.parentElement; if (!c) return;
+        if (c.querySelectorAll('.riga-dinamica').length <= 1) m.riga.querySelectorAll('input').forEach(i => i.value = ''); else m.riga.remove(); });
+      _segnaRigheIncomplete(); _campiToccati.add('_righe'); _salvataggioInSospeso = true;
+      chiudi(true);
+    };
+    riga.append(b1, b2); box.append(tit, sot, lista, riga); ov.appendChild(box); document.body.appendChild(ov); b1.focus();
+  });
+}
+
 // Da chiamare prima di chiudere o cambiare PDP: true = si può uscire
 async function _uscitaSicura() {
   if (!_salvataggioInSospeso && _salvataggiInCorso === 0) return true;
@@ -3807,18 +3889,100 @@ window.protocolla = async () => {
   if (!plesso) { mostraToast('⚠️ Seleziona il plesso di appartenenza prima di chiudere', 'rosso'); return; }
   const senzaMotivo = _nessunoStrumentoSenzaMotivo();
   if (senzaMotivo.length) { mostraToast('⚠️ Manca la motivazione per "nessuno strumento / misura" in: ' + senzaMotivo.join(', '), 'rosso'); return; }
-  if (!confirm('Confermi la chiusura di questo PDP?\n\nIl documento verrà marcato come completato e passerà in sola lettura. Potrai scaricarlo in PDF dalla dashboard.')) return;
+  // Controllo di completezza: se manca qualcosa si mostra l'elenco; il coordinatore può completare o chiudere comunque
+  const mancanze = _controlliChiusura();
+  if (mancanze.length) {
+    if (!(await _finestraMancanze(mancanze))) return;
+  } else if (!confirm('Confermi la chiusura di questo PDP?\n\nIl documento verrà marcato come completato e passerà in sola lettura. Potrai scaricarlo in PDF dalla dashboard.')) return;
   try {
     // Salva prima tutti i dati correnti, poi protocolla
     await salvaOra();
-    await _protocollaNow();
+    await _protocollaNow(mancanze.map(m => m.dove + ': ' + m.cosa));
   } catch(e) {
     console.error('Errore protocollazione:', e);
     mostraToast('❌ Errore: ' + (e.code || e.message), 'rosso');
   }
 };
 
-async function _protocollaNow() {
+// ─── CONTROLLO DI COMPLETEZZA PRIMA DELLA CHIUSURA ───
+// Legge soltanto i campi a schermo: non modifica nulla.
+function _controlliChiusura() {
+  const area = document.getElementById('area-editing'); const out = [];
+  if (!area) return out;
+  const val = el => String(el?.value || '').trim();
+  const campo = c => area.querySelector('[data-campo="' + c + '"]');
+  // Tipologia
+  const radio = [...area.querySelectorAll('input[name="tipo_pdp"]')];
+  const tipo = (radio.find(r => r.checked) || {}).value || '';
+  if (radio.length && !tipo) out.push({ dove: 'Tipologia PDP', cosa: 'non è stata scelta la tipologia', el: radio[0] });
+  // Diagnosi: solo con DSA o con BES con diagnosi
+  if (tipo === 'dsa' || tipo === 'diagnosi') {
+    if (campo('s2_diagnosi_data') && !val(campo('s2_diagnosi_data'))) out.push({ dove: 'Diagnosi', cosa: 'manca la data della diagnosi', el: campo('s2_diagnosi_data') });
+    if (campo('s2_specialista_nome') && !val(campo('s2_specialista_nome')) && !val(campo('s2_specialista_ente'))) out.push({ dove: 'Diagnosi', cosa: 'mancano lo specialista e la struttura', el: campo('s2_specialista_nome') });
+  }
+  // Discipline
+  area.querySelectorAll('#materie-container .materia-card').forEach(card => {
+    const sel = card.querySelector('.materia-nome-select');
+    const nome = (card.querySelector('.materia-nome')?.textContent || (sel ? sel.options[sel.selectedIndex]?.text : '') || 'Disciplina').trim();
+    const firma = card.querySelector('[data-campo^="mat_firma_"]');
+    if (firma && !val(firma)) out.push({ dove: nome, cosa: 'manca la firma del docente', el: firma });
+    const nostrum = card.querySelector('.nostrum-box input[type="checkbox"]');
+    if (nostrum && nostrum.checked) return; // "nessuno strumento / misura": le righe non contano
+    [['strumenti-righe-', 'strumento', 'strumenti'], ['misure-righe-', 'misura', 'misure']].forEach(([pref, uno, tanti]) => {
+      const senza = [...card.querySelectorAll('[id^="' + pref + '"] .riga-dinamica')].filter(r => val(r.querySelector('.riga-nome')) && !val(r.querySelector('.riga-quando')));
+      if (senza.length) out.push({ dove: nome, cosa: 'manca "quando / in quali attività" per ' + senza.length + ' ' + (senza.length === 1 ? uno : tanti), el: senza[0].querySelector('.riga-quando') });
+    });
+  });
+  return out;
+}
+
+// Porta al campo da completare, aprendo la sezione se è chiusa
+function _vaiAlCampo(el) {
+  if (!el) return;
+  let e = el.parentElement;
+  while (e && e.id !== 'area-editing') {
+    if (e.classList.contains('sezione-body') && getComputedStyle(e).display === 'none') e.previousElementSibling?.click();
+    e = e.parentElement;
+  }
+  setTimeout(() => { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); try { el.focus({ preventScroll: true }); } catch (x) {} el.style.outline = '3px solid #C8A84B'; setTimeout(() => { el.style.outline = ''; }, 2500); }, 120);
+}
+
+// Elenco di ciò che manca: true = chiudere comunque, false = tornare a completare
+function _finestraMancanze(mancanze) {
+  return new Promise(risolvi => {
+    document.getElementById('ov-mancanze')?.remove();
+    const ov = document.createElement('div'); ov.id = 'ov-mancanze';
+    ov.setAttribute('role', 'alertdialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'ov-man-tit');
+    ov.style.cssText = "position:fixed;inset:0;z-index:9400;background:rgba(26,58,92,.55);display:flex;align-items:center;justify-content:center;padding:16px;font-family:'DM Sans',sans-serif";
+    const box = document.createElement('div');
+    box.style.cssText = 'background:#fff;border-radius:14px;max-width:560px;width:100%;max-height:86vh;display:flex;flex-direction:column;padding:20px 22px;box-shadow:0 12px 40px rgba(0,0,0,.25);color:#1a2b3c';
+    const tit = document.createElement('div'); tit.id = 'ov-man-tit'; tit.style.cssText = 'font-weight:700;font-size:1.05rem;margin-bottom:6px';
+    tit.textContent = '⚠️ Il PDP non è completo: ' + (mancanze.length === 1 ? 'manca 1 elemento' : 'mancano ' + mancanze.length + ' elementi');
+    const sot = document.createElement('div'); sot.style.cssText = 'font-size:0.88rem;line-height:1.4;margin-bottom:10px';
+    sot.textContent = 'Clicca una voce per andare al punto da completare.';
+    const lista = document.createElement('div'); lista.style.cssText = 'overflow-y:auto;border:1px solid #d5dde6;border-radius:10px;padding:4px 0;flex:1;min-height:60px';
+    const chiudi = v => { ov.remove(); risolvi(v); };
+    mancanze.forEach(m => {
+      const b = document.createElement('button'); b.type = 'button';
+      b.style.cssText = 'display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid #eef2f6;padding:8px 12px;font:inherit;font-size:0.88rem;cursor:pointer;color:inherit';
+      const s = document.createElement('strong'); s.textContent = m.dove + ': '; b.appendChild(s); b.appendChild(document.createTextNode(m.cosa));
+      b.onclick = () => { chiudi(false); _vaiAlCampo(m.el); };
+      lista.appendChild(b);
+    });
+    const nota = document.createElement('div'); nota.style.cssText = 'font-size:0.82rem;line-height:1.4;margin:12px 0 0;color:#5a6b7c';
+    nota.textContent = 'Se chiudi comunque, il PDP passa in sola lettura così com\'è: chi chiude se ne assume la responsabilità a nome del consiglio di classe o del team docenti. La scelta viene registrata.';
+    const riga = document.createElement('div'); riga.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:14px';
+    const b1 = document.createElement('button'); b1.type = 'button'; b1.textContent = '✏️ Torna a completare';
+    b1.style.cssText = 'padding:9px 14px;border-radius:8px;font:inherit;font-weight:700;cursor:pointer;border:none;background:#1a3a5c;color:#fff';
+    b1.onclick = () => chiudi(false);
+    const b2 = document.createElement('button'); b2.type = 'button'; b2.id = 'ov-man-chiudi'; b2.textContent = 'Chiudi comunque il PDP';
+    b2.style.cssText = 'padding:9px 14px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer;border:1px solid #c0392b;background:#fff;color:#c0392b';
+    b2.onclick = () => chiudi(true);
+    riga.append(b1, b2); box.append(tit, sot, lista, nota, riga); ov.appendChild(box); document.body.appendChild(ov); b1.focus();
+  });
+}
+
+async function _protocollaNow(mancanze = []) {
   const now = new Date();
   const chi = utenteCorrente?.displayName || utenteCorrente?.email || 'Utente';
   const dataStr = now.toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
@@ -3826,10 +3990,11 @@ async function _protocollaNow() {
     stato: 'protocollato',
     protocollato: serverTimestamp(),
     protocollato_da: chi,
-    protocollato_data_str: dataStr
+    protocollato_data_str: dataStr,
+    protocollato_mancanze: mancanze   // vuoto = chiuso completo; altrimenti l'elenco di ciò che mancava alla chiusura
   });
   mostraToast('✅ PDP — Versione definitiva salvata!', 'verde');
-  scriviLog('versione_definitiva', pdpCorrenteId, { alunno: pdpCorrenteDoc?.alunno || '?', chi });
+  scriviLog('versione_definitiva', pdpCorrenteId, { alunno: pdpCorrenteDoc?.alunno || '?', chi, ...(mancanze.length ? { chiuso_con_mancanze: mancanze.length, mancanze: mancanze.join(' · ').slice(0, 1400) } : {}) });
   const btnP = document.getElementById('btn-protocolla');
   if (btnP) btnP.style.display = 'none';
   _mostraBannerProtocollato(chi, dataStr);
