@@ -108,6 +108,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--grigio-bg); color: 
 .ad-src { display: block; margin-top: 6px; font-size: 0.72rem; color: #14785A; font-weight: 700; }
 .ad-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .ad-grp { display: block; margin: 9px 0 4px; font-size: 0.72rem; font-weight: 700; color: #14785A; text-transform: uppercase; letter-spacing: 0.03em; }
+.ad-voto { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 2px 0 4px; font-size: 0.76rem; color: #4a5b6c; }
+.ad-voto button { border: 1.5px solid #c9d3df; background: #fff; border-radius: 16px; padding: 3px 10px; font-size: 0.78rem; font-weight: 600; color: #1a3a5c; cursor: pointer; font-family: inherit; }
+.ad-voto button:hover, .ad-voto button:focus-visible { border-color: #14785A; background: #eef8f3; }
 .ad-grp.ad-dom { text-transform: none; letter-spacing: 0; font-size: 0.8rem; color: #1a3a5c; }
 .ad-chip { border: 1.5px solid #c9d3df; background: #fff; border-radius: 16px; padding: 5px 10px; font-size: 0.75rem; color: #1a3a5c; font-weight: 600; cursor: pointer; font-family: inherit; text-align: left; }
 .ad-chip:hover { border-color: #1a3a5c; }
@@ -2018,6 +2021,7 @@ const AZIONE_LABEL = {
   'versione_definitiva': '📌 Versione definitiva',
   'download_pdf': '⬇️ Download PDF',
   'adelia_domanda': '🐧 Domanda ad Adelia',
+  'adelia_voto': '🐧 Risposta di Adelia valutata',
 };
 // ─── TEMPI DI LAVORO (solo Super Admin) ───
 let _tempiRighe = [];
@@ -2061,12 +2065,43 @@ window.scaricaTempiCSV = () => {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 };
 
+// Pollici dati alle risposte di Adelia nei giorni caricati: totale, schede con più "no", elenco dei "no" con la domanda.
+function _mostraVotiAdelia(contenuto) {
+  const voti = (_logsAllDocs || []).filter(l => l.azione === 'adelia_voto');
+  const box = document.createElement('div'); box.id = 'adelia-voti'; box.style.cssText = 'background:white;border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:0.85rem';
+  const tit = document.createElement('h3'); tit.style.cssText = 'margin:0 0 8px;font-size:1rem;color:var(--blu)'; tit.textContent = 'Risposte valutate (👍 / 👎)'; box.appendChild(tit);
+  if (!voti.length) { const p = document.createElement('p'); p.style.cssText = 'margin:0;color:var(--testo-soft)'; p.textContent = 'Nessun pollice nei giorni caricati.'; box.appendChild(p); contenuto.appendChild(box); return; }
+  const si = voti.filter(v => v.utile).length, no = voti.length - si;
+  const p = document.createElement('p'); p.style.margin = '0 0 10px'; p.textContent = voti.length + ' valutazioni: ' + si + ' utili (' + Math.round(si * 100 / voti.length) + '%), ' + no + ' non utili.'; box.appendChild(p);
+  const cella = (tr, testo, th, extra) => { const td = document.createElement(th ? 'th' : 'td'); td.textContent = testo; td.style.cssText = 'padding:7px 10px;text-align:left;vertical-align:top;border-bottom:1px solid #e2e8f0' + (extra || ''); tr.appendChild(td); };
+  const nome = v => (v.scheda || '—') + (v.titolo ? ' · ' + v.titolo : '');
+  const per = {}; voti.forEach(v => { const k = nome(v); per[k] = per[k] || { si: 0, no: 0 }; per[k][v.utile ? 'si' : 'no']++; });
+  const t1 = document.createElement('table'); t1.style.cssText = 'width:100%;border-collapse:collapse;margin-bottom:12px';
+  let tr = document.createElement('tr'); ['Scheda mostrata', '👍', '👎'].forEach(x => cella(tr, x, true)); t1.appendChild(tr);
+  const ordinate = Object.entries(per).sort((a, b) => b[1].no - a[1].no || b[1].si - a[1].si);
+  ordinate.forEach(([k, n]) => { tr = document.createElement('tr'); cella(tr, k); cella(tr, String(n.si)); cella(tr, String(n.no), false, n.no ? ';font-weight:700;color:#a5281b' : ''); t1.appendChild(tr); });
+  box.appendChild(t1);
+  const negativi = voti.filter(v => !v.utile);
+  if (negativi.length) {
+    const h = document.createElement('div'); h.style.cssText = 'font-weight:700;margin:4px 0 6px'; h.textContent = 'Risposte non utili: che cosa era stato chiesto'; box.appendChild(h);
+    const t2 = document.createElement('table'); t2.style.cssText = 'width:100%;border-collapse:collapse';
+    tr = document.createElement('tr'); ['Giorno', 'Domanda', 'Scheda mostrata'].forEach(x => cella(tr, x, true)); t2.appendChild(tr);
+    negativi.forEach(v => { const ts = v.ts?.toDate?.(); tr = document.createElement('tr'); cella(tr, ts ? ts.toLocaleDateString('it-IT') : '—'); cella(tr, v.domanda || '(da un pulsante)', false, ';font-weight:500'); cella(tr, nome(v)); t2.appendChild(tr); });
+    box.appendChild(t2);
+  }
+  const btn = document.createElement('button'); btn.className = 'btn-secondary'; btn.style.marginTop = '12px'; btn.textContent = '📋 Copia le valutazioni';
+  btn.onclick = async () => { try { await navigator.clipboard.writeText(['Giorno\tUtile\tScheda\tDomanda', ...voti.map(v => [(v.ts?.toDate?.() || new Date(0)).toLocaleDateString('it-IT'), v.utile ? 'sì' : 'no', nome(v), v.domanda || ''].join('\t'))].join('\n')); btn.textContent = '✓ Copiato: incollalo in un foglio'; } catch (e) { btn.textContent = 'Copia non riuscita'; } };
+  box.appendChild(btn); contenuto.appendChild(box);
+}
+
 // Elenco delle domande fatte ad Adelia nei giorni caricati: solo giorno e testo.
 function mostraDomandeAdelia() {
   const contenuto = document.getElementById('logs-contenuto'), docs = (_logsAllDocs || []).filter(l => l.azione === 'adelia_domanda');
-  const countEl = document.getElementById('filtro-log-count'); if (countEl) countEl.textContent = docs.length + ' domande negli ultimi ' + _logsGiorni + ' giorni';
+  const countEl = document.getElementById('filtro-log-count'); if (countEl) countEl.textContent = docs.length + ' domande e ' + (_logsAllDocs || []).filter(l => l.azione === 'adelia_voto').length + ' valutazioni negli ultimi ' + _logsGiorni + ' giorni';
   contenuto.textContent = '';
-  if (!docs.length) { contenuto.innerHTML = '<div class="lista-vuota" style="padding:30px"><div class="lista-vuota-icon">🐧</div><p>Nessuna domanda ad Adelia nei giorni caricati</p></div>'; return; }
+  _mostraVotiAdelia(contenuto);
+  if (!docs.length) { const v = document.createElement('div'); v.className = 'lista-vuota'; v.style.padding = '30px'; v.innerHTML = '<div class="lista-vuota-icon">🐧</div><p>Nessuna domanda ad Adelia nei giorni caricati</p>'; contenuto.appendChild(v); return; }
+  const titD = document.createElement('h3'); titD.style.cssText = 'margin:6px 0 10px;font-size:1rem;color:var(--blu)'; titD.textContent = 'Domande scritte'; contenuto.appendChild(titD);
   const righe = docs.map(l => { const ts = l.ts?.toDate?.(); return [ts ? ts.toLocaleDateString('it-IT') : '—', l.domanda || '']; });
   const btn = document.createElement('button'); btn.className = 'btn-secondary'; btn.style.marginBottom = '12px'; btn.textContent = '📋 Copia l\'elenco';
   btn.onclick = async () => { try { await navigator.clipboard.writeText(['Giorno\tDomanda', ...righe.map(r => r.join('\t'))].join('\n')); btn.textContent = '✓ Copiato: incollalo in un foglio'; } catch (e) { btn.textContent = 'Copia non riuscita'; } };
@@ -2121,7 +2156,7 @@ function _renderLogsFiltrati() {
   const fPdp     = document.getElementById('filtro-log-pdp')?.value     || '';
 
   // Le copie di sicurezza restano nel database ma non affollano l'elenco
-  let docs = _logsAllDocs.filter(l => l.azione !== 'versione_precedente' && l.azione !== 'adelia_domanda');
+  let docs = _logsAllDocs.filter(l => l.azione !== 'versione_precedente' && l.azione !== 'adelia_domanda' && l.azione !== 'adelia_voto');
   if (fData)    docs = docs.filter(l => {
     const ts = l.ts?.toDate?.();
     if (!ts) return false;
@@ -2825,6 +2860,35 @@ function _adMsg(chi, nodo) {
   d.className = 'ad-m ' + chi; if (typeof nodo === 'string') d.textContent = nodo; else d.appendChild(nodo);
   body.appendChild(d); return d;
 }
+// "Ti è stata utile?": un pollice sotto l'ultima risposta. Serve alla FS per capire quali schede migliorare.
+// Si salva solo: giorno, sì/no, scheda mostrata e domanda (già ripulita). Niente nome, ruolo, ora o PDP.
+var _adeliaDomandaCorrente = '';
+function _adVoto(rif) {
+  if (_adeliaModo() !== 'pieno' || !utenteCorrente) return;
+  const body = document.getElementById('ad-body'), domanda = _adeliaDomandaCorrente;
+  setTimeout(() => {   // dopo gli eventuali pulsanti di rimando, così il pollice resta in fondo alla risposta
+    body.querySelectorAll('.ad-voto:not(.dato)').forEach(v => v.remove());   // il pollice c'è solo sull'ultima risposta
+    const r = document.createElement('div'); r.className = 'ad-voto'; r.setAttribute('role', 'group'); r.setAttribute('aria-label', 'Valuta la risposta');
+    const t = document.createElement('span'); t.textContent = 'Ti è stata utile?'; r.appendChild(t);
+    [[true, '👍 Sì', 'Sì, la risposta mi è stata utile'], [false, '👎 No', 'No, la risposta non mi è stata utile']].forEach(([utile, etichetta, aria]) => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = etichetta; b.setAttribute('aria-label', aria);
+      b.onclick = () => {
+        r.classList.add('dato'); r.textContent = utile ? 'Grazie! 👍' : 'Grazie: lo segnalo, così questa risposta viene migliorata.'; r.setAttribute('role', 'status');
+        _adeliaRegistraVoto(utile, rif, domanda);
+      };
+      r.appendChild(b);
+    });
+    body.appendChild(r);
+  }, 0);
+}
+async function _adeliaRegistraVoto(utile, rif, domanda) {
+  try {
+    if (_adeliaModo() !== 'pieno' || !utenteCorrente) return;
+    const sch = _adeliaIdx && _adeliaIdx.perId[rif];
+    const giorno = new Date(); giorno.setHours(0, 0, 0, 0);
+    await addDoc(collection(db, 'logs'), { ts: giorno, azione: 'adelia_voto', utile: !!utile, scheda: String(rif || ''), titolo: sch ? String(sch.t).slice(0, 120) : '', domanda: String(domanda || '').slice(0, 300) });
+  } catch (e) { console.warn('Voto non registrato:', e.code || e.message); }
+}
 function _adChips(voci) {
   const body = document.getElementById('ad-body'), c = document.createElement('div'); c.className = 'ad-chips';
   voci.forEach(v => { const b = document.createElement('button'); b.type = 'button'; b.className = 'ad-chip'; b.textContent = v.etichetta; b.onclick = v.azione; c.appendChild(b); });
@@ -2934,7 +2998,7 @@ function _adeliaMostraIncrocio(inc) {
   const rimandi = [...new Set([...(inc.dsaGenerico ? ['Q5'] : inc.dist.map(d => ADELIA_Q[d[0]])), ...inc.disc.map(d => ADELIA_F[d[0]])])].filter(id => id && _adeliaIdx.perId[id]).slice(0, 4);
   if (rimandi.length) _adChips(rimandi.map(id => ({ etichetta: _adeliaIdx.perId[id].t, azione: () => adeliaMostra(id) })));
   _adeliaUltima = null; _adeliaAltre = [...rimandi, ...inc.voci.map(s => s.id)];
-  _adInFondo(m);
+  _adInFondo(m); _adVoto('elenco strumenti');
 }
 function _adInFondo(el) { const body = document.getElementById('ad-body'); body.scrollTop = el ? Math.max(0, el.offsetTop - body.offsetTop - 8) : body.scrollHeight; }
 var _adeliaUltima = null, _adeliaAltre = [];
@@ -2942,6 +3006,7 @@ function adeliaMostra(id) {
   const s = _adeliaIdx && _adeliaIdx.perId[id]; if (!s) return;
   _adeliaUltima = s;
   _adInFondo(_adMsg('a', _adScheda(s)));
+  _adVoto(s.id);
 }
 // Raccolta delle domande: serve alla FS per capire che cosa chiedono i colleghi e che cosa manca nelle schede.
 // Si salva solo il testo della domanda scritta a mano (non i pulsanti), dopo l'accesso, con il giorno: senza ora, ruolo,
@@ -2967,12 +3032,14 @@ async function _adeliaRispondi(testo) {
   inp.value = '';
   try { await _adeliaCarica(); } catch (e) { _adInFondo(_adMsg('a', 'Non riesco a caricare le mie schede: controlla la connessione e riprova.')); return; }
   if (_adeliaDatiPersonali(domanda)) {
+    _adeliaDomandaCorrente = '';
     // la domanda non viene nemmeno riportata nella finestrella
     _adMsg('u', '(messaggio non mostrato)');
     _adInFondo(_adMsg('a', _adeliaIdx.perId.L1 ? _adeliaIdx.perId.L1.x : 'Non posso lavorare su dati di un alunno. Scrivimi solo codici o difficoltà in forma generica.'));
     return;
   }
   const senzaNomi = _adeliaTogliNomi(domanda);
+  _adeliaDomandaCorrente = senzaNomi.pulito;   // la domanda (senza nomi) a cui si riferisce il pollice
   _adMsg('u', senzaNomi.pulito);
   if (senzaNomi.trovato) _adMsg('a', 'Una cosa prima: non serve scrivermi il nome dell\'alunno. La prossima volta scrivi solo il disturbo o la difficoltà.');
   if (/^(ciao|buongiorno|buonasera|salve|ehi|hey)[\s!.,]*$/i.test(domanda)) { _adInFondo(_adMsg('a', 'Ciao! Scrivimi che cosa ti serve: una sigla, un disturbo, uno strumento, oppure "cosa devo fare" se parti da zero.')); return; }
@@ -3024,9 +3091,9 @@ async function _adeliaRispondi(testo) {
   }
   if (!ris.length || ris[0].p < 2.2) {
     const m = _adMsg('a', 'Su questo non ho una scheda. Prova con altre parole (un codice, una sigla, il nome di una sezione)' + (ruoloCorrente === 'master' ? ', oppure continua con me su Gemini' : '') + ' o senti la Funzione Strumentale Inclusione.');
-    _adChips([{ etichetta: 'Parto da zero: cosa devo fare', azione: () => adeliaInvia('io cosa devo fare') }, { etichetta: 'Dove si scrive: la mappa del PDP', azione: () => adeliaInvia('mappa del pdp') }, { etichetta: 'Le sigle spiegate', azione: () => adeliaInvia('sigle') }, ...(ruoloCorrente === 'master' ? [{ etichetta: '✨ Continua su Gemini', azione: apriAdelia }] : [])]); _adInFondo(m); return;
+    _adChips([{ etichetta: 'Parto da zero: cosa devo fare', azione: () => adeliaInvia('io cosa devo fare') }, { etichetta: 'Dove si scrive: la mappa del PDP', azione: () => adeliaInvia('mappa del pdp') }, { etichetta: 'Le sigle spiegate', azione: () => adeliaInvia('sigle') }, ...(ruoloCorrente === 'master' ? [{ etichetta: '✨ Continua su Gemini', azione: apriAdelia }] : [])]); _adInFondo(m); _adVoto('nessuna scheda'); return;
   }
-  const m = _adMsg('a', _adScheda(ris[0].s)); _adeliaUltima = ris[0].s;
+  const m = _adMsg('a', _adScheda(ris[0].s)); _adeliaUltima = ris[0].s; _adVoto(ris[0].s.id);
   const altre = ris.slice(1, 4).filter(r => r.p >= ris[0].p * 0.45);
   // per "e poi?": prima i rimandi della scheda mostrata, poi le schede vicine
   _adeliaAltre = [...new Set([...(ris[0].s.x.match(/\b[A-W]\d+\b/g) || []).filter(id => _adeliaIdx.perId[id] && /sched[ae] [^.]*$/.test(ris[0].s.x.slice(0, ris[0].s.x.indexOf(id)))), ...altre.map(r => r.s.id)])].filter(id => id !== ris[0].s.id);
@@ -3054,7 +3121,7 @@ function _adeliaAggiornaVisibilita() {
     _adeliaModoCorrente = modo; pn.style.display = 'none'; document.getElementById('ad-body').textContent = ''; _adeliaUltima = null;
     const gem = pn.querySelector('.ad-gem'); if (gem) gem.style.display = modo === 'pieno' && ruoloCorrente === 'master' ? '' : 'none';
     const sotto = pn.querySelector('.ad-head small'); if (sotto) sotto.textContent = modo === 'accesso' ? 'Ti aiuto a entrare nel gestionale' : 'Aiuto per il PDP e la lettura della diagnosi';
-    const sal = document.getElementById('ad-warn-salva'); if (sal) sal.textContent = modo === 'pieno' ? 'Le domande che scrivi vengono raccolte senza il tuo nome, per migliorare Adelia.' : 'Quello che scrivi qui non viene salvato né inviato.';
+    const sal = document.getElementById('ad-warn-salva'); if (sal) sal.textContent = modo === 'pieno' ? 'Le domande che scrivi e i pollici che dai vengono raccolti senza il tuo nome, per migliorare Adelia.' : 'Quello che scrivi qui non viene salvato né inviato.';
     const lab = fab.querySelector('.ad-lab'); if (lab) lab.textContent = modo === 'accesso' ? 'Non riesci a entrare? Chiedi ad Adelia' : 'Serve una mano? Chiedi ad Adelia';
   }
   if (!modo) pn.style.display = 'none';
