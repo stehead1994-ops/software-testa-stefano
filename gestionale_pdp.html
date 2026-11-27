@@ -5652,6 +5652,19 @@ function aggiornaVisibilitaDSA() {
 }
 
 function setGrado(g) {
+  // A PDP aperto e caricato, un clic sull'ordine di scuola NON deve ricreare le discipline: prima le svuotava a video
+  // (con la classe) e il salvataggio successivo registrava come vuoti i campi su cui il docente aveva lavorato.
+  if (pdpCorrenteId && !_caricamentoPDP && document.getElementById('materie-container')) {
+    const sg = document.getElementById('select-grado');
+    if (g === gradoCorrente) { if (sg) sg.value = g; return; }   // stesso ordine: non cambia nulla
+    const cards = [...document.querySelectorAll('#materie-container .materia-card')];
+    const pieno = cards.some(c => _disciplinaCompilata(c) || [...c.querySelectorAll('[data-campo^="mat_firma_"]')].some(f => String(f.value || '').trim() !== ''))
+      || [...document.querySelectorAll('#s4-infanzia textarea, #s4-infanzia input[type="text"]')].some(e => String(e.value || '').trim() !== '');
+    if (pieno && !confirm('Stai cambiando l\'ordine di scuola di questo PDP.\n\nLe discipline già compilate verrebbero ricreate vuote. Se hai cliccato per sbaglio premi Annulla: non cambia nulla.\n\nVuoi davvero cambiare ordine di scuola?')) {
+      if (sg) sg.value = gradoCorrente;
+      return;
+    }
+  }
   gradoCorrente = g;
   document.querySelectorAll('.grado-btn').forEach((b,i) => {
     const gradi = ['infanzia','primaria','secondaria'];
