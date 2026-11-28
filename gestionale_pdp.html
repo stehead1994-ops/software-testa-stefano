@@ -2794,7 +2794,7 @@ function _adeliaCarica() {
       ok(_adeliaIdx);
     };
     if (window.ADELIA_BASE) return fine();
-    const sc = document.createElement('script'); sc.src = 'adelia_base.js?v=23';
+    const sc = document.createElement('script'); sc.src = 'adelia_base.js?v=24';
     sc.onload = fine; sc.onerror = () => { _adeliaCaricamento = null; ko(new Error('base non raggiungibile')); };
     document.head.appendChild(sc);
   });
