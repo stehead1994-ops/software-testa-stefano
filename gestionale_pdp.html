@@ -3299,6 +3299,17 @@ function _ripristinaDatiFirebase(dati, grado) {
     }
   });
 
+  // Riquadri che si aprono con una spunta (tempo aggiuntivo, riduzione, domande chiuse, domande aperte):
+  // al caricamento la spunta veniva rimessa ma il riquadro restava com'era, quindi il "perché" già scritto
+  // non si vedeva finché non si toglieva e rimetteva la spunta. Qui si allinea solo la vista: nessun dato cambia.
+  area.querySelectorAll('input[type="checkbox"][onchange*="toggleSub("]').forEach(el => {
+    const m = /toggleSub\('([^']+)'/.exec(el.getAttribute('onchange') || '');
+    if (!m) return;
+    const sub = document.getElementById(m[1]);
+    const scritto = sub && [...sub.querySelectorAll('textarea')].some(t => String(t.value || '').trim() !== '');
+    toggleSub(m[1], el.checked || scritto);   // un testo già scritto non resta mai nascosto
+  });
+
   // Ripristina radio buttons
   area.querySelectorAll('input[type="radio"]').forEach(el => {
     const radioKey = 'radio_' + el.name;
